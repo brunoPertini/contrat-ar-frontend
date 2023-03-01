@@ -5,9 +5,15 @@ import Header from './Header';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const menuOptions = [{ label: 'Registrarse', onClick: () => {} },
+  { label: 'Iniciar Sesión', onClick: () => {} }];
+
+const title = 'Contract.ar';
+
 root.render(
   <React.StrictMode>
-    <Header />
+    <Header title={title} menuOptions={menuOptions} withMenu />
   </React.StrictMode>,
 );
 
