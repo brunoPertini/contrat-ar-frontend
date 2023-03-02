@@ -19,6 +19,7 @@ function Menu({ options }) {
         <Button
           color="inherit"
           onClick={option.onClick()}
+          key={`menu-${option.label}`}
         >
           {option.label}
         </Button>
@@ -35,13 +36,13 @@ Menu.propTypes = {
   })).isRequired,
 };
 
-export default function Header({ withMenu, menuOptions, title }) {
+export default function Header({ withMenu, menuOptions }) {
   return (
     <>
       <Box sx={{ flexGrow: 1 }} />
       <AppBar position="static">
         <Typography variant="h3">
-          { title }
+          Contract.ar
         </Typography>
         { withMenu && <Menu options={menuOptions} />}
       </AppBar>
@@ -57,5 +58,4 @@ Header.defaultProps = {
 Header.propTypes = {
   withMenu: PropTypes.bool,
   menuOptions: PropTypes.array,
-  title: PropTypes.string.isRequired,
 };

@@ -1,20 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom';
 import './index.css';
-import Header from './Header';
 import reportWebVitals from './reportWebVitals';
+import RootPage from './Root';
+import UserSignUp from './SignUp';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootPage />,
+  },
+  {
+    path: '/signup',
+    element: <UserSignUp />,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const menuOptions = [{ label: 'Registrarse', onClick: () => {} },
-  { label: 'Iniciar Sesión', onClick: () => {} }];
-
-const title = 'Contract.ar';
-
 root.render(
-  <React.StrictMode>
-    <Header title={title} menuOptions={menuOptions} withMenu />
-  </React.StrictMode>,
+  <RouterProvider router={router} />,
 );
 
 // If you want to start measuring performance in your app, pass a function
