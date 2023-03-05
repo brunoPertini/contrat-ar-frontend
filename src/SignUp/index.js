@@ -19,25 +19,27 @@ export default function UserSignUp() {
         <Typography variant="h6" align="left">
           Registrate! Sólo llevará unos minutos
         </Typography>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <TextField
             id="outlined-controlled"
             label="Nombre"
             onChange={() => {}}
           />
+          {' '}
           <TextField
             id="outlined-controlled"
             label="Apellido"
             onChange={() => {}}
           />
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <TextField
             id="outlined-controlled"
             label="Email"
             type="email"
             onChange={() => {}}
           />
+          {' '}
           <TextField
             id="outlined-controlled"
             label="Contraseña"
@@ -45,13 +47,15 @@ export default function UserSignUp() {
             onChange={() => {}}
           />
         </Grid>
-        <Grid item>
+        <Grid item xs={12} sx={{ width: '31rem' }}>
+          <Typography variant="subtitle1" align="left">
+            Fecha de nacimiento
+          </Typography>
           <TextField
             id="outlined-controlled"
-            label="Nacimiento"
             type="date"
+            sx={{ width: '100%' }}
             onChange={() => {}}
-            sx={{ width: '200%' }}
           />
         </Grid>
       </Grid>
