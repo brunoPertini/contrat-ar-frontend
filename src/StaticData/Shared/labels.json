@@ -1,0 +1,8 @@
+{
+    "name": "Nombre",
+    "surname": "Apellido",
+    "email": "Email",
+    "password": "Contraseña",
+    "birthDate": "Fecha de nacimiento",
+    "siteName": "Contract.ar" 
+}

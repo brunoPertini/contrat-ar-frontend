@@ -20,6 +20,7 @@
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
         "react/forbid-prop-types": [0],
         "import/no-extraneous-dependencies": [0],
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "import/prefer-default-export": [0]
     }
 }

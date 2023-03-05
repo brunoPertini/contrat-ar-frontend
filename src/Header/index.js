@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   AppBar, Box, Toolbar, Button, IconButton, Typography,
 } from '@mui/material';
+import { sharedLabels } from '../StaticData/Shared';
 
 function Menu({ options }) {
   return (
@@ -42,7 +43,7 @@ export default function Header({ withMenu, menuOptions }) {
       <Box sx={{ flexGrow: 1 }} />
       <AppBar position="static">
         <Typography variant="h3">
-          Contract.ar
+          { sharedLabels.siteName }
         </Typography>
         { withMenu && <Menu options={menuOptions} />}
       </AppBar>

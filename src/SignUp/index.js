@@ -2,6 +2,8 @@ import {
   Grid, TextField, Typography,
 } from '@mui/material';
 import Header from '../Header';
+import { signUpLabels } from '../StaticData/SignUp';
+import { sharedLabels } from '../StaticData/Shared';
 
 export default function UserSignUp() {
   return (
@@ -17,39 +19,39 @@ export default function UserSignUp() {
         spacing={2}
       >
         <Typography variant="h6" align="left">
-          Registrate! Sólo llevará unos minutos
+          { signUpLabels.title }
         </Typography>
         <Grid item xs={12}>
           <TextField
             id="outlined-controlled"
-            label="Nombre"
+            label={sharedLabels.name}
             onChange={() => {}}
           />
           {' '}
           <TextField
             id="outlined-controlled"
-            label="Apellido"
+            label={sharedLabels.surname}
             onChange={() => {}}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             id="outlined-controlled"
-            label="Email"
+            label={sharedLabels.email}
             type="email"
             onChange={() => {}}
           />
           {' '}
           <TextField
             id="outlined-controlled"
-            label="Contraseña"
+            label={sharedLabels.password}
             type="password"
             onChange={() => {}}
           />
         </Grid>
         <Grid item xs={12} sx={{ width: '31rem' }}>
           <Typography variant="subtitle1" align="left">
-            Fecha de nacimiento
+            { sharedLabels.birthDate }
           </Typography>
           <TextField
             id="outlined-controlled"
