@@ -9,6 +9,7 @@ export default function Form({ fields, title }) {
       container
       sx={{
         marginTop: '5%',
+        marginBottom: '5%',
         flexDirection: 'column',
         alignItems: 'center',
       }}

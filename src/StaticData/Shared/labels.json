@@ -4,5 +4,8 @@
     "email": "Email",
     "password": "Contraseña",
     "birthDate": "Fecha de nacimiento",
-    "siteName": "Contract.ar" 
+    "siteName": "Contract.ar" ,
+    "optional": "Opcional",
+    "back": "Atrás",
+    "next": "Siguiente"
 }

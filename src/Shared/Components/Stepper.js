@@ -1,40 +1,55 @@
-import * as React from 'react';
-import { Grid } from '@mui/material';
+import React, { useState } from 'react';
+import { PropTypes } from 'prop-types';
+import { Button, Grid } from '@mui/material';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
+import { sharedLabels } from '../../StaticData/Shared';
 
-const steps = ['Tus datos', 'Confirmanos tu ubicación'];
+export default function LinearStepper({ steps }) {
+  const [completedSteps] = useState(new Set());
+  const [activeStep] = useState(0);
 
-export default function HorizontalLinearStepper() {
+  const optionalLabel = <Typography variant="caption">{ sharedLabels.optional}</Typography>;
+
   return (
-    <Grid
-      container
-      sx={{
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Stepper activeStep={1}>
-        {steps.map((label) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (true) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
-          }
-          if (false) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+    <>
+      <Grid
+        container
+        sx={{
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Grid item sx={{ flexDirection: 'row' }}>
+          <Button>{ sharedLabels.back}</Button>
+          <Button>{ sharedLabels.next}</Button>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        sx={{
+          flexDirection: 'column',
+          alignItems: 'center',
+          mt: '2%',
+        }}
+      >
+        <Stepper activeStep={activeStep}>
+          {steps.map(({ label, isOptional }, index) => (
+            <Step key={label} completed={completedSteps.has(index)}>
+              <StepLabel optional={isOptional ? optionalLabel : undefined}>{label}</StepLabel>
             </Step>
-          );
-        })}
-      </Stepper>
-    </Grid>
+          ))}
+        </Stepper>
+      </Grid>
+    </>
   );
 }
+
+LinearStepper.propTypes = {
+  steps: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    isOptional: PropTypes.bool,
+  })).isRequired,
+};

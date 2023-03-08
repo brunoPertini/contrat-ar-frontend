@@ -62,11 +62,14 @@ export default function UserSignUp() {
 
   const fields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
 
+  const steps = [{ label: 'Tus datos', isOptional: false },
+    { label: 'Confirmanos tu ubicación', isOptional: false }];
+
   return (
     <Grid>
       <Header />
       <Form fields={fields} title={title} />
-      <Stepper />
+      <Stepper steps={steps} />
     </Grid>
   );
 }
