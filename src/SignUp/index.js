@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import {
   Grid, TextField, Typography,
 } from '@mui/material';
@@ -12,6 +14,11 @@ import { Form, Stepper } from '../Shared/Components';
  */
 export default function UserSignUp() {
   const { title } = signUpLabels;
+
+  const [completedSteps] = useState(new Set());
+
+  const [activeStep, setActiveStep] = useState(0);
+
   const nameAndSurnameRow = () => (
     <Grid item xs={12}>
       <TextField
@@ -62,14 +69,31 @@ export default function UserSignUp() {
 
   const fields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
 
-  const steps = [{ label: 'Tus datos', isOptional: false },
-    { label: 'Confirmanos tu ubicación', isOptional: false }];
+  const steps = [{
+    label: 'Tus datos',
+    isOptional: false,
+    component: <Form fields={fields} title={title} />,
+  },
+  {
+    label: 'Confirmanos tu ubicación',
+    isOptional: false,
+    component: <Form fields={[]} title={signUpLabels['location.proveedor.title']} />,
+  }];
+
+  const handleOnStepChange = (newStepIndex) => {
+    setActiveStep(newStepIndex);
+  };
 
   return (
     <Grid>
       <Header />
-      <Form fields={fields} title={title} />
-      <Stepper steps={steps} />
+      { steps[activeStep].component }
+      <Stepper
+        steps={steps}
+        completedSteps={completedSteps}
+        activeStep={activeStep}
+        onStepChange={handleOnStepChange}
+      />
     </Grid>
   );
 }

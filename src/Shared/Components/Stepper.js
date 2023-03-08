@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { PropTypes } from 'prop-types';
 import { Button, Grid } from '@mui/material';
 import Stepper from '@mui/material/Stepper';
@@ -7,11 +7,12 @@ import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../../StaticData/Shared';
 
-export default function LinearStepper({ steps }) {
-  const [completedSteps] = useState(new Set());
-  const [activeStep] = useState(0);
-
+export default function LinearStepper({
+  steps, completedSteps, activeStep, onStepChange,
+}) {
   const optionalLabel = <Typography variant="caption">{ sharedLabels.optional}</Typography>;
+
+  const onButtonClick = useCallback((newStep) => onStepChange(newStep), [onStepChange]);
 
   return (
     <>
@@ -23,8 +24,18 @@ export default function LinearStepper({ steps }) {
         }}
       >
         <Grid item sx={{ flexDirection: 'row' }}>
-          <Button>{ sharedLabels.back}</Button>
-          <Button>{ sharedLabels.next}</Button>
+          <Button
+            onClick={() => onButtonClick(activeStep - 1)}
+            disabled={activeStep === 0}
+          >
+            { sharedLabels.back}
+          </Button>
+          <Button
+            onClick={() => onButtonClick(activeStep + 1)}
+            disabled={activeStep === steps.length - 1}
+          >
+            { sharedLabels.next}
+          </Button>
         </Grid>
       </Grid>
       <Grid
@@ -52,4 +63,8 @@ LinearStepper.propTypes = {
     label: PropTypes.string,
     isOptional: PropTypes.bool,
   })).isRequired,
+
+  completedSteps: PropTypes.instanceOf(Set).isRequired,
+  activeStep: PropTypes.number.isRequired,
+  onStepChange: PropTypes.func.isRequired,
 };
