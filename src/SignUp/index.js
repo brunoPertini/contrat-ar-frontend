@@ -67,20 +67,62 @@ export default function UserSignUp() {
     </Grid>
   );
 
-  const fields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
+  const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
+
+  const locationFields = [
+    () => <div id="map"> </div>,
+  ];
+
+  const onLocationFormLoading = () => {
+    if (typeof window.L !== 'undefined') {
+      const map = window.L.map('map').setView([51.505, -0.09], 13);
+    }
+  };
 
   const steps = [{
     label: 'Tus datos',
     isOptional: false,
-    component: <Form fields={fields} title={title} />,
+    component: <Form fields={personalDataFields} title={title} onLoad={() => {}} />,
   },
   {
     label: 'Confirmanos tu ubicación',
     isOptional: false,
-    component: <Form fields={[]} title={signUpLabels['location.proveedor.title']} />,
+    component: <Form
+      fields={locationFields}
+      title={signUpLabels['location.proveedor.title']}
+      onLoad={onLocationFormLoading}
+    />,
   }];
 
-  const handleOnStepChange = (newStepIndex) => {
+  const prepareFormRendering = async (stepIndex) => {
+    const functions = {
+      1: () => {
+        if (!document.querySelector('#leafletCSS')) {
+          const mapCSS = document.createElement('link');
+          mapCSS.id = 'leafletCSS';
+          mapCSS.rel = 'stylesheet';
+          mapCSS.href = 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css';
+          mapCSS.integrity = 'sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=';
+          mapCSS.crossOrigin = '';
+
+          document.head.appendChild(mapCSS);
+        }
+
+        if (!document.querySelector('#leafletJS')) {
+          const mapJS = document.createElement('script');
+          mapJS.id = 'leafletJS';
+          mapJS.src = 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js';
+          mapJS.integrity = 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=';
+          mapJS.crossOrigin = '';
+          document.head.appendChild(mapJS);
+        }
+      },
+    };
+    return stepIndex in functions ? functions[stepIndex]() : () => {};
+  };
+
+  const handleOnStepChange = async (newStepIndex) => {
+    await prepareFormRendering(newStepIndex);
     setActiveStep(newStepIndex);
   };
 

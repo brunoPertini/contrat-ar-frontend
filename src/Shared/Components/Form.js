@@ -1,9 +1,14 @@
+/* eslint-disable react/prop-types */
 import { PropTypes } from 'prop-types';
 import {
   Grid, Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
 
-export default function Form({ fields, title }) {
+export default function Form({ fields, title, onLoad }) {
+  useEffect(() => {
+    onLoad();
+  }, [fields]);
   return (
     <Grid
       container
