@@ -1,8 +1,12 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
   Grid, TextField, Typography,
 } from '@mui/material';
+import {
+  MapContainer, TileLayer, Marker, Popup,
+} from 'react-leaflet';
 import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
 import { sharedLabels } from '../StaticData/Shared';
@@ -70,13 +74,32 @@ export default function UserSignUp() {
   const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
 
   const locationFields = [
-    () => <div id="map"> </div>,
+    () => (
+      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{ height: 500, width: '100%' }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[51.505, -0.09]}>
+          <Popup>
+            A pretty CSS3 popup.
+            {' '}
+            <br />
+            {' '}
+            Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
+    ),
   ];
 
   const onLocationFormLoading = () => {
-    if (typeof window.L !== 'undefined') {
-      const map = window.L.map('map').setView([51.505, -0.09], 13);
-    }
+    const map = L.map('map').setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
   };
 
   const steps = [{
@@ -90,7 +113,7 @@ export default function UserSignUp() {
     component: <Form
       fields={locationFields}
       title={signUpLabels['location.proveedor.title']}
-      onLoad={onLocationFormLoading}
+      onLoad={() => {}}
     />,
   }];
 
@@ -114,8 +137,10 @@ export default function UserSignUp() {
           mapJS.src = 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js';
           mapJS.integrity = 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=';
           mapJS.crossOrigin = '';
-          document.head.appendChild(mapJS);
+          document.body.prepend(mapJS);
         }
+
+        onLocationFormLoading();
       },
     };
     return stepIndex in functions ? functions[stepIndex]() : () => {};
