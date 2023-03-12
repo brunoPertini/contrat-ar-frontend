@@ -8,6 +8,7 @@ import {
   MapContainer, TileLayer, Marker, Popup,
 } from 'react-leaflet';
 import { sharedLabels } from '../../StaticData/Shared';
+import { DomUtils } from '../Utils';
 
 class FormBuilder {
   prepareForRender() {
@@ -93,31 +94,30 @@ export class LocationFormBuilder extends FormBuilder {
   }
 
   prepareForRender() {
-    if (!document.querySelector('#map')) {
-      const mapContainer = document.createElement('div');
-      mapContainer.id = 'map';
-      document.body.appendChild(mapContainer);
-    }
+    DomUtils.createDomElement('div', 'body', { id: 'map' });
 
-    if (!document.querySelector('#leafletCSS')) {
-      const mapCSS = document.createElement('link');
-      mapCSS.id = 'leafletCSS';
-      mapCSS.rel = 'stylesheet';
-      mapCSS.href = 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css';
-      mapCSS.integrity = 'sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=';
-      mapCSS.crossOrigin = '';
+    DomUtils.createDomElement(
+      'link',
+      'head',
+      {
+        id: 'leafletCSS',
+        rel: 'stylesheet',
+        href: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css',
+        integrity: 'sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=',
+        crossOrigin: '',
+      },
+    );
 
-      document.head.appendChild(mapCSS);
-    }
-
-    if (!document.querySelector('#leafletJS')) {
-      const mapJS = document.createElement('script');
-      mapJS.id = 'leafletJS';
-      mapJS.src = 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js';
-      mapJS.integrity = 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=';
-      mapJS.crossOrigin = '';
-      document.body.prepend(mapJS);
-    }
+    DomUtils.createDomElement(
+      'script',
+      'body',
+      {
+        id: 'leafletJS',
+        src: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js',
+        integrity: 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=',
+        crossOrigin: '',
+      },
+    );
 
     this.onLocationFormLoading();
   }
@@ -125,7 +125,12 @@ export class LocationFormBuilder extends FormBuilder {
   build() {
     return [
       () => (
-        <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{ height: 500, width: '100%' }}>
+        <MapContainer
+          center={[51.505, -0.09]}
+          zoom={13}
+          scrollWheelZoom={false}
+          style={{ height: 500, width: '50%' }}
+        >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
