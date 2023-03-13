@@ -1,10 +1,17 @@
-import { useEffect, useState, useMemo } from 'react';
+import {
+  useEffect, useState, useMemo,
+  useCallback,
+} from 'react';
 import {
   MapContainer, TileLayer, Marker, Popup,
 } from 'react-leaflet';
+import withRouter from './HighOrderComponents/withRouter';
+import { routes } from '../Constants';
+import DialogModal from './DialogModal';
 
-export default function LocationMap() {
+export default withRouter(({ router: { navigate } }) => {
   const [location, setCurrentLocation] = useState();
+  const [openPermissionDialog, setOpenPermissionDialog] = useState();
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -12,27 +19,29 @@ export default function LocationMap() {
     timeout: 20000,
   };
 
-  function preShowLocation(position) {
+  function handleGranted(position) {
     setCurrentLocation(position);
   }
 
-  function handlePermission() {
+  function handleDenied() {
+    setOpenPermissionDialog(true);
+  }
+
+  const handlePermission = useCallback(() => {
     navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-      if (result.state === 'granted') {
-        console.log(result.state);
-      } else if (result.state === 'prompt') {
-        const position = navigator.geolocation.getCurrentPosition(
-          preShowLocation,
-          () => {},
+      if (result.state === 'prompt') {
+        navigator.geolocation.getCurrentPosition(
+          handleGranted,
+          handleDenied,
           geoSettings,
         );
-        console.log(position);
-      } else if (result.state === 'denied') {
-        // Manejar caso revoke, mostrar alerta con botones para volver a mostrar el alert de permisos o para directamente salir del registro
-        console.log(result.state);
       }
     });
-  }
+  }, [handleGranted, handleDenied]);
+
+  const handleDialogDenied = useCallback(() => {
+    navigate(routes.index);
+  }, [navigate]);
 
   useEffect(() => {
     handlePermission();
@@ -53,6 +62,12 @@ export default function LocationMap() {
       scrollWheelZoom={false}
       style={{ height: 500, width: '50%' }}
     >
+      <DialogModal
+        open={openPermissionDialog}
+        handleAccept={handlePermission}
+        handleDeny={() => handleDialogDenied()}
+      />
+      ;
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -60,4 +75,4 @@ export default function LocationMap() {
       { LocationMarker }
     </MapContainer>
   );
-}
+});
