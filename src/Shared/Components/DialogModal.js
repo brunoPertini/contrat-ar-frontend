@@ -4,7 +4,10 @@ import {
   DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
 } from '@mui/material';
 
-function DialogModal({ open, handleAccept, handleDeny }) {
+function DialogModal({
+  open,
+  handleAccept, handleDeny, title, contextText, cancelText, acceptText,
+}) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -15,20 +18,19 @@ function DialogModal({ open, handleAccept, handleDeny }) {
       aria-labelledby="responsive-dialog-title"
     >
       <DialogTitle id="responsive-dialog-title">
-        Contract.AR necesita saber su ubicación
+        { title }
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Para ser encontrado por tus clientes,
-          necesitamos que aceptes los permisos de ubicación en tu navegador
+          { contextText }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={() => handleDeny()}>
-          Cancelar Registro
+          { cancelText }
         </Button>
         <Button onClick={() => handleAccept()} autoFocus>
-          Aceptar
+          { acceptText }
         </Button>
       </DialogActions>
     </Dialog>

@@ -8,10 +8,18 @@ import {
 import withRouter from './HighOrderComponents/withRouter';
 import { routes } from '../Constants';
 import DialogModal from './DialogModal';
+import { labels } from '../../StaticData/LocationMap';
 
 export default withRouter(({ router: { navigate } }) => {
   const [location, setCurrentLocation] = useState();
   const [openPermissionDialog, setOpenPermissionDialog] = useState();
+
+  const [dialogLabels, setDialogLabels] = useState({
+    title: labels['dialog.permission.request.title'],
+    contextText: labels['dialog.permission.request.textContext'],
+    cancelText: labels['dialog.permission.request.cancelText'],
+    acceptText: labels['dialog.permission.request.acceptText'],
+  });
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -21,27 +29,45 @@ export default withRouter(({ router: { navigate } }) => {
 
   function handleGranted(position) {
     setCurrentLocation(position);
+    setOpenPermissionDialog(false);
   }
-
-  function handleDenied() {
-    setOpenPermissionDialog(true);
-  }
-
-  const handlePermission = useCallback(() => {
-    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-      if (result.state === 'prompt') {
-        navigator.geolocation.getCurrentPosition(
-          handleGranted,
-          handleDenied,
-          geoSettings,
-        );
-      }
-    });
-  }, [handleGranted, handleDenied]);
 
   const handleDialogDenied = useCallback(() => {
     navigate(routes.index);
   }, [navigate]);
+
+  const getCurentLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      handleGranted,
+      handleDialogDenied,
+      geoSettings,
+    );
+  };
+
+  const handlePermission = useCallback(() => {
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      if (result.state === 'prompt') {
+        setDialogLabels({
+
+          title: labels['dialog.permission.request.title'],
+          contextText: labels['dialog.permission.request.textContext'],
+          cancelText: labels['dialog.permission.request.cancelText'],
+          acceptText: labels['dialog.permission.request.acceptText'],
+
+        });
+        setOpenPermissionDialog(true);
+      }
+
+      if (result.state === 'denied') {
+        setDialogLabels({
+          title: labels['dialog.permission.revoke.title'],
+          contextText: labels['dialog.permission.revoke.textContext'],
+          acceptText: labels['dialog.permission.revoke.finish'],
+        });
+        setOpenPermissionDialog(true);
+      }
+    });
+  }, [handleGranted]);
 
   useEffect(() => {
     handlePermission();
@@ -63,11 +89,14 @@ export default withRouter(({ router: { navigate } }) => {
       style={{ height: 500, width: '50%' }}
     >
       <DialogModal
+        title={dialogLabels.title}
+        contextText={dialogLabels.contextText}
+        cancelText={dialogLabels.cancelText}
+        acceptText={dialogLabels.acceptText}
         open={openPermissionDialog}
-        handleAccept={handlePermission}
+        handleAccept={getCurentLocation}
         handleDeny={() => handleDialogDenied()}
       />
-      ;
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

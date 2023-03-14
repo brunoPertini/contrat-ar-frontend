@@ -1,0 +1,9 @@
+{
+    "dialog.permission.request.title": "Contract.AR necesita saber su ubicación",
+    "dialog.permission.request.textContext": "Para ser encontrado por tus clientes, necesitamos que aceptes los permisos de ubicación en tu navegador",
+    "dialog.permission.request.acceptText": "Gestionar permisos de ubicación",
+    "dialog.permission.request.cancelText": "Cancelar Registro",
+    "dialog.permission.revoke.title": "Permisos de ubicación",
+    "dialog.permission.revoke.textContext": "Dado que rechaz\u00F3 los permisos de ubicaci\u00F3n, deber\u00E1 configuarlos manualmente para poder continuar. Si su navegador es Google Chrome, <a href=\\\"https:\/\/support.google.com\/chrome\/answer\/114662?hl=es&co=GENIE.Platform%3DDesktop&oco=0\\\">siga estas instrucciones<\\\/a>",
+    "dialog.permission.revoke.finish": "Volver al inicio"
+}
