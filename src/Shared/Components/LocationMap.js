@@ -12,7 +12,7 @@ import { labels } from '../../StaticData/LocationMap';
 
 export default withRouter(({ router: { navigate } }) => {
   const [location, setCurrentLocation] = useState();
-  const [openPermissionDialog, setOpenPermissionDialog] = useState();
+  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
     title: labels['dialog.permission.request.title'],
@@ -27,10 +27,10 @@ export default withRouter(({ router: { navigate } }) => {
     timeout: 20000,
   };
 
-  function handleGranted(position) {
+  const handleGranted = (position) => {
     setCurrentLocation(position);
     setOpenPermissionDialog(false);
-  }
+  };
 
   const handleDialogDenied = useCallback(() => {
     navigate(routes.index);
@@ -46,6 +46,9 @@ export default withRouter(({ router: { navigate } }) => {
 
   const handlePermission = useCallback(() => {
     navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      if (result.state === 'granted') {
+        getCurentLocation();
+      }
       if (result.state === 'prompt') {
         setDialogLabels({
 
@@ -61,7 +64,7 @@ export default withRouter(({ router: { navigate } }) => {
       if (result.state === 'denied') {
         setDialogLabels({
           title: labels['dialog.permission.revoke.title'],
-          contextText: labels['dialog.permission.revoke.textContext'],
+          contextText: <span dangerouslySetInnerHTML={{ __html: labels['dialog.permission.revoke.textContext'] }} />,
           acceptText: labels['dialog.permission.revoke.finish'],
         });
         setOpenPermissionDialog(true);
@@ -76,7 +79,7 @@ export default withRouter(({ router: { navigate } }) => {
   const LocationMarker = useMemo(() => (location ? (
     <Marker position={[location.coords.latitude, location.coords.longitude]}>
       <Popup>
-        Esta es su ubicación estimada
+        { labels['map.marker.title'] }
       </Popup>
     </Marker>
   ) : null), [location]);
@@ -85,7 +88,7 @@ export default withRouter(({ router: { navigate } }) => {
     <MapContainer
       center={[-34.9204509, -57.9944562]}
       zoom={13}
-      scrollWheelZoom={false}
+      scrollWheelZoom
       style={{ height: 500, width: '50%' }}
     >
       <DialogModal
