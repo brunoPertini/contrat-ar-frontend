@@ -1,9 +1,9 @@
 import {
-  useEffect, useState, useMemo,
+  useEffect, useState,
   useCallback,
 } from 'react';
 import {
-  MapContainer, TileLayer, Marker, Popup,
+  MapContainer, TileLayer, Marker, Popup, useMapEvents,
 } from 'react-leaflet';
 import withRouter from './HighOrderComponents/withRouter';
 import { routes } from '../Constants';
@@ -11,7 +11,7 @@ import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 
 export default withRouter(({ router: { navigate } }) => {
-  const [location, setCurrentLocation] = useState();
+  const [location, setLocation] = useState();
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
@@ -28,7 +28,7 @@ export default withRouter(({ router: { navigate } }) => {
   };
 
   const handleGranted = (position) => {
-    setCurrentLocation(position);
+    setLocation(position);
     setOpenPermissionDialog(false);
   };
 
@@ -76,13 +76,33 @@ export default withRouter(({ router: { navigate } }) => {
     handlePermission();
   }, []);
 
-  const LocationMarker = useMemo(() => (location ? (
-    <Marker position={[location.coords.latitude, location.coords.longitude]}>
-      <Popup>
-        { labels['map.marker.title'] }
-      </Popup>
-    </Marker>
-  ) : null), [location]);
+  const LocationMarker = useCallback(() => {
+    const map = useMapEvents({
+      dragend() {
+        map.locate();
+      },
+      locationfound(e) {
+        setLocation(e.latlng);
+        handleGranted({
+          location: {
+            coords: {
+              latitude: e.latlng.lat,
+              longitude: e.latlng.lng,
+            },
+          },
+        });
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
+
+    return !location?.coords ? null : (
+      <Marker position={[location.coords.latitude, location.coords.longitude]} draggable>
+        <Popup>
+          { labels['map.marker.title'] }
+        </Popup>
+      </Marker>
+    );
+  }, [location]);
 
   return (
     <MapContainer
@@ -104,7 +124,7 @@ export default withRouter(({ router: { navigate } }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      { LocationMarker }
+      <LocationMarker />
     </MapContainer>
   );
 });
