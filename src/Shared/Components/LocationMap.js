@@ -1,9 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import {
   useEffect, useState,
-  useCallback,
+  useCallback, useMemo,
 } from 'react';
 import {
-  MapContainer, TileLayer, Marker, Popup, useMapEvents,
+  MapContainer, TileLayer, Marker, Popup,
 } from 'react-leaflet';
 import withRouter from './HighOrderComponents/withRouter';
 import { routes } from '../Constants';
@@ -77,26 +78,24 @@ export default withRouter(({ router: { navigate } }) => {
   }, []);
 
   const LocationMarker = useCallback(() => {
-    const map = useMapEvents({
-      dragend() {
-        map.locate();
-      },
-      locationfound(e) {
-        setLocation(e.latlng);
+    const eventHandlers = useMemo(() => ({
+      dragend(e) {
+        const { target: { _latlng } } = e;
         handleGranted({
-          location: {
-            coords: {
-              latitude: e.latlng.lat,
-              longitude: e.latlng.lng,
-            },
+          coords: {
+            latitude: _latlng.lat,
+            longitude: _latlng.lng,
           },
         });
-        map.flyTo(e.latlng, map.getZoom());
       },
-    });
+    }), []);
 
     return !location?.coords ? null : (
-      <Marker position={[location.coords.latitude, location.coords.longitude]} draggable>
+      <Marker
+        position={[location.coords.latitude, location.coords.longitude]}
+        eventHandlers={eventHandlers}
+        draggable
+      >
         <Popup>
           { labels['map.marker.title'] }
         </Popup>
