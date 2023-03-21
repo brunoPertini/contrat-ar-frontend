@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {
   useEffect, useState,
   useCallback, useMemo,
@@ -7,10 +6,15 @@ import {
   MapContainer, TileLayer, Marker, Popup,
 } from 'react-leaflet';
 import withRouter from './HighOrderComponents/withRouter';
-import { routes } from '../Constants';
+import { routes, thirdPartyRoutes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
+import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 
+/**
+ * Map that requests current user location, shows it in a marker and translates it
+ * in a human readable address.
+ */
 export default withRouter(({ router: { navigate } }) => {
   const [location, setLocation] = useState();
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
@@ -73,6 +77,20 @@ export default withRouter(({ router: { navigate } }) => {
     });
   }, [handleGranted]);
 
+  const translateAddress = useCallback(async ({ coords }) => {
+    const httpClient = HttpClientFactory.createHttpClient(
+      thirdPartyRoutes.getAddressFromCoordinates,
+    );
+
+    const readableAddress = await httpClient.get({
+      format: 'json',
+      lat: coords.latitude,
+      lon: coords.longitude,
+    });
+
+    console.log('READABLE ADDRESS: ', readableAddress);
+  }, [HttpClientFactory]);
+
   useEffect(() => {
     handlePermission();
   }, []);
@@ -81,12 +99,14 @@ export default withRouter(({ router: { navigate } }) => {
     const eventHandlers = useMemo(() => ({
       dragend(e) {
         const { target: { _latlng } } = e;
-        handleGranted({
+        const newCoords = {
           coords: {
             latitude: _latlng.lat,
             longitude: _latlng.lng,
           },
-        });
+        };
+        handleGranted(newCoords);
+        translateAddress(newCoords);
       },
     }), []);
 
@@ -102,6 +122,8 @@ export default withRouter(({ router: { navigate } }) => {
       </Marker>
     );
   }, [location]);
+
+  // TODO: unharcode center
 
   return (
     <MapContainer

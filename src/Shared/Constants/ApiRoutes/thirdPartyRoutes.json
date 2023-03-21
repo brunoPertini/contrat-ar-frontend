@@ -1,0 +1,3 @@
+{
+    "getAddressFromCoordinates": "https://nominatim.openstreetmap.org/reverse"
+}
