@@ -120,7 +120,8 @@ export class LocationFormBuilder extends FormBuilder {
     this.onLocationFormLoading();
   }
 
-  build() {
-    return [LocationMap];
+  build(props) {
+    const componentWrapper = () => <LocationMap {...props} />;
+    return [componentWrapper];
   }
 }

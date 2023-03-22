@@ -26,12 +26,16 @@ export default function UserSignUp() {
 
   const personalDataFields = personalDataFormBuilder.build();
 
-  const locationFields = locationFormBuilder.build();
+  const locationFields = locationFormBuilder.build({ showTranslatedAddress: true });
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
     isOptional: false,
-    component: <Form fields={personalDataFields} title={title} />,
+    component: <Form
+      fields={personalDataFields}
+      title={title}
+      styles={{ display: activeStep === 0 ? 'flex' : 'none' }}
+    />,
   },
   {
     label: signUpLabels['steps.your.location'],
@@ -39,6 +43,7 @@ export default function UserSignUp() {
     component: <Form
       fields={locationFields}
       title={signUpLabels['location.proveedor.title']}
+      styles={{ display: activeStep === 1 ? 'flex' : 'none' }}
     />,
   }];
 
@@ -63,7 +68,7 @@ export default function UserSignUp() {
   return (
     <Grid>
       <Header />
-      { steps[activeStep].component }
+      { steps.map((step) => step.component) }
       <Stepper
         steps={steps}
         completedSteps={completedSteps}

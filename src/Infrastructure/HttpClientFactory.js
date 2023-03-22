@@ -1,7 +1,12 @@
-import { HttpClient } from './HttpClients/HttpClient';
+import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 
 export class HttpClientFactory {
-  static createHttpClient(baseUrl) {
-    return new HttpClient({ baseUrl });
+  static externalInstance;
+
+  static createExternalHttpClient(baseUrl) {
+    if (!HttpClientFactory.externalInstance) {
+      return new ExternalHttpClient({ baseUrl });
+    }
+    return HttpClientFactory.externalInstance;
   }
 }

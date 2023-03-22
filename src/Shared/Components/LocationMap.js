@@ -1,10 +1,13 @@
+/* eslint-disable no-unused-vars */
 import {
   useEffect, useState,
   useCallback, useMemo,
 } from 'react';
 import {
-  MapContainer, TileLayer, Marker, Popup,
+  MapContainer, TileLayer, Marker, Popup, ZoomControl,
 } from 'react-leaflet';
+import { TextField } from '@mui/material';
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import withRouter from './HighOrderComponents/withRouter';
 import { routes, thirdPartyRoutes } from '../Constants';
 import DialogModal from './DialogModal';
@@ -15,7 +18,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
-export default withRouter(({ router: { navigate } }) => {
+export default withRouter(({ router: { navigate }, showTranslatedAddress }) => {
   const [location, setLocation] = useState();
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
@@ -25,6 +28,7 @@ export default withRouter(({ router: { navigate } }) => {
     cancelText: labels['dialog.permission.request.cancelText'],
     acceptText: labels['dialog.permission.request.acceptText'],
   });
+  const [readableAddress, setReadableAddress] = useState('');
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -78,17 +82,17 @@ export default withRouter(({ router: { navigate } }) => {
   }, [handleGranted]);
 
   const translateAddress = useCallback(async ({ coords }) => {
-    const httpClient = HttpClientFactory.createHttpClient(
+    const httpClient = HttpClientFactory.createExternalHttpClient(
       thirdPartyRoutes.getAddressFromCoordinates,
     );
 
-    const readableAddress = await httpClient.get({
-      format: 'json',
+    // eslint-disable-next-line no-shadow
+    const readableAddress = await httpClient.getAddressFromLocation({
       lat: coords.latitude,
       lon: coords.longitude,
     });
 
-    console.log('READABLE ADDRESS: ', readableAddress);
+    setReadableAddress(readableAddress);
   }, [HttpClientFactory]);
 
   useEffect(() => {
@@ -126,26 +130,42 @@ export default withRouter(({ router: { navigate } }) => {
   // TODO: unharcode center
 
   return (
-    <MapContainer
-      center={[-34.9204509, -57.9944562]}
-      zoom={13}
-      scrollWheelZoom
-      style={{ height: 500, width: '50%' }}
-    >
-      <DialogModal
-        title={dialogLabels.title}
-        contextText={dialogLabels.contextText}
-        cancelText={dialogLabels.cancelText}
-        acceptText={dialogLabels.acceptText}
-        open={openPermissionDialog}
-        handleAccept={getCurentLocation}
-        handleDeny={() => handleDialogDenied()}
-      />
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <LocationMarker />
-    </MapContainer>
+    <>
+      <MapContainer
+        center={[-34.9204509, -57.9944562]}
+        zoom={13}
+        scrollWheelZoom
+        zoomControl={false}
+        style={{ height: 500, width: '50%' }}
+      >
+        <ZoomControl position="bottomright" />
+        <DialogModal
+          title={dialogLabels.title}
+          contextText={dialogLabels.contextText}
+          cancelText={dialogLabels.cancelText}
+          acceptText={dialogLabels.acceptText}
+          open={openPermissionDialog}
+          handleAccept={getCurentLocation}
+          handleDeny={() => handleDialogDenied()}
+        />
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <LocationMarker />
+      </MapContainer>
+      {
+        showTranslatedAddress && (
+          <TextField
+            aria-readonly
+            value={readableAddress}
+            sx={{
+              mt: '2%',
+              width: '30%',
+            }}
+          />
+        )
+      }
+    </>
   );
 });

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Logger from '../Logging/Logger';
 
 export class HttpClient {
   #baseUrl;
@@ -23,6 +24,8 @@ export class HttpClient {
   }
 
   get(params) {
-    return this.instance.get('', { params });
+    return this.instance.get('', { params })
+      .then((response) => response.data)
+      .catch((error) => Logger.log(error));
   }
 }

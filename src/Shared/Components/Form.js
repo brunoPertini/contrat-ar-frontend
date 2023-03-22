@@ -4,7 +4,9 @@ import {
 } from '@mui/material';
 import { useEffect } from 'react';
 
-export default function Form({ fields, title, onLoad }) {
+export default function Form({
+  fields, title, onLoad, styles,
+}) {
   useEffect(() => {
     onLoad();
   }, [fields]);
@@ -16,6 +18,7 @@ export default function Form({ fields, title, onLoad }) {
         marginBottom: '5%',
         flexDirection: 'column',
         alignItems: 'center',
+        ...styles,
       }}
       spacing={2}
     >
@@ -35,8 +38,10 @@ Form.propTypes = {
     PropTypes.node,
     PropTypes.elementType])).isRequired,
   onLoad: PropTypes.func,
+  styles: PropTypes.objectOf(PropTypes.string),
 };
 
 Form.defaultProps = {
   onLoad: () => {},
+  styles: {},
 };
