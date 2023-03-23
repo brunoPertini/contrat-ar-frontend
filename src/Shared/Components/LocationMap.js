@@ -18,8 +18,10 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
-export default withRouter(({ router: { navigate }, showTranslatedAddress }) => {
-  const [location, setLocation] = useState();
+export default withRouter(({
+  router: { navigate }, showTranslatedAddress,
+  location, setLocation, readableAddress, setReadableAddress,
+}) => {
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
@@ -28,7 +30,6 @@ export default withRouter(({ router: { navigate }, showTranslatedAddress }) => {
     cancelText: labels['dialog.permission.request.cancelText'],
     acceptText: labels['dialog.permission.request.acceptText'],
   });
-  const [readableAddress, setReadableAddress] = useState('');
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -36,8 +37,8 @@ export default withRouter(({ router: { navigate }, showTranslatedAddress }) => {
     timeout: 20000,
   };
 
-  const handleGranted = (position) => {
-    setLocation(position);
+  const handleGranted = async (position) => {
+    await setLocation(position);
     setOpenPermissionDialog(false);
   };
 
@@ -132,6 +133,7 @@ export default withRouter(({ router: { navigate }, showTranslatedAddress }) => {
   return (
     <>
       <MapContainer
+        id="locationMapContainer"
         center={[-34.9204509, -57.9944562]}
         zoom={13}
         scrollWheelZoom

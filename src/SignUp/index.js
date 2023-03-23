@@ -24,9 +24,23 @@ export default function UserSignUp() {
 
   const [activeStep, setActiveStep] = useState(0);
 
+  // LocationMap data
+  const [location, setLocation] = useState();
+  const [readableAddress, setReadableAddress] = useState('');
+
   const personalDataFields = personalDataFormBuilder.build();
 
-  const locationFields = locationFormBuilder.build({ showTranslatedAddress: true });
+  const locationFields = locationFormBuilder.build({
+    showTranslatedAddress: true,
+    location,
+    // setLocation: (newLocation) => {
+    //   console.log('ENTRA');
+    //   setLocation({ ...location, ...newLocation });
+    // },
+    setLocation,
+    readableAddress,
+    setReadableAddress,
+  });
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
@@ -64,6 +78,9 @@ export default function UserSignUp() {
     await prepareFormRendering(newStepIndex);
     setActiveStep(newStepIndex);
   };
+
+  console.log(location);
+  console.log(readableAddress);
 
   return (
     <Grid>

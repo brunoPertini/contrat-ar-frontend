@@ -19,13 +19,6 @@ class FormBuilder {
 }
 
 export class PersonalDataFormBuilder extends FormBuilder {
-  prepareForRender() {
-    const mapContainer = document.querySelector('#map');
-    if (mapContainer) {
-      mapContainer.remove();
-    }
-  }
-
   build() {
     const nameAndSurnameRow = () => (
       <Grid item xs={12}>
@@ -83,41 +76,33 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
 export class LocationFormBuilder extends FormBuilder {
   onLocationFormLoading() {
-    const map = L.map('map').setView([51.505, -0.09], 13);
+    if (!document.querySelector('#map')) {
+      const map = L.map('map').setView([51.505, -0.09], 13);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+    }
   }
 
   prepareForRender() {
-    DomUtils.createDomElement('div', 'body', { id: 'map' });
+    if (!document.querySelector('#map')) {
+      DomUtils.createDomElement('div', 'body', { id: 'map' });
 
-    DomUtils.createDomElement(
-      'link',
-      'head',
-      {
-        id: 'leafletCSS',
-        rel: 'stylesheet',
-        href: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css',
-        integrity: 'sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=',
-        crossOrigin: '',
-      },
-    );
+      DomUtils.createDomElement(
+        'script',
+        'body',
+        {
+          id: 'leafletJS',
+          src: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js',
+          integrity: 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=',
+          crossOrigin: '',
+        },
+      );
 
-    DomUtils.createDomElement(
-      'script',
-      'body',
-      {
-        id: 'leafletJS',
-        src: 'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js',
-        integrity: 'sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=',
-        crossOrigin: '',
-      },
-    );
-
-    this.onLocationFormLoading();
+      this.onLocationFormLoading();
+    }
   }
 
   build(props) {
