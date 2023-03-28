@@ -14,3 +14,13 @@ export function createDomElement(elementType, elementLocation, attributes) {
     document[elementLocation].appendChild(element);
   }
 }
+
+/**
+ *
+ * @param {string} selector
+ * @returns If element having passed selector is being shown
+ */
+export function isElementBeingShown(selector) {
+  const element = document.querySelector(selector);
+  return !element || window.getComputedStyle(element).display === 'none';
+}

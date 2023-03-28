@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { PropTypes } from 'prop-types';
 import {
   Grid, Typography,
@@ -5,13 +6,14 @@ import {
 import { useEffect } from 'react';
 
 export default function Form({
-  fields, title, onLoad, styles,
+  fields, title, onLoad, styles, containerId,
 }) {
   useEffect(() => {
     onLoad();
   }, [fields]);
   return (
     <Grid
+      id={containerId}
       container
       sx={{
         marginTop: '5%',

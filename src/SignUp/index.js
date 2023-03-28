@@ -55,6 +55,7 @@ export default function UserSignUp() {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component: <Form
+      containerId="locationMapContainer"
       fields={locationFields}
       title={signUpLabels['location.proveedor.title']}
       styles={{ display: activeStep === 1 ? 'flex' : 'none' }}

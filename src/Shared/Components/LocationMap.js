@@ -7,19 +7,19 @@ import {
   MapContainer, TileLayer, Marker, Popup, ZoomControl,
 } from 'react-leaflet';
 import { TextField } from '@mui/material';
-import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import withRouter from './HighOrderComponents/withRouter';
 import { routes, thirdPartyRoutes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { isElementBeingShown } from '../Utils/DomUtils';
 
 /**
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
 export default withRouter(({
-  router: { navigate }, showTranslatedAddress,
+  router: { navigate }, showTranslatedAddress, containerId,
   location, setLocation, readableAddress, setReadableAddress,
 }) => {
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
@@ -41,6 +41,8 @@ export default withRouter(({
     await setLocation(position);
     setOpenPermissionDialog(false);
   };
+
+  const isMainContainerShown = useMemo(() => isElementBeingShown('#locationMapContainer'), [isElementBeingShown]);
 
   const handleDialogDenied = useCallback(() => {
     navigate(routes.index);
@@ -97,8 +99,10 @@ export default withRouter(({
   }, [HttpClientFactory]);
 
   useEffect(() => {
-    handlePermission();
-  }, []);
+    if (isMainContainerShown) {
+      handlePermission();
+    }
+  }, [isMainContainerShown]);
 
   const LocationMarker = useCallback(() => {
     const eventHandlers = useMemo(() => ({
@@ -133,7 +137,6 @@ export default withRouter(({
   return (
     <>
       <MapContainer
-        id="locationMapContainer"
         center={[-34.9204509, -57.9944562]}
         zoom={13}
         scrollWheelZoom
