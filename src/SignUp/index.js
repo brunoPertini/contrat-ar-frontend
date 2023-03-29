@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
   Grid,
@@ -13,6 +11,12 @@ const locationFormBuilder = new LocationFormBuilder();
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
+let location = {};
+
+function setLocation(newLocation) {
+  location = newLocation;
+}
+
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
@@ -25,7 +29,6 @@ export default function UserSignUp() {
   const [activeStep, setActiveStep] = useState(0);
 
   // LocationMap data
-  const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
 
   const personalDataFields = personalDataFormBuilder.build();
@@ -33,10 +36,6 @@ export default function UserSignUp() {
   const locationFields = locationFormBuilder.build({
     showTranslatedAddress: true,
     location,
-    // setLocation: (newLocation) => {
-    //   console.log('ENTRA');
-    //   setLocation({ ...location, ...newLocation });
-    // },
     setLocation,
     readableAddress,
     setReadableAddress,
@@ -79,9 +78,6 @@ export default function UserSignUp() {
     await prepareFormRendering(newStepIndex);
     setActiveStep(newStepIndex);
   };
-
-  console.log(location);
-  console.log(readableAddress);
 
   return (
     <Grid>

@@ -132,7 +132,7 @@ export default withRouter(({
     );
   }, [location]);
 
-  // TODO: unharcode center
+  // TODO: unharcode center and fix flickering
 
   return (
     <>
