@@ -6,16 +6,11 @@ import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
 import { Form, Stepper } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
+import { LocationMapProvider } from '../Shared/State/Context/LocationMap';
 
 const locationFormBuilder = new LocationFormBuilder();
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
-
-let location = {};
-
-function setLocation(newLocation) {
-  location = newLocation;
-}
 
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
@@ -28,17 +23,10 @@ export default function UserSignUp() {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  // LocationMap data
-  const [readableAddress, setReadableAddress] = useState('');
-
   const personalDataFields = personalDataFormBuilder.build();
 
   const locationFields = locationFormBuilder.build({
     showTranslatedAddress: true,
-    location,
-    setLocation,
-    readableAddress,
-    setReadableAddress,
   });
 
   const steps = [{
@@ -53,12 +41,15 @@ export default function UserSignUp() {
   {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
-    component: <Form
+    component:
+  <LocationMapProvider>
+    <Form
       containerId="locationMapContainer"
       fields={locationFields}
       title={signUpLabels['location.proveedor.title']}
       styles={{ display: activeStep === 1 ? 'flex' : 'none' }}
-    />,
+    />
+  </LocationMapProvider>,
   }];
 
   const prepareFormRendering = async (stepIndex) => {

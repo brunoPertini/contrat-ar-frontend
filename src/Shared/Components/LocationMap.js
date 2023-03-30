@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars */
 import {
   useEffect, useState,
   useCallback, useMemo,
+  useContext,
 } from 'react';
 import {
   MapContainer, TileLayer, Marker, Popup, ZoomControl,
@@ -13,6 +13,7 @@ import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { isElementBeingShown } from '../Utils/DomUtils';
+import { LocationMapContext } from '../State/Context/LocationMap';
 
 /**
  * Map that requests current user location, shows it in a marker and translates it
@@ -20,7 +21,6 @@ import { isElementBeingShown } from '../Utils/DomUtils';
  */
 export default withRouter(({
   router: { navigate }, showTranslatedAddress, containerId,
-  location, setLocation, readableAddress, setReadableAddress,
 }) => {
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
@@ -30,6 +30,11 @@ export default withRouter(({
     cancelText: labels['dialog.permission.request.cancelText'],
     acceptText: labels['dialog.permission.request.acceptText'],
   });
+
+  const {
+    location, setLocation,
+    readableAddress, setReadableAddress,
+  } = useContext(LocationMapContext);
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -42,7 +47,10 @@ export default withRouter(({
     setOpenPermissionDialog(false);
   };
 
-  const isMainContainerShown = useMemo(() => isElementBeingShown('#locationMapContainer'), [isElementBeingShown]);
+  const isMainContainerShown = useMemo(
+    () => isElementBeingShown(containerId),
+    [isElementBeingShown],
+  );
 
   const handleDialogDenied = useCallback(() => {
     navigate(routes.index);
@@ -100,7 +108,12 @@ export default withRouter(({
 
   useEffect(() => {
     if (isMainContainerShown) {
-      handlePermission();
+      // If map is hidden and shown again, I want to keep the marker through previous set location
+      if (!location) {
+        handlePermission();
+      }
+
+      translateAddress(location);
     }
   }, [isMainContainerShown]);
 
@@ -132,7 +145,7 @@ export default withRouter(({
     );
   }, [location]);
 
-  // TODO: unharcode center and fix flickering
+  // TODO: unharcode center
 
   return (
     <>
