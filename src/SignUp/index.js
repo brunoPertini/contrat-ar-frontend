@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import {
-  Grid,
+  Grid, IconButton, Typography,
 } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
-import { Form, Stepper } from '../Shared/Components';
+import { Form, Stepper, Tooltip } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { LocationMapProvider } from '../Shared/State/Context/LocationMap';
 
@@ -46,7 +47,23 @@ export default function UserSignUp() {
     <Form
       containerId="locationMapContainer"
       fields={locationFields}
-      title={signUpLabels['location.proveedor.title']}
+      title={(
+        <>
+          {signUpLabels['location.proveedor.title']}
+          <Tooltip
+            title={(
+              <Typography variant="h6">
+                {signUpLabels['title.disclaimer']}
+              </Typography>
+            )}
+            placement="right-start"
+          >
+            <IconButton>
+              <InfoIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+)}
       styles={{ display: activeStep === 1 ? 'flex' : 'none' }}
     />
   </LocationMapProvider>,
