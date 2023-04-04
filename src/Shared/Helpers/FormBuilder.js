@@ -7,8 +7,15 @@ import {
 import { sharedLabels } from '../../StaticData/Shared';
 import { LocationMap } from '../Components';
 import { DomUtils } from '../Utils';
+import { cleanNumbersFromInput } from '../Utils/InputUtils';
 
 class FormBuilder {
+  #fields;
+
+  constructor() {
+    this.fields = {};
+  }
+
   prepareForRender() {
     return this;
   }
@@ -16,54 +23,81 @@ class FormBuilder {
   build() {
     return this;
   }
+
+  set fields(value) {
+    this.#fields = value;
+  }
+
+  get fields() {
+    return this.#fields;
+  }
 }
 
 export class PersonalDataFormBuilder extends FormBuilder {
-  build() {
-    const nameAndSurnameRow = () => (
+  constructor() {
+    super();
+    this.fields = {
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      birthDate: '',
+    };
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  build({ fieldsValues, onChangeFields }) {
+    const nameAndSurnameRow = (
       <Grid item xs={12}>
         <TextField
-          id="outlined-controlled"
+          id="form-name"
+          type="text"
+          value={fieldsValues.name}
           label={sharedLabels.name}
-          onChange={() => {}}
+          onChange={(e) => onChangeFields('name', cleanNumbersFromInput(e.target.value))}
         />
         {' '}
         <TextField
-          id="outlined-controlled"
+          id="form-surname"
+          type="text"
+          value={fieldsValues.surname}
           label={sharedLabels.surname}
-          onChange={() => {}}
+          onChange={(e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value))}
         />
       </Grid>
     );
 
-    const emailAndPasswordRow = () => (
+    const emailAndPasswordRow = (
       <Grid item xs={12}>
         <TextField
-          id="outlined-controlled"
+          id="form-email"
+          value={fieldsValues.email}
           label={sharedLabels.email}
           type="email"
-          onChange={() => {}}
+          onChange={(e) => onChangeFields('email', e.target.value)}
         />
         {' '}
         <TextField
-          id="outlined-controlled"
+          id="form-password"
+          value={fieldsValues.password}
           label={sharedLabels.password}
           type="password"
-          onChange={() => {}}
+          onChange={(e) => onChangeFields('password', e.target.value)}
         />
       </Grid>
     );
 
-    const birthDateRow = () => (
+    const birthDateRow = (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.birthDate }
         </Typography>
         <TextField
-          id="outlined-controlled"
+          id="form-birthDate"
+          value={fieldsValues.birthDate}
           type="date"
           sx={{ width: '100%' }}
-          onChange={() => {}}
+          onChange={(e) => onChangeFields('birthDate', e.target.value)}
         />
       </Grid>
     );
@@ -106,7 +140,6 @@ export class LocationFormBuilder extends FormBuilder {
   }
 
   build(props) {
-    const componentWrapper = () => <LocationMap {...props} />;
-    return [componentWrapper];
+    return [<LocationMap {...props} />];
   }
 }

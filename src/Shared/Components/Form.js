@@ -28,14 +28,14 @@ export default function Form({
         { title }
       </Typography>
       {
-        fields.map((Field) => <Field />)
+        fields.map((field) => field)
      }
     </Grid>
   );
 }
 
 Form.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   fields: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.node,
     PropTypes.elementType])).isRequired,

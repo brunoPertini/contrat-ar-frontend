@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import {
   Grid, IconButton, Typography,
 } from '@mui/material';
@@ -7,7 +7,7 @@ import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
 import { Form, Stepper, Tooltip } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
-import { LocationMapProvider } from '../Shared/State/Context/LocationMap';
+import { LocationMapContext, LocationMapProvider } from '../Shared/State/Context/LocationMap';
 
 const locationFormBuilder = new LocationFormBuilder();
 
@@ -24,7 +24,18 @@ export default function UserSignUp() {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const personalDataFields = personalDataFormBuilder.build();
+  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
+    personalDataFormBuilder.fields,
+  );
+
+  const { location } = useContext(LocationMapContext);
+
+  const personalDataFields = personalDataFormBuilder.build({
+    fieldsValues: personalDataFieldsValues,
+    onChangeFields: (fieldId, fieldValue) => {
+      setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
+    },
+  });
 
   const locationFields = locationFormBuilder.build({
     showTranslatedAddress: true,
@@ -38,6 +49,9 @@ export default function UserSignUp() {
       title={title}
       styles={{ display: activeStep === 0 ? 'flex' : 'none' }}
     />,
+    backButtonEnabled: false,
+    nextButtonEnabled: useMemo(() => Object.values(personalDataFieldsValues)
+      .every((value) => value), [[personalDataFields]]),
   },
   {
     label: signUpLabels['steps.your.location'],
@@ -67,6 +81,8 @@ export default function UserSignUp() {
       styles={{ display: activeStep === 1 ? 'flex' : 'none' }}
     />
   </LocationMapProvider>,
+    nextButtonEnabled: useMemo(() => !!location && Object.values(location)
+      .every((value) => value), [[location]]),
   }];
 
   const prepareFormRendering = async (stepIndex) => {
@@ -96,6 +112,8 @@ export default function UserSignUp() {
         completedSteps={completedSteps}
         activeStep={activeStep}
         onStepChange={handleOnStepChange}
+        backButtonEnabled={steps[activeStep].backButtonEnabled}
+        nextButtonEnabled={steps[activeStep].nextButtonEnabled}
       />
     </Grid>
   );

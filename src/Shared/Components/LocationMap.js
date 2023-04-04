@@ -92,18 +92,22 @@ export default withRouter(({
     });
   }, [handleGranted]);
 
-  const translateAddress = useCallback(async ({ coords }) => {
-    const httpClient = HttpClientFactory.createExternalHttpClient(
-      thirdPartyRoutes.getAddressFromCoordinates,
-    );
+  const translateAddress = useCallback(async (coordsObject) => {
+    const { coords } = coordsObject ?? {};
 
-    // eslint-disable-next-line no-shadow
-    const readableAddress = await httpClient.getAddressFromLocation({
-      lat: coords.latitude,
-      lon: coords.longitude,
-    });
+    if (coords) {
+      const httpClient = HttpClientFactory.createExternalHttpClient(
+        thirdPartyRoutes.getAddressFromCoordinates,
+      );
 
-    setReadableAddress(readableAddress);
+      // eslint-disable-next-line no-shadow
+      const readableAddress = await httpClient.getAddressFromLocation({
+        lat: coords.latitude,
+        lon: coords.longitude,
+      });
+
+      setReadableAddress(readableAddress);
+    }
   }, [HttpClientFactory]);
 
   useEffect(() => {

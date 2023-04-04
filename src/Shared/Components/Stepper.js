@@ -9,6 +9,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 
 export default function LinearStepper({
   steps, completedSteps, activeStep, onStepChange,
+  backButtonEnabled, nextButtonEnabled,
 }) {
   const optionalLabel = <Typography variant="caption">{ sharedLabels.optional}</Typography>;
 
@@ -26,13 +27,13 @@ export default function LinearStepper({
         <Grid item sx={{ flexDirection: 'row' }}>
           <Button
             onClick={() => onButtonClick(activeStep - 1)}
-            disabled={activeStep === 0}
+            disabled={!backButtonEnabled}
           >
             { sharedLabels.back}
           </Button>
           <Button
             onClick={() => onButtonClick(activeStep + 1)}
-            disabled={activeStep === steps.length - 1}
+            disabled={!nextButtonEnabled}
           >
             { sharedLabels.next}
           </Button>
@@ -58,6 +59,10 @@ export default function LinearStepper({
   );
 }
 
+LinearStepper.defaultProps = {
+  backButtonEnabled: true,
+};
+
 LinearStepper.propTypes = {
   steps: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string,
@@ -67,4 +72,6 @@ LinearStepper.propTypes = {
   completedSteps: PropTypes.instanceOf(Set).isRequired,
   activeStep: PropTypes.number.isRequired,
   onStepChange: PropTypes.func.isRequired,
+  backButtonEnabled: PropTypes.bool,
+  nextButtonEnabled: PropTypes.bool.isRequired,
 };
