@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Grid, IconButton, Typography,
 } from '@mui/material';
@@ -7,7 +7,6 @@ import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
 import { Form, Stepper, Tooltip } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
-import { LocationMapContext, LocationMapProvider } from '../Shared/State/Context/LocationMap';
 
 const locationFormBuilder = new LocationFormBuilder();
 
@@ -27,8 +26,8 @@ export default function UserSignUp() {
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
   );
-
-  const { location } = useContext(LocationMapContext);
+  const [location, setLocation] = useState();
+  const [readableAddress, setReadableAddress] = useState('');
 
   const personalDataFields = personalDataFormBuilder.build({
     fieldsValues: personalDataFieldsValues,
@@ -39,6 +38,10 @@ export default function UserSignUp() {
 
   const locationFields = locationFormBuilder.build({
     showTranslatedAddress: true,
+    location,
+    setLocation,
+    readableAddress,
+    setReadableAddress,
   });
 
   const steps = [{
@@ -47,7 +50,6 @@ export default function UserSignUp() {
     component: <Form
       fields={personalDataFields}
       title={title}
-      styles={{ display: activeStep === 0 ? 'flex' : 'none' }}
     />,
     backButtonEnabled: false,
     nextButtonEnabled: useMemo(() => Object.values(personalDataFieldsValues)
@@ -57,30 +59,26 @@ export default function UserSignUp() {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component:
-  <LocationMapProvider>
-    <Form
-      containerId="locationMapContainer"
-      fields={locationFields}
-      title={(
-        <>
-          {signUpLabels['location.proveedor.title']}
-          <Tooltip
-            title={(
-              <Typography variant="h6">
-                {signUpLabels['title.disclaimer']}
-              </Typography>
+  <Form
+    fields={locationFields}
+    title={(
+      <>
+        {signUpLabels['location.proveedor.title']}
+        <Tooltip
+          title={(
+            <Typography variant="h6">
+              {signUpLabels['title.disclaimer']}
+            </Typography>
             )}
-            placement="right-start"
-          >
-            <IconButton>
-              <InfoIcon />
-            </IconButton>
-          </Tooltip>
-        </>
+          placement="right-start"
+        >
+          <IconButton>
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
+      </>
 )}
-      styles={{ display: activeStep === 1 ? 'flex' : 'none' }}
-    />
-  </LocationMapProvider>,
+  />,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
   }];
@@ -106,7 +104,7 @@ export default function UserSignUp() {
   return (
     <Grid>
       <Header />
-      { steps.map((step) => step.component) }
+      { steps[activeStep].component }
       <Stepper
         steps={steps}
         completedSteps={completedSteps}
