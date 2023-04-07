@@ -3,5 +3,13 @@
     "title.disclaimer": "¡No es necesario que pongas tu dirección exacta! Solo la vamos a usar para que tus clientes te encuentren",
     "location.proveedor.title": "Para que seas visible a tus clientes, necesitamos saber tu ubicación",
     "steps.your.data": "Tus datos",
-    "steps.your.location": "Confirmanos tu ubicación"
+    "steps.your.location": "Confirmanos tu ubicación",
+    "steps.planType": "Elegí tu plan",
+    "planSelection.title": "Texto donde se persuada de alguna manera para que elijan el plan pago",
+    "planSelection.free.description": "Con este plan podrás ser encontrado por tus clientes en un radio de X km",
+    "planSelection.paid.description": "Con este plan podrás ser encontrado por tus clientes en toda la ciudad y alrededores",
+    "confirmation.title": "Confirmación de Registro",
+    "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si encontramos algún inconveniente, te vamos a avisar a tu mail.",
+    "confirmation.ok": "Terminar",
+    "confirmation.cancel": "Tengo que modificar algún dato"
 }

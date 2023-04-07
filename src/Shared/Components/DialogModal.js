@@ -1,12 +1,12 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import {
   useTheme, useMediaQuery, Dialog,
   DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
 } from '@mui/material';
 
 function DialogModal({
-  open,
-  handleAccept, handleDeny, title, contextText, cancelText, acceptText,
+  open, handleAccept, handleDeny, title,
+  contextText, cancelText, acceptText,
 }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -36,5 +36,20 @@ function DialogModal({
     </Dialog>
   );
 }
+
+DialogModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleAccept: PropTypes.func.isRequired,
+  handleDeny: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  contextText: PropTypes.string,
+  cancelText: PropTypes.string.isRequired,
+  acceptText: PropTypes.string.isRequired,
+};
+
+DialogModal.defaultProps = {
+  title: '',
+  contextText: '',
+};
 
 export default DialogModal;

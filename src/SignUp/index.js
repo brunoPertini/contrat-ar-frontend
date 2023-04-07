@@ -5,8 +5,12 @@ import {
 import InfoIcon from '@mui/icons-material/Info';
 import Header from '../Header';
 import { signUpLabels } from '../StaticData/SignUp';
-import { Form, Stepper, Tooltip } from '../Shared/Components';
+import {
+  DialogModal,
+  Form, PlanSelection, Stepper, Tooltip,
+} from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
+import { systemConstants } from '../Shared/Constants';
 
 const locationFormBuilder = new LocationFormBuilder();
 
@@ -22,12 +26,16 @@ export default function UserSignUp() {
   const [completedSteps] = useState(new Set());
 
   const [activeStep, setActiveStep] = useState(0);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
+  // Steps data
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
   );
   const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
+
+  const [selectedPlan, setSelectedPlan] = useState(systemConstants.PLAN_TYPE_FREE);
 
   const personalDataFields = personalDataFormBuilder.build({
     fieldsValues: personalDataFieldsValues,
@@ -81,17 +89,28 @@ export default function UserSignUp() {
   />,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
+  },
+  {
+    label: signUpLabels['steps.planType'],
+    isOptional: false,
+    component: <PlanSelection
+      selectedPlan={selectedPlan}
+      setSelectedPlan={setSelectedPlan}
+      paidPlanValue={200}
+    />,
+    backButtonEnabled: true,
+    nextButtonEnabled: true,
   }];
 
   const prepareFormRendering = async (stepIndex) => {
     const functions = {
-      0: () => {
-        personalDataFormBuilder.prepareForRender();
-      },
+      0: () => personalDataFormBuilder.prepareForRender(),
 
-      1: () => {
-        locationFormBuilder.prepareForRender();
-      },
+      1: () => locationFormBuilder.prepareForRender(),
+
+      2: () => setOpenConfirmationModal(false),
+
+      3: () => setOpenConfirmationModal(true),
     };
     return stepIndex in functions ? functions[stepIndex]() : () => {};
   };
@@ -101,10 +120,22 @@ export default function UserSignUp() {
     setActiveStep(newStepIndex);
   };
 
+  const isStepValid = activeStep < steps.length;
+
   return (
     <Grid>
       <Header />
-      { steps[activeStep].component }
+      { isStepValid ? steps[activeStep].component : null}
+      <DialogModal
+        title={signUpLabels['confirmation.title']}
+        contextText={signUpLabels['confirmation.context']}
+        cancelText={signUpLabels['confirmation.cancel']}
+        acceptText={signUpLabels['confirmation.ok']}
+        open={openConfirmationModal}
+        handleAccept={() => {}}
+        handleDeny={() => handleOnStepChange(steps.length - 1)}
+      />
+      {isStepValid && (
       <Stepper
         steps={steps}
         completedSteps={completedSteps}
@@ -113,6 +144,7 @@ export default function UserSignUp() {
         backButtonEnabled={steps[activeStep].backButtonEnabled}
         nextButtonEnabled={steps[activeStep].nextButtonEnabled}
       />
+      )}
     </Grid>
   );
 }

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { PropTypes } from 'prop-types';
 import {
   Grid, Typography,
@@ -35,6 +34,7 @@ export default function Form({
 }
 
 Form.propTypes = {
+  containerId: PropTypes.string,
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   fields: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.node,
@@ -44,6 +44,7 @@ Form.propTypes = {
 };
 
 Form.defaultProps = {
+  containerId: '',
   onLoad: () => {},
   styles: {},
 };
