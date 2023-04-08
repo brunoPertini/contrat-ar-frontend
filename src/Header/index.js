@@ -19,7 +19,7 @@ function Menu({ options }) {
       options.map((option) => (
         <Button
           color="inherit"
-          onClick={option.onClick()}
+          onClick={option.onClick}
           key={`menu-${option.label}`}
         >
           {option.label}

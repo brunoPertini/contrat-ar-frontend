@@ -9,7 +9,8 @@
     "planSelection.free.description": "Con este plan podrás ser encontrado por tus clientes en un radio de X km",
     "planSelection.paid.description": "Con este plan podrás ser encontrado por tus clientes en toda la ciudad y alrededores",
     "confirmation.title": "Confirmación de Registro",
-    "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si encontramos algún inconveniente, te vamos a avisar a tu mail.",
+    "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si el registro es aprobado, o si encontramos algún inconveniente, te vamos a avisar a tu mail.",
     "confirmation.ok": "Terminar",
-    "confirmation.cancel": "Tengo que modificar algún dato"
+    "confirmation.cancel": "Tengo que modificar algún dato",
+    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!"
 }

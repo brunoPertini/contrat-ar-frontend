@@ -24,11 +24,14 @@ const ExpandMore = styled((props) => {
 export default function ExpandableCard({
   title, collapsableContent,
   gridStyles, collapsableAreaStyles,
+  keepCollapsableAreaOpen,
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(keepCollapsableAreaOpen);
 
   const handleExpandClick = () => {
-    setExpanded(!expanded);
+    if (!keepCollapsableAreaOpen) {
+      setExpanded(!expanded);
+    }
   };
 
   return (
@@ -37,34 +40,33 @@ export default function ExpandableCard({
       sx={gridStyles}
       spacing={2}
     >
-      <Card sx={{
-        width: '50%',
-      }}
-      >
-        <CardContent>
-          <Typography paragraph>
-            { title }
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
-        </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Grid
-            container
-            sx={collapsableAreaStyles}
-          >
-            { collapsableContent }
-          </Grid>
-        </Collapse>
-      </Card>
+      <Grid item sx={{ width: '100%' }}>
+        <Card>
+          <CardContent>
+            <Typography paragraph>
+              { title }
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </ExpandMore>
+          </CardActions>
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Grid
+              container
+              sx={collapsableAreaStyles}
+            >
+              { collapsableContent }
+            </Grid>
+          </Collapse>
+        </Card>
+      </Grid>
     </Grid>
   );
 }
@@ -72,11 +74,13 @@ export default function ExpandableCard({
 ExpandableCard.defaultProps = {
   gridStyles: {},
   collapsableAreaStyles: {},
+  keepCollapsableAreaOpen: false,
 };
 
 ExpandableCard.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   collapsableContent: PropTypes.node.isRequired,
   gridStyles: PropTypes.objectOf(PropTypes.string),
   collapsableAreaStyles: PropTypes.objectOf(PropTypes.string),
+  keepCollapsableAreaOpen: PropTypes.bool,
 };

@@ -1,9 +1,19 @@
 import Header from '../Header';
+import { withRouter } from '../Shared/Components';
+import { routes } from '../Shared/Constants';
 import { rootPageLabels } from '../StaticData/RootPage';
 
-export default function RootPage() {
-  const menuOptions = [{ label: rootPageLabels.signup, onClick: () => {} },
-    { label: rootPageLabels.signin, onClick: () => {} }];
+const RootPage = withRouter(({ router }) => {
+  const menuOptions = [{
+    label: rootPageLabels.signup,
+    onClick: () => {
+      console.log('click registrar');
+      router.navigate(routes.signup);
+    },
+  },
+  { label: rootPageLabels.signin, onClick: () => {} }];
 
   return <Header menuOptions={menuOptions} withMenu />;
-}
+});
+
+export default RootPage;
