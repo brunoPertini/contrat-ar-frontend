@@ -4,6 +4,7 @@
     "email": "Email",
     "password": "Contraseña",
     "birthDate": "Fecha de nacimiento",
+    "dni": "DNI",
     "siteName": "Contract.ar" ,
     "optional": "Opcional",
     "back": "Atrás",

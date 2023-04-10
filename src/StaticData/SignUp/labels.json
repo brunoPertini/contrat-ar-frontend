@@ -1,7 +1,8 @@
 {
     "title": "Registrate! Sólo llevará unos minutos",
-    "title.disclaimer": "¡No es necesario que pongas tu dirección exacta! Solo la vamos a usar para que tus clientes te encuentren",
+    "title.disclaimer": "¡No es necesario que pongas tu dirección exacta!",
     "location.proveedor.title": "Para que seas visible a tus clientes, necesitamos saber tu ubicación",
+    "location.cliente.title": "Para que seas brindarte las mejores opciones en tus búsquedas, necesitamos saber tu ubicación",
     "steps.your.data": "Tus datos",
     "steps.your.location": "Confirmanos tu ubicación",
     "steps.planType": "Elegí tu plan",

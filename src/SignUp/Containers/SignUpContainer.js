@@ -98,7 +98,7 @@ export default function SignUpContainer() {
         collapsableContent={signupTypeColumns}
         keepCollapsableAreaOpen
       />
-    ) : <UserSignUp />;
+    ) : <UserSignUp signupType={signupType} />;
 
   return (
     <>

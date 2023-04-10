@@ -1,12 +1,9 @@
 import { useMemo, useState } from 'react';
-import {
-  IconButton, Typography,
-} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import PropTypes from 'prop-types';
 import { signUpLabels } from '../StaticData/SignUp';
 import {
   DialogModal,
-  Form, PlanSelection, Stepper, Tooltip,
+  Form, PlanSelection, Stepper,
 } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { systemConstants } from '../Shared/Constants';
@@ -19,7 +16,7 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
-export default function UserSignUp() {
+export default function UserSignUp({ signupType }) {
   const { title } = signUpLabels;
 
   const [completedSteps] = useState(new Set());
@@ -37,6 +34,7 @@ export default function UserSignUp() {
   const [selectedPlan, setSelectedPlan] = useState(systemConstants.PLAN_TYPE_FREE);
 
   const personalDataFields = personalDataFormBuilder.build({
+    usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
     onChangeFields: (fieldId, fieldValue) => {
       setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
@@ -44,6 +42,7 @@ export default function UserSignUp() {
   });
 
   const locationFields = locationFormBuilder.build({
+    usuarioType: signupType,
     showTranslatedAddress: true,
     location,
     setLocation,
@@ -68,38 +67,25 @@ export default function UserSignUp() {
     component:
   <Form
     fields={locationFields}
-    title={(
-      <>
-        {signUpLabels['location.proveedor.title']}
-        <Tooltip
-          title={(
-            <Typography variant="h6">
-              {signUpLabels['title.disclaimer']}
-            </Typography>
-            )}
-          placement="right-start"
-        >
-          <IconButton>
-            <InfoIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-)}
+    title={locationFormBuilder.getTitle()}
   />,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
-  },
-  {
-    label: signUpLabels['steps.planType'],
-    isOptional: false,
-    component: <PlanSelection
-      selectedPlan={selectedPlan}
-      setSelectedPlan={setSelectedPlan}
-      paidPlanValue={200}
-    />,
-    backButtonEnabled: true,
-    nextButtonEnabled: true,
   }];
+
+  if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
+    steps.push({
+      label: signUpLabels['steps.planType'],
+      isOptional: false,
+      component: <PlanSelection
+        selectedPlan={selectedPlan}
+        setSelectedPlan={setSelectedPlan}
+        paidPlanValue={200}
+      />,
+      backButtonEnabled: true,
+      nextButtonEnabled: true,
+    });
+  }
 
   const prepareFormRendering = async (stepIndex) => {
     const functions = {
@@ -146,3 +132,7 @@ export default function UserSignUp() {
     </>
   );
 }
+
+UserSignUp.propTypes = {
+  signupType: PropTypes.string.isRequired,
+};

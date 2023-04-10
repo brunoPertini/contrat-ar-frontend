@@ -2,12 +2,15 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
 import {
-  Grid, TextField, Typography,
+  Grid, TextField, Typography, IconButton, Tooltip,
 } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { sharedLabels } from '../../StaticData/Shared';
 import { LocationMap } from '../Components';
+import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
 import { cleanNumbersFromInput } from '../Utils/InputUtils';
+import { signUpLabels } from '../../StaticData/SignUp';
 
 class FormBuilder {
   #fields;
@@ -20,7 +23,16 @@ class FormBuilder {
     return this;
   }
 
-  build() {
+  build(props) {
+    const { usuarioType } = props;
+    const shouldShowDni = usuarioType && usuarioType !== systemConstants.USER_TYPE_CLIENTE;
+
+    if (shouldShowDni) {
+      this.fields.dni = '';
+    }
+    this.shouldShowDni = shouldShowDni;
+    this.usuarioType = usuarioType;
+
     return this;
   }
 
@@ -45,8 +57,9 @@ export class PersonalDataFormBuilder extends FormBuilder {
     };
   }
 
-  // eslint-disable-next-line no-unused-vars
-  build({ fieldsValues, onChangeFields }) {
+  build({ fieldsValues, onChangeFields, usuarioType }) {
+    super.build({ usuarioType });
+
     const nameAndSurnameRow = (
       <Grid item xs={12}>
         <TextField
@@ -87,6 +100,21 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Grid>
     );
 
+    const dniRow = this.shouldShowDni ? (
+      <Grid item xs={12} sx={{ width: '31rem' }}>
+        <Typography variant="subtitle1" align="left">
+          { sharedLabels.dni }
+        </Typography>
+        <TextField
+          id="form-dni"
+          value={fieldsValues.dni}
+          type="number"
+          sx={{ width: '100%' }}
+          onChange={(e) => onChangeFields('dni', e.target.value)}
+        />
+      </Grid>
+    ) : null;
+
     const birthDateRow = (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
@@ -102,7 +130,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Grid>
     );
 
-    const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, birthDateRow];
+    const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, dniRow, birthDateRow];
 
     return personalDataFields;
   }
@@ -139,7 +167,32 @@ export class LocationFormBuilder extends FormBuilder {
     }
   }
 
+  getTitle() {
+    const { usuarioType } = this;
+
+    return (
+      <>
+        {usuarioType
+         && usuarioType !== systemConstants.USER_TYPE_CLIENTE
+          ? signUpLabels['location.proveedor.title'] : signUpLabels['location.cliente.title']}
+        <Tooltip
+          title={(
+            <Typography variant="h6">
+              {signUpLabels['title.disclaimer']}
+            </Typography>
+            )}
+          placement="right-start"
+        >
+          <IconButton>
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
+      </>
+    );
+  }
+
   build(props) {
+    super.build(props);
     return [<LocationMap {...props} />];
   }
 }
