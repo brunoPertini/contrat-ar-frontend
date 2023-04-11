@@ -88,20 +88,42 @@ export default function UserSignUp({ signupType }) {
   }
 
   const prepareFormRendering = async (stepIndex) => {
-    const functions = {
+    const commonSteps = {
       0: () => personalDataFormBuilder.prepareForRender(),
 
       1: () => locationFormBuilder.prepareForRender(),
 
-      2: () => setOpenConfirmationModal(false),
+    };
+
+    const nonClientFunctions = {
+      ...commonSteps,
 
       3: () => setOpenConfirmationModal(true),
     };
-    return stepIndex in functions ? functions[stepIndex]() : () => {};
+
+    const clientFunctions = {
+      ...commonSteps,
+
+      2: () => setOpenConfirmationModal(true),
+
+    };
+
+    const functions = {
+      [systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS]: nonClientFunctions,
+      [systemConstants.USER_TYPE_PROVEEDOR_SERVICES]: nonClientFunctions,
+      [systemConstants.USER_TYPE_CLIENTE]: clientFunctions,
+    };
+
+    return stepIndex in functions[signupType] ? functions[signupType][stepIndex]() : () => {};
   };
 
   const handleOnStepChange = async (newStepIndex) => {
-    await prepareFormRendering(newStepIndex);
+    const returningFromLastStep = activeStep === steps.length && newStepIndex === steps.length - 1;
+    if (returningFromLastStep) {
+      setOpenConfirmationModal(false);
+    } else {
+      await prepareFormRendering(newStepIndex);
+    }
     setActiveStep(newStepIndex);
   };
 
