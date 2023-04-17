@@ -7,7 +7,6 @@ const RootPage = withRouter(({ router }) => {
   const menuOptions = [{
     label: rootPageLabels.signup,
     onClick: () => {
-      console.log('click registrar');
       router.navigate(routes.signup);
     },
   },

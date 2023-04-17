@@ -1,0 +1,4 @@
+{
+    "createClient": "/usuarios/cliente",
+    "createProveedor": "/usuarios/proveedor"
+}

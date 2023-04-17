@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../../StaticData/Shared';
 
 export default function LinearStepper({
-  steps, completedSteps, activeStep, onStepChange,
+  steps, activeStep, onStepChange,
   backButtonEnabled, nextButtonEnabled,
 }) {
   const optionalLabel = <Typography variant="caption">{ sharedLabels.optional}</Typography>;
@@ -48,8 +48,8 @@ export default function LinearStepper({
         }}
       >
         <Stepper activeStep={activeStep}>
-          {steps.map(({ label, isOptional }, index) => (
-            <Step key={label} completed={completedSteps.has(index)}>
+          {steps.map(({ label, isOptional }) => (
+            <Step key={label}>
               <StepLabel optional={isOptional ? optionalLabel : undefined}>{label}</StepLabel>
             </Step>
           ))}
@@ -69,7 +69,6 @@ LinearStepper.propTypes = {
     isOptional: PropTypes.bool,
   })).isRequired,
 
-  completedSteps: PropTypes.instanceOf(Set).isRequired,
   activeStep: PropTypes.number.isRequired,
   onStepChange: PropTypes.func.isRequired,
   backButtonEnabled: PropTypes.bool,

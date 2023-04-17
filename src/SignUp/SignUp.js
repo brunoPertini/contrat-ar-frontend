@@ -16,10 +16,8 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
-export default function UserSignUp({ signupType }) {
+export default function UserSignUp({ signupType, dispatchSignUp }) {
   const { title } = signUpLabels;
-
-  const [completedSteps] = useState(new Set());
 
   const [activeStep, setActiveStep] = useState(0);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
@@ -138,13 +136,12 @@ export default function UserSignUp({ signupType }) {
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
         open={openConfirmationModal}
-        handleAccept={() => {}}
+        handleAccept={() => dispatchSignUp({ ...personalDataFieldsValues, selectedPlan, location })}
         handleDeny={() => handleOnStepChange(steps.length - 1)}
       />
       {isStepValid && (
       <Stepper
         steps={steps}
-        completedSteps={completedSteps}
         activeStep={activeStep}
         onStepChange={handleOnStepChange}
         backButtonEnabled={steps[activeStep].backButtonEnabled}
@@ -157,4 +154,5 @@ export default function UserSignUp({ signupType }) {
 
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
+  dispatchSignUp: PropTypes.func.isRequired,
 };

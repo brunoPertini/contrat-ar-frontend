@@ -12,12 +12,28 @@ import { ExpandableCard } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
 import { systemConstants } from '../../Shared/Constants';
+import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
+import Logger from '../../Infrastructure/Logging/Logger';
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
  */
 export default function SignUpContainer() {
   const [signupType, setSignupType] = useState();
+
+  const dispatchSignUp = (body) => {
+    const finalRoute = signupType === systemConstants.USER_TYPE_CLIENTE
+      ? usersRoutes.createClient : usersRoutes.createProveedor;
+    const httpClient = HttpClientFactory.createUserHttpClient();
+    console.log(httpClient);
+    httpClient.crearCliente(finalRoute, { proveedorType: signupType }, body).then(() => {
+      console.log('OK');
+    })
+      .catch((error) => {
+        Logger.log(error);
+      });
+  };
 
   const signupTypeColumns = (
     <>
@@ -98,7 +114,7 @@ export default function SignUpContainer() {
         collapsableContent={signupTypeColumns}
         keepCollapsableAreaOpen
       />
-    ) : <UserSignUp signupType={signupType} />;
+    ) : <UserSignUp signupType={signupType} dispatchSignUp={dispatchSignUp} />;
 
   return (
     <>
