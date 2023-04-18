@@ -16,6 +16,11 @@ export class UserHttpClient extends HttpClient {
     const url = (signupType === systemConstants.USER_TYPE_CLIENTE)
       ? usersRoutes.createClient : usersRoutes.createProveedor;
 
-    return this.post(url, queryParams, body);
+    const finalQueryParams = {
+      proveedorType: signupType === systemConstants.USER_TYPE_CLIENTE
+        ? undefined : queryParams.proveedorType,
+    };
+
+    return this.post(url, finalQueryParams, body);
   }
 }

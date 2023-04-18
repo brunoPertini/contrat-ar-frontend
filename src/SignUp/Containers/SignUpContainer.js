@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import Card from '@mui/material/Card';
@@ -8,23 +9,23 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import Header from '../../Header';
-import { ExpandableCard } from '../../Shared/Components';
+import { ExpandableCard, withRouter } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
-import { systemConstants } from '../../Shared/Constants';
+import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import Logger from '../../Infrastructure/Logging/Logger';
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
  */
-export default function SignUpContainer() {
+function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
-      console.log('OK');
+      router.navigate(routes.signin);
     })
       .catch((error) => {
         Logger.log(error);
@@ -131,3 +132,9 @@ export default function SignUpContainer() {
     </>
   );
 }
+
+export default withRouter(SignUpContainer);
+
+SignUpContainer.propTypes = {
+  router: PropTypes.any.isRequired,
+};

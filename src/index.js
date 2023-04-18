@@ -8,6 +8,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import RootPage from './Root';
 import { UserSignUp } from './SignUp';
+import SignIn from './SignIn';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <UserSignUp />,
+  },
+  {
+    path: '/signin',
+    element: <SignIn />,
   },
 ]);
 

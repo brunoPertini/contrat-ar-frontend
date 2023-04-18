@@ -10,7 +10,12 @@ const RootPage = withRouter(({ router }) => {
       router.navigate(routes.signup);
     },
   },
-  { label: rootPageLabels.signin, onClick: () => {} }];
+  {
+    label: rootPageLabels.signin,
+    onClick: () => {
+      router.navigate(routes.signin);
+    },
+  }];
 
   return <Header menuOptions={menuOptions} withMenu />;
 });

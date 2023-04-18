@@ -196,3 +196,45 @@ export class LocationFormBuilder extends FormBuilder {
     return [<LocationMap {...props} />];
   }
 }
+
+export class SignInFormBuilder extends FormBuilder {
+  constructor() {
+    super();
+    this.fields = {
+      email: '',
+      password: '',
+    };
+  }
+
+  build(fieldsValues = {}) {
+    const emailValue = fieldsValues.email || this.fields.email;
+    const passwordValue = fieldsValues.password || this.fields.password;
+
+    const emailAndPasswordRow = (
+      <>
+        <Grid item xs={12} sx={{ width: '30%' }}>
+          <TextField
+            id="form-email"
+            value={emailValue}
+            label={sharedLabels.email}
+            type="email"
+            onChange={(e) => onChangeFields('email', e.target.value)}
+            sx={{ width: '100%' }}
+          />
+        </Grid>
+        <Grid item xs={12} sx={{ width: '30%' }}>
+          <TextField
+            id="form-password"
+            value={passwordValue}
+            label={sharedLabels.password}
+            type="password"
+            onChange={(e) => onChangeFields('password', e.target.value)}
+            sx={{ width: '100%' }}
+          />
+        </Grid>
+      </>
+    );
+
+    return [emailAndPasswordRow];
+  }
+}
