@@ -13,7 +13,6 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
 import { systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import Logger from '../../Infrastructure/Logging/Logger';
 
 /**
@@ -23,11 +22,8 @@ export default function SignUpContainer() {
   const [signupType, setSignupType] = useState();
 
   const dispatchSignUp = (body) => {
-    const finalRoute = signupType === systemConstants.USER_TYPE_CLIENTE
-      ? usersRoutes.createClient : usersRoutes.createProveedor;
     const httpClient = HttpClientFactory.createUserHttpClient();
-    console.log(httpClient);
-    httpClient.crearCliente(finalRoute, { proveedorType: signupType }, body).then(() => {
+    httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
       console.log('OK');
     })
       .catch((error) => {

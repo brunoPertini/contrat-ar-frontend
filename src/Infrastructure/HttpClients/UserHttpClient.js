@@ -1,10 +1,10 @@
 /* eslint-disable no-new-wrappers */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-param-reassign */
+import { systemConstants } from '../../Shared/Constants';
+import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
-  crearCliente(url, queryParams, body) {
+  crearUsuario(signupType, queryParams, body) {
     body.plan = body.selectedPlan;
     body.location = {
       x: new String(body.location.coords.latitude),
@@ -12,6 +12,9 @@ export class UserHttpClient extends HttpClient {
     };
 
     delete body.selectedPlan;
+
+    const url = (signupType === systemConstants.USER_TYPE_CLIENTE)
+      ? usersRoutes.createClient : usersRoutes.createProveedor;
 
     return this.post(url, queryParams, body);
   }
