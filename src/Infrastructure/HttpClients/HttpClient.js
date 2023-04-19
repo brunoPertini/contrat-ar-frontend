@@ -7,7 +7,7 @@ export class HttpClient {
   #instance;
 
   constructor({ baseUrl }) {
-    this.#baseUrl = baseUrl || 'http://localhost:8090';
+    this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     this.#instance = axios.create({ baseURL: this.#baseUrl });
   }
 
@@ -21,6 +21,11 @@ export class HttpClient {
 
   get instance() {
     return this.#instance;
+  }
+
+  #handleError(error) {
+    Logger.log(error);
+    return Promise.reject(new Error(error));
   }
 
   /**
@@ -43,6 +48,6 @@ export class HttpClient {
   post(url, params, body) {
     return this.instance.post(url, body, { params })
       .then((response) => response.data)
-      .catch((error) => Logger.log(error));
+      .catch((error) => this.#handleError(error));
   }
 }

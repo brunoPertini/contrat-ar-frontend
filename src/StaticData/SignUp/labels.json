@@ -13,5 +13,7 @@
     "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si el registro es aprobado, o si encontramos algún inconveniente, te vamos a avisar a tu mail.",
     "confirmation.ok": "Terminar",
     "confirmation.cancel": "Tengo que modificar algún dato",
-    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!"
+    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
+    "signup.error.title": "Error en el registro",
+    "signup.error.context": "Ocurrió un error inesperado, por favor intentalo más tarde!"
 }

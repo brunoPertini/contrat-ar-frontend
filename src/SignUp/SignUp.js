@@ -6,7 +6,7 @@ import {
   Form, PlanSelection, Stepper,
 } from '../Shared/Components';
 import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
-import { systemConstants } from '../Shared/Constants';
+import { routes, systemConstants } from '../Shared/Constants';
 
 const locationFormBuilder = new LocationFormBuilder();
 
@@ -16,7 +16,9 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
-export default function UserSignUp({ signupType, dispatchSignUp }) {
+export default function UserSignUp({
+  signupType, dispatchSignUp, hasError, router,
+}) {
   const { title } = signUpLabels;
 
   const [activeStep, setActiveStep] = useState(0);
@@ -135,9 +137,16 @@ export default function UserSignUp({ signupType, dispatchSignUp }) {
         contextText={signUpLabels['confirmation.context']}
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
-        open={openConfirmationModal}
+        open={openConfirmationModal && !hasError}
         handleAccept={() => dispatchSignUp({ ...personalDataFieldsValues, selectedPlan, location })}
         handleDeny={() => handleOnStepChange(steps.length - 1)}
+      />
+      <DialogModal
+        title={signUpLabels['signup.error.title']}
+        contextText={signUpLabels['signup.error.context']}
+        acceptText={signUpLabels['confirmation.ok']}
+        open={hasError}
+        handleAccept={() => router.navigate(routes.index)}
       />
       {isStepValid && (
       <Stepper
@@ -152,7 +161,13 @@ export default function UserSignUp({ signupType, dispatchSignUp }) {
   );
 }
 
+UserSignUp.defaultProps = {
+  hasError: false,
+};
+
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
+  router: PropTypes.any.isRequired,
+  hasError: PropTypes.bool,
 };

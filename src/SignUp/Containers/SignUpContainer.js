@@ -14,21 +14,21 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
 import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import Logger from '../../Infrastructure/Logging/Logger';
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
  */
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
+  const [hasError, setHasError] = useState();
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
-    httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
+    return httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
       router.navigate(routes.signin);
     })
-      .catch((error) => {
-        Logger.log(error);
+      .catch(() => {
+        setHasError(true);
       });
   };
 
@@ -111,7 +111,14 @@ function SignUpContainer({ router }) {
         collapsableContent={signupTypeColumns}
         keepCollapsableAreaOpen
       />
-    ) : <UserSignUp signupType={signupType} dispatchSignUp={dispatchSignUp} />;
+    ) : (
+      <UserSignUp
+        signupType={signupType}
+        dispatchSignUp={dispatchSignUp}
+        hasError={hasError}
+        router={router}
+      />
+    );
 
   return (
     <>
