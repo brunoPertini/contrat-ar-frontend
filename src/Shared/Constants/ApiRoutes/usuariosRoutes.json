@@ -1,4 +1,5 @@
 {
     "createClient": "/usuarios/cliente",
-    "createProveedor": "/usuarios/proveedor"
+    "createProveedor": "/usuarios/proveedor",
+    "login": "/oauth/login"
 }
