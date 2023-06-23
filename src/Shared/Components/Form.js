@@ -28,7 +28,9 @@ export default function Form({
       </Typography>
       {
         fields.map((field) => field)
-     }
+
+      }
+
     </Grid>
   );
 }

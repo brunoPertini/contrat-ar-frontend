@@ -23,4 +23,8 @@ export class UserHttpClient extends HttpClient {
 
     return this.post(url, finalQueryParams, body);
   }
+
+  login(queryParams) {
+    return this.get(usersRoutes.login, queryParams);
+  }
 }

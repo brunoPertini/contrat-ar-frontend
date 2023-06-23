@@ -1,8 +1,9 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
 import {
-  Grid, TextField, Typography, IconButton, Tooltip,
+  Grid, TextField, Typography, IconButton, Tooltip, Button, Link,
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { sharedLabels } from '../../StaticData/Shared';
@@ -11,6 +12,7 @@ import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
 import { cleanNumbersFromInput } from '../Utils/InputUtils';
 import { signUpLabels } from '../../StaticData/SignUp';
+import { signinLabels } from '../../StaticData/SignIn';
 
 class FormBuilder {
   #fields;
@@ -206,16 +208,23 @@ export class SignInFormBuilder extends FormBuilder {
     };
   }
 
-  build(fieldsValues = {}) {
+  #hasError(errorFields, field) {
+    return errorFields.includes(field);
+  }
+
+  build({
+    onButtonClick, onChangeFields, fieldsValues = {}, errorFields = [], errorMessage,
+  }) {
     const emailValue = fieldsValues.email || this.fields.email;
     const passwordValue = fieldsValues.password || this.fields.password;
 
-    const emailAndPasswordRow = (
+    const row = (
       <>
         <Grid item xs={12} sx={{ width: '30%' }}>
           <TextField
             id="form-email"
             value={emailValue}
+            error={this.#hasError(errorFields, 'email')}
             label={sharedLabels.email}
             type="email"
             onChange={(e) => onChangeFields('email', e.target.value)}
@@ -226,15 +235,41 @@ export class SignInFormBuilder extends FormBuilder {
           <TextField
             id="form-password"
             value={passwordValue}
+            error={this.#hasError(errorFields, 'password')}
             label={sharedLabels.password}
             type="password"
             onChange={(e) => onChangeFields('password', e.target.value)}
             sx={{ width: '100%' }}
           />
+          {
+            !!errorMessage && (
+            <Typography
+              variant="h6"
+              align="left"
+              color="red"
+              sx={{ marginTop: '15px' }}
+            >
+              { errorMessage }
+            </Typography>
+            )
+          }
+          <Button
+            variant="contained"
+            sx={{ marginTop: '15px' }}
+            onClick={onButtonClick}
+          >
+            { signinLabels.buttonLabel }
+          </Button>
         </Grid>
+        <Grid item xs={12} sx={{ width: '30%' }}>
+          <Link href="#">
+            { signinLabels.forgotPassword }
+          </Link>
+        </Grid>
+
       </>
     );
 
-    return [emailAndPasswordRow];
+    return [row];
   }
 }

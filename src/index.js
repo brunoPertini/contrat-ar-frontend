@@ -8,7 +8,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import RootPage from './Root';
 import { UserSignUp } from './SignUp';
-import SignIn from './SignIn';
+import { SignIn } from './SignIn';
 
 const router = createBrowserRouter([
   {
