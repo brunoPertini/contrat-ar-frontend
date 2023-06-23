@@ -30,8 +30,9 @@ export class HttpClient {
   }
 
   #handleError(error) {
-    Logger.log(error);
-    return Promise.reject(new Error(error));
+    const wrappedError = error.response.data;
+    Logger.log(wrappedError);
+    return Promise.reject(wrappedError.error);
   }
 
   /**
@@ -46,10 +47,7 @@ export class HttpClient {
     const fullUrl = stringParams ? `${url}?${stringParams}` : url;
     return this.instance.get(fullUrl)
       .then((response) => response.data)
-      .catch((error) => {
-        Logger.log(error);
-        return Promise.reject(error);
-      });
+      .catch((error) => this.#handleError(error));
   }
 
   /**

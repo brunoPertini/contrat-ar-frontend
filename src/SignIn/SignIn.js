@@ -5,7 +5,7 @@ import { SignInFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { Form } from '../Shared/Components';
 import { signinLabels } from '../StaticData/SignIn';
 
-function SignIn({ dispatchSignIn }) {
+function SignIn({ dispatchSignIn, errorMessage }) {
   const formBuilder = new SignInFormBuilder();
   const [formValues, setFormValues] = useState(formBuilder.fields);
   const [emptyFields, setEmptyFields] = useState([]);
@@ -27,17 +27,17 @@ function SignIn({ dispatchSignIn }) {
     }
   };
 
-  const errorMessage = useMemo(() => {
+  const finalErrorMessage = useMemo(() => {
     if (emptyFields.length) {
       return 'Por favor, revisá los campos vacíos';
     }
 
-    if (false) {
-      return 'Usuario o contraseña incorrectos';
+    if (errorMessage) {
+      return errorMessage;
     }
 
     return '';
-  }, [emptyFields]);
+  }, [emptyFields, errorMessage]);
 
   const formFields = formBuilder.build({
     fieldsValues: formValues,
@@ -46,7 +46,7 @@ function SignIn({ dispatchSignIn }) {
     },
     errorFields: emptyFields,
     onButtonClick,
-    errorMessage,
+    errorMessage: finalErrorMessage,
   });
 
   return (
@@ -61,8 +61,13 @@ function SignIn({ dispatchSignIn }) {
   );
 }
 
+SignIn.defaultProps = {
+  errorMessage: '',
+};
+
 SignIn.propTypes = {
   dispatchSignIn: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
 };
 
 export default SignIn;

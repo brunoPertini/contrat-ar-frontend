@@ -6,18 +6,18 @@ import { withRouter } from '../../Shared/Components';
 import { routes } from '../../Shared/Constants';
 
 function SignInContainer({ router }) {
-  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const dispatchSignIn = (params) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.login(params).then(() => {
       router.navigate(routes.index);
-    }).catch(() => {
-      setHasError(true);
+    }).catch((message) => {
+      setErrorMessage(message);
     });
   };
 
-  return <SignIn dispatchSignIn={dispatchSignIn} hasError={hasError} />;
+  return <SignIn dispatchSignIn={dispatchSignIn} errorMessage={errorMessage} />;
 }
 
 SignInContainer.propTypes = {
