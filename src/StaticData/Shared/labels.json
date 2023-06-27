@@ -9,5 +9,10 @@
     "optional": "Opcional",
     "back": "Atrás",
     "next": "Siguiente",
-    "iWantIt": "Lo quiero"
+    "iWantIt": "Lo quiero",
+    "hello": "¡Hola!",
+    "myProfile": "Mi perfil",
+    "product": "Producto",
+    "service": "Servicio",
+    "search": "Buscar"    
 }

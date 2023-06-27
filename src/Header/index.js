@@ -4,8 +4,9 @@ import {
   AppBar, Box, Toolbar, Button, IconButton, Typography,
 } from '@mui/material';
 import { sharedLabels } from '../StaticData/Shared';
+import Menu from '../Shared/Components/Menu';
 
-function Menu({ options }) {
+function HeaderMenu({ options }) {
   return (
     <Toolbar sx={{ justifyContent: 'right' }}>
       <IconButton
@@ -30,14 +31,14 @@ function Menu({ options }) {
   );
 }
 
-Menu.propTypes = {
+HeaderMenu.propTypes = {
   options: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string,
     onClick: PropTypes.func,
   })).isRequired,
 };
 
-export default function Header({ withMenu, menuOptions }) {
+export default function Header({ withMenu, menuOptions, withMenuComponent }) {
   return (
     <>
       <Box sx={{ flexGrow: 1 }} />
@@ -45,7 +46,8 @@ export default function Header({ withMenu, menuOptions }) {
         <Typography variant="h3">
           { sharedLabels.siteName }
         </Typography>
-        { withMenu && <Menu options={menuOptions} />}
+        { withMenu && <HeaderMenu options={menuOptions} />}
+        { withMenuComponent && <Menu options={menuOptions} />}
       </AppBar>
     </>
   );
@@ -53,10 +55,12 @@ export default function Header({ withMenu, menuOptions }) {
 
 Header.defaultProps = {
   withMenu: false,
+  withMenuComponent: false,
   menuOptions: [],
 };
 
 Header.propTypes = {
   withMenu: PropTypes.bool,
+  withMenuComponent: PropTypes.bool,
   menuOptions: PropTypes.array,
 };
