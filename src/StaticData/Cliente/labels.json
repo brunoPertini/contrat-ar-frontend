@@ -1,4 +1,6 @@
 {
     "title": "¡Decinos qué buscas, escribilo, y listo!",
-    "lookingFor": "Estoy buscando un"
+    "lookingFor": "Estoy buscando un",
+    "foundServices": "Servicios encontrados",
+    "foundProducts": "Productos encontrados"
 }

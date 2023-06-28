@@ -24,3 +24,21 @@ export function isElementBeingShown(selector) {
   const element = document.querySelector(selector);
   return !element || window.getComputedStyle(element).display === 'none';
 }
+
+/**
+ *
+ * @param {Event} event
+ * @returns if event is of type click
+ */
+export function isClickEvent(event) {
+  return event.type === 'click';
+}
+
+/**
+ *
+ * @param {Event} event
+ * @returns if enter key was pressed
+ */
+export function isEnterPressed(event) {
+  return event.key === 'Enter';
+}
