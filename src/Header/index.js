@@ -42,7 +42,7 @@ export default function Header({ withMenu, menuOptions, withMenuComponent }) {
   return (
     <>
       <Box sx={{ flexGrow: 1 }} />
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Typography variant="h3">
           { sharedLabels.siteName }
         </Typography>
