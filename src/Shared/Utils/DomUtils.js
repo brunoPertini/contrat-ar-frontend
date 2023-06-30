@@ -42,3 +42,7 @@ export function isClickEvent(event) {
 export function isEnterPressed(event) {
   return event.key === 'Enter';
 }
+
+export function isKeyEvent(event) {
+  return event.type.includes('key');
+}

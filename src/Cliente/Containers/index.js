@@ -1,25 +1,8 @@
-/* eslint-disable no-unused-vars */
-import { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
-import { labels } from '../../StaticData/Cliente';
-import Header from '../../Header';
-import { sharedLabels } from '../../StaticData/Shared';
-import { List, RadioList } from '../../Shared/Components';
-import { isClickEvent, isEnterPressed } from '../../Shared/Utils/DomUtils';
 import { systemConstants } from '../../Shared/Constants';
+import Cliente from '../Components';
 
 function ClienteContainer() {
-  const [searchDone, setSearchDone] = useState(false);
-  const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
-
   const menuOptions = [{
     component: UserAccountOptions,
     props: { userInfo: { name: 'Bruno' } },
@@ -73,123 +56,10 @@ function ClienteContainer() {
     },
   ];
 
-  const handleSearchDone = (event) => {
-    if (isClickEvent(event) || isEnterPressed(event)) {
-      setSearchDone(true);
-    }
-  };
+  // eslint-disable-next-line max-len
+  const dispatchHandleSearch = ({ searchType }) => Promise.resolve((searchType === systemConstants.PRODUCTS) ? products : services);
 
-  const handleSetSearchType = (event) => {
-    setSearchDone(false);
-    setSearchType(event.target.value);
-  };
-
-  const radioGroupConfig = {
-    onChange: handleSetSearchType,
-    defaultValue: systemConstants.PRODUCTS,
-    row: true,
-    values: [
-      {
-        value: systemConstants.PRODUCTS,
-        style: {
-          '& .MuiSvgIcon-root': {
-            fontSize: 50,
-          },
-        },
-        label: sharedLabels.product,
-      },
-      {
-        value: systemConstants.SERVICES,
-        style: {
-          '& .MuiSvgIcon-root': {
-            fontSize: 50,
-          },
-        },
-        label: sharedLabels.service,
-      },
-    ],
-  };
-
-  return (
-    <>
-      <Header withMenuComponent menuOptions={menuOptions} />
-      <Grid
-        container
-        sx={{
-          flexDirection: 'row',
-        }}
-        justifyContent="center"
-      >
-        <Grid
-          container
-          item
-          height="30%"
-          xs={6}
-          sx={{
-            flexDirection: 'column',
-            position: 'sticky',
-            top: 130,
-            'z-index': 100,
-          }}
-        >
-          <Grid
-            item
-          >
-            <Typography variant="h2" color="#1976d2">
-              { labels.title }
-            </Typography>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>
-                {sharedLabels.search}
-              </InputLabel>
-              <OutlinedInput
-                id="vendible-input"
-                type="text"
-                endAdornment={(
-                  <IconButton
-                    aria-label="search-input"
-                    edge="end"
-                    onClick={handleSearchDone}
-                  >
-                    <SearchOutlinedIcon />
-                  </IconButton>
-)}
-                label={sharedLabels.search}
-                onKeyUp={handleSearchDone}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>
-                {' '}
-                <Typography variant="h5">
-                  { labels.lookingFor }
-                </Typography>
-
-              </FormLabel>
-              <RadioList {...radioGroupConfig} />
-            </FormControl>
-          </Grid>
-        </Grid>
-        { searchDone && (
-        <Grid
-          container
-          item
-          xs={6}
-          sx={{
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Typography variant="h3">
-            { searchType === systemConstants.SERVICES && labels.foundServices}
-            { searchType === systemConstants.PRODUCTS && labels.foundProducts}
-          </Typography>
-          <List items={searchType === systemConstants.SERVICES ? services : products} />
-        </Grid>
-        )}
-      </Grid>
-    </>
-  );
+  return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
 }
 
 export default ClienteContainer;
