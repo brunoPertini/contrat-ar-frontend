@@ -13,6 +13,7 @@ import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
 import { labels } from '../../StaticData/Cliente';
+import Layout from '../../Shared/Components/Layout';
 
 function Cliente({
   menuOptions, dispatchHandleSearch,
@@ -25,7 +26,11 @@ function Cliente({
 
   const [vendibles, setVendibles] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSetSearchType = (event) => {
+    setSearchInputValue('');
+    setVendibles([]);
     setSearchDone(false);
     setSearchType(event.target.value);
   };
@@ -33,15 +38,21 @@ function Cliente({
   const handleStartSearch = (event) => {
     if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
       if (searchInputValue) {
+        setIsLoading(true);
         setErrorMessage('');
         const params = { searchType };
-        dispatchHandleSearch(params).then((vendiblesResponse) => {
-          setSearchDone(true);
-          setVendibles(vendiblesResponse);
-        })
-          .catch((errorMessage) => {
-            setErrorMessage(errorMessage);
-          });
+        setTimeout(() => {
+          dispatchHandleSearch(params).then((vendiblesResponse) => {
+            setSearchDone(true);
+            setVendibles(vendiblesResponse);
+          })
+            .catch((errorMessage) => {
+              setErrorMessage(errorMessage);
+            })
+            .finally(() => {
+              setIsLoading(false);
+            });
+        }, 5000);
       } else {
         setErrorMessage(labels.searchErrorMessage);
       }
@@ -76,6 +87,16 @@ function Cliente({
         label: sharedLabels.service,
       },
     ],
+  };
+
+  const gridProps = {
+    container: true,
+    item: true,
+    xs: 6,
+    sx: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
   };
 
   return (
@@ -142,23 +163,15 @@ function Cliente({
             </FormControl>
           </Grid>
         </Grid>
-        { searchDone && (
-          <Grid
-            container
-            item
-            xs={6}
-            sx={{
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant="h3">
-              { searchType === systemConstants.SERVICES && labels.foundServices}
-              { searchType === systemConstants.PRODUCTS && labels.foundProducts}
-            </Typography>
-            <List items={vendibles} />
-          </Grid>
-        )}
+        <Layout gridProps={gridProps} isLoading={isLoading}>
+          {searchDone && (
+          <Typography variant="h3">
+            { searchType === systemConstants.SERVICES && labels.foundServices}
+            { searchType === systemConstants.PRODUCTS && labels.foundProducts}
+          </Typography>
+          )}
+          <List items={vendibles} />
+        </Layout>
       </Grid>
     </>
   );
