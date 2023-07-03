@@ -9,4 +9,4 @@ export { default as PlanSelection } from './PlanSelection';
 export { default as UserAccountOptions } from './UserAccountOptions';
 export { default as List } from './VendiblesList';
 export { default as RadioList } from './RadioGroup';
-export { default as ImageCard } from './ImageCard';
+export { default as VendibleCard } from './VendibleCard';

@@ -15,5 +15,6 @@
     "product": "Producto",
     "service": "Servicio",
     "search": "Buscar",
-    "loading": "Cargando"    
+    "loading": "Cargando",
+    "provider": "Proveedor"    
 }
