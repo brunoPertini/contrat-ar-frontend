@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
@@ -52,7 +52,7 @@ function Cliente({
             .finally(() => {
               setIsLoading(false);
             });
-        }, 5000);
+        }, 3000);
       } else {
         setErrorMessage(labels.searchErrorMessage);
       }
@@ -98,6 +98,9 @@ function Cliente({
       alignItems: 'center',
     },
   };
+
+  const VendiblesList = useCallback(() => (vendibles?.length
+    ? <List items={vendibles} /> : null), [vendibles]);
 
   return (
     <>
@@ -170,7 +173,7 @@ function Cliente({
             { searchType === systemConstants.PRODUCTS && labels.foundProducts}
           </Typography>
           )}
-          <List items={vendibles} />
+          <VendiblesList />
         </Layout>
       </Grid>
     </>

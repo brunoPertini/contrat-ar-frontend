@@ -7,5 +7,6 @@ export { default as Tooltip } from './Tooltip';
 export { default as ExpandableCard } from './ExpandableCard';
 export { default as PlanSelection } from './PlanSelection';
 export { default as UserAccountOptions } from './UserAccountOptions';
-export { default as List } from './ImageList';
+export { default as List } from './VendiblesList';
 export { default as RadioList } from './RadioGroup';
+export { default as ImageCard } from './ImageCard';
