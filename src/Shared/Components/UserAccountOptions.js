@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -28,3 +28,7 @@ export default function UserAccountOptions({ userInfo }) {
     </Grid>
   );
 }
+
+UserAccountOptions.propTypes = {
+  userInfo: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};

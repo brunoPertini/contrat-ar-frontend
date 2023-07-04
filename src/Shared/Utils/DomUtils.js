@@ -43,6 +43,11 @@ export function isEnterPressed(event) {
   return event.key === 'Enter';
 }
 
+/**
+ *
+ * @param {Event} event
+ * @returns if event is of type key
+ */
 export function isKeyEvent(event) {
   return event.type.includes('key');
 }
