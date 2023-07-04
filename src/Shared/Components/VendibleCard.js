@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { sharedLabels } from '../../StaticData/Shared';
 
 export default function VendibleCard({
@@ -36,6 +35,18 @@ export default function VendibleCard({
             {' '}
             { proveedor.surname }
           </Typography>
+          {
+            !!(proveedor.location.distanceFrom) && (
+              <Typography variant="body2" color="text.secondary">
+                  {sharedLabels.to}
+                  {' '}
+                  {proveedor.location.distanceFrom}
+                  {' '}
+                  {sharedLabels.kilometersAway}
+                <LocationOnIcon fontSize="medium" />
+              </Typography>
+            )
+          }
         </CardContent>
       </Box>
       {/*
@@ -46,3 +57,24 @@ export default function VendibleCard({
     </Card>
   );
 }
+
+VendibleCard.defaultProps = {
+  image: {
+    src: '',
+    text: '',
+  },
+};
+
+VendibleCard.propTypes = {
+  image: PropTypes.shape({
+    text: PropTypes.string,
+    src: PropTypes.string,
+  }),
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  proveedor: PropTypes.shape({
+    name: PropTypes.string,
+    surname: PropTypes.string,
+    location: PropTypes.any,
+  }).isRequired,
+};

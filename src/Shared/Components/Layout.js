@@ -41,7 +41,7 @@ Layout.defaultProps = {
 
 Layout.propTypes = {
   gridProps: PropTypes.object,
-  children: PropTypes.elementType.isRequired,
+  children: PropTypes.any.isRequired,
   isLoading: PropTypes.bool,
 };
 

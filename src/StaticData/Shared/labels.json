@@ -16,5 +16,7 @@
     "service": "Servicio",
     "search": "Buscar",
     "loading": "Cargando",
-    "provider": "Proveedor"    
+    "provider": "Proveedor",
+    "to": "A",
+    "kilometersAway": "KM de distancia"    
 }

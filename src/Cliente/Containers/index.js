@@ -17,6 +17,7 @@ function ClienteContainer() {
           coordinates: [
             34.9474625, -57.9733943,
           ],
+          distanceFrom: 20,
         },
       },
       services: [
@@ -95,8 +96,10 @@ function ClienteContainer() {
     },
   ];
 
-  // eslint-disable-next-line max-len
-  const dispatchHandleSearch = ({ searchType }) => Promise.resolve((searchType === systemConstants.PRODUCTS) ? products : services);
+  const dispatchHandleSearch = ({ searchType, searchInput }) => (searchInput !== 'noResults'
+    ? Promise.resolve((searchType === systemConstants.PRODUCTS)
+      ? products : services)
+    : Promise.resolve([]));
 
   return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
 }

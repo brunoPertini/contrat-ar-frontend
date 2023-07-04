@@ -7,31 +7,34 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import Alert from '@mui/material/Alert';
 import Header from '../../Header';
-import { List, RadioList } from '../../Shared/Components';
+import { List, RadioList, Layout } from '../../Shared/Components';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
 import { labels } from '../../StaticData/Cliente';
-import Layout from '../../Shared/Components/Layout';
+import { vendiblesLabels } from '../../StaticData/Vendibles';
 
 function Cliente({
   menuOptions, dispatchHandleSearch,
 }) {
-  const [searchDone, setSearchDone] = useState(false);
   const [searchErrorMessage, setErrorMessage] = useState('');
-  const [searchInputValue, setSearchInputValue] = useState('');
 
+  const [searchInputValue, setSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
   const [vendibles, setVendibles] = useState([]);
 
+  const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [thereIsNoResults, setThereIsNoResults] = useState(false);
 
   const handleSetSearchType = (event) => {
     setSearchInputValue('');
     setVendibles([]);
     setSearchDone(false);
+    setThereIsNoResults(false);
     setSearchType(event.target.value);
   };
 
@@ -40,11 +43,16 @@ function Cliente({
       if (searchInputValue) {
         setIsLoading(true);
         setErrorMessage('');
-        const params = { searchType };
+        const params = { searchType, searchInput: searchInputValue };
         setTimeout(() => {
           dispatchHandleSearch(params).then((vendiblesResponse) => {
             setSearchDone(true);
             setVendibles(vendiblesResponse);
+            if (!vendiblesResponse.length) {
+              setThereIsNoResults(true);
+            } else {
+              setThereIsNoResults(false);
+            }
           })
             .catch((errorMessage) => {
               setErrorMessage(errorMessage);
@@ -167,13 +175,29 @@ function Cliente({
           </Grid>
         </Grid>
         <Layout gridProps={gridProps} isLoading={isLoading}>
-          {searchDone && (
+          {searchDone && !thereIsNoResults && (
           <Typography variant="h3">
             { searchType === systemConstants.SERVICES && labels.foundServices}
             { searchType === systemConstants.PRODUCTS && labels.foundProducts}
           </Typography>
           )}
           <VendiblesList />
+          { thereIsNoResults
+          && (
+          <Alert
+            severity="info"
+            variant="filled"
+            sx={{
+              mt: '2%',
+              fontSize: 'h4.fontSize',
+              '.MuiAlert-icon': {
+                fontSize: '50px;',
+              },
+            }}
+          >
+            { vendiblesLabels.noResultsFound}
+          </Alert>
+          ) }
         </Layout>
       </Grid>
     </>
