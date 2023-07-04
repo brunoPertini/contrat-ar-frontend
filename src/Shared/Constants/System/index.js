@@ -7,3 +7,7 @@ export const USER_TYPE_CLIENTE = 'CLIENTE';
 export const USER_TYPE_PROVEEDOR_SERVICES = 'SERVICIOS';
 
 export const USER_TYPE_PROVEEDOR_PRODUCTS = 'PRODUCTOS';
+
+export const SERVICES = 'servicios';
+
+export const PRODUCTS = 'productos';
