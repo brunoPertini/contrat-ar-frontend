@@ -6,14 +6,11 @@ export class HttpClient {
 
   #instance;
 
-  constructor({ baseUrl }) {
+  constructor({ baseUrl, headers }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     this.#instance = axios.create({
       baseURL: this.#baseUrl,
-      headers: {
-        'client-id': 'contractarFrontend',
-        'client-secret': 'contractar',
-      },
+      headers,
     });
   }
 
@@ -40,12 +37,12 @@ export class HttpClient {
    * @param {Object} params The query params
    * @returns
    */
-  get(url, params = {}) {
+  get(url, params = {}, config) {
     const stringParams = Object.entries(params)
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
     const fullUrl = stringParams ? `${url}?${stringParams}` : url;
-    return this.instance.get(fullUrl)
+    return this.instance.get(fullUrl, config)
       .then((response) => response.data)
       .catch((error) => this.#handleError(error));
   }

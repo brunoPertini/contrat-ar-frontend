@@ -4,6 +4,15 @@ import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
+  constructor() {
+    super({
+      headers: {
+        'client-id': 'contractarFrontend',
+        'client-secret': 'contractar',
+      },
+    });
+  }
+
   crearUsuario(signupType, queryParams, body) {
     body.plan = body.selectedPlan;
     body.location = {
@@ -25,6 +34,6 @@ export class UserHttpClient extends HttpClient {
   }
 
   login(queryParams) {
-    return this.get(usersRoutes.login, queryParams);
+    return this.get(usersRoutes.login, queryParams, { withCredentials: true });
   }
 }

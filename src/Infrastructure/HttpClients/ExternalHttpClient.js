@@ -14,6 +14,6 @@ export class ExternalHttpClient extends HttpClient {
    * @returns {string}
    */
   getAddressFromLocation(params) {
-    return this.get({ ...params, format: 'json' }).then((data) => data.display_name);
+    return this.get('', { ...params, format: 'json' }).then((data) => data.display_name);
   }
 }

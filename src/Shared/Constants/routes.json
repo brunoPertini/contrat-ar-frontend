@@ -1,5 +1,6 @@
 {
     "index": "/",
     "signup": "/signup",
-    "signin": "/signin"
+    "signin": "/signin",
+    "clientIndex": "/cliente"
 }
