@@ -4,6 +4,7 @@ import { HttpClient } from '../HttpClients/HttpClient';
 import { UserHttpClient } from '../HttpClients/UserHttpClient';
 import { HttpClientFactory } from '../HttpClientFactory';
 import Logger from '../Logging/Logger';
+import { signinLabels } from '../../StaticData/SignIn';
 
 const jose = require('jose');
 
@@ -21,9 +22,9 @@ class SecurityService {
 
   #handleError(error) {
     const errorMessages = {
-      JWSSignatureVerificationFailed: 'Hubo un error al iniciar sesión, por favor intentalo más tarde',
-      JOSENotSupported: 'Estamos en mantenimiento, por favor iniciá sesión más tarde',
-      TypeError: 'Estamos en mantenimiento, por favor iniciá sesión más tarde',
+      JWSSignatureVerificationFailed: signinLabels['error.jwt.verificationFailed'],
+      JOSENotSupported: signinLabels['error.unknown'],
+      TypeError: signinLabels['error.unknown'],
     };
 
     Logger.log(error);
@@ -45,6 +46,7 @@ class SecurityService {
    * @returns {{exp: Date,
    *  nbf: Date,
    *  role: String,
+   *  indexPage: String,
    *  sub: String}} If the jwt is valid, returns its decoded payload,
    * empty object otherwise
    * @param {string} jwt

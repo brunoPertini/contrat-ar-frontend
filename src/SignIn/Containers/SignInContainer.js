@@ -3,7 +3,6 @@ import { useState } from 'react';
 import SignIn from '../SignIn';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { withRouter } from '../../Shared/Components';
-import { routes } from '../../Shared/Constants';
 import SecurityService from '../../Infrastructure/Services/SecurityService';
 
 function SignInContainer({ router }) {
@@ -14,9 +13,10 @@ function SignInContainer({ router }) {
     return httpClient.login(params).then(async (response) => {
       const securityService = new SecurityService();
       await securityService.loadPublicKey();
-      const a = await securityService.validateJwt(response);
-      console.log(a);
-      router.navigate(routes.index);
+      const userInfo = await securityService.validateJwt(response);
+      if (userInfo.indexPage) {
+        router.navigate(userInfo.indexPage);
+      }
     }).catch((error) => {
       setErrorMessage(error.message);
     });

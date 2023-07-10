@@ -2,5 +2,5 @@
     "index": "/",
     "signup": "/signup",
     "signin": "/signin",
-    "clientIndex": "/cliente"
+    "ROLE_CLIENTE": "/cliente"
 }
