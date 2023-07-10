@@ -1,3 +1,4 @@
+import { withRouter } from '../../Shared/Components';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { systemConstants } from '../../Shared/Constants';
 import Cliente from '../Components';
@@ -104,4 +105,4 @@ function ClienteContainer() {
   return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
 }
 
-export default ClienteContainer;
+export default withRouter(ClienteContainer);

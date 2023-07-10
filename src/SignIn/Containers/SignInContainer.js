@@ -4,16 +4,21 @@ import SignIn from '../SignIn';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { withRouter } from '../../Shared/Components';
 import { routes } from '../../Shared/Constants';
+import SecurityService from '../../Infrastructure/Services/SecurityService';
 
 function SignInContainer({ router }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const dispatchSignIn = (params) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
-    return httpClient.login(params).then(() => {
+    return httpClient.login(params).then(async (response) => {
+      const securityService = new SecurityService();
+      await securityService.loadPublicKey();
+      const a = await securityService.validateJwt(response);
+      console.log(a);
       router.navigate(routes.index);
-    }).catch((message) => {
-      setErrorMessage(message);
+    }).catch((error) => {
+      setErrorMessage(error.message);
     });
   };
 
