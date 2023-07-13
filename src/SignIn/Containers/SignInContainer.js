@@ -4,17 +4,18 @@ import SignIn from '../SignIn';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { withRouter } from '../../Shared/Components';
 import SecurityService from '../../Infrastructure/Services/SecurityService';
+import CookiesService from '../../Infrastructure/Services/CookiesService';
 
-function SignInContainer({ router }) {
+function SignInContainer({ router, securityService, cookiesService }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const dispatchSignIn = (params) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.login(params).then(async (response) => {
-      const securityService = new SecurityService();
       await securityService.loadPublicKey();
       const userInfo = await securityService.validateJwt(response);
       if (userInfo.indexPage) {
+        cookiesService.add('userToken', response);
         router.navigate(userInfo.indexPage);
       }
     }).catch((error) => {
@@ -27,6 +28,8 @@ function SignInContainer({ router }) {
 
 SignInContainer.propTypes = {
   router: PropTypes.any.isRequired,
+  securityService: PropTypes.instanceOf(SecurityService).isRequired,
+  cookiesService: PropTypes.instanceOf(CookiesService).isRequired,
 };
 
 export default withRouter(SignInContainer);

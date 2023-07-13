@@ -20,6 +20,8 @@ class SecurityService {
    */
   #httpClient;
 
+  static SECURED_PATHS = ['/cliente'];
+
   #handleError(error) {
     const errorMessages = {
       JWSSignatureVerificationFailed: signinLabels['error.jwt.verificationFailed'],
@@ -31,6 +33,10 @@ class SecurityService {
     throw new Error(errorMessages[error.constructor.name]);
   }
 
+  /**
+   * Loads the public key from backend so it is used to verify each user token
+   *
+   */
   async loadPublicKey() {
     try {
       this.#httpClient = HttpClientFactory.createUserHttpClient();
