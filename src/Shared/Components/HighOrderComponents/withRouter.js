@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import {
   useLocation,
   useNavigate,
@@ -11,7 +13,11 @@ import SecurityService from '../../../Infrastructure/Services/SecurityService';
 import CookiesService from '../../../Infrastructure/Services/CookiesService';
 import { routes } from '../../Constants';
 import { setUserInfo } from '../../../State/Actions/usuario';
-import { store } from '../../../State';
+import { createStore } from '../../../State';
+
+const store = createStore();
+const securityService = new SecurityService();
+const cookiesService = new CookiesService();
 
 export default function withRouter(Component) {
   function ComponentWithRouterProp(props) {
@@ -19,42 +25,65 @@ export default function withRouter(Component) {
     const navigate = useNavigate();
     const params = useParams();
 
-    const shouldVerifyToken = SecurityService.SECURED_PATHS.includes(location.pathname);
+    const isSecuredRoute = SecurityService.SECURED_PATHS.includes(location.pathname);
+    const routeHasChanged = useMemo(() => !!cookiesService.get('previousRoute') && location.pathname !== cookiesService.get('previousRoute'), [location]);
 
     const [tokenVerified, setTokenVerified] = useState(false);
 
-    const securityService = new SecurityService();
-    const cookiesService = new CookiesService();
-
-    const verifyToken = async (token) => {
-      await securityService.loadPublicKey();
+    const verifyToken = useCallback(async (token) => {
       try {
         const userInfo = await securityService.validateJwt(token);
         if (isEmpty(userInfo)) {
           navigate(routes.signin);
         } else {
           setTokenVerified(true);
-          cookiesService.remove('userToken');
-          store.dispatch(setUserInfo({ ...userInfo, token }));
+          await store.dispatch(setUserInfo({ ...userInfo, token }));
         }
       } catch (error) {
         navigate(routes.signin);
       }
+    }, [securityService]);
+
+    const fetchAndSetUserInfo = useCallback(async (userToken) => {
+      if (userToken) {
+        const userInfo = await securityService.validateJwt(userToken);
+        store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
+      }
+    }, [securityService]);
+
+    const handleOnBeforeUnload = () => {
+      const { usuario: { token } } = store.getState();
+      if (!cookiesService.get('userToken') && token) {
+        cookiesService.add('userToken', token);
+      }
     };
 
-    useEffect(() => () => {
-      console.log('CAMBIANDO RUTA');
+    useEffect(() => {
+      const previousRoute = cookiesService.get('previousRoute');
+      const pathChanged = previousRoute && location.pathname !== previousRoute;
+      const userToken = cookiesService.get('userToken');
+      if (pathChanged && isSecuredRoute) {
+        verifyToken(userToken);
+      } else {
+        fetchAndSetUserInfo(userToken);
+      }
+
+      cookiesService.remove('userToken');
+
+      window.addEventListener('beforeunload', handleOnBeforeUnload);
+
+      return () => {
+        window.removeEventListener('beforeunload', handleOnBeforeUnload);
+      };
     }, []);
 
     useEffect(() => {
-      console.log('CAMBIO ruta');
-      if (shouldVerifyToken) {
-        const userToken = cookiesService.get('userToken');
-        verifyToken(userToken);
-      }
-    }, [location]);
+      cookiesService.add('previousRoute', location.pathname);
+    }, [location.pathname]);
 
-    if (!shouldVerifyToken || (shouldVerifyToken && tokenVerified)) {
+    if (!isSecuredRoute
+       || !(routeHasChanged)
+        || (isSecuredRoute && tokenVerified)) {
       return (
         <Provider store={store}>
           <Component

@@ -12,7 +12,6 @@ function SignInContainer({ router, securityService, cookiesService }) {
   const dispatchSignIn = (params) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.login(params).then(async (response) => {
-      await securityService.loadPublicKey();
       const userInfo = await securityService.validateJwt(response);
       if (userInfo.indexPage) {
         cookiesService.add('userToken', response);

@@ -37,7 +37,7 @@ class SecurityService {
    * Loads the public key from backend so it is used to verify each user token
    *
    */
-  async loadPublicKey() {
+  async #loadPublicKey() {
     try {
       this.#httpClient = HttpClientFactory.createUserHttpClient();
       const spkiContent = await this.#httpClient.getPublicKey();
@@ -58,6 +58,7 @@ class SecurityService {
    * @param {string} jwt
   */
   async validateJwt(jwt) {
+    await this.#loadPublicKey();
     return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
       const { payload } = jwtResultValue;
       return !isEmpty(payload) ? payload : {};
