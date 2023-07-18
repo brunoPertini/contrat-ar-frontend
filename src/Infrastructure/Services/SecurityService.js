@@ -22,6 +22,8 @@ class SecurityService {
 
   static SECURED_PATHS = ['/cliente'];
 
+  static LOGIN_PATH = '/signin';
+
   #handleError(error) {
     const errorMessages = {
       JWSSignatureVerificationFailed: signinLabels['error.jwt.verificationFailed'],

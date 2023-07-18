@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-restricted-globals */
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
@@ -21,14 +23,17 @@ const cookiesService = new CookiesService();
 
 export default function withRouter(Component) {
   function ComponentWithRouterProp(props) {
-    const location = useLocation();
+    const { location } = window;
     const navigate = useNavigate();
     const params = useParams();
 
     const isSecuredRoute = SecurityService.SECURED_PATHS.includes(location.pathname);
-    const routeHasChanged = useMemo(() => !!cookiesService.get('previousRoute') && location.pathname !== cookiesService.get('previousRoute'), [location]);
 
-    const [tokenVerified, setTokenVerified] = useState(false);
+    // null = not verified; false = verification failed; true= verification passed
+    const [tokenVerified, setTokenVerified] = useState(null);
+
+    const shouldGoBack = useMemo(() => [SecurityService.LOGIN_PATH].includes(location.pathname)
+    && !!(cookiesService.get('userToken')), [location.pathname]);
 
     const verifyToken = useCallback(async (token) => {
       try {
@@ -56,13 +61,15 @@ export default function withRouter(Component) {
       if (!cookiesService.get('userToken') && token) {
         cookiesService.add('userToken', token);
       }
+      cookiesService.add('previousRoute', location.pathname);
     };
 
     useEffect(() => {
-      const previousRoute = cookiesService.get('previousRoute');
-      const pathChanged = previousRoute && location.pathname !== previousRoute;
+      if (shouldGoBack) {
+        return navigate(cookiesService.get('previousRoute'));
+      }
       const userToken = cookiesService.get('userToken');
-      if (pathChanged && isSecuredRoute) {
+      if (isSecuredRoute) {
         verifyToken(userToken);
       } else {
         fetchAndSetUserInfo(userToken);
@@ -77,13 +84,11 @@ export default function withRouter(Component) {
       };
     }, []);
 
-    useEffect(() => {
-      cookiesService.add('previousRoute', location.pathname);
-    }, [location.pathname]);
+    if (isSecuredRoute && tokenVerified === null) {
+      return null;
+    }
 
-    if (!isSecuredRoute
-       || !(routeHasChanged)
-        || (isSecuredRoute && tokenVerified)) {
+    if ((!shouldGoBack) && (!isSecuredRoute || (isSecuredRoute && tokenVerified))) {
       return (
         <Provider store={store}>
           <Component

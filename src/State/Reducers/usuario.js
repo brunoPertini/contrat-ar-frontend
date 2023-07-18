@@ -14,7 +14,7 @@ import { SET_USER_INFO } from '../ActionTypes/usuario';
 /**
  * @type {UsuarioModel} person
  */
-const userState = {
+export const userState = {
   name: '',
   surname: '',
   email: '',
