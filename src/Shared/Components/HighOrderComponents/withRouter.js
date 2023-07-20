@@ -27,68 +27,82 @@ export default function withRouter(Component) {
     const navigate = useNavigate();
     const params = useParams();
 
-    const isSecuredRoute = SecurityService.SECURED_PATHS.includes(location.pathname);
+    const isSecuredRoute = useMemo(
+      () => SecurityService.SECURED_PATHS.includes(location.pathname),
+      [location.pathname],
+    );
 
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
 
-    const shouldGoBack = useMemo(() => [SecurityService.LOGIN_PATH].includes(location.pathname)
-    && !!(cookiesService.get('userToken')), [location.pathname]);
-
-    const verifyToken = useCallback(async (token) => {
+    const verifyToken = useCallback(async () => {
       try {
-        const userInfo = await securityService.validateJwt(token);
+        const userToken = cookiesService.get('userToken');
+        const userInfo = await securityService.validateJwt(userToken);
         if (isEmpty(userInfo)) {
           navigate(routes.signin);
         } else {
           setTokenVerified(true);
-          await store.dispatch(setUserInfo({ ...userInfo, token }));
+          await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
+          cookiesService.remove('userToken');
         }
       } catch (error) {
         navigate(routes.signin);
       }
     }, [securityService]);
 
-    const fetchAndSetUserInfo = useCallback(async (userToken) => {
+    const fetchAndSetUserInfo = useCallback(async () => {
+      const userToken = cookiesService.get('userToken');
       if (userToken) {
         const userInfo = await securityService.validateJwt(userToken);
         store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
+        cookiesService.remove('userToken');
       }
     }, [securityService]);
 
-    const handleOnBeforeUnload = () => {
+    const handleOnBeforeUnload = (event) => {
+      console.log(event);
       const { usuario: { token } } = store.getState();
       if (!cookiesService.get('userToken') && token) {
         cookiesService.add('userToken', token);
       }
-      cookiesService.add('previousRoute', location.pathname);
+
+      const shouldGoBack = [SecurityService.LOGIN_PATH, '/'].includes(location.pathname)
+      && !!(cookiesService.get('userToken'));
+
+      if (shouldGoBack) {
+        navigate(routes.ROLE_CLIENTE);
+      }
     };
 
     useEffect(() => {
+      const shouldGoBack = [SecurityService.LOGIN_PATH, '/'].includes(location.pathname)
+      && !!(cookiesService.get('userToken'));
+
       if (shouldGoBack) {
-        return navigate(cookiesService.get('previousRoute'));
-      }
-      const userToken = cookiesService.get('userToken');
-      if (isSecuredRoute) {
-        verifyToken(userToken);
-      } else {
-        fetchAndSetUserInfo(userToken);
+        return navigate(routes.ROLE_CLIENTE);
       }
 
-      cookiesService.remove('userToken');
+      if (isSecuredRoute) {
+        verifyToken();
+      } else {
+        fetchAndSetUserInfo();
+      }
 
       window.addEventListener('beforeunload', handleOnBeforeUnload);
 
       return () => {
-        window.removeEventListener('beforeunload', handleOnBeforeUnload);
+        handleOnBeforeUnload();
       };
     }, []);
+
+    console.log('cookie token: ', cookiesService.get('userToken'));
 
     if (isSecuredRoute && tokenVerified === null) {
       return null;
     }
 
-    if ((!shouldGoBack) && (!isSecuredRoute || (isSecuredRoute && tokenVerified))) {
+    if ((!isSecuredRoute || (isSecuredRoute && tokenVerified))) {
       return (
         <Provider store={store}>
           <Component

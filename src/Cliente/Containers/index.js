@@ -5,12 +5,14 @@ import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { systemConstants } from '../../Shared/Constants';
 import Cliente from '../Components';
 
+const stateSelector = (state) => state;
+
 const userInfoSelector = createSelector(
+  stateSelector,
   (state) => state.usuario,
 );
 
 function ClienteContainer() {
-  console.log(userInfoSelector);
   const userInfo = useSelector(userInfoSelector);
   const menuOptions = [{
     component: UserAccountOptions,
