@@ -38,8 +38,6 @@ export default function withRouter(Component) {
       [location.pathname],
     );
 
-    const userIndexPage = useMemo(() => store.getState()?.usuario?.indexPage ?? '', [store]);
-
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
 
@@ -51,6 +49,7 @@ export default function withRouter(Component) {
           setTokenVerified(false);
           navigate(routes.signin);
         } else {
+          cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
           setTokenVerified(true);
           await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
           cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
@@ -65,6 +64,7 @@ export default function withRouter(Component) {
       const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
       if (userToken) {
         const userInfo = await securityService.validateJwt(userToken);
+        cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
         store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
         cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
       }
@@ -83,7 +83,7 @@ export default function withRouter(Component) {
       && !!(cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN));
 
       if (shouldGoBack) {
-        navigate(userIndexPage);
+        navigate(cookiesService.get((CookiesService.COOKIES_NAMES.USER_INDEX_PAGE)));
       }
     };
 
@@ -95,7 +95,7 @@ export default function withRouter(Component) {
       && !!(cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN));
 
       if (shouldGoBack) {
-        return navigate(userIndexPage);
+        return navigate(cookiesService.get((CookiesService.COOKIES_NAMES.USER_INDEX_PAGE)));
       }
 
       if (isSecuredRoute) {

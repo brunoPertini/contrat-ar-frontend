@@ -1,6 +1,7 @@
 class CookiesService {
   static COOKIES_NAMES = {
     USER_TOKEN: 'userToken',
+    USER_INDEX_PAGE: 'userIndexPage',
   };
 
   add(key, value) {
