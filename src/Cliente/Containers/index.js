@@ -1,11 +1,22 @@
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
+import { withRouter } from '../../Shared/Components';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { systemConstants } from '../../Shared/Constants';
 import Cliente from '../Components';
 
+const stateSelector = (state) => state;
+
+const userInfoSelector = createSelector(
+  stateSelector,
+  (state) => state.usuario,
+);
+
 function ClienteContainer() {
+  const userInfo = useSelector(userInfoSelector);
   const menuOptions = [{
     component: UserAccountOptions,
-    props: { userInfo: { name: 'Bruno' } },
+    props: { userInfo },
   }];
 
   const services = [
@@ -104,4 +115,4 @@ function ClienteContainer() {
   return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
 }
 
-export default ClienteContainer;
+export default withRouter(ClienteContainer);

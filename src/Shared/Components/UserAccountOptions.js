@@ -15,6 +15,8 @@ export default function UserAccountOptions({ userInfo }) {
           { sharedLabels.hello }
           {' '}
           { userInfo.name }
+          {' '}
+          { userInfo.surname }
         </Typography>
       </Grid>
       <Grid item>
@@ -30,5 +32,5 @@ export default function UserAccountOptions({ userInfo }) {
 }
 
 UserAccountOptions.propTypes = {
-  userInfo: PropTypes.shape({ name: PropTypes.string }).isRequired,
+  userInfo: PropTypes.shape({ name: PropTypes.string, surname: PropTypes.string }).isRequired,
 };

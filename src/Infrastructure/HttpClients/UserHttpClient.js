@@ -4,6 +4,15 @@ import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
+  constructor() {
+    super({
+      headers: {
+        'client-id': 'contractarFrontend',
+        'client-secret': 'contractar',
+      },
+    });
+  }
+
   crearUsuario(signupType, queryParams, body) {
     body.plan = body.selectedPlan;
     body.location = {
@@ -24,7 +33,18 @@ export class UserHttpClient extends HttpClient {
     return this.post(url, finalQueryParams, body);
   }
 
+  /**
+    * @param{{email: string, password: string}} queryParams
+    * @returns {Promise<String>} A JWT holding user info
+   */
   login(queryParams) {
-    return this.get(usersRoutes.login, queryParams);
+    return this.get(usersRoutes.login, queryParams, { withCredentials: true });
+  }
+
+  /**
+   * @returns {Promise<String>} the public key used to validate future incoming jwt
+   */
+  getPublicKey() {
+    return this.get(usersRoutes.getPublicKey);
   }
 }
