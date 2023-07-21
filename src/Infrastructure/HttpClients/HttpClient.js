@@ -8,9 +8,10 @@ export class HttpClient {
 
   constructor({ baseUrl, headers }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
+    const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
     this.#instance = axios.create({
       baseURL: this.#baseUrl,
-      headers,
+      headers: { ...headers, TimeZone: timeZone },
     });
   }
 
@@ -33,9 +34,9 @@ export class HttpClient {
   }
 
   /**
-   *
+   * @param {string} url
    * @param {Object} params The query params
-   * @returns
+   * @param {{withCredentials: Boolean }} config additional config for the request
    */
   get(url, params = {}, config) {
     const stringParams = Object.entries(params)
@@ -48,10 +49,9 @@ export class HttpClient {
   }
 
   /**
-   *
+   * @param {string} url
    * @param {Object} params The query params
    * @param {Object} body Request payload
-   * @returns
    */
   post(url, params, body) {
     return this.instance.post(url, body, { params })

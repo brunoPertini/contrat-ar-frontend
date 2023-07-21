@@ -1,4 +1,8 @@
 class CookiesService {
+  static COOKIES_NAMES = {
+    USER_TOKEN: 'userToken',
+  };
+
   add(key, value) {
     document.cookie = `${key}=${value}`;
   }

@@ -140,7 +140,7 @@ function SignUpContainer({ router }) {
   );
 }
 
-export default withRouter(SignUpContainer, ['usuario']);
+export default withRouter(SignUpContainer);
 
 SignUpContainer.propTypes = {
   router: PropTypes.any.isRequired,

@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
-import { combineReducers, legacy_createStore } from 'redux';
+import { combineReducers, legacy_createStore, Store } from 'redux';
 import usuarioReducer from './Reducers/usuario';
 
-// TODO: diferenciar dev de prod
+// TODO: differentiate dev and prod
 /**
- * @type { import('redux').Store}
+ * @returns {Store}
  */
 export const createStore = () => legacy_createStore(
   combineReducers({ usuario: usuarioReducer }),

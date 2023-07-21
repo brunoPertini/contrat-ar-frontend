@@ -60,7 +60,9 @@ class SecurityService {
    * @param {string} jwt
   */
   async validateJwt(jwt) {
-    await this.#loadPublicKey();
+    if (!this.#publicKey) {
+      await this.#loadPublicKey();
+    }
     return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
       const { payload } = jwtResultValue;
       return !isEmpty(payload) ? payload : {};
