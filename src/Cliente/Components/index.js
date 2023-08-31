@@ -108,7 +108,7 @@ function Cliente({
   };
 
   const VendiblesList = useCallback(() => (vendibles?.length
-    ? <List items={vendibles} /> : null), [vendibles]);
+    ? <List items={vendibles} vendibleType={searchType} /> : null), [vendibles]);
 
   return (
     <>

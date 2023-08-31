@@ -1,6 +1,14 @@
 import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
-import { HttpClient } from './HttpClients/HttpClient';
+// eslint-disable-next-line import/named
+import { HttpClient, HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
 import { UserHttpClient } from './HttpClients/UserHttpClient';
+import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
+
+/**
+ * @typedef HttpClientInstanceFactoryConfiguration
+ * Params needed to be passed to instances for several purposes
+ * @property {String} token
+ */
 
 export class HttpClientFactory {
   static httpClientInstance;
@@ -8,6 +16,8 @@ export class HttpClientFactory {
   static externalInstance;
 
   static userHttpClientInstance;
+
+  static vendibleHttpClientInstance;
 
   /**
    *
@@ -43,5 +53,22 @@ export class HttpClientFactory {
       HttpClientFactory.externalInstance = new ExternalHttpClient({ baseUrl });
     }
     return HttpClientFactory.externalInstance;
+  }
+
+  /**
+   *
+   * @param {string} vendibleType
+   * @param {HttpClientInstanceFactoryConfiguration} config
+   * @returns {VendibleHttpClient}
+   */
+  static createVendibleHttpClient(vendibleType, config) {
+    if (!HttpClientFactory.vendibleHttpClientInstance
+      || HttpClientFactory.vendibleHttpClientInstance.vendibleType !== vendibleType) {
+      HttpClientFactory.vendibleHttpClientInstance = new VendibleHttpClient(
+        vendibleType,
+        { headersValues: { Authorization: config.token } },
+      );
+    }
+    return HttpClientFactory.vendibleHttpClientInstance;
   }
 }

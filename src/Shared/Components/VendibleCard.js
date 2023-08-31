@@ -15,7 +15,6 @@ export default function VendibleCard({
       <CardMedia
         sx={{ height: 140 }}
         image={image.src}
-        title={image.text}
       />
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <CardContent>
@@ -30,12 +29,15 @@ export default function VendibleCard({
           <Typography gutterBottom variant="h5" component="div">
             { sharedLabels.provider }
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            { proveedor.name }
-            {' '}
-            { proveedor.surname }
-          </Typography>
           {
+            proveedor && (
+              <>
+                <Typography variant="body2" color="text.secondary">
+                  { proveedor.name }
+                  {' '}
+                  { proveedor.surname }
+                </Typography>
+                {
             !!(proveedor.location.distanceFrom) && (
               <Typography variant="body2" color="text.secondary">
                   {sharedLabels.to}
@@ -45,6 +47,9 @@ export default function VendibleCard({
                   {sharedLabels.kilometersAway}
                 <LocationOnIcon fontSize="medium" />
               </Typography>
+            )
+          }
+              </>
             )
           }
         </CardContent>
@@ -61,13 +66,11 @@ export default function VendibleCard({
 VendibleCard.defaultProps = {
   image: {
     src: '',
-    text: '',
   },
 };
 
 VendibleCard.propTypes = {
   image: PropTypes.shape({
-    text: PropTypes.string,
     src: PropTypes.string,
   }),
   title: PropTypes.string.isRequired,

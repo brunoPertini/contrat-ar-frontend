@@ -1,17 +1,34 @@
 import axios from 'axios';
 import Logger from '../Logging/Logger';
 
+/**
+ * @typedef HttpClientInstanceConfiguration
+ * Config needed to set the instance (headers, cookies, etc)
+ * @property {{token: String}} headersValues
+ */
+
+const defaultHeadersValues = {
+  Authorization: undefined,
+};
+
 export class HttpClient {
   #baseUrl;
 
   #instance;
 
-  constructor({ baseUrl, headers }) {
+  constructor({ baseUrl, headersValues = defaultHeadersValues }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+    const AuthorizationHeaderValue = headersValues.Authorization
+      ? `Bearer ${headersValues.Authorization}` : undefined;
     this.#instance = axios.create({
       baseURL: this.#baseUrl,
-      headers: { ...headers, TimeZone: timeZone },
+      headers: {
+        TimeZone: timeZone,
+        'client-id': process.env.REACT_APP_CLIENT_ID,
+        'client-secret': process.env.REACT_APP_CLIENT_SECRET,
+        Authorization: AuthorizationHeaderValue,
+      },
     });
   }
 
