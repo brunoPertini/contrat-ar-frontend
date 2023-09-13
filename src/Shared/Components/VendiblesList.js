@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import VendibleCard from './VendibleCard';
@@ -19,6 +18,7 @@ export default function VendiblesList({ items, vendibleType }) {
           title={vendible.nombre}
           text={vendible.descripcion}
           proveedor={vendible.proveedor}
+          vendibleType={vendibleType}
         />
       ))}
     </List>
