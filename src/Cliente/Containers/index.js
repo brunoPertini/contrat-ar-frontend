@@ -25,7 +25,9 @@ function ClienteContainer() {
       { token: userInfo.token },
     );
 
-    return httpClient.getVendibleByName(searchInput);
+    return httpClient.getVendibleByName(searchInput).catch((error) => {
+      console.log(error);
+    });
   };
 
   return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;

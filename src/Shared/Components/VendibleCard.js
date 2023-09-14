@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -5,27 +6,37 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { ImageList, ImageListItem } from '@mui/material';
 import { sharedLabels } from '../../StaticData/Shared';
 
 export default function VendibleCard({
-  image, title, text, proveedor,
+  vendibleTitle, images, vendibleType,
 }) {
   return (
     <Card sx={{ mb: '2%' }}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image={image.src}
-      />
+      {
+        !!images.length && (
+          <ImageList cols={images.length} gap={10}>
+            {images.map((imageUrl) => (
+              <ImageListItem key={imageUrl}>
+                <img
+                  src={imageUrl}
+                  srcSet={imageUrl}
+                  alt={vendibleTitle}
+                  loading="lazy"
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        )
+      }
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            { title }
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            { text }
+            { vendibleTitle }
           </Typography>
         </CardContent>
-        <CardContent>
+        {/* <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             { sharedLabels.provider }
           </Typography>
@@ -52,32 +63,14 @@ export default function VendibleCard({
               </>
             )
           }
-        </CardContent>
+        </CardContent> */}
       </Box>
-      {/*
-      <CardActions>
-         TODO: checkbox para marcar proveedor
-      </CardActions>
-      */}
     </Card>
   );
 }
 
-VendibleCard.defaultProps = {
-  image: {
-    src: '',
-  },
-};
-
 VendibleCard.propTypes = {
-  image: PropTypes.shape({
-    src: PropTypes.string,
-  }),
-  title: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  proveedor: PropTypes.shape({
-    name: PropTypes.string,
-    surname: PropTypes.string,
-    location: PropTypes.any,
-  }).isRequired,
+  vendibleTitle: PropTypes.string.isRequired,
+  images: PropTypes.arrayOf(PropTypes.string).isRequired,
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
 };

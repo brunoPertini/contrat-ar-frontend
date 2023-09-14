@@ -1,63 +1,52 @@
+/* eslint-disable no-plusplus */
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
+import { useMemo } from 'react';
+import { Divider } from '@mui/material';
 import VendibleCard from './VendibleCard';
+import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
 
 /**
  * List that shows each service or product info, including its provider
- * @param {Array<T>} items
+ * @param {Object<String, Array>} vendiblesObject
+ * @param {String} vendibleType
  */
-export default function VendiblesList({ items, vendibleType }) {
+export default function VendiblesList({ vendiblesObject, vendibleType }) {
+  const vendiblesNames = useMemo(() => Object.keys(vendiblesObject.vendibles), [vendiblesObject]);
   return (
     <List sx={{
-      width: '100%', flexDirection: 'column', alignItems: 'center', display: 'flex',
+      width: '100%',
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
     }}
     >
-      { items.map((vendible) => (
-        <VendibleCard
-          image={{ src: vendible.imagesUrl[0] }}
-          title={vendible.nombre}
-          text={vendible.descripcion}
-          proveedor={vendible.proveedor}
-          vendibleType={vendibleType}
-        />
-      ))}
+      { vendiblesNames.map((vendibleName) => {
+        const images = [];
+        for (let i = 0;
+          i < vendiblesObject.vendibles[vendibleName].length && images.length < 3;
+          i++) {
+          if (vendiblesObject.vendibles[vendibleName][i].imagenUrl) {
+            images.push(vendiblesObject.vendibles[vendibleName][i].imagenUrl);
+          }
+        }
+        return (
+          <>
+            <VendibleCard
+              vendibleTitle={vendibleName}
+              images={images}
+              vendibleType={vendibleType}
+            />
+            <Divider light />
+
+          </>
+        );
+      })}
     </List>
   );
 }
 
-// TODO: extraerlo cuando se integre el backend
-// const proveedorShape = PropTypes.shape({
-//   name: PropTypes.string,
-//   surname: PropTypes.string,
-//   location: PropTypes.shape({
-//     coordinates: PropTypes.arrayOf(PropTypes.number),
-//     distanceFrom: PropTypes.number,
-//   }),
-// });
-
-// const servicioShape = PropTypes.shape({
-//   proveedor: PropTypes.shape(proveedorShape).isRequired,
-//   services: PropTypes.arrayOf(PropTypes.shape({
-//     title: PropTypes.string,
-//     text: PropTypes.string,
-//     image: PropTypes.shape({
-//       src: PropTypes.string,
-//     }).isRequired,
-//   })),
-// });
-
-// const productoShape = PropTypes.shape({
-//   proveedor: PropTypes.shape(proveedorShape).isRequired,
-//   products: PropTypes.arrayOf(PropTypes.shape({
-//     title: PropTypes.string,
-//     text: PropTypes.string,
-//     image: PropTypes.shape({
-//       src: PropTypes.string,
-//     }).isRequired,
-//   })),
-// });
-
 VendiblesList.propTypes = {
-  items: PropTypes.array.isRequired,
+  vendiblesObject: PropTypes.shape(getVendiblesResponseShape).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
 };
