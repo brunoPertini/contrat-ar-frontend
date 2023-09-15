@@ -11,3 +11,7 @@ export const USER_TYPE_PROVEEDOR_PRODUCTS = 'PRODUCTOS';
 export const SERVICES = 'servicios';
 
 export const PRODUCTS = 'productos';
+
+export const PRODUCT = 'PRODUCTO';
+
+export const SERVICE = 'SERVICIO';

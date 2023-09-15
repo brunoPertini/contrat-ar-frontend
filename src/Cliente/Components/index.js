@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Alert from '@mui/material/Alert';
+import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import { List, RadioList, Layout } from '../../Shared/Components';
 import { systemConstants } from '../../Shared/Constants';
@@ -24,7 +25,7 @@ function Cliente({
   const [searchInputValue, setSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
-  const [vendibles, setVendibles] = useState([]);
+  const [vendiblesResponse, setVendiblesResponse] = useState({});
 
   const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ function Cliente({
 
   const handleSetSearchType = (event) => {
     setSearchInputValue('');
-    setVendibles([]);
+    setVendiblesResponse({});
     setSearchDone(false);
     setThereIsNoResults(false);
     setSearchType(event.target.value);
@@ -44,23 +45,21 @@ function Cliente({
         setIsLoading(true);
         setErrorMessage('');
         const params = { searchType, searchInput: searchInputValue };
-        setTimeout(() => {
-          dispatchHandleSearch(params).then((vendiblesResponse) => {
-            setSearchDone(true);
-            setVendibles(vendiblesResponse);
-            if (!vendiblesResponse.length) {
-              setThereIsNoResults(true);
-            } else {
-              setThereIsNoResults(false);
-            }
+        dispatchHandleSearch(params).then((response) => {
+          setSearchDone(true);
+          setVendiblesResponse(response);
+          if (isEmpty(response.vendibles)) {
+            setThereIsNoResults(true);
+          } else {
+            setThereIsNoResults(false);
+          }
+        })
+          .catch((errorMessage) => {
+            setErrorMessage(errorMessage);
           })
-            .catch((errorMessage) => {
-              setErrorMessage(errorMessage);
-            })
-            .finally(() => {
-              setIsLoading(false);
-            });
-        }, 3000);
+          .finally(() => {
+            setIsLoading(false);
+          });
       } else {
         setErrorMessage(labels.searchErrorMessage);
       }
@@ -107,8 +106,11 @@ function Cliente({
     },
   };
 
-  const VendiblesList = useCallback(() => (vendibles?.length
-    ? <List items={vendibles} /> : null), [vendibles]);
+  const VendiblesList = useCallback(
+    () => (!isEmpty(vendiblesResponse)
+      ? <List vendiblesObject={vendiblesResponse} vendibleType={searchType} /> : null),
+    [vendiblesResponse],
+  );
 
   return (
     <>
@@ -138,7 +140,7 @@ function Cliente({
             <Typography variant="h2" color="#1976d2">
               { labels.title }
             </Typography>
-            <FormControl fullWidth variant="outlined">
+            <FormControl variant="outlined" sx={{ width: '60%' }}>
               <TextField
                 autoFocus
                 id="vendible-input"
@@ -162,6 +164,8 @@ function Cliente({
                 value={searchInputValue}
               />
             </FormControl>
+          </Grid>
+          <Grid item>
             <FormControl sx={{ mt: '3%' }}>
               <FormLabel>
                 {' '}

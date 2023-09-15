@@ -1,0 +1,4 @@
+{
+    "getService": "/service",
+    "getProduct": "/product"
+}

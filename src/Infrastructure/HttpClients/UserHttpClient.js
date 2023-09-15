@@ -4,15 +4,6 @@ import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
-  constructor() {
-    super({
-      headers: {
-        'client-id': 'contractarFrontend',
-        'client-secret': 'contractar',
-      },
-    });
-  }
-
   crearUsuario(signupType, queryParams, body) {
     body.plan = body.selectedPlan;
     body.location = {
