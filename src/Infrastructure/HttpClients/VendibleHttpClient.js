@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import { systemConstants } from '../../Shared/Constants';
 import { vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient, HttpClientInstanceConfiguration } from './HttpClient';

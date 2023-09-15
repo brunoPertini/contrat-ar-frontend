@@ -8,14 +8,17 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Link } from '@mui/material';
 import Groups2Icon from '@mui/icons-material/Groups2';
-import * as systemConstants from '../Constants/System';
-import { labels } from '../../StaticData/Cliente';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function VendibleCard({
-  vendibleTitle, images, vendibleType,
+  vendibleTitle, images, linkLabel, redirectLink,
 }) {
-  const linkLabel = vendibleType === systemConstants.PRODUCTS ? labels.linkVendibleCardProduct
-    : labels.linkVendibleCardService;
+  const navigate = useNavigate();
+
+  const handleGoToVendiblePage = useCallback(() => {
+    navigate(redirectLink, { state: { test: 'fdfdfd' } });
+  }, [navigate]);
   return (
     <Card sx={{ mb: '2%' }}>
       {
@@ -44,7 +47,14 @@ export default function VendibleCard({
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <CardContent sx={{ display: 'flex' }}>
           <Groups2Icon fontSize="large" />
-          <Link href="#" variant="h5" sx={{ ml: '10px' }}>
+          <Link
+            onClick={handleGoToVendiblePage}
+            variant="h5"
+            sx={{
+              ml: '10px',
+              cursor: 'pointer',
+            }}
+          >
             { linkLabel }
           </Link>
         </CardContent>
@@ -56,7 +66,8 @@ export default function VendibleCard({
 VendibleCard.propTypes = {
   vendibleTitle: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
+  linkLabel: PropTypes.string.isRequired,
+  redirectLink: PropTypes.string.isRequired,
 };
 
 // TODO: extraerlo a pagina de vendible

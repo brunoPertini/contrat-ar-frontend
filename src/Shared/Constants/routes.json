@@ -2,5 +2,7 @@
     "index": "/",
     "signup": "/signup",
     "signin": "/signin",
-    "ROLE_CLIENTE": "/cliente"
+    "ROLE_CLIENTE": "/cliente",
+    "productoIndex": "/producto",
+    "servicioIndex": "/servicio"
 }

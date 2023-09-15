@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import { useMemo } from 'react';
-import { Divider } from '@mui/material';
+import Divider from '@mui/material/Divider';
 import VendibleCard from './VendibleCard';
+import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
+import { routes, systemConstants } from '../Constants';
 
 /**
  * List that shows each service or product info, including its provider
@@ -12,6 +14,15 @@ import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
  */
 export default function VendiblesList({ vendiblesObject, vendibleType }) {
   const vendiblesNames = useMemo(() => Object.keys(vendiblesObject.vendibles), [vendiblesObject]);
+
+  const { linkLabel, redirectLink } = useMemo(() => (vendibleType === systemConstants.PRODUCTS ? {
+    linkLabel: labels.linkVendibleCardProduct,
+    redirectLink: routes.productoIndex,
+  } : {
+    linkLabel: labels.linkVendibleCardService,
+    redirectLink: routes.servicioIndex,
+  }), [vendibleType]);
+
   return (
     <List sx={{
       width: '100%',
@@ -34,7 +45,8 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
             <VendibleCard
               vendibleTitle={vendibleName}
               images={images}
-              vendibleType={vendibleType}
+              linkLabel={linkLabel}
+              redirectLink={redirectLink}
             />
             <Divider light />
 
