@@ -1,17 +1,21 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { ImageList, ImageListItem } from '@mui/material';
-import { sharedLabels } from '../../StaticData/Shared';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import { Link } from '@mui/material';
+import Groups2Icon from '@mui/icons-material/Groups2';
+import * as systemConstants from '../Constants/System';
+import { labels } from '../../StaticData/Cliente';
 
 export default function VendibleCard({
   vendibleTitle, images, vendibleType,
 }) {
+  const linkLabel = vendibleType === systemConstants.PRODUCTS ? labels.linkVendibleCardProduct
+    : labels.linkVendibleCardService;
   return (
     <Card sx={{ mb: '2%' }}>
       {
@@ -36,34 +40,14 @@ export default function VendibleCard({
             { vendibleTitle }
           </Typography>
         </CardContent>
-        {/* <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            { sharedLabels.provider }
-          </Typography>
-          {
-            proveedor && (
-              <>
-                <Typography variant="body2" color="text.secondary">
-                  { proveedor.name }
-                  {' '}
-                  { proveedor.surname }
-                </Typography>
-                {
-            !!(proveedor.location.distanceFrom) && (
-              <Typography variant="body2" color="text.secondary">
-                  {sharedLabels.to}
-                  {' '}
-                  {proveedor.location.distanceFrom}
-                  {' '}
-                  {sharedLabels.kilometersAway}
-                <LocationOnIcon fontSize="medium" />
-              </Typography>
-            )
-          }
-              </>
-            )
-          }
-        </CardContent> */}
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <CardContent sx={{ display: 'flex' }}>
+          <Groups2Icon fontSize="large" />
+          <Link href="#" variant="h5" sx={{ ml: '10px' }}>
+            { linkLabel }
+          </Link>
+        </CardContent>
       </Box>
     </Card>
   );
@@ -74,3 +58,33 @@ VendibleCard.propTypes = {
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
 };
+
+// TODO: extraerlo a pagina de vendible
+/* <CardContent>
+  <Typography gutterBottom variant="h5" component="div">
+    { sharedLabels.provider }
+  </Typography>
+  {
+    proveedor && (
+      <>
+        <Typography variant="body2" color="text.secondary">
+          { proveedor.name }
+          {' '}
+          { proveedor.surname }
+        </Typography>
+        {
+    !!(proveedor.location.distanceFrom) && (
+      <Typography variant="body2" color="text.secondary">
+          {sharedLabels.to}
+          {' '}
+          {proveedor.location.distanceFrom}
+          {' '}
+          {sharedLabels.kilometersAway}
+        <LocationOnIcon fontSize="medium" />
+      </Typography>
+    )
+  }
+      </>
+    )
+  }
+</CardContent> */

@@ -3,5 +3,7 @@
     "lookingFor": "Estoy buscando un",
     "foundServices": "Servicios encontrados",
     "foundProducts": "Productos encontrados",
-    "searchErrorMessage": "Por favor introducí el nombre de un producto o servicio"
+    "searchErrorMessage": "Por favor introducí el nombre de un producto o servicio",
+    "linkVendibleCardProduct": "Fijate quién lo vende",
+    "linkVendibleCardService": "Fijate quién lo puede hacer"
 }

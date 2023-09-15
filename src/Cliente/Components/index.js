@@ -140,7 +140,7 @@ function Cliente({
             <Typography variant="h2" color="#1976d2">
               { labels.title }
             </Typography>
-            <FormControl fullWidth variant="outlined">
+            <FormControl variant="outlined" sx={{ width: '60%' }}>
               <TextField
                 autoFocus
                 id="vendible-input"
@@ -164,6 +164,8 @@ function Cliente({
                 value={searchInputValue}
               />
             </FormControl>
+          </Grid>
+          <Grid item>
             <FormControl sx={{ mt: '3%' }}>
               <FormLabel>
                 {' '}
