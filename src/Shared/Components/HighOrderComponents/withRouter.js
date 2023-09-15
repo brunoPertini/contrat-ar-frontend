@@ -78,26 +78,12 @@ export default function withRouter(Component) {
       if (!cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN) && token) {
         cookiesService.add(CookiesService.COOKIES_NAMES.USER_TOKEN, token);
       }
-
-      // const shouldGoBack = [SecurityService.LOGIN_PATH, '/'].includes(location.pathname)
-      // && !!(cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN));
-
-      // if (shouldGoBack) {
-      //   navigate(cookiesService.get((CookiesService.COOKIES_NAMES.USER_INDEX_PAGE)));
-      // }
     };
 
     /**
      * This is to handle when the url is replaced in the browser
      */
     useEffect(() => {
-      // const shouldGoBack = [SecurityService.LOGIN_PATH, '/'].includes(location.pathname)
-      // && !!(cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN));
-
-      // if (shouldGoBack) {
-      //   return navigate(cookiesService.get((CookiesService.COOKIES_NAMES.USER_INDEX_PAGE)));
-      // }
-
       if (isSecuredRoute) {
         verifyToken();
       } else {

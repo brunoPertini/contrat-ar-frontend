@@ -26,6 +26,7 @@ function ClienteContainer() {
     );
 
     return httpClient.getVendibleByName(searchInput).catch((error) => {
+      // TODO: resolver el caso de token expirado aca. Integrarlo con HttpClient.
       console.log(error);
     });
   };

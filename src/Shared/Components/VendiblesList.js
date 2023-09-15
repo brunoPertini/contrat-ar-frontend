@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import { useMemo } from 'react';
