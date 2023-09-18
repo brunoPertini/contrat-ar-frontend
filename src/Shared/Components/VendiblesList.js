@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import Divider from '@mui/material/Divider';
+import { useNavigate } from 'react-router-dom';
 import VendibleCard from './VendibleCard';
 import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
@@ -22,6 +23,20 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
     linkLabel: labels.linkVendibleCardService,
     redirectLink: routes.servicioIndex,
   }), [vendibleType]);
+
+  const navigate = useNavigate();
+
+  const handleGoToVendiblePage = useCallback((vendibleName) => {
+    const parsedChosenVendible = vendiblesObject.vendibles[vendibleName].map((
+      proveedorVendible,
+    ) => {
+      proveedorVendible.proveedorInfo = vendiblesObject.proveedores.find(
+        (proveedor) => proveedor.id === proveedorVendible.proveedorId,
+      );
+      return proveedorVendible;
+    });
+    navigate(redirectLink, { state: parsedChosenVendible });
+  }, [navigate]);
 
   return (
     <List sx={{
@@ -46,7 +61,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
               vendibleTitle={vendibleName}
               images={images}
               linkLabel={linkLabel}
-              redirectLink={redirectLink}
+              onLinkClick={handleGoToVendiblePage}
             />
             <Divider light />
 

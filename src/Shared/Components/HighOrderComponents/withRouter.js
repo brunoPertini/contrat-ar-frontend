@@ -47,6 +47,7 @@ export default function withRouter(Component) {
         const userInfo = await securityService.validateJwt(userToken);
         if (isEmpty(userInfo)) {
           setTokenVerified(false);
+          await store.dispatch(setUserInfo({}));
           navigate(routes.signin);
         } else {
           cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
@@ -56,6 +57,7 @@ export default function withRouter(Component) {
         }
       } catch (error) {
         setTokenVerified(false);
+        await store.dispatch(setUserInfo({}));
         navigate(routes.signin);
       }
     }, [securityService]);
