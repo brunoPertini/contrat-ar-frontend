@@ -35,7 +35,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
       );
       return proveedorVendible;
     });
-    navigate(redirectLink, { state: parsedChosenVendible });
+    navigate(redirectLink, { state: { proveedoresInfo: parsedChosenVendible } });
   }, [navigate]);
 
   return (

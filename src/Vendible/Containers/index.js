@@ -3,8 +3,9 @@ import VendiblePage from '../Components';
 
 function VendibleContainer() {
   const location = useLocation();
-  console.log(location.state);
-  return <VendiblePage />;
+  const { proveedoresInfo } = location.state;
+
+  return <VendiblePage proveedoresInfo={proveedoresInfo} />;
 }
 
 export default VendibleContainer;
