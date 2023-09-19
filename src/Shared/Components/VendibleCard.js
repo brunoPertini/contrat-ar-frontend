@@ -62,33 +62,3 @@ VendibleCard.propTypes = {
   linkLabel: PropTypes.string.isRequired,
   onLinkClick: PropTypes.func.isRequired,
 };
-
-// TODO: extraerlo a pagina de vendible
-/* <CardContent>
-  <Typography gutterBottom variant="h5" component="div">
-    { sharedLabels.provider }
-  </Typography>
-  {
-    proveedor && (
-      <>
-        <Typography variant="body2" color="text.secondary">
-          { proveedor.name }
-          {' '}
-          { proveedor.surname }
-        </Typography>
-        {
-    !!(proveedor.location.distanceFrom) && (
-      <Typography variant="body2" color="text.secondary">
-          {sharedLabels.to}
-          {' '}
-          {proveedor.location.distanceFrom}
-          {' '}
-          {sharedLabels.kilometersAway}
-        <LocationOnIcon fontSize="medium" />
-      </Typography>
-    )
-  }
-      </>
-    )
-  }
-</CardContent> */

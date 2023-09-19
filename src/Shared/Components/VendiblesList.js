@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import { useCallback, useMemo } from 'react';
-import Divider from '@mui/material/Divider';
 import { useNavigate } from 'react-router-dom';
 import VendibleCard from './VendibleCard';
 import { labels } from '../../StaticData/Cliente';
@@ -33,9 +32,11 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
       proveedorVendible.proveedorInfo = vendiblesObject.proveedores.find(
         (proveedor) => proveedor.id === proveedorVendible.proveedorId,
       );
+      // TODO: desharcodearlo cuando se integre el cálculo de distancia en el backend
+      proveedorVendible.proveedorInfo.distanceFrom = 0.5;
       return proveedorVendible;
     });
-    navigate(redirectLink, { state: { proveedoresInfo: parsedChosenVendible } });
+    navigate(redirectLink, { state: { proveedoresInfo: parsedChosenVendible, vendibleType } });
   }, [navigate]);
 
   return (
@@ -56,16 +57,12 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
           }
         }
         return (
-          <>
-            <VendibleCard
-              vendibleTitle={vendibleName}
-              images={images}
-              linkLabel={linkLabel}
-              onLinkClick={handleGoToVendiblePage}
-            />
-            <Divider light />
-
-          </>
+          <VendibleCard
+            vendibleTitle={vendibleName}
+            images={images}
+            linkLabel={linkLabel}
+            onLinkClick={handleGoToVendiblePage}
+          />
         );
       })}
     </List>
