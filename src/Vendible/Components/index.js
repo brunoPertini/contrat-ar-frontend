@@ -14,6 +14,7 @@ import Divider from '@mui/material/Divider';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Link } from 'react-router-dom';
 import { useCallback } from 'react';
+import { Box } from '@mui/material';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
@@ -21,7 +22,9 @@ import { systemConstants } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 
-function VendiblePage({ proveedoresInfo, vendibleType, userInfo }) {
+function VendiblePage({
+  proveedoresInfo, vendibleType, userInfo, filtersEnabled,
+}) {
   const getPriceLabel = useCallback((price) => {
     if (vendibleType === systemConstants.PRODUCTS) {
       return price === 0 ? sharedLabels.priceToBeAgreed : `${sharedLabels.price}${price}`;
@@ -35,6 +38,8 @@ function VendiblePage({ proveedoresInfo, vendibleType, userInfo }) {
     props: { userInfo },
   }];
 
+  const firstColumnBreakpoint = filtersEnabled ? 2 : 'auto';
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -45,13 +50,11 @@ function VendiblePage({ proveedoresInfo, vendibleType, userInfo }) {
         }}
         justifyContent="center"
       >
-        <Grid item xs={2}>
+        <Grid item xs={firstColumnBreakpoint}>
           <Typography variant="h3">
             { proveedoresInfo[0].vendibleNombre}
           </Typography>
         </Grid>
-        {/* TODO: pasar por props cuando los filtros no estén activos.
-         Si no lo están, darle mas espacio a la segunda columna del grid */}
         <Grid item xs={10}>
           <List sx={{ width: '100%' }}>
             {
@@ -95,10 +98,10 @@ function VendiblePage({ proveedoresInfo, vendibleType, userInfo }) {
                       </ListItemAvatar>
                       <ImageListItem
                         sx={{
-                          width: '50%',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
+                          width: '100%',
                         }}
                         key={info.imagenUrl}
                       >
@@ -108,9 +111,21 @@ function VendiblePage({ proveedoresInfo, vendibleType, userInfo }) {
                           alt={info.proveedorInfo.name}
                           loading="lazy"
                         />
-                        <ListItemText
-                          primary={info.descripcion}
-                        />
+                        <Box sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          width: '100%',
+                        }}
+                        >
+                          <Typography
+                            paragraph
+                            sx={{
+                              wordBreak: 'break-word',
+                            }}
+                          >
+                            {info.descripcion}
+                          </Typography>
+                        </Box>
                       </ImageListItem>
                       <ListItem sx={{ display: 'flex', flexDirection: 'column' }}>
                         <Typography variant="h5">
