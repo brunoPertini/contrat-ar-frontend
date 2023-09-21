@@ -1,4 +1,4 @@
-import { SET_USER_INFO } from '../ActionTypes/usuario';
+import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
 
 /**
  * @typedef UsuarioModel
@@ -33,6 +33,8 @@ function usuarioReducer(state = userState, action) {
         ...state,
         ...action.payload,
       };
+    case RESET_USER_INFO:
+      return userState;
     default:
       return state;
   }

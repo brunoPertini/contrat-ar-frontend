@@ -42,7 +42,7 @@ function VendiblePage({
 
   return (
     <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+      <Header withMenuComponent menuOptions={menuOptions} renderNavigationLinks />
       <Grid
         container
         sx={{
@@ -105,12 +105,14 @@ function VendiblePage({
                         }}
                         key={info.imagenUrl}
                       >
+                        {!!info.imagenUrl && (
                         <img
                           src={info.imagenUrl}
                           srcSet={info.imagenUrl}
                           alt={info.proveedorInfo.name}
                           loading="lazy"
                         />
+                        )}
                         <Box sx={{
                           display: 'flex',
                           flexDirection: 'row',
@@ -134,7 +136,7 @@ function VendiblePage({
                         <Typography variant="h5" sx={{ mt: '50px' }}>
                           {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
                         </Typography>
-                        <TextareaAutosize minRows={5} cols={50} />
+                        <TextareaAutosize minRows={15} cols={80} />
                         <Button variant="contained" sx={{ mt: '5px' }}>
                           Enviar mensaje
                         </Button>

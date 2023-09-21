@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  AppBar, Box, Toolbar, Button, IconButton, Typography,
+  AppBar, Box, Toolbar, Button, IconButton, Typography, Link, Grid,
 } from '@mui/material';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
@@ -38,24 +39,50 @@ HeaderMenu.propTypes = {
   })).isRequired,
 };
 
-export default function Header({ withMenu, menuOptions, withMenuComponent }) {
+export default function Header({
+  withMenu,
+  menuOptions, withMenuComponent, renderNavigationLinks,
+}) {
   return (
-    <>
-      <Box sx={{ flexGrow: 1 }} />
-      <AppBar position="sticky">
-        <Typography variant="h3">
+    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+      <AppBar
+        position="sticky"
+        sx={{
+          height: '100%',
+        }}
+      >
+        <Typography variant="h3" sx={{ width: '30%' }}>
           { sharedLabels.siteName }
         </Typography>
-        { withMenu && <HeaderMenu options={menuOptions} />}
-        { withMenuComponent && <Menu options={menuOptions} />}
+        {
+          renderNavigationLinks && (
+            <Grid container sx={{ justifyContent: 'space-between' }}>
+              <Grid item>
+                <Link
+                  variant="h5"
+                  onClick={() => {}}
+                  color="#fff"
+                  sx={{ width: '30%' }}
+                >
+                  Volver
+                </Link>
+              </Grid>
+              <Grid item>
+                { withMenu && <HeaderMenu options={menuOptions} />}
+                { withMenuComponent && <Menu options={menuOptions} />}
+              </Grid>
+            </Grid>
+          )
+        }
       </AppBar>
-    </>
+    </Box>
   );
 }
 
 Header.defaultProps = {
   withMenu: false,
   withMenuComponent: false,
+  renderNavigationLinks: false,
   menuOptions: [],
 };
 
@@ -63,4 +90,5 @@ Header.propTypes = {
   withMenu: PropTypes.bool,
   withMenuComponent: PropTypes.bool,
   menuOptions: PropTypes.array,
+  renderNavigationLinks: PropTypes.bool,
 };

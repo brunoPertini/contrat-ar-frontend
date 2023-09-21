@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 
 export default function Menu({ options }) {
   return (
-    <Toolbar sx={{ justifyContent: 'right' }}>
+    <Toolbar sx={{ alignSelf: 'flex-end' }}>
       <Paper>
         <MenuList>
           {

@@ -8,3 +8,7 @@ export function setUserInfo(userInfo) {
   sanitizedUserInfo.email = userInfo.sub;
   return { type: actionTypes.SET_USER_INFO, payload: sanitizedUserInfo };
 }
+
+export function resetUserInfo() {
+  return { type: actionTypes.RESET_USER_INFO };
+}

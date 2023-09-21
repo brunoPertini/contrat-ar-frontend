@@ -12,7 +12,7 @@ import { Provider } from 'react-redux';
 import SecurityService from '../../../Infrastructure/Services/SecurityService';
 import CookiesService from '../../../Infrastructure/Services/CookiesService';
 import { routes } from '../../Constants';
-import { setUserInfo } from '../../../State/Actions/usuario';
+import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
 
 const store = createStore();
@@ -47,7 +47,7 @@ export default function withRouter(Component) {
         const userInfo = await securityService.validateJwt(userToken);
         if (isEmpty(userInfo)) {
           setTokenVerified(false);
-          await store.dispatch(setUserInfo({}));
+          await store.dispatch(resetUserInfo());
           navigate(routes.signin);
         } else {
           cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
@@ -57,7 +57,7 @@ export default function withRouter(Component) {
         }
       } catch (error) {
         setTokenVerified(false);
-        await store.dispatch(setUserInfo({}));
+        await store.dispatch(resetUserInfo());
         navigate(routes.signin);
       }
     }, [securityService]);
