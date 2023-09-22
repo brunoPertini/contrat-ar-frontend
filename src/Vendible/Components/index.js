@@ -136,8 +136,8 @@ function VendiblePage({
                         <Typography variant="h5" sx={{ mt: '50px' }}>
                           {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
                         </Typography>
-                        <TextareaAutosize minRows={15} cols={80} />
-                        <Button variant="contained" sx={{ mt: '5px' }}>
+                        <TextareaAutosize minRows={15} style={{ width: '100%' }} />
+                        <Button variant="contained" sx={{ mt: '5px', alignSelf: 'flex-start' }}>
                           Enviar mensaje
                         </Button>
                       </ListItem>

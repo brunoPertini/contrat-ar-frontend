@@ -29,7 +29,7 @@ export class UserHttpClient extends HttpClient {
     * @returns {Promise<String>} A JWT holding user info
    */
   login(queryParams) {
-    return this.get(usersRoutes.login, queryParams, { withCredentials: true });
+    return this.get(usersRoutes.login, queryParams);
   }
 
   /**

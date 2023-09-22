@@ -13,10 +13,10 @@ export default function VendibleCard({
   vendibleTitle, images, linkLabel, onLinkClick,
 }) {
   return (
-    <Card sx={{ mb: '2%' }}>
+    <Card sx={{ mb: '2%', alignSelf: 'flex-start' }}>
       {
         !!images.length && (
-          <ImageList cols={images.length} gap={10}>
+          <ImageList cols={3} gap={10}>
             {images.map((imageUrl) => (
               <ImageListItem key={imageUrl}>
                 <img

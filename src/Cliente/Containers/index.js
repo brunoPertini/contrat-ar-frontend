@@ -1,9 +1,11 @@
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { withRouter } from '../../Shared/Components';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import Cliente from '../Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { routes } from '../../Shared/Constants';
 
 const stateSelector = (state) => state;
 
@@ -12,7 +14,7 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function ClienteContainer() {
+function ClienteContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
   const menuOptions = [{
     component: UserAccountOptions,
@@ -26,8 +28,9 @@ function ClienteContainer() {
     );
 
     return httpClient.getVendibleByName(searchInput).catch((error) => {
-      // TODO: resolver el caso de token expirado aca. Integrarlo con HttpClient.
-      console.log(error);
+      if (error.status && error.status === 401) {
+        router.navigate(routes.signin);
+      }
     });
   };
 
@@ -35,3 +38,11 @@ function ClienteContainer() {
 }
 
 export default withRouter(ClienteContainer);
+
+ClienteContainer.propTypes = {
+  router: PropTypes.shape({
+    location: PropTypes.any,
+    navigate: PropTypes.func,
+    params: PropTypes.any,
+  }).isRequired,
+};

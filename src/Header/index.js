@@ -66,12 +66,12 @@ export default function Header({
         { renderNavigationLinks
         && (
         <Grid container sx={{ justifyContent: 'space-between' }}>
-          <Grid item>
+          <Grid item sx={{ height: '50%', mt: '2%' }}>
             <Link
               variant="h5"
-              onClick={() => {}}
+              onClick={() => window.history.back()}
               color="#fff"
-              sx={{ width: '30%' }}
+              sx={{ width: '30%', cursor: 'pointer' }}
             >
               Volver
             </Link>
