@@ -9,7 +9,7 @@ import Menu from '../Shared/Components/Menu';
 
 function HeaderMenu({ options }) {
   return (
-    <Toolbar sx={{ justifyContent: 'right' }}>
+    <Toolbar>
       <IconButton
         size="large"
         edge="start"
@@ -43,39 +43,45 @@ export default function Header({
   withMenu,
   menuOptions, withMenuComponent, renderNavigationLinks,
 }) {
+  const menusMarkup = (
+    <Grid item>
+      { withMenu && <HeaderMenu options={menuOptions} />}
+      { withMenuComponent && <Menu options={menuOptions} />}
+    </Grid>
+  );
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-      <AppBar
-        position="sticky"
-        sx={{
-          height: '100%',
-        }}
-      >
-        <Typography variant="h3" sx={{ width: '30%' }}>
-          { sharedLabels.siteName }
-        </Typography>
-        {
-          renderNavigationLinks && (
-            <Grid container sx={{ justifyContent: 'space-between' }}>
-              <Grid item>
-                <Link
-                  variant="h5"
-                  onClick={() => {}}
-                  color="#fff"
-                  sx={{ width: '30%' }}
-                >
-                  Volver
-                </Link>
-              </Grid>
-              <Grid item>
-                { withMenu && <HeaderMenu options={menuOptions} />}
-                { withMenuComponent && <Menu options={menuOptions} />}
-              </Grid>
-            </Grid>
-          )
-        }
-      </AppBar>
-    </Box>
+    <AppBar
+      position="sticky"
+      sx={{
+        height: '100%',
+      }}
+    >
+      <Grid container sx={{ width: '100%', justifyContent: 'space-between' }}>
+        <Grid item>
+          <Typography variant="h3" sx={{ width: '30%' }}>
+            { sharedLabels.siteName }
+          </Typography>
+        </Grid>
+        { renderNavigationLinks
+        && (
+        <Grid container sx={{ justifyContent: 'space-between' }}>
+          <Grid item>
+            <Link
+              variant="h5"
+              onClick={() => {}}
+              color="#fff"
+              sx={{ width: '30%' }}
+            >
+              Volver
+            </Link>
+          </Grid>
+          { menusMarkup }
+        </Grid>
+        )}
+        { !renderNavigationLinks && menusMarkup }
+      </Grid>
+    </AppBar>
   );
 }
 
