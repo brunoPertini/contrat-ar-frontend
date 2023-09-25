@@ -9,6 +9,8 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { Link } from '@mui/material';
 import Groups2Icon from '@mui/icons-material/Groups2';
 
+const MAX_GALLERY_IMAGES = 3;
+
 export default function VendibleCard({
   vendibleTitle, images, linkLabel, onLinkClick,
 }) {
@@ -16,7 +18,7 @@ export default function VendibleCard({
     <Card sx={{ mb: '2%', alignSelf: 'flex-start' }}>
       {
         !!images.length && (
-          <ImageList cols={3} gap={10}>
+          <ImageList cols={MAX_GALLERY_IMAGES} gap={10}>
             {images.map((imageUrl) => (
               <ImageListItem key={imageUrl}>
                 <img

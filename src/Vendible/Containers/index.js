@@ -22,6 +22,7 @@ function VendibleContainer() {
       proveedoresInfo={proveedoresInfo}
       vendibleType={vendibleType}
       userInfo={userInfo}
+      filtersEnabled={false}
     />
   );
 }

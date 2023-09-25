@@ -21,5 +21,6 @@
     "kilometersAway": "KM de distancia",
     "price": "Precio: ",
     "minimalPrice": "Presupuesto mínimo: ",
-    "priceToBeAgreed": "Precio a  convenir"    
+    "priceToBeAgreed": "Precio a  convenir",
+    "sendMessage": "Enviar mensaje"    
 }

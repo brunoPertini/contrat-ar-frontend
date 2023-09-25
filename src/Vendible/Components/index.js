@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/prop-types */
+import { Fragment, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -11,28 +11,32 @@ import ListItemText from '@mui/material/ListItemText';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Link } from 'react-router-dom';
-import { useCallback } from 'react';
-import { Box } from '@mui/material';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { systemConstants } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
+import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
 
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, filtersEnabled,
 }) {
   const getPriceLabel = useCallback((price) => {
+    if (price === 0) {
+      return sharedLabels.priceToBeAgreed;
+    }
     if (vendibleType === systemConstants.PRODUCTS) {
-      return price === 0 ? sharedLabels.priceToBeAgreed : `${sharedLabels.price}${price}`;
+      return `${sharedLabels.price}${price}`;
     }
 
-    return price === 0 ? sharedLabels.priceToBeAgreed : `${sharedLabels.minimalPrice}${price}`;
+    return `${sharedLabels.minimalPrice}${price}`;
   }, [vendibleType]);
 
+  // TODO: modularizar en el componente Header
   const menuOptions = [{
     component: UserAccountOptions,
     props: { userInfo },
@@ -68,8 +72,10 @@ function VendiblePage({
                 const fullName = `${name} ${surname}`;
 
                 return (
-                  <>
-                    <ListItem alignItems="flex-start">
+                  <Fragment key={`${proveedoresInfo[0].vendibleNombre}_${fullName}`}>
+                    <ListItem
+                      alignItems="flex-start"
+                    >
                       <ListItemAvatar>
                         <Avatar
                           alt={fullName}
@@ -138,13 +144,13 @@ function VendiblePage({
                         </Typography>
                         <TextareaAutosize minRows={15} style={{ width: '100%' }} />
                         <Button variant="contained" sx={{ mt: '5px', alignSelf: 'flex-start' }}>
-                          Enviar mensaje
+                          { sharedLabels.sendMessage }
                         </Button>
                       </ListItem>
                     </ListItem>
                     <Divider variant="outlined" sx={{ borderColor: 'black' }} />
 
-                  </>
+                  </Fragment>
                 );
               })
             }
@@ -154,4 +160,12 @@ function VendiblePage({
     </>
   );
 }
+
+VendiblePage.propTypes = {
+  proveedoresInfo: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)).isRequired,
+  vendibleType: PropTypes.string.isRequired,
+  userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
+  filtersEnabled: PropTypes.bool.isRequired,
+};
+
 export default VendiblePage;
