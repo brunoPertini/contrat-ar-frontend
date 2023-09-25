@@ -10,6 +10,7 @@ import RootPage from './Root';
 import { UserSignUp } from './SignUp';
 import { SignIn } from './SignIn';
 import { Cliente } from './Cliente';
+import { VendiblePage } from './Vendible';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
   {
     path: '/cliente',
     element: <Cliente />,
+  },
+  {
+    path: '/producto',
+    element: <VendiblePage />,
+  },
+  {
+    path: '/servicio',
+    element: <VendiblePage />,
   },
 ]);
 

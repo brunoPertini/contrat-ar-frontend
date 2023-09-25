@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 import axios from 'axios';
 import Logger from '../Logging/Logger';
 
@@ -45,9 +46,17 @@ export class HttpClient {
   }
 
   #handleError(error) {
-    const wrappedError = error.response.data;
-    Logger.log(wrappedError);
-    return Promise.reject(wrappedError.error);
+    if (error?.response) {
+      const { status } = error.response;
+      if (status && status === 401) {
+        Logger.log(error.response);
+        return Promise.reject({ data: error.response.data, status });
+      }
+      const wrappedError = error.response.data;
+      Logger.log(wrappedError);
+      return Promise.reject(wrappedError);
+    }
+    return Promise.reject(error);
   }
 
   /**

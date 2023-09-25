@@ -22,6 +22,17 @@ export const proveedorDTOShape = {
   dni: PropTypes.string,
   fotoPerfilUrl: PropTypes.string,
   active: PropTypes.bool,
+  distanceFrom: PropTypes.number,
+};
+
+export const getUserInfoResponseShape = {
+  name: PropTypes.string,
+  surname: PropTypes.string,
+  email: PropTypes.string,
+  birthDate: PropTypes.string,
+  role: PropTypes.oneOf(['PROVEEDOR_SERVICIOS', 'PROVEEDOR_PRODUCTOS', 'CLIENTE']),
+  token: PropTypes.string,
+  indexPage: PropTypes.string,
 };
 
 export const getVendiblesResponseShape = {

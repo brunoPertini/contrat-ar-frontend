@@ -8,19 +8,17 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Link } from '@mui/material';
 import Groups2Icon from '@mui/icons-material/Groups2';
-import * as systemConstants from '../Constants/System';
-import { labels } from '../../StaticData/Cliente';
+
+const MAX_GALLERY_IMAGES = 3;
 
 export default function VendibleCard({
-  vendibleTitle, images, vendibleType,
+  vendibleTitle, images, linkLabel, onLinkClick,
 }) {
-  const linkLabel = vendibleType === systemConstants.PRODUCTS ? labels.linkVendibleCardProduct
-    : labels.linkVendibleCardService;
   return (
-    <Card sx={{ mb: '2%' }}>
+    <Card sx={{ mb: '2%', alignSelf: 'flex-start' }}>
       {
         !!images.length && (
-          <ImageList cols={images.length} gap={10}>
+          <ImageList cols={MAX_GALLERY_IMAGES} gap={10}>
             {images.map((imageUrl) => (
               <ImageListItem key={imageUrl}>
                 <img
@@ -44,7 +42,14 @@ export default function VendibleCard({
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <CardContent sx={{ display: 'flex' }}>
           <Groups2Icon fontSize="large" />
-          <Link href="#" variant="h5" sx={{ ml: '10px' }}>
+          <Link
+            onClick={() => onLinkClick(vendibleTitle)}
+            variant="h5"
+            sx={{
+              ml: '10px',
+              cursor: 'pointer',
+            }}
+          >
             { linkLabel }
           </Link>
         </CardContent>
@@ -56,35 +61,6 @@ export default function VendibleCard({
 VendibleCard.propTypes = {
   vendibleTitle: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
+  linkLabel: PropTypes.string.isRequired,
+  onLinkClick: PropTypes.func.isRequired,
 };
-
-// TODO: extraerlo a pagina de vendible
-/* <CardContent>
-  <Typography gutterBottom variant="h5" component="div">
-    { sharedLabels.provider }
-  </Typography>
-  {
-    proveedor && (
-      <>
-        <Typography variant="body2" color="text.secondary">
-          { proveedor.name }
-          {' '}
-          { proveedor.surname }
-        </Typography>
-        {
-    !!(proveedor.location.distanceFrom) && (
-      <Typography variant="body2" color="text.secondary">
-          {sharedLabels.to}
-          {' '}
-          {proveedor.location.distanceFrom}
-          {' '}
-          {sharedLabels.kilometersAway}
-        <LocationOnIcon fontSize="medium" />
-      </Typography>
-    )
-  }
-      </>
-    )
-  }
-</CardContent> */

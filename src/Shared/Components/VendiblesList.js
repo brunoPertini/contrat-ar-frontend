@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
-import { useMemo } from 'react';
-import { Divider } from '@mui/material';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import VendibleCard from './VendibleCard';
+import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
+import { routes, systemConstants } from '../Constants';
 
 /**
  * List that shows each service or product info, including its provider
@@ -12,6 +14,31 @@ import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
  */
 export default function VendiblesList({ vendiblesObject, vendibleType }) {
   const vendiblesNames = useMemo(() => Object.keys(vendiblesObject.vendibles), [vendiblesObject]);
+
+  const { linkLabel, redirectLink } = useMemo(() => (vendibleType === systemConstants.PRODUCTS ? {
+    linkLabel: labels.linkVendibleCardProduct,
+    redirectLink: routes.productoIndex,
+  } : {
+    linkLabel: labels.linkVendibleCardService,
+    redirectLink: routes.servicioIndex,
+  }), [vendibleType]);
+
+  const navigate = useNavigate();
+
+  const handleGoToVendiblePage = useCallback((vendibleName) => {
+    const parsedChosenVendible = vendiblesObject.vendibles[vendibleName].map((
+      proveedorVendible,
+    ) => {
+      proveedorVendible.proveedorInfo = vendiblesObject.proveedores.find(
+        (proveedor) => proveedor.id === proveedorVendible.proveedorId,
+      );
+      // TODO: desharcodearlo cuando se integre el cálculo de distancia en el backend
+      proveedorVendible.proveedorInfo.distanceFrom = 0.5;
+      return proveedorVendible;
+    });
+    navigate(redirectLink, { state: { proveedoresInfo: parsedChosenVendible, vendibleType } });
+  }, [navigate]);
+
   return (
     <List sx={{
       width: '100%',
@@ -30,15 +57,13 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
           }
         }
         return (
-          <>
-            <VendibleCard
-              vendibleTitle={vendibleName}
-              images={images}
-              vendibleType={vendibleType}
-            />
-            <Divider light />
-
-          </>
+          <VendibleCard
+            vendibleTitle={vendibleName}
+            images={images}
+            linkLabel={linkLabel}
+            onLinkClick={handleGoToVendiblePage}
+            key={`vendible_card_${vendibleName}`}
+          />
         );
       })}
     </List>
