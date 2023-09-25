@@ -11,3 +11,4 @@ export { default as List } from './VendiblesList';
 export { default as RadioList } from './RadioGroup';
 export { default as VendibleCard } from './VendibleCard';
 export { default as Layout } from './Layout';
+export { default as CheckBoxGroup } from './CheckboxGroup';

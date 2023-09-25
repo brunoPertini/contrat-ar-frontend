@@ -1,0 +1,3 @@
+function VendiblesFilters({ elements, vendibleType}) {
+
+}   

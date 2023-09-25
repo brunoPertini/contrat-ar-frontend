@@ -62,7 +62,6 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
             images={images}
             linkLabel={linkLabel}
             onLinkClick={handleGoToVendiblePage}
-            key={`vendible_card_${vendibleName}`}
           />
         );
       })}
