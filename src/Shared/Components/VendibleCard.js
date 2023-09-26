@@ -19,8 +19,8 @@ export default function VendibleCard({
       {
         !!images.length && (
           <ImageList cols={MAX_GALLERY_IMAGES} gap={10}>
-            {images.map((imageUrl) => (
-              <ImageListItem key={imageUrl}>
+            {images.map((imageUrl, i) => (
+              <ImageListItem key={`image_${vendibleTitle}_${i}`}>
                 <img
                   src={imageUrl}
                   srcSet={imageUrl}

@@ -10,13 +10,17 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
 import { useCallback, useState } from 'react';
 
-function CheckBoxGroup({ elements, handleChange }) {
-  const [checked, setChecked] = useState({});
+function CheckBoxGroup({
+  elements, handleChange, title, bottomLabel,
+}) {
+  const [checkedElements, setCheckedElements] = useState({});
 
-  const handleChangeChecked = useCallback((event) => {
-    console.log(event);
+  const handleChangeChecked = useCallback((checked, element) => {
+    setCheckedElements((currentValues) => ({ ...currentValues, [element]: checked }));
     handleChange();
-  }, [handleChange]);
+  }, [setCheckedElements]);
+
+  console.log('checkedElements: ', checkedElements);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -24,16 +28,16 @@ function CheckBoxGroup({ elements, handleChange }) {
         error={false}
         component="fieldset"
       >
-        <FormLabel component="legend">Categoría de producto</FormLabel>
+        <FormLabel component="legend">{title}</FormLabel>
         <FormGroup>
           {
-                elements.map((element) => (
+                elements.map((element, i) => (
                   <FormControlLabel
-                    key={`filters_category_${element}`}
+                    key={`checkbox_${i}`}
                     control={(
                       <Checkbox
-                        checked={checked[element]}
-                        onChange={handleChangeChecked}
+                        checked={checkedElements[element]}
+                        onChange={(event) => handleChangeChecked(event.target.checked, element)}
                         name={element}
                       />
                     )}
@@ -42,7 +46,7 @@ function CheckBoxGroup({ elements, handleChange }) {
                 ))
             }
         </FormGroup>
-        <FormHelperText>Podés seleccionar más de una categoría</FormHelperText>
+        <FormHelperText>{ bottomLabel }</FormHelperText>
       </FormControl>
     </Box>
   );

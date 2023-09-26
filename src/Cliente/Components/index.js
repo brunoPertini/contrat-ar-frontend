@@ -11,8 +11,9 @@ import Alert from '@mui/material/Alert';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import {
-  List, RadioList, Layout, CheckBoxGroup,
+  List, RadioList, Layout,
 } from '../../Shared/Components';
+import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
@@ -123,10 +124,12 @@ function Cliente({
     [vendiblesResponse],
   );
 
-  const categoriesLabels = useMemo(() => vendiblesResponse.categorias.map(
-    (c) => c.name,
+  const categoriesLabels = useMemo(
+    () => vendiblesResponse.categorias?.map(
+      (c) => c.name,
+    ) || [],
     [vendiblesResponse.categorias],
-  ));
+  );
 
   return (
     <>
@@ -146,7 +149,6 @@ function Cliente({
           sx={{
             flexDirection: 'column',
             position: 'sticky',
-            top: 130,
             'z-index': 100,
           }}
         >
@@ -196,7 +198,7 @@ function Cliente({
           {
             filtersEnabled && (
             <Grid item sx={{ mt: '3%' }}>
-              <CheckBoxGroup elements={categoriesLabels} />
+              <VendiblesFilters categories={categoriesLabels} vendibleType={searchType} />
             </Grid>
             )
           }
