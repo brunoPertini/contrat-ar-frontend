@@ -27,14 +27,26 @@ function ClienteContainer({ router }) {
       { token: userInfo.token },
     );
 
-    return httpClient.getVendibleByName(searchInput).catch((error) => {
-      if (error.status && error.status === 401) {
-        router.navigate(routes.signin);
-      }
-    });
+    return httpClient.getVendibleByName(searchInput)
+      .then((response) => {
+        const aux = response;
+        aux.categorias = [{ id: 1, name: 'Plomería' },
+          { id: 2, name: 'Carpinteria' },
+          { id: 3, name: 'Arreglo de electrodomésticos' },
+          { id: 4, name: 'Tranajos de gasista' },
+          { id: 5, name: 'Fitness' },
+        ];
+        return aux;
+      }).catch((error) => {
+        if (error.status && error.status === 401) {
+          router.navigate(routes.signin);
+        }
+
+        return error;
+      });
   };
 
-  return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
+  return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch}   />;
 }
 
 export default withRouter(ClienteContainer);

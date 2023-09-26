@@ -16,6 +16,7 @@ export default function RadioGroupComponent({
       {
             values.map(({ value, style, label }) => (
               <FormControlLabel
+                key={`radioGroupItem_${label}`}
                 value={value}
                 control={(
                   <Radio sx={{ ...style }} />

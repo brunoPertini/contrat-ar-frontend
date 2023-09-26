@@ -52,7 +52,7 @@ export class HttpClient {
         Logger.log(error.response);
         return Promise.reject({ data: error.response.data, status });
       }
-      const wrappedError = error.response.data;
+      const wrappedError = error.response.data.error;
       Logger.log(wrappedError);
       return Promise.reject(wrappedError);
     }

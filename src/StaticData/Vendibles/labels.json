@@ -1,4 +1,6 @@
 {
     "noResultsFound": "No se encontraron resultados para tu búsqueda",
-    "seeInMap": "Ver en Mapa"
+    "seeInMap": "Ver en Mapa",
+    "categoryOfVendible": "Categoría de {vendibleType}",
+    "categoriesBottomLabel": "Podés elegir más de una categoría"
 }

@@ -109,7 +109,6 @@ function VendiblePage({
                           alignItems: 'center',
                           width: '100%',
                         }}
-                        key={info.imagenUrl}
                       >
                         {!!info.imagenUrl && (
                         <img

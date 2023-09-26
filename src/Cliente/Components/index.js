@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
@@ -10,7 +10,10 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Alert from '@mui/material/Alert';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
-import { List, RadioList, Layout } from '../../Shared/Components';
+import {
+  List, RadioList, Layout,
+} from '../../Shared/Components';
+import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
@@ -31,6 +34,8 @@ function Cliente({
   const [isLoading, setIsLoading] = useState(false);
   const [thereIsNoResults, setThereIsNoResults] = useState(false);
 
+  const [filtersEnabled, setFiltersEnabled] = useState(false);
+
   const handleSetSearchType = (event) => {
     setSearchInputValue('');
     setVendiblesResponse({});
@@ -48,6 +53,7 @@ function Cliente({
         dispatchHandleSearch(params).then((response) => {
           setSearchDone(true);
           setVendiblesResponse(response);
+          setFiltersEnabled(!!response.categorias);
           if (isEmpty(response.vendibles)) {
             setThereIsNoResults(true);
           } else {
@@ -108,8 +114,21 @@ function Cliente({
 
   const VendiblesList = useCallback(
     () => (!isEmpty(vendiblesResponse)
-      ? <List vendiblesObject={vendiblesResponse} vendibleType={searchType} /> : null),
+      ? (
+        <List
+          vendiblesObject={vendiblesResponse}
+          vendibleType={searchType}
+          filtersEnabled={filtersEnabled}
+        />
+      ) : null),
     [vendiblesResponse],
+  );
+
+  const categoriesLabels = useMemo(
+    () => vendiblesResponse.categorias?.map(
+      (c) => c.name,
+    ) || [],
+    [vendiblesResponse.categorias],
   );
 
   return (
@@ -130,7 +149,6 @@ function Cliente({
           sx={{
             flexDirection: 'column',
             position: 'sticky',
-            top: 130,
             'z-index': 100,
           }}
         >
@@ -177,6 +195,13 @@ function Cliente({
               <RadioList {...radioGroupConfig} />
             </FormControl>
           </Grid>
+          {
+            filtersEnabled && (
+            <Grid item sx={{ mt: '3%' }}>
+              <VendiblesFilters categories={categoriesLabels} vendibleType={searchType} />
+            </Grid>
+            )
+          }
         </Grid>
         <Layout gridProps={gridProps} isLoading={isLoading}>
           {searchDone && !thereIsNoResults && (
