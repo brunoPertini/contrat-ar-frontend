@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import FormLabel from '@mui/material/FormLabel';
@@ -46,10 +44,21 @@ function CheckBoxGroup({
                 ))
             }
         </FormGroup>
-        <FormHelperText>{ bottomLabel }</FormHelperText>
+        { !!bottomLabel && <FormHelperText>{ bottomLabel }</FormHelperText>}
       </FormControl>
     </Box>
   );
 }
+
+CheckBoxGroup.defaultProps = {
+  bottomLabel: '',
+};
+
+CheckBoxGroup.propTypes = {
+  elements: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  bottomLabel: PropTypes.string,
+};
 
 export default CheckBoxGroup;
