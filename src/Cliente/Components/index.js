@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useCallback, useMemo, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
@@ -124,13 +125,6 @@ function Cliente({
     [vendiblesResponse],
   );
 
-  const categoriesLabels = useMemo(
-    () => vendiblesResponse.categorias?.map(
-      (c) => c.name,
-    ) || [],
-    [vendiblesResponse.categorias],
-  );
-
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -198,7 +192,10 @@ function Cliente({
           {
             filtersEnabled && (
             <Grid item sx={{ mt: '3%' }}>
-              <VendiblesFilters categories={categoriesLabels} vendibleType={searchType} />
+              <VendiblesFilters
+                categories={vendiblesResponse.categorias}
+                vendibleType={searchType}
+              />
             </Grid>
             )
           }

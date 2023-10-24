@@ -18,8 +18,6 @@ function CheckBoxGroup({
     handleChange();
   }, [setCheckedElements]);
 
-  console.log('checkedElements: ', checkedElements);
-
   return (
     <Box sx={{ display: 'flex' }}>
       <FormControl
