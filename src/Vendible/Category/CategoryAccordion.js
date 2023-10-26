@@ -21,12 +21,8 @@ function CategoryAccordion({ categories, vendibleType }) {
     if (categoryTree.rootName === categoryName) {
       return categoryTree;
     }
-    if (categoryTree.children?.length) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const child of categoryTree.children) {
-        const found = searchCategoryInTree(child, categoryName);
-        return found || null;
-      }
+    if (categoryTree.children.length) {
+      return categoryTree.children.find((c) => !!(searchCategoryInTree(c, categoryName)));
     }
 
     return null;
@@ -35,11 +31,9 @@ function CategoryAccordion({ categories, vendibleType }) {
   const handleAccordionClick = ({ root, children }) => (_, isExpanded) => setCategoriesSubSection((currentCategories) => {
     const updatedCategories = [...currentCategories];
     let toUpdateElement = null;
-    for (const currentTree of updatedCategories) {
-      const r = searchCategoryInTree(currentTree, root);
-      if (r) {
-        toUpdateElement = r;
-      }
+
+    for (let i = 0; !toUpdateElement; i++) {
+      toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
     }
     if (isExpanded) {
       children.forEach(({ root: childRoot, children: newChildren }) => {
