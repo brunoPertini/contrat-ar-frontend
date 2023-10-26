@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import Groups2Icon from '@mui/icons-material/Groups2';
 
 const MAX_GALLERY_IMAGES = 3;

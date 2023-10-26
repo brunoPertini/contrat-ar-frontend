@@ -1,17 +1,12 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-unreachable-loop */
-/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import AccordionElement from './AccordionElement';
 
 function CategoryAccordion({ categories, vendibleType }) {
-  const [categoriesSubSection, setCategoriesSubSection] = useState();
+  const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
   /**
    * @param {AccordionElement} categoryTree
@@ -28,28 +23,45 @@ function CategoryAccordion({ categories, vendibleType }) {
     return null;
   }
 
-  const handleAccordionClick = ({ root, children }) => (_, isExpanded) => setCategoriesSubSection((currentCategories) => {
-    const updatedCategories = [...currentCategories];
-    let toUpdateElement = null;
+  const handleAccordionClick = ({ root, children }) => (
+    _,
+    expanded,
+  ) => {
+    setCategoriesSubSection((
+      currentCategories,
+    ) => {
+      const updatedCategories = [...currentCategories];
+      let toUpdateElement = null;
 
-    for (let i = 0; !toUpdateElement; i++) {
-      toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
-    }
-    if (isExpanded) {
-      children.forEach(({ root: childRoot, children: newChildren }) => {
-        const childrenRootJsx = (
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{ childRoot }</Typography>
-          </AccordionSummary>
-        );
-        const onChangeChildren = () => handleAccordionClick({ root: childRoot, children: newChildren });
+      for (let i = 0; !toUpdateElement; i++) {
+        toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
+      }
+      if (expanded) {
+        children.forEach(({ root: childRoot, children: newChildren }) => {
+          const onChangeChildren = () => handleAccordionClick({
+            root: childRoot,
+            children: newChildren,
+          });
 
-        toUpdateElement.children.push(new AccordionElement(childRoot, childrenRootJsx, [], !!(newChildren.length), onChangeChildren));
-      });
+          toUpdateElement.children.push(new AccordionElement(
+            childRoot,
+            [],
+
+            !!(newChildren.length),
+
+            onChangeChildren,
+
+            false,
+          ));
+
+          toUpdateElement.isExpanded = true;
+        });
+      } else {
+        toUpdateElement.children = [];
+      }
       return updatedCategories;
-    }
-    return [];
-  });
+    });
+  };
 
   useEffect(() => {
     const firstCategoriesSections = [];
@@ -59,30 +71,31 @@ function CategoryAccordion({ categories, vendibleType }) {
 
         const isSuperCategory = !!(children.length);
 
-        const rootJsx = (
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{ root }</Typography>
-          </AccordionSummary>
-        );
-
         const childrenJsx = [];
 
         const onChange = () => handleAccordionClick({ root, children });
 
-        const accordionElement = new AccordionElement(root, rootJsx, childrenJsx, isSuperCategory, onChange);
+        const accordionElement = new AccordionElement(
+          root,
+          childrenJsx,
+
+          isSuperCategory,
+
+          onChange,
+
+          false,
+        );
 
         firstCategoriesSections.push(accordionElement);
       });
-
-      setCategoriesSubSection(firstCategoriesSections);
     }
+    setCategoriesSubSection(firstCategoriesSections);
   }, [categories]);
 
   if (!isEmpty(categoriesSubSection)) {
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
-    console.log(categoriesSubSection);
     return (
-      <div>
+      <div style={{ width: '40%' }}>
         <Typography variant="h4">
           { categoriesTitle }
         </Typography>
