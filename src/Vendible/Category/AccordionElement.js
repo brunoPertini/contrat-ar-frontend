@@ -16,7 +16,6 @@ class AccordionElement {
 
   #onChange;
 
-  /** @type {Boolean} */
   #isExpanded;
 
   constructor(rootName, children, isSuperCategory, onChange, isExpanded) {

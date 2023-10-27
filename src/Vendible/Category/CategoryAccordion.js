@@ -1,9 +1,10 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Typography from '@mui/material/Typography';
-import { vendiblesLabels } from '../../StaticData/Vendibles';
 import AccordionElement from './AccordionElement';
+import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
+import { vendiblesLabels } from '../../StaticData/Vendibles';
 
 function CategoryAccordion({ categories, vendibleType }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
@@ -13,14 +14,20 @@ function CategoryAccordion({ categories, vendibleType }) {
    * @param {String} categoryName
    * @returns { AccordionElement} */
   function searchCategoryInTree(categoryTree, categoryName) {
-    if (categoryTree.rootName === categoryName) {
-      return categoryTree;
-    }
-    if (categoryTree.children.length) {
-      return categoryTree.children.find((c) => !!(searchCategoryInTree(c, categoryName)));
+    let found = null;
+    const queue = [categoryTree];
+
+    while (queue.length && !found) {
+      const current = queue.at(0);
+      queue.shift();
+      if (current.rootName === categoryName) {
+        found = current;
+      }
+
+      current.children.forEach((child) => queue.unshift(child));
     }
 
-    return null;
+    return found;
   }
 
   const handleAccordionClick = ({ root, children }) => (
@@ -57,6 +64,7 @@ function CategoryAccordion({ categories, vendibleType }) {
           toUpdateElement.isExpanded = true;
         });
       } else {
+        toUpdateElement.isExpanded = false;
         toUpdateElement.children = [];
       }
       return updatedCategories;
@@ -107,5 +115,10 @@ function CategoryAccordion({ categories, vendibleType }) {
   }
   return null;
 }
+
+CategoryAccordion.propTypes = {
+  vendibleType: PropTypes.string.isRequired,
+  categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+};
 
 export default CategoryAccordion;

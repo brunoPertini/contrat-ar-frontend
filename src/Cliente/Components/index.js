@@ -27,6 +27,7 @@ function Cliente({
   const [searchErrorMessage, setErrorMessage] = useState('');
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [previousSearchInputValue, setPreviousSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
   const [vendiblesResponse, setVendiblesResponse] = useState({});
@@ -52,6 +53,7 @@ function Cliente({
         setErrorMessage('');
         const params = { searchType, searchInput: searchInputValue };
         dispatchHandleSearch(params).then((response) => {
+          setPreviousSearchInputValue(searchInputValue);
           setSearchDone(true);
           setVendiblesResponse(response);
           setFiltersEnabled(!!response.categorias);
@@ -163,6 +165,8 @@ function Cliente({
                       aria-label="search-input"
                       edge="end"
                       onClick={handleStartSearch}
+                      disabled={(!!previousSearchInputValue
+                         && previousSearchInputValue === searchInputValue)}
                     >
                       <SearchOutlinedIcon />
                     </IconButton>
