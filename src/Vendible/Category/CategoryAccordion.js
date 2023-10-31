@@ -6,7 +6,7 @@ import AccordionElement from './AccordionElement';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 
-function CategoryAccordion({ categories, vendibleType }) {
+function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
   /**
@@ -30,6 +30,10 @@ function CategoryAccordion({ categories, vendibleType }) {
     return found;
   }
 
+  const handleCategorySelected = (categoryName) => {
+    onCategorySelected(categoryName);
+  };
+
   const handleAccordionClick = ({ root, children }) => (
     _,
     expanded,
@@ -43,6 +47,7 @@ function CategoryAccordion({ categories, vendibleType }) {
       for (let i = 0; !toUpdateElement; i++) {
         toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
       }
+
       if (expanded) {
         children.forEach(({ root: childRoot, children: newChildren }) => {
           const onChangeChildren = () => handleAccordionClick({
@@ -59,6 +64,8 @@ function CategoryAccordion({ categories, vendibleType }) {
             onChangeChildren,
 
             false,
+
+            handleCategorySelected,
           ));
 
           toUpdateElement.isExpanded = true;
@@ -81,7 +88,8 @@ function CategoryAccordion({ categories, vendibleType }) {
 
         const childrenJsx = [];
 
-        const onChange = () => handleAccordionClick({ root, children });
+        const onChange = () => (isSuperCategory ? handleAccordionClick({ root, children })
+          : handleCategorySelected(root));
 
         const accordionElement = new AccordionElement(
           root,
@@ -103,7 +111,7 @@ function CategoryAccordion({ categories, vendibleType }) {
   if (!isEmpty(categoriesSubSection)) {
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
     return (
-      <div style={{ width: '40%' }}>
+      <div>
         <Typography variant="h4">
           { categoriesTitle }
         </Typography>
@@ -119,6 +127,7 @@ function CategoryAccordion({ categories, vendibleType }) {
 CategoryAccordion.propTypes = {
   vendibleType: PropTypes.string.isRequired,
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  onCategorySelected: PropTypes.func.isRequired,
 };
 
 export default CategoryAccordion;

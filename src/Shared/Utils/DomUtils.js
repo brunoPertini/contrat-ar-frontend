@@ -49,5 +49,5 @@ export function isEnterPressed(event) {
  * @returns if event is of type key
  */
 export function isKeyEvent(event) {
-  return event.type.includes('key');
+  return !!event && event.type.includes('key');
 }

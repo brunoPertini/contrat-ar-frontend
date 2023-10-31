@@ -18,7 +18,7 @@ class AccordionElement {
 
   #isExpanded;
 
-  constructor(rootName, children, isSuperCategory, onChange, isExpanded) {
+  constructor(rootName, children, isSuperCategory, onChange, isExpanded, handleCategorySelected) {
     this.#root = isSuperCategory ? (
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{ rootName }</Typography>
@@ -26,7 +26,7 @@ class AccordionElement {
     ) : (
       <AccordionDetails>
         <Link
-          onClick={() => {}}
+          onClick={() => handleCategorySelected(rootName)}
           variant="caption"
           sx={{
             cursor: 'pointer',

@@ -46,12 +46,12 @@ function Cliente({
     setSearchType(event.target.value);
   };
 
-  const handleStartSearch = (event) => {
+  const handleStartSearch = (event, filters) => {
     if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
       if (searchInputValue) {
         setIsLoading(true);
         setErrorMessage('');
-        const params = { searchType, searchInput: searchInputValue };
+        const params = { searchType, searchInput: searchInputValue, filters };
         dispatchHandleSearch(params).then((response) => {
           setPreviousSearchInputValue(searchInputValue);
           setSearchDone(true);
@@ -199,6 +199,7 @@ function Cliente({
               <VendiblesFilters
                 categories={vendiblesResponse.categorias}
                 vendibleType={searchType}
+                onFiltersApplied={handleStartSearch}
               />
             </Grid>
             )
