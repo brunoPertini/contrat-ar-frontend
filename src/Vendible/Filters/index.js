@@ -1,27 +1,36 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
-import pickBy from 'lodash/pickBy';
 import { useEffect, useMemo, useState } from 'react';
 import { Chip, Grid, Typography } from '@mui/material';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
+import { usePreviousPropValue } from '../../Shared/Hooks';
 
 function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
+  const previousVendibleType = usePreviousPropValue(vendibleType);
+
   const [filtersApplied, setFiltersApplied] = useState({
     category: '',
   });
 
-  const handleOnCategorySelected = (categoryName) => setFiltersApplied((previous) => ({
-    ...previous, category: categoryName,
-  }));
+  const handleOnCategorySelected = (categoryName) => {
+    let newAppliedFilters = {};
+    setFiltersApplied((previous) => {
+      newAppliedFilters = { ...previous, category: categoryName };
+      return newAppliedFilters;
+    });
+    onFiltersApplied(null, newAppliedFilters);
+  };
 
   const handleFilterDeleted = (filterValue) => {
+    let newAppliedFilters = {};
     const filterToDelete = Object.keys(filtersApplied)
       .find((key) => filtersApplied[key] === filterValue);
-    return setFiltersApplied((previous) => ({
-      ...previous,
-      [filterToDelete]: '',
-    }));
+    setFiltersApplied((previous) => {
+      newAppliedFilters = { ...previous, [filterToDelete]: '' };
+      return newAppliedFilters;
+    });
+    onFiltersApplied(null, newAppliedFilters);
   };
 
   const filtersLabels = useMemo(() => Object.values(
@@ -29,11 +38,10 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
   ).filter((label) => label), [filtersApplied]);
 
   useEffect(() => {
-    if (filtersLabels.length) {
-      const nonEmptyFilters = pickBy(filtersApplied, (value) => filtersLabels.includes(value));
-      onFiltersApplied(null, nonEmptyFilters);
+    if (previousVendibleType && previousVendibleType !== vendibleType) {
+      setFiltersApplied({});
     }
-  }, [filtersLabels]);
+  }, [vendibleType]);
 
   return (
     <Grid container flexDirection="column">

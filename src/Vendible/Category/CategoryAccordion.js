@@ -88,8 +88,7 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
 
         const childrenJsx = [];
 
-        const onChange = () => (isSuperCategory ? handleAccordionClick({ root, children })
-          : handleCategorySelected(root));
+        const onChange = () => handleAccordionClick({ root, children });
 
         const accordionElement = new AccordionElement(
           root,
@@ -100,6 +99,10 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
           onChange,
 
           false,
+
+          handleCategorySelected,
+
+          true,
         );
 
         firstCategoriesSections.push(accordionElement);

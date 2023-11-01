@@ -39,7 +39,9 @@ function Cliente({
   const [filtersEnabled, setFiltersEnabled] = useState(false);
 
   const handleSetSearchType = (event) => {
+    setErrorMessage('');
     setSearchInputValue('');
+    setPreviousSearchInputValue('');
     setVendiblesResponse({});
     setSearchDone(false);
     setThereIsNoResults(false);

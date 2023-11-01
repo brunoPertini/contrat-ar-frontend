@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-unused-vars */
 import Typography from '@mui/material/Typography';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -18,10 +20,29 @@ class AccordionElement {
 
   #isExpanded;
 
-  constructor(rootName, children, isSuperCategory, onChange, isExpanded, handleCategorySelected) {
+  constructor(
+    rootName,
+    children,
+    isSuperCategory,
+    onChange,
+    isExpanded,
+    handleCategorySelected,
+    isRootOfTree,
+  ) {
     this.#root = isSuperCategory ? (
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>{ rootName }</Typography>
+      </AccordionSummary>
+    ) : isRootOfTree ? (
+      <AccordionSummary>
+        <Link
+          onClick={() => handleCategorySelected(rootName)}
+          sx={{
+            cursor: 'pointer',
+          }}
+        >
+          { rootName }
+        </Link>
       </AccordionSummary>
     ) : (
       <AccordionDetails>

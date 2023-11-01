@@ -15,7 +15,7 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function ClienteContainer({ router }) {
+function ClienteContainer() {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
@@ -34,7 +34,7 @@ function ClienteContainer({ router }) {
       .catch((error) => {
         if (error.status && error.status === 401) {
           dispatch(resetUserInfo());
-          router.navigate(routes.signin);
+          window.location.href = routes.signin;
         }
 
         return error;
