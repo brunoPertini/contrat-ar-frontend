@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Typography from '@mui/material/Typography';
-import AccordionElement from './AccordionElement';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
+import RootRenderer from './RootRenderer';
+import EmptyTreeRenderer from './EmptyTreeRenderer';
+import LeafRenderer from './LeafRenderer';
 
 function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
@@ -55,18 +57,21 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
             children: newChildren,
           });
 
-          toUpdateElement.children.push(new AccordionElement(
-            childRoot,
-            [],
+          const isSuperCategory = !!(newChildren.length);
 
-            !!(newChildren.length),
-
-            onChangeChildren,
-
-            false,
-
+          const toInsertElement = isSuperCategory ? new RootRenderer({
+            rootName: childRoot,
+            onChange: onChangeChildren,
+            isExpanded: false,
+            children: [],
+          }) : new LeafRenderer({
+            rootName: childRoot,
+            onChange: onChangeChildren,
+            isExpanded: false,
             handleCategorySelected,
-          ));
+          });
+
+          toUpdateElement.children.push(toInsertElement);
 
           toUpdateElement.isExpanded = true;
         });
@@ -90,20 +95,14 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
 
         const onChange = () => handleAccordionClick({ root, children });
 
-        const accordionElement = new AccordionElement(
-          root,
-          childrenJsx,
-
-          isSuperCategory,
-
-          onChange,
-
-          false,
-
-          handleCategorySelected,
-
-          true,
-        );
+        const accordionElement = isSuperCategory ? new RootRenderer({
+          rootName: root, onChange, isExpanded: false, children: childrenJsx,
+        })
+          : new EmptyTreeRenderer({
+            rootName: root,
+            isExpanded: true,
+            handleCategorySelected,
+          });
 
         firstCategoriesSections.push(accordionElement);
       });
