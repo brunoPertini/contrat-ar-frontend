@@ -8,29 +8,29 @@ import RootRenderer from './RootRenderer';
 import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
 
-function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
-  const [categoriesSubSection, setCategoriesSubSection] = useState([]);
+/**
+ * @param {AccordionElement} categoryTree
+ * @param {String} categoryName
+ * @returns { AccordionElement} */
+function searchCategoryInTree(categoryTree, categoryName) {
+  let found = null;
+  const queue = [categoryTree];
 
-  /**
-   * @param {AccordionElement} categoryTree
-   * @param {String} categoryName
-   * @returns { AccordionElement} */
-  function searchCategoryInTree(categoryTree, categoryName) {
-    let found = null;
-    const queue = [categoryTree];
-
-    while (queue.length && !found) {
-      const current = queue.at(0);
-      queue.shift();
-      if (current.rootName === categoryName) {
-        found = current;
-      }
-
-      current.children.forEach((child) => queue.unshift(child));
+  while (queue.length && !found) {
+    const current = queue.at(0);
+    queue.shift();
+    if (current.rootName === categoryName) {
+      found = current;
     }
 
-    return found;
+    current.children.forEach((child) => queue.unshift(child));
   }
+
+  return found;
+}
+
+function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
+  const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
   const handleCategorySelected = (categoryName) => {
     onCategorySelected(categoryName);

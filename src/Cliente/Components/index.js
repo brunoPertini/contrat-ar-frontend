@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
@@ -32,6 +31,8 @@ function Cliente({
 
   const [vendiblesResponse, setVendiblesResponse] = useState({});
 
+  const [lastFiltersApplied, setLastFiltersApplied] = useState({});
+
   const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [thereIsNoResults, setThereIsNoResults] = useState(false);
@@ -43,6 +44,7 @@ function Cliente({
     setSearchInputValue('');
     setPreviousSearchInputValue('');
     setVendiblesResponse({});
+    setLastFiltersApplied({});
     setSearchDone(false);
     setThereIsNoResults(false);
     setSearchType(event.target.value);
@@ -53,7 +55,13 @@ function Cliente({
       if (searchInputValue) {
         setIsLoading(true);
         setErrorMessage('');
-        const params = { searchType, searchInput: searchInputValue, filters };
+        setLastFiltersApplied(filters);
+        const finalAppliedFilters = filters ?? lastFiltersApplied;
+        const params = {
+          searchType,
+          searchInput: searchInputValue,
+          filters: finalAppliedFilters,
+        };
         dispatchHandleSearch(params).then((response) => {
           setPreviousSearchInputValue(searchInputValue);
           setSearchDone(true);
