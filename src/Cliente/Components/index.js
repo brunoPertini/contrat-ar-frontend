@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
@@ -26,9 +26,12 @@ function Cliente({
   const [searchErrorMessage, setErrorMessage] = useState('');
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [previousSearchInputValue, setPreviousSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
   const [vendiblesResponse, setVendiblesResponse] = useState({});
+
+  const [lastFiltersApplied, setLastFiltersApplied] = useState({});
 
   const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,20 +40,32 @@ function Cliente({
   const [filtersEnabled, setFiltersEnabled] = useState(false);
 
   const handleSetSearchType = (event) => {
+    setErrorMessage('');
     setSearchInputValue('');
+    setPreviousSearchInputValue('');
     setVendiblesResponse({});
+    setLastFiltersApplied({});
     setSearchDone(false);
     setThereIsNoResults(false);
     setSearchType(event.target.value);
   };
 
-  const handleStartSearch = (event) => {
+  const handleStartSearch = (event, filters) => {
     if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
       if (searchInputValue) {
         setIsLoading(true);
         setErrorMessage('');
-        const params = { searchType, searchInput: searchInputValue };
+        if (filters) {
+          setLastFiltersApplied(filters);
+        }
+        const finalAppliedFilters = filters ?? lastFiltersApplied;
+        const params = {
+          searchType,
+          searchInput: searchInputValue,
+          filters: finalAppliedFilters,
+        };
         dispatchHandleSearch(params).then((response) => {
+          setPreviousSearchInputValue(searchInputValue);
           setSearchDone(true);
           setVendiblesResponse(response);
           setFiltersEnabled(!!response.categorias);
@@ -124,13 +139,6 @@ function Cliente({
     [vendiblesResponse],
   );
 
-  const categoriesLabels = useMemo(
-    () => vendiblesResponse.categorias?.map(
-      (c) => c.name,
-    ) || [],
-    [vendiblesResponse.categorias],
-  );
-
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -169,6 +177,8 @@ function Cliente({
                       aria-label="search-input"
                       edge="end"
                       onClick={handleStartSearch}
+                      disabled={(!!previousSearchInputValue
+                         && previousSearchInputValue === searchInputValue)}
                     >
                       <SearchOutlinedIcon />
                     </IconButton>
@@ -198,7 +208,11 @@ function Cliente({
           {
             filtersEnabled && (
             <Grid item sx={{ mt: '3%' }}>
-              <VendiblesFilters categories={categoriesLabels} vendibleType={searchType} />
+              <VendiblesFilters
+                categories={vendiblesResponse.categorias}
+                vendibleType={searchType}
+                onFiltersApplied={handleStartSearch}
+              />
             </Grid>
             )
           }

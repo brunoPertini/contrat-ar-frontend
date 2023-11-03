@@ -25,6 +25,14 @@ export const proveedorDTOShape = {
   distanceFrom: PropTypes.number,
 };
 
+export const vendibleCategoryShape = {
+  root: PropTypes.string,
+  children: PropTypes.arrayOf(PropTypes.shape({
+    root: PropTypes.string,
+    children: PropTypes.array,
+  })),
+};
+
 export const getUserInfoResponseShape = {
   name: PropTypes.string,
   surname: PropTypes.string,
@@ -38,4 +46,5 @@ export const getUserInfoResponseShape = {
 export const getVendiblesResponseShape = {
   vendibles: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape))),
   proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)),
+  categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
 };

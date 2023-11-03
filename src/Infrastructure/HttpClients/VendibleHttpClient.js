@@ -18,11 +18,17 @@ export class VendibleHttpClient extends HttpClient {
     this.vendibleType = vendibleType;
   }
 
-  getVendibleByName(nombre) {
+  getVendibleByName(nombre, filters = {}) {
     const finalUrl = this.vendibleType === systemConstants.PRODUCTS
       ? vendiblesRoutes.getProduct : vendiblesRoutes.getService;
 
     const queryParams = { nombre };
+
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        queryParams[key] = filters[key];
+      }
+    });
 
     return this.get(finalUrl, queryParams);
   }
