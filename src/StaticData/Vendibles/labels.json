@@ -2,5 +2,6 @@
     "noResultsFound": "No se encontraron resultados para tu búsqueda",
     "seeInMap": "Ver en Mapa",
     "categoryOfVendible": "Categorías de {vendibleType}",
-    "categoriesBottomLabel": "Podés elegir más de una categoría"
+    "categoriesBottomLabel": "Podés elegir más de una categoría",
+    "appliedFilters": "Filtros aplicados"
 }

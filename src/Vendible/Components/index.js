@@ -162,7 +162,7 @@ function VendiblePage({
 
 VendiblePage.propTypes = {
   proveedoresInfo: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)).isRequired,
-  vendibleType: PropTypes.string.isRequired,
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   filtersEnabled: PropTypes.bool.isRequired,
 };

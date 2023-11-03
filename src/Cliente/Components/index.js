@@ -55,7 +55,9 @@ function Cliente({
       if (searchInputValue) {
         setIsLoading(true);
         setErrorMessage('');
-        setLastFiltersApplied(filters);
+        if (filters) {
+          setLastFiltersApplied(filters);
+        }
         const finalAppliedFilters = filters ?? lastFiltersApplied;
         const params = {
           searchType,

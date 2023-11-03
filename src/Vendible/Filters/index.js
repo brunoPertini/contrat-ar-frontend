@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { useEffect, useMemo, useState } from 'react';
-import { Chip, Grid, Typography } from '@mui/material';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks';
+import { vendiblesLabels } from '../../StaticData/Vendibles';
 
 function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
@@ -57,7 +60,7 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
       {
         !(isEmpty(filtersLabels)) && (
           <Grid item>
-            <Typography variant="h4">Filtros aplicados</Typography>
+            <Typography variant="h4">{vendiblesLabels.appliedFilters}</Typography>
             {
               filtersLabels.map((label) => <Chip label={label} variant="outlined" onDelete={() => handleFilterDeleted(label)} />)
             }
@@ -73,7 +76,7 @@ VendiblesFilters.defaultProps = {
 };
 VendiblesFilters.propTypes = {
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
-  vendibleType: PropTypes.string.isRequired,
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   onFiltersApplied: PropTypes.func.isRequired,
 };
 

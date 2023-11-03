@@ -127,7 +127,7 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
 }
 
 CategoryAccordion.propTypes = {
-  vendibleType: PropTypes.string.isRequired,
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
   onCategorySelected: PropTypes.func.isRequired,
 };
