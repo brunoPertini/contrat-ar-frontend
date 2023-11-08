@@ -15,3 +15,7 @@ export const PRODUCTS = 'productos';
 export const PRODUCT = 'PRODUCTO';
 
 export const SERVICE = 'SERVICIO';
+
+export const ROLE_PROVEEDOR_PRODUCTOS = 'PROVEEDOR_PRODUCTOS';
+
+export const ROLE_PROVEEDOR_SERVICIOS = 'PROVEEDOR_SERVICIOS';

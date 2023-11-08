@@ -4,14 +4,11 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Alert from '@mui/material/Alert';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import {
-  List, RadioList, Layout,
+  List, RadioList, Layout, SearcherInput,
 } from '../../Shared/Components';
 import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
@@ -163,35 +160,25 @@ function Cliente({
           <Grid
             item
           >
-            <Typography variant="h2" color="#1976d2">
-              { labels.title }
-            </Typography>
-            <FormControl variant="outlined" sx={{ width: '60%' }}>
-              <TextField
-                autoFocus
-                id="vendible-input"
-                type="text"
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      aria-label="search-input"
-                      edge="end"
-                      onClick={handleStartSearch}
-                      disabled={(!!previousSearchInputValue
-                         && previousSearchInputValue === searchInputValue)}
-                    >
-                      <SearchOutlinedIcon />
-                    </IconButton>
-                  ),
-                }}
-                label={!searchInputValue ? sharedLabels.search : ''}
-                onChange={handleSearchDone}
-                onKeyUp={handleStartSearch}
-                error={!!searchErrorMessage}
-                helperText={searchErrorMessage}
-                value={searchInputValue}
-              />
-            </FormControl>
+            <SearcherInput
+              title={labels.title}
+              onSearchClick={handleStartSearch}
+              isSearchDisabled={(!!previousSearchInputValue
+            && previousSearchInputValue === searchInputValue)}
+              searchLabel={!searchInputValue ? sharedLabels.search : ''}
+              handleSearchDone={handleSearchDone}
+              hasError={!!searchErrorMessage}
+              errorMessage={searchErrorMessage}
+              inputValue={searchInputValue}
+              titleConfig={{
+                variant: 'h2',
+                color: '#1976d2',
+              }}
+              searcherConfig={{
+                variant: 'outlined',
+                sx: { width: '60%' },
+              }}
+            />
           </Grid>
           <Grid item>
             <FormControl sx={{ mt: '3%' }}>
