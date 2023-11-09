@@ -55,6 +55,7 @@ function ProveedorContainer() {
 
   return !isEmpty(vendibles) ? (
     <ProveedorPage
+      vendibles={vendibles}
       menuOptions={menuOptions}
       addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
     />

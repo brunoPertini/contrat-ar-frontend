@@ -8,8 +8,9 @@ import Alert from '@mui/material/Alert';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import {
-  List, RadioList, Layout, SearcherInput,
+  RadioList, Layout, SearcherInput,
 } from '../../Shared/Components';
+import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
