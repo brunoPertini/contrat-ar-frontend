@@ -33,7 +33,7 @@ function Searcher({
           }}
           label={searchLabel}
           onChange={handleSearchDone}
-          onKeyUp={!isSearchDisabled ? onSearchClick : () => { }}
+          onKeyUp={(event) => (!isSearchDisabled ? onSearchClick(event) : () => {})}
           error={hasError}
           helperText={errorMessage}
           value={inputValue}

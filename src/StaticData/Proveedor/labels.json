@@ -3,5 +3,6 @@
     "addNewProductLabel": "¿Querés vender algo más?",
     "addNewServiceLinkLabel": "¡Agregá un servicio nuevo!",
     "addNewProductLinkLabel": "¡Agregá un producto nuevo!",
-    "yourPosts": "Tus Publicaciones"  
+    "yourPosts": "Tus Publicaciones",
+    "tooltipLabel": "Hacé click en \"Ver detalle\" para editar tu publicación o borrarla."  
 }

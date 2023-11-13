@@ -43,6 +43,10 @@ export function isEnterPressed(event) {
   return event.key === 'Enter';
 }
 
+export function isDeletePressed(event) {
+  return event.key === 'Backspace';
+}
+
 /**
  *
  * @param {Event} event

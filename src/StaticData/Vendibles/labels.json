@@ -3,5 +3,6 @@
     "seeInMap": "Ver en Mapa",
     "categoryOfVendible": "Categorías de {vendibleType}",
     "categoriesBottomLabel": "Podés elegir más de una categoría",
-    "appliedFilters": "Filtros aplicados"
+    "appliedFilters": "Filtros aplicados",
+    "appliedCategories": "Categorías aplicadas"
 }

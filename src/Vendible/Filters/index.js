@@ -67,7 +67,12 @@ function VendiblesFilters({
       {
         !(isEmpty(filtersLabels)) && (
           <Grid item>
-            <Typography variant="h4">{vendiblesLabels.appliedFilters}</Typography>
+            <Typography variant="h4">
+              {showAccordionTitle
+                ? vendiblesLabels.appliedFilters
+                : vendiblesLabels.appliedCategories}
+
+            </Typography>
             {
               filtersLabels.map((label) => <Chip label={label} variant="outlined" onDelete={() => handleFilterDeleted(label)} />)
             }
