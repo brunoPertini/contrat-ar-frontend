@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 function Searcher({
-  title, titleConfig, searcherConfig, onSearchClick,
+  title, titleConfig, searcherConfig, onSearchClick, placeholder,
   isSearchDisabled, searchLabel, handleSearchDone, hasError, errorMessage, inputValue,
 }) {
   return (
@@ -37,6 +37,7 @@ function Searcher({
           error={hasError}
           helperText={errorMessage}
           value={inputValue}
+          placeholder={placeholder}
         />
       </FormControl>
 
@@ -46,6 +47,7 @@ function Searcher({
 
 Searcher.defaultProps = {
   title: '',
+  placeholder: '',
   isSearchDisabled: false,
   searchLabel: '',
   hasError: false,
@@ -57,6 +59,7 @@ Searcher.defaultProps = {
 
 Searcher.propTypes = {
   title: PropTypes.string,
+  placeholder: PropTypes.string,
   onSearchClick: PropTypes.func.isRequired,
   isSearchDisabled: PropTypes.bool,
   searchLabel: PropTypes.string,

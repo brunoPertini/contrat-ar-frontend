@@ -9,7 +9,12 @@ import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 
-function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
+function VendiblesFilters({
+  categories, vendibleType,
+  onFiltersApplied, containerStyles,
+  showAccordionTitle,
+  alternativeAccordionTitle,
+}) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
   const [filtersApplied, setFiltersApplied] = useState({
@@ -47,13 +52,15 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
   }, [vendibleType]);
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection="column" sx={{ ...containerStyles }}>
       { (isEmpty(filtersLabels)) && (
       <Grid item xs={4}>
+        {!showAccordionTitle && alternativeAccordionTitle}
         <CategoryAccordion
           categories={categories}
           vendibleType={vendibleType}
           onCategorySelected={handleOnCategorySelected}
+          showTitle={showAccordionTitle}
         />
       </Grid>
       )}
@@ -73,11 +80,17 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
 
 VendiblesFilters.defaultProps = {
   categories: {},
+  containerStyles: {},
+  showAccordionTitle: true,
+  alternativeAccordionTitle: null,
 };
 VendiblesFilters.propTypes = {
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   onFiltersApplied: PropTypes.func.isRequired,
+  containerStyles: PropTypes.objectOf(PropTypes.string),
+  showAccordionTitle: PropTypes.bool,
+  alternativeAccordionTitle: PropTypes.node,
 };
 
 export default VendiblesFilters;

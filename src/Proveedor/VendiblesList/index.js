@@ -10,6 +10,7 @@ import VendibleCard from '../../Shared/Components/VendibleCard';
 import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { sharedLabels } from '../../StaticData/Shared';
 import { routes, systemConstants } from '../../Shared/Constants';
+import ProveedorVendibleCard from '../../Shared/Components/VendibleCard/ProveedorVendibleCard';
 
 /**
  * Vendibles list of Provider page.
@@ -17,7 +18,7 @@ import { routes, systemConstants } from '../../Shared/Constants';
 export default function VendiblesList({ vendibles }) {
   const redirectLink = () => {};
 
-  const cardStyles = { display: 'flex', flexDirection: 'row' };
+  const cardStyles = { display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' };
 
   const linkSection = (
     <Link
@@ -38,13 +39,15 @@ export default function VendiblesList({ vendibles }) {
             vendibles.map((vendible) => (
               <VendibleCard
                 vendibleTitle={vendible.vendibleNombre}
-                images={[vendible.imagenUrl]}
+                images={vendible.imagenUrl ? [vendible.imagenUrl] : []}
                 key={`vendibleCard_${vendible.vendibleNombre}`}
                 cardStyles={cardStyles}
                 linkSection={linkSection}
                 imageListProps={{
-                  MAX_GALLERY_IMAGES: 1,
+                  cols: 1,
+                  sx: { width: '40%' },
                 }}
+                ChildrenComponent={ProveedorVendibleCard}
               />
             ))
         }

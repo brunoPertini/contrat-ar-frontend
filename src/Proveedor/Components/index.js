@@ -8,6 +8,8 @@ import Header from '../../Header';
 import { SearcherInput } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
+import VendiblesFilters from '../../Vendible/Filters';
+import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
 
 function ProveedorPage({
   menuOptions,
@@ -16,7 +18,11 @@ function ProveedorPage({
     addVendibleLink,
   },
   vendibles,
+  categorias,
+  role,
 }) {
+  const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -27,15 +33,38 @@ function ProveedorPage({
         }}
         justifyContent="center"
       >
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <SearcherInput
             title="Filtros"
+            titleConfig={{
+              variant: 'h3',
+            }}
+            searcherConfig={{
+              sx: {
+                mt: '5%',
+              },
+            }}
             onSearchClick={() => {}}
             handleSearchDone={() => {}}
             hasError={false}
+            placeholder="Filtrá por nombre"
+          />
+          <VendiblesFilters
+            categories={categorias}
+            vendibleType={vendibleType}
+            onFiltersApplied={() => {}}
+            containerStyles={{
+              mt: '5%',
+            }}
+            showAccordionTitle={false}
+            alternativeAccordionTitle={(
+              <Typography variant="h6">
+                Filtrá por categoría
+              </Typography>
+            )}
           />
         </Grid>
-        <Grid item display="flex" xs={6} flexDirection="column">
+        <Grid item display="flex" xs={8} flexDirection="column">
           <Box
             display="flex"
             flexDirection="row"
@@ -56,7 +85,7 @@ function ProveedorPage({
               <Typography variant="h6">
                 {addVendibleLabel}
               </Typography>
-              <Link sx={{ mt: '10px' }}>
+              <Link sx={{ mt: '10px', cursor: 'pointer' }}>
                 {addVendibleLink}
               </Link>
             </div>

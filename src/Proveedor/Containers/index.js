@@ -29,7 +29,7 @@ const addNewVendiblesLabels = {
 function ProveedorContainer() {
   const userInfo = useSelector(userInfoSelector);
 
-  const [vendibles, setVendibles] = useState();
+  const [response, setResponse] = useState();
 
   const { role, token, id } = userInfo;
 
@@ -45,17 +45,18 @@ function ProveedorContainer() {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
     });
-    const newVendibles = await client.getVendibles(id);
-    setVendibles(newVendibles);
+    const newResponse = await client.getVendibles(id);
+    setResponse(newResponse);
   };
 
   useEffect(() => {
     handleGetVendibles();
   }, []);
 
-  return !isEmpty(vendibles) ? (
+  return !isEmpty(response) ? (
     <ProveedorPage
-      vendibles={vendibles}
+      vendibles={response.vendibles}
+      categorias={response.categorias}
       menuOptions={menuOptions}
       addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
     />

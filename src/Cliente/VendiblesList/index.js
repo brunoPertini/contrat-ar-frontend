@@ -8,6 +8,7 @@ import VendibleCard from '../../Shared/Components/VendibleCard';
 import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { routes, systemConstants } from '../../Shared/Constants';
+import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
 
 /**
  * List that shows each service or product info, including its provider
@@ -78,9 +79,10 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
             linkSection={linkSection}
             linkCardStyles={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
             imageListProps={{
-              MAX_GALLERY_IMAGES: 3,
+              cols: 3,
               gap: 10,
             }}
+            ChildrenComponent={ClienteVendibleCard}
           />
         );
       })}

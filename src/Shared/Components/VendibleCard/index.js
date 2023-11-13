@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -7,11 +9,11 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 export default function VendibleCard({
   vendibleTitle, images, linkSection,
-  imageListProps: { MAX_GALLERY_IMAGES, gap },
-  cardStyles, linkCardStyles,
+  imageListProps: { cols, gap, sx },
+  cardStyles, linkCardStyles, ChildrenComponent,
 }) {
-  const imagesSection = !!images.length && (
-    <ImageList cols={MAX_GALLERY_IMAGES} gap={gap}>
+  const imageSection = !!images.length && (
+    <ImageList cols={cols} gap={gap} sx={sx}>
       {images.map((imageUrl, i) => (
         <ImageListItem key={`image_${vendibleTitle}_${i}`}>
           <img
@@ -25,19 +27,27 @@ export default function VendibleCard({
     </ImageList>
   );
 
+  const titleSection = (
+    <CardContent>
+      <Typography gutterBottom variant="h5" component="div">
+        { vendibleTitle }
+      </Typography>
+    </CardContent>
+  );
+
+  const linkContent = (
+    <CardContent sx={{ ...linkCardStyles }}>
+      {linkSection}
+    </CardContent>
+  );
+
   return (
     <Card sx={{ ...cardStyles }}>
-      {
-       imagesSection
-      }
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          { vendibleTitle }
-        </Typography>
-      </CardContent>
-      <CardContent sx={{ ...linkCardStyles }}>
-        {linkSection}
-      </CardContent>
+      <ChildrenComponent
+        linkSection={linkContent}
+        imageSection={imageSection}
+        titleSection={titleSection}
+      />
     </Card>
   );
 }
@@ -57,4 +67,5 @@ VendibleCard.propTypes = {
     MAX_GALLERY_IMAGES: PropTypes.number.isRequired,
     gap: PropTypes.number.isRequired,
   }).isRequired,
+  ChildrenComponent: PropTypes.node.isRequired,
 };
