@@ -20,9 +20,9 @@ const addNewVendiblesLabels = {
     label: proveedorLabels.addNewProductLabel,
     labelLink: proveedorLabels.addNewProductLinkLabel,
   },
-  [systemConstants.ROLE_PROVEEDOR_PRODUCTOS]: {
-    label: proveedorLabels.addNewProductLabel,
-    labelLink: proveedorLabels.addNewProductLinkLabel,
+  [systemConstants.ROLE_PROVEEDOR_SERVICIOS]: {
+    label: proveedorLabels.addNewServiceLabel,
+    labelLink: proveedorLabels.addNewServiceLinkLabel,
   },
 };
 

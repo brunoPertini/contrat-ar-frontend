@@ -22,6 +22,14 @@ function filterVendiblesByTerm({ sourceVendibles, term }) {
   return sourceVendibles.filter((v) => regEx.test(v.vendibleNombre));
 }
 
+/**
+ *
+ * @param {{vendibles: Array<T>, categoryName: String}}
+ */
+function filterVendiblesByCategory({ vendibles, categoryName }) {
+  return vendibles.filter((vendible) => vendible.categoryNames.includes(categoryName));
+}
+
 function ProveedorPage({
   menuOptions,
   addVendibleSectionProps: {
@@ -35,25 +43,56 @@ function ProveedorPage({
   const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
   const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
-  const [searchValue, setSearchValue] = useState('');
 
-  const handleOnDeleteVendibleTerm = () => {
-    setFilteredVendibles(vendibles);
-  };
+  const [searchValue, setSearchValue] = useState('');
+  const [categorySelected, setCategorySelected] = useState();
 
   const handleSetSearchValue = (event) => {
     setSearchValue(event.target.value);
   };
 
+  const handleOnSelectCategory = (_, { category }) => {
+    setFilteredVendibles((previous) => {
+      let newFilteredVendibles;
+      const vendiblesSource = searchValue ? previous : vendibles;
+      if (category) {
+        newFilteredVendibles = filterVendiblesByCategory({
+          vendibles: vendiblesSource,
+          categoryName: category,
+        });
+      } else if (searchValue) {
+        newFilteredVendibles = filterVendiblesByTerm({
+          sourceVendibles: vendibles,
+          term: searchValue,
+        });
+      } else {
+        newFilteredVendibles = [...vendibles];
+      }
+
+      return newFilteredVendibles;
+    });
+    setCategorySelected(category || null);
+  };
+
+  const handleOnDeleteVendibleTerm = () => {
+    if (!categorySelected) {
+      setFilteredVendibles(vendibles);
+    } else {
+      handleOnSelectCategory(null, { category: categorySelected });
+    }
+  };
+
   const handleFilterVendiblesByName = (event) => {
     console.log(event);
     if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
-      const newFilteredVendibles = filterVendiblesByTerm({
-        sourceVendibles:
-         vendibles,
-        term: searchValue,
+      setFilteredVendibles((previous) => {
+        const newFilteredVendibles = filterVendiblesByTerm({
+          sourceVendibles: categorySelected ? previous : vendibles,
+          term: searchValue,
+        });
+
+        return newFilteredVendibles;
       });
-      setFilteredVendibles(newFilteredVendibles);
     }
 
     if (!searchValue && isKeyEvent(event) && isDeletePressed(event)) {
@@ -91,14 +130,14 @@ function ProveedorPage({
           <VendiblesFilters
             categories={categorias}
             vendibleType={vendibleType}
-            onFiltersApplied={() => {}}
+            onFiltersApplied={handleOnSelectCategory}
             containerStyles={{
               mt: '5%',
             }}
             showAccordionTitle={false}
             alternativeAccordionTitle={(
               <Typography variant="h6">
-                Filtrá por categoría
+                {proveedorLabels.filterByCategory}
               </Typography>
             )}
           />
