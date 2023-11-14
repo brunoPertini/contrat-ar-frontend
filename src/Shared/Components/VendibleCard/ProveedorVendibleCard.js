@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 
 export default function ProveedorVendibleCard({ imageSection, titleSection, linkSection }) {
   return (
@@ -9,3 +9,9 @@ export default function ProveedorVendibleCard({ imageSection, titleSection, link
     </>
   );
 }
+
+ProveedorVendibleCard.propTypes = {
+  imageSection: PropTypes.node.isRequired,
+  titleSection: PropTypes.node.isRequired,
+  linkSection: PropTypes.node.isRequired,
+};

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
@@ -66,11 +66,7 @@ function Cliente({
         setSearchDone(true);
         setVendiblesResponse(response);
         setFiltersEnabled(!!response.categorias);
-        if (isEmpty(response.vendibles)) {
-          setThereIsNoResults(true);
-        } else {
-          setThereIsNoResults(false);
-        }
+        setThereIsNoResults(isEmpty(response.vendibles));
       })
         .catch((errorMessage) => {
           setErrorMessage(errorMessage);
@@ -135,6 +131,12 @@ function Cliente({
     [vendiblesResponse],
   );
 
+  const isSearchDisabled = useMemo(
+    () => (!!previousSearchInputValue
+    && previousSearchInputValue === searchInputValue),
+    [previousSearchInputValue, searchInputValue],
+  );
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -162,8 +164,7 @@ function Cliente({
             <SearcherInput
               title={labels.title}
               onSearchClick={handleStartSearch}
-              isSearchDisabled={(!!previousSearchInputValue
-            && previousSearchInputValue === searchInputValue)}
+              isSearchDisabled={isSearchDisabled}
               searchLabel={!searchInputValue ? sharedLabels.search : ''}
               hasError={!!searchErrorMessage}
               errorMessage={searchErrorMessage}

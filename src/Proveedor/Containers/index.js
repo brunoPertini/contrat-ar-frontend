@@ -29,8 +29,6 @@ const addNewVendiblesLabels = {
 function ProveedorContainer() {
   const userInfo = useSelector(userInfoSelector);
 
-  const [response, setResponse] = useState();
-
   const { role, token, id } = userInfo;
 
   const menuOptions = [{
@@ -40,6 +38,8 @@ function ProveedorContainer() {
 
   const addVendibleLabel = addNewVendiblesLabels[role].label;
   const addVendibleLink = addNewVendiblesLabels[role].labelLink;
+
+  const [response, setResponse] = useState();
 
   const handleGetVendibles = async () => {
     const client = HttpClientFactory.createProveedorHttpClient({

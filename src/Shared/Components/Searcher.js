@@ -6,7 +6,11 @@ import Typography from '@mui/material/Typography';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { isDeletePressed, isEnterPressed } from '../Utils/DomUtils';
 import { EMPTY_FUNCTION } from '../Constants/System';
-
+/**
+ * Text input component capable of running a set of functions when some event occurs,
+ * as keyUp, enter pressed, delete pressed, click (over its search icon).
+ * It's meant to be an uncontrolled component.
+ */
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
   isSearchDisabled, searchLabel,
@@ -44,7 +48,6 @@ function Searcher({
       <FormControl {...searcherConfig}>
         <TextField
           autoFocus
-          id="vendible-input"
           type="text"
           InputProps={{
             endAdornment: (

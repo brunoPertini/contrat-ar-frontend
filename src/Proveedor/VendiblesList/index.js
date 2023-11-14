@@ -1,25 +1,17 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Link from '@mui/material/Link';
-import Groups2Icon from '@mui/icons-material/Groups2';
 import Alert from '@mui/material/Alert';
 import VendibleCard from '../../Shared/Components/VendibleCard';
-import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { sharedLabels } from '../../StaticData/Shared';
-import { routes, systemConstants } from '../../Shared/Constants';
 import ProveedorVendibleCard from '../../Shared/Components/VendibleCard/ProveedorVendibleCard';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
+import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 
 /**
  * Vendibles list of Provider page.
  */
 export default function VendiblesList({ vendibles }) {
-  const redirectLink = () => {};
-
   const cardStyles = { display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' };
 
   const linkSection = (
@@ -74,3 +66,7 @@ export default function VendiblesList({ vendibles }) {
     </>
   );
 }
+
+VendiblesList.propTypes = {
+  vendibles: PropTypes.shape(proveedoresVendiblesShape).isRequired,
+};

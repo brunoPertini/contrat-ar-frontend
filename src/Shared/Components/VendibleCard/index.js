@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -64,8 +62,9 @@ VendibleCard.propTypes = {
   cardStyles: PropTypes.objectOf(PropTypes.string),
   linkCardStyles: PropTypes.objectOf(PropTypes.string),
   imageListProps: PropTypes.shape({
-    MAX_GALLERY_IMAGES: PropTypes.number.isRequired,
-    gap: PropTypes.number.isRequired,
+    cols: PropTypes.number,
+    gap: PropTypes.number,
+    sx: PropTypes.objectOf(PropTypes.string),
   }).isRequired,
   ChildrenComponent: PropTypes.node.isRequired,
 };

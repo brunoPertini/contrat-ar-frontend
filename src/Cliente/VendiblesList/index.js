@@ -9,6 +9,7 @@ import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { routes, systemConstants } from '../../Shared/Constants';
 import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
+import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
 
 /**
  * List that shows each service or product info, including its provider
@@ -47,7 +48,8 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
       { vendiblesNames.map((vendibleName) => {
         const images = [];
         for (let i = 0;
-          i < vendiblesObject.vendibles[vendibleName].length && images.length < 3;
+          i < vendiblesObject.vendibles[vendibleName].length
+          && images.length < MAX_CLIENT_VENDIBLES_GALLERY_IMAGES;
           i++) {
           if (vendiblesObject.vendibles[vendibleName][i].imagenUrl) {
             images.push(vendiblesObject.vendibles[vendibleName][i].imagenUrl);
