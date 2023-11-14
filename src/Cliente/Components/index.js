@@ -14,7 +14,6 @@ import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
-import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
 import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 
@@ -48,45 +47,43 @@ function Cliente({
     setSearchType(event.target.value);
   };
 
-  const handleStartSearch = (event, filters) => {
-    if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
-      if (searchInputValue) {
-        setIsLoading(true);
-        setErrorMessage('');
-        if (filters) {
-          setLastFiltersApplied(filters);
-        }
-        const finalAppliedFilters = filters ?? lastFiltersApplied;
-        const params = {
-          searchType,
-          searchInput: searchInputValue,
-          filters: finalAppliedFilters,
-        };
-        dispatchHandleSearch(params).then((response) => {
-          setPreviousSearchInputValue(searchInputValue);
-          setSearchDone(true);
-          setVendiblesResponse(response);
-          setFiltersEnabled(!!response.categorias);
-          if (isEmpty(response.vendibles)) {
-            setThereIsNoResults(true);
-          } else {
-            setThereIsNoResults(false);
-          }
-        })
-          .catch((errorMessage) => {
-            setErrorMessage(errorMessage);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      } else {
-        setErrorMessage(labels.searchErrorMessage);
+  const handleStartSearch = (filters) => {
+    if (searchInputValue) {
+      setIsLoading(true);
+      setErrorMessage('');
+      if (filters) {
+        setLastFiltersApplied(filters);
       }
+      const finalAppliedFilters = filters ?? lastFiltersApplied;
+      const params = {
+        searchType,
+        searchInput: searchInputValue,
+        filters: finalAppliedFilters,
+      };
+      dispatchHandleSearch(params).then((response) => {
+        setPreviousSearchInputValue(searchInputValue);
+        setSearchDone(true);
+        setVendiblesResponse(response);
+        setFiltersEnabled(!!response.categorias);
+        if (isEmpty(response.vendibles)) {
+          setThereIsNoResults(true);
+        } else {
+          setThereIsNoResults(false);
+        }
+      })
+        .catch((errorMessage) => {
+          setErrorMessage(errorMessage);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setErrorMessage(labels.searchErrorMessage);
     }
   };
 
-  const handleSearchDone = (event) => {
-    setSearchInputValue(event.target.value);
+  const handleKeyUp = (newValue) => {
+    setSearchInputValue(newValue);
   };
 
   const radioGroupConfig = {
@@ -167,7 +164,6 @@ function Cliente({
               isSearchDisabled={(!!previousSearchInputValue
             && previousSearchInputValue === searchInputValue)}
               searchLabel={!searchInputValue ? sharedLabels.search : ''}
-              handleSearchDone={handleSearchDone}
               hasError={!!searchErrorMessage}
               errorMessage={searchErrorMessage}
               inputValue={searchInputValue}
@@ -178,6 +174,10 @@ function Cliente({
               searcherConfig={{
                 variant: 'outlined',
                 sx: { width: '60%' },
+              }}
+              keyEvents={{
+                onKeyUp: handleKeyUp,
+                onEnterPressed: handleStartSearch,
               }}
             />
           </Grid>

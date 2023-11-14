@@ -5,5 +5,6 @@
     "addNewProductLinkLabel": "¡Agregá un producto nuevo!",
     "yourPosts": "Tus Publicaciones",
     "tooltipLabel": "Hacé click en \"Ver detalle\" para editar tu publicación o borrarla.",
-    "filterByCategory": "Filtrá por categoría"  
+    "filterByCategory": "Filtrá por categoría",
+    "filterByName": "Filtrá por nombre"  
 }

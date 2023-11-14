@@ -12,6 +12,7 @@ import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
 import { isDeletePressed, isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
+import { sharedLabels } from '../../StaticData/Shared';
 
 /**
  *
@@ -47,11 +48,11 @@ function ProveedorPage({
   const [searchValue, setSearchValue] = useState('');
   const [categorySelected, setCategorySelected] = useState();
 
-  const handleSetSearchValue = (event) => {
-    setSearchValue(event.target.value);
+  const handleSetSearchValue = (value) => {
+    setSearchValue(value);
   };
 
-  const handleOnSelectCategory = (_, { category }) => {
+  const handleOnSelectCategory = ({ category }) => {
     setFilteredVendibles((previous) => {
       let newFilteredVendibles;
       const vendiblesSource = searchValue ? previous : vendibles;
@@ -78,26 +79,19 @@ function ProveedorPage({
     if (!categorySelected) {
       setFilteredVendibles(vendibles);
     } else {
-      handleOnSelectCategory(null, { category: categorySelected });
+      handleOnSelectCategory({ category: categorySelected });
     }
   };
 
-  const handleFilterVendiblesByName = (event) => {
-    console.log(event);
-    if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
-      setFilteredVendibles((previous) => {
-        const newFilteredVendibles = filterVendiblesByTerm({
-          sourceVendibles: categorySelected ? previous : vendibles,
-          term: searchValue,
-        });
-
-        return newFilteredVendibles;
+  const handleFilterVendiblesByName = () => {
+    setFilteredVendibles((previous) => {
+      const newFilteredVendibles = filterVendiblesByTerm({
+        sourceVendibles: categorySelected ? previous : vendibles,
+        term: searchValue,
       });
-    }
 
-    if (!searchValue && isKeyEvent(event) && isDeletePressed(event)) {
-      handleOnDeleteVendibleTerm();
-    }
+      return newFilteredVendibles;
+    });
   };
 
   return (
@@ -112,7 +106,7 @@ function ProveedorPage({
       >
         <Grid item xs={4}>
           <SearcherInput
-            title="Filtros"
+            title={sharedLabels.filters}
             titleConfig={{
               variant: 'h3',
             }}
@@ -122,9 +116,12 @@ function ProveedorPage({
               },
             }}
             onSearchClick={handleFilterVendiblesByName}
-            handleSearchDone={handleSetSearchValue}
-            hasError={false}
-            placeholder="Filtrá por nombre"
+            keyEvents={{
+              onKeyUp: handleSetSearchValue,
+              onEnterPressed: handleFilterVendiblesByName,
+              onDeletePressed: handleOnDeleteVendibleTerm,
+            }}
+            placeholder={proveedorLabels.filterByName}
             inputValue={searchValue}
           />
           <VendiblesFilters

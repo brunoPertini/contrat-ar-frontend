@@ -27,7 +27,7 @@ function VendiblesFilters({
       newAppliedFilters = { ...previous, category: categoryName };
       return newAppliedFilters;
     });
-    onFiltersApplied(null, newAppliedFilters);
+    onFiltersApplied(newAppliedFilters);
   };
 
   const handleFilterDeleted = (filterValue) => {
@@ -38,7 +38,7 @@ function VendiblesFilters({
       newAppliedFilters = { ...previous, [filterToDelete]: '' };
       return newAppliedFilters;
     });
-    onFiltersApplied(null, newAppliedFilters);
+    onFiltersApplied(newAppliedFilters);
   };
 
   const filtersLabels = useMemo(() => Object.values(
