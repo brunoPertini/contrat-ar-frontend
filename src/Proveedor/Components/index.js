@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import {
-  Box, Grid, Link, Typography,
-} from '@mui/material';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import { useState } from 'react';
 import Header from '../../Header';
@@ -10,26 +10,14 @@ import { SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
-import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
-import { isDeletePressed, isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
+import {
+  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS, SERVICES,
+} from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
-
-/**
- *
- * @param {{sourceVendibles: Array<T>, term: String}}
- */
-function filterVendiblesByTerm({ sourceVendibles, term }) {
-  const regEx = new RegExp(term, 'i');
-  return sourceVendibles.filter((v) => regEx.test(v.vendibleNombre));
-}
-
-/**
- *
- * @param {{vendibles: Array<T>, categoryName: String}}
- */
-function filterVendiblesByCategory({ vendibles, categoryName }) {
-  return vendibles.filter((vendible) => vendible.categoryNames.includes(categoryName));
-}
+import { menuOptionsShape } from '../../Shared/PropTypes/Header';
+import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
+import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
+import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 
 function ProveedorPage({
   menuOptions,
@@ -187,5 +175,16 @@ function ProveedorPage({
     </>
   );
 }
+
+ProveedorPage.propTypes = {
+  menuOptions: PropTypes.shape(menuOptionsShape).isRequired,
+  addVendibleSectionProps: PropTypes.shape({
+    addVendibleLabel: PropTypes.string,
+    addVendibleLink: PropTypes.string,
+  }).isRequired,
+  vendibles: PropTypes.shape(proveedoresVendiblesShape).isRequired,
+  categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  role: PropTypes.oneOf([ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS]).isRequired,
+};
 
 export default ProveedorPage;

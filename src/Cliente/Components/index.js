@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import { useCallback, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
-import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import {
   RadioList, Layout, SearcherInput,
@@ -16,6 +16,7 @@ import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
+import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 
 function Cliente({
   menuOptions, dispatchHandleSearch,
@@ -236,10 +237,7 @@ function Cliente({
 }
 
 Cliente.propTypes = {
-  menuOptions: PropTypes.arrayOf(PropTypes.shape({
-    component: PropTypes.elementType,
-    props: PropTypes.object,
-  })).isRequired,
+  menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   dispatchHandleSearch: PropTypes.func.isRequired,
 };
 
