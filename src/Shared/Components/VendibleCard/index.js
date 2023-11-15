@@ -66,5 +66,5 @@ VendibleCard.propTypes = {
     gap: PropTypes.number,
     sx: PropTypes.objectOf(PropTypes.string),
   }).isRequired,
-  ChildrenComponent: PropTypes.node.isRequired,
+  ChildrenComponent: PropTypes.elementType.isRequired,
 };

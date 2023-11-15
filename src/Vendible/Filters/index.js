@@ -74,7 +74,14 @@ function VendiblesFilters({
 
             </Typography>
             {
-              filtersLabels.map((label) => <Chip label={label} variant="outlined" onDelete={() => handleFilterDeleted(label)} />)
+              filtersLabels.map((label) => (
+                <Chip
+                  key={`selected_filter_${label}`}
+                  label={label}
+                  variant="outlined"
+                  onDelete={() => handleFilterDeleted(label)}
+                />
+              ))
             }
           </Grid>
         )

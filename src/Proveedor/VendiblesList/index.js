@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
@@ -68,5 +67,5 @@ export default function VendiblesList({ vendibles }) {
 }
 
 VendiblesList.propTypes = {
-  vendibles: PropTypes.shape(proveedoresVendiblesShape).isRequired,
+  vendibles: proveedoresVendiblesShape.isRequired,
 };

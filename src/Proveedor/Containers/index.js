@@ -59,6 +59,7 @@ function ProveedorContainer() {
       categorias={response.categorias}
       menuOptions={menuOptions}
       addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
+      role={role}
     />
   ) : null;
 }

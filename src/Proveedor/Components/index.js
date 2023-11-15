@@ -41,25 +41,29 @@ function ProveedorPage({
   };
 
   const handleOnSelectCategory = ({ category }) => {
-    setFilteredVendibles((previous) => {
-      let newFilteredVendibles;
-      const vendiblesSource = searchValue ? previous : vendibles;
-      if (category) {
-        newFilteredVendibles = filterVendiblesByCategory({
-          vendibles: vendiblesSource,
-          categoryName: category,
-        });
-      } else if (searchValue) {
-        newFilteredVendibles = filterVendiblesByTerm({
-          sourceVendibles: vendibles,
-          term: searchValue,
-        });
-      } else {
-        newFilteredVendibles = [...vendibles];
-      }
+    setSearchValue((currentSearchValue) => {
+      setFilteredVendibles((previous) => {
+        let newFilteredVendibles;
+        const vendiblesSource = currentSearchValue ? previous : vendibles;
+        if (category) {
+          newFilteredVendibles = filterVendiblesByCategory({
+            vendibles: vendiblesSource,
+            categoryName: category,
+          });
+        } else if (currentSearchValue) {
+          newFilteredVendibles = filterVendiblesByTerm({
+            sourceVendibles: vendibles,
+            term: currentSearchValue,
+          });
+        } else {
+          newFilteredVendibles = [...vendibles];
+        }
 
-      return newFilteredVendibles;
+        return newFilteredVendibles;
+      });
+      return currentSearchValue;
     });
+
     setCategorySelected(category || null);
   };
 
@@ -177,12 +181,12 @@ function ProveedorPage({
 }
 
 ProveedorPage.propTypes = {
-  menuOptions: PropTypes.shape(menuOptionsShape).isRequired,
+  menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   addVendibleSectionProps: PropTypes.shape({
     addVendibleLabel: PropTypes.string,
     addVendibleLink: PropTypes.string,
   }).isRequired,
-  vendibles: PropTypes.shape(proveedoresVendiblesShape).isRequired,
+  vendibles: proveedoresVendiblesShape.isRequired,
   categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
   role: PropTypes.oneOf([ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS]).isRequired,
 };
