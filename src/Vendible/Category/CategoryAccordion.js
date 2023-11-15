@@ -29,7 +29,9 @@ function searchCategoryInTree(categoryTree, categoryName) {
   return found;
 }
 
-function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
+function CategoryAccordion({
+  categories, vendibleType, onCategorySelected, showTitle,
+}) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
   const handleCategorySelected = (categoryName) => {
@@ -114,9 +116,11 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
     return (
       <div>
+        {showTitle && (
         <Typography variant="h4">
           { categoriesTitle }
         </Typography>
+        )}
         {
           categoriesSubSection.map((accordionElement) => accordionElement.render())
         }
@@ -126,10 +130,15 @@ function CategoryAccordion({ categories, vendibleType, onCategorySelected }) {
   return null;
 }
 
+CategoryAccordion.defaultProps = {
+  showTitle: true,
+};
+
 CategoryAccordion.propTypes = {
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
   onCategorySelected: PropTypes.func.isRequired,
+  showTitle: PropTypes.bool,
 };
 
 export default CategoryAccordion;

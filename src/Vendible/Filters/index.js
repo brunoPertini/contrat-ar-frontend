@@ -9,7 +9,12 @@ import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 
-function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
+function VendiblesFilters({
+  categories, vendibleType,
+  onFiltersApplied, containerStyles,
+  showAccordionTitle,
+  alternativeAccordionTitle,
+}) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
   const [filtersApplied, setFiltersApplied] = useState({
@@ -22,7 +27,7 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
       newAppliedFilters = { ...previous, category: categoryName };
       return newAppliedFilters;
     });
-    onFiltersApplied(null, newAppliedFilters);
+    onFiltersApplied(newAppliedFilters);
   };
 
   const handleFilterDeleted = (filterValue) => {
@@ -33,7 +38,7 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
       newAppliedFilters = { ...previous, [filterToDelete]: '' };
       return newAppliedFilters;
     });
-    onFiltersApplied(null, newAppliedFilters);
+    onFiltersApplied(newAppliedFilters);
   };
 
   const filtersLabels = useMemo(() => Object.values(
@@ -47,22 +52,36 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
   }, [vendibleType]);
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection="column" sx={{ ...containerStyles }}>
       { (isEmpty(filtersLabels)) && (
       <Grid item xs={4}>
+        {!showAccordionTitle && alternativeAccordionTitle}
         <CategoryAccordion
           categories={categories}
           vendibleType={vendibleType}
           onCategorySelected={handleOnCategorySelected}
+          showTitle={showAccordionTitle}
         />
       </Grid>
       )}
       {
         !(isEmpty(filtersLabels)) && (
           <Grid item>
-            <Typography variant="h4">{vendiblesLabels.appliedFilters}</Typography>
+            <Typography variant="h4">
+              {showAccordionTitle
+                ? vendiblesLabels.appliedFilters
+                : vendiblesLabels.appliedCategories}
+
+            </Typography>
             {
-              filtersLabels.map((label) => <Chip label={label} variant="outlined" onDelete={() => handleFilterDeleted(label)} />)
+              filtersLabels.map((label) => (
+                <Chip
+                  key={`selected_filter_${label}`}
+                  label={label}
+                  variant="outlined"
+                  onDelete={() => handleFilterDeleted(label)}
+                />
+              ))
             }
           </Grid>
         )
@@ -73,11 +92,17 @@ function VendiblesFilters({ categories, vendibleType, onFiltersApplied }) {
 
 VendiblesFilters.defaultProps = {
   categories: {},
+  containerStyles: {},
+  showAccordionTitle: true,
+  alternativeAccordionTitle: null,
 };
 VendiblesFilters.propTypes = {
   categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   onFiltersApplied: PropTypes.func.isRequired,
+  containerStyles: PropTypes.objectOf(PropTypes.string),
+  showAccordionTitle: PropTypes.bool,
+  alternativeAccordionTitle: PropTypes.node,
 };
 
 export default VendiblesFilters;

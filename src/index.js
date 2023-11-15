@@ -10,6 +10,7 @@ import RootPage from './Root';
 import { UserSignUp } from './SignUp';
 import { SignIn } from './SignIn';
 import { Cliente } from './Cliente';
+import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: '/servicio',
     element: <VendiblePage />,
+  },
+  {
+    path: '/proveedor',
+    element: <Proveedor />,
   },
 ]);
 

@@ -22,5 +22,7 @@
     "price": "Precio: ",
     "minimalPrice": "Presupuesto mínimo: ",
     "priceToBeAgreed": "Precio a  convenir",
-    "sendMessage": "Enviar mensaje"    
+    "sendMessage": "Enviar mensaje",
+    "seeDetail": "Ver detalle",
+    "filters": "Filtros"    
 }

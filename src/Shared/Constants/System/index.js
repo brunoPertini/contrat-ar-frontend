@@ -15,3 +15,11 @@ export const PRODUCTS = 'productos';
 export const PRODUCT = 'PRODUCTO';
 
 export const SERVICE = 'SERVICIO';
+
+export const ROLE_PROVEEDOR_PRODUCTOS = 'PROVEEDOR_PRODUCTOS';
+
+export const ROLE_PROVEEDOR_SERVICIOS = 'PROVEEDOR_SERVICIOS';
+
+export const EMPTY_FUNCTION = () => {};
+
+export const MAX_CLIENT_VENDIBLES_GALLERY_IMAGES = 3;

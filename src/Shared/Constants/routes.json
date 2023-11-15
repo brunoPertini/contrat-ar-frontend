@@ -3,6 +3,8 @@
     "signup": "/signup",
     "signin": "/signin",
     "ROLE_CLIENTE": "/cliente",
+    "ROLE_PROVEEDOR_SERVICIOS": "/proveedor",
+    "ROLE_PROVEEDOR_PRODUCTOS": "/proveedor",
     "productoIndex": "/producto",
     "servicioIndex": "/servicio"
 }

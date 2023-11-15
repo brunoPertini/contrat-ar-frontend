@@ -1,24 +1,22 @@
 import PropTypes from 'prop-types';
-import { useCallback, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import { useCallback, useMemo, useState } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import Alert from '@mui/material/Alert';
-import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import {
-  List, RadioList, Layout,
+  RadioList, Layout, SearcherInput,
 } from '../../Shared/Components';
+import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import { systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
-import { isEnterPressed, isKeyEvent } from '../../Shared/Utils/DomUtils';
 import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
+import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 
 function Cliente({
   menuOptions, dispatchHandleSearch,
@@ -50,45 +48,39 @@ function Cliente({
     setSearchType(event.target.value);
   };
 
-  const handleStartSearch = (event, filters) => {
-    if ((isKeyEvent(event) && isEnterPressed(event)) || !isKeyEvent(event)) {
-      if (searchInputValue) {
-        setIsLoading(true);
-        setErrorMessage('');
-        if (filters) {
-          setLastFiltersApplied(filters);
-        }
-        const finalAppliedFilters = filters ?? lastFiltersApplied;
-        const params = {
-          searchType,
-          searchInput: searchInputValue,
-          filters: finalAppliedFilters,
-        };
-        dispatchHandleSearch(params).then((response) => {
-          setPreviousSearchInputValue(searchInputValue);
-          setSearchDone(true);
-          setVendiblesResponse(response);
-          setFiltersEnabled(!!response.categorias);
-          if (isEmpty(response.vendibles)) {
-            setThereIsNoResults(true);
-          } else {
-            setThereIsNoResults(false);
-          }
-        })
-          .catch((errorMessage) => {
-            setErrorMessage(errorMessage);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      } else {
-        setErrorMessage(labels.searchErrorMessage);
+  const handleStartSearch = (filters) => {
+    if (searchInputValue) {
+      setIsLoading(true);
+      setErrorMessage('');
+      if (filters) {
+        setLastFiltersApplied(filters);
       }
+      const finalAppliedFilters = filters ?? lastFiltersApplied;
+      const params = {
+        searchType,
+        searchInput: searchInputValue,
+        filters: finalAppliedFilters,
+      };
+      dispatchHandleSearch(params).then((response) => {
+        setPreviousSearchInputValue(searchInputValue);
+        setSearchDone(true);
+        setVendiblesResponse(response);
+        setFiltersEnabled(!!response.categorias);
+        setThereIsNoResults(isEmpty(response.vendibles));
+      })
+        .catch((errorMessage) => {
+          setErrorMessage(errorMessage);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setErrorMessage(labels.searchErrorMessage);
     }
   };
 
-  const handleSearchDone = (event) => {
-    setSearchInputValue(event.target.value);
+  const handleKeyUp = (newValue) => {
+    setSearchInputValue(newValue);
   };
 
   const radioGroupConfig = {
@@ -139,6 +131,12 @@ function Cliente({
     [vendiblesResponse],
   );
 
+  const isSearchDisabled = useMemo(
+    () => (!!previousSearchInputValue
+    && previousSearchInputValue === searchInputValue),
+    [previousSearchInputValue, searchInputValue],
+  );
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -163,35 +161,27 @@ function Cliente({
           <Grid
             item
           >
-            <Typography variant="h2" color="#1976d2">
-              { labels.title }
-            </Typography>
-            <FormControl variant="outlined" sx={{ width: '60%' }}>
-              <TextField
-                autoFocus
-                id="vendible-input"
-                type="text"
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      aria-label="search-input"
-                      edge="end"
-                      onClick={handleStartSearch}
-                      disabled={(!!previousSearchInputValue
-                         && previousSearchInputValue === searchInputValue)}
-                    >
-                      <SearchOutlinedIcon />
-                    </IconButton>
-                  ),
-                }}
-                label={!searchInputValue ? sharedLabels.search : ''}
-                onChange={handleSearchDone}
-                onKeyUp={handleStartSearch}
-                error={!!searchErrorMessage}
-                helperText={searchErrorMessage}
-                value={searchInputValue}
-              />
-            </FormControl>
+            <SearcherInput
+              title={labels.title}
+              onSearchClick={handleStartSearch}
+              isSearchDisabled={isSearchDisabled}
+              searchLabel={!searchInputValue ? sharedLabels.search : ''}
+              hasError={!!searchErrorMessage}
+              errorMessage={searchErrorMessage}
+              inputValue={searchInputValue}
+              titleConfig={{
+                variant: 'h2',
+                color: '#1976d2',
+              }}
+              searcherConfig={{
+                variant: 'outlined',
+                sx: { width: '60%' },
+              }}
+              keyEvents={{
+                onKeyUp: handleKeyUp,
+                onEnterPressed: handleStartSearch,
+              }}
+            />
           </Grid>
           <Grid item>
             <FormControl sx={{ mt: '3%' }}>
@@ -248,10 +238,7 @@ function Cliente({
 }
 
 Cliente.propTypes = {
-  menuOptions: PropTypes.arrayOf(PropTypes.shape({
-    component: PropTypes.elementType,
-    props: PropTypes.object,
-  })).isRequired,
+  menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   dispatchHandleSearch: PropTypes.func.isRequired,
 };
 

@@ -16,6 +16,7 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @type {UsuarioModel} person
  */
 export const userState = {
+  id: null,
   name: '',
   surname: '',
   email: '',

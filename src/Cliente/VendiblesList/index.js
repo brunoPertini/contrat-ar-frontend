@@ -2,10 +2,14 @@ import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import VendibleCard from './VendibleCard';
+import Link from '@mui/material/Link';
+import Groups2Icon from '@mui/icons-material/Groups2';
+import VendibleCard from '../../Shared/Components/VendibleCard';
 import { labels } from '../../StaticData/Cliente';
-import { getVendiblesResponseShape } from '../PropTypes/Vendibles';
-import { routes, systemConstants } from '../Constants';
+import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
+import { routes, systemConstants } from '../../Shared/Constants';
+import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
+import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
 
 /**
  * List that shows each service or product info, including its provider
@@ -40,29 +44,47 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
   }, [navigate]);
 
   return (
-    <List sx={{
-      width: '100%',
-      flexDirection: 'column',
-      alignItems: 'center',
-      display: 'flex',
-    }}
-    >
+    <List>
       { vendiblesNames.map((vendibleName) => {
         const images = [];
         for (let i = 0;
-          i < vendiblesObject.vendibles[vendibleName].length && images.length < 3;
+          i < vendiblesObject.vendibles[vendibleName].length
+          && images.length < MAX_CLIENT_VENDIBLES_GALLERY_IMAGES;
           i++) {
           if (vendiblesObject.vendibles[vendibleName][i].imagenUrl) {
             images.push(vendiblesObject.vendibles[vendibleName][i].imagenUrl);
           }
         }
+
+        const linkSection = (
+          <>
+            <Groups2Icon fontSize="large" />
+            <Link
+              onClick={() => handleGoToVendiblePage(vendibleName)}
+              variant="h5"
+              sx={{
+                ml: '10px',
+                cursor: 'pointer',
+              }}
+            >
+              {linkLabel}
+            </Link>
+          </>
+        );
+
         return (
           <VendibleCard
             vendibleTitle={vendibleName}
             images={images}
-            linkLabel={linkLabel}
-            onLinkClick={handleGoToVendiblePage}
             key={`vendibleCard_${vendibleName}`}
+            cardStyles={{ mb: '2%', display: 'flex', flexDirection: 'column' }}
+            linkSection={linkSection}
+            linkCardStyles={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+            imageListProps={{
+              cols: 3,
+              gap: 10,
+            }}
+            ChildrenComponent={ClienteVendibleCard}
           />
         );
       })}
