@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -11,13 +13,15 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import {
-  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS, SERVICES,
+  PRODUCT,
+  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS, SERVICE, SERVICES,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
+import VendibleCreateForm from '../CreateVendible';
 
 function ProveedorPage({
   menuOptions,
@@ -27,14 +31,18 @@ function ProveedorPage({
   },
   vendibles,
   categorias,
-  role,
+  userInfo,
+  changeCurrentScreen,
 }) {
-  const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
+  // eslint-disable-next-line no-nested-ternary
+  const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
   const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
 
   const [searchValue, setSearchValue] = useState('');
   const [categorySelected, setCategorySelected] = useState();
+
+  const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
   const handleSetSearchValue = (value) => {
     setSearchValue(value);
@@ -86,9 +94,30 @@ function ProveedorPage({
     });
   };
 
-  return (
-    <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+  const onChangeCurrentScreen = ({ newScreen }) => {
+    setCurrentInnerScreen(newScreen);
+  };
+
+  const innerScreens = {
+    addNewVendible: {
+      component: VendibleCreateForm,
+      props: {
+        userInfo,
+        vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
+          .toLowerCase(),
+      },
+    },
+  };
+
+  let mainContent;
+
+  if (currentInnerScreen) {
+    const InnerComponent = innerScreens[currentInnerScreen].component;
+    const innerProps = innerScreens[currentInnerScreen].props;
+
+    mainContent = <InnerComponent {...innerProps} />;
+  } else {
+    mainContent = (
       <Grid
         container
         sx={{
@@ -128,7 +157,7 @@ function ProveedorPage({
               <Typography variant="h6">
                 {proveedorLabels.filterByCategory}
               </Typography>
-            )}
+        )}
           />
         </Grid>
         <Grid
@@ -152,7 +181,7 @@ function ProveedorPage({
                   <Typography variant="h6">
                     {proveedorLabels.tooltipLabel}
                   </Typography>
-                )}
+            )}
               >
                 <HelpOutline />
               </Tooltip>
@@ -166,7 +195,10 @@ function ProveedorPage({
               <Typography variant="h6">
                 {addVendibleLabel}
               </Typography>
-              <Link sx={{ mt: '10px', cursor: 'pointer' }}>
+              <Link
+                sx={{ mt: '10px', cursor: 'pointer' }}
+                onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+              >
                 {addVendibleLink}
               </Link>
             </div>
@@ -176,6 +208,13 @@ function ProveedorPage({
           </Box>
         </Grid>
       </Grid>
+    );
+  }
+
+  return (
+    <>
+      <Header withMenuComponent menuOptions={menuOptions} />
+      { mainContent }
     </>
   );
 }
@@ -188,7 +227,6 @@ ProveedorPage.propTypes = {
   }).isRequired,
   vendibles: proveedoresVendiblesShape.isRequired,
   categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
-  role: PropTypes.oneOf([ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS]).isRequired,
 };
 
 export default ProveedorPage;

@@ -50,7 +50,7 @@ function Searcher({
           autoFocus
           type="text"
           InputProps={{
-            endAdornment: (
+            endAdornment: onSearchClick ? (
               <IconButton
                 aria-label="search-input"
                 edge="end"
@@ -59,7 +59,7 @@ function Searcher({
               >
                 <SearchOutlinedIcon />
               </IconButton>
-            ),
+            ) : undefined,
           }}
           label={searchLabel}
           onKeyUp={handleKeyEvents}
