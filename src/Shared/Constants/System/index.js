@@ -23,3 +23,9 @@ export const ROLE_PROVEEDOR_SERVICIOS = 'PROVEEDOR_SERVICIOS';
 export const EMPTY_FUNCTION = () => {};
 
 export const MAX_CLIENT_VENDIBLES_GALLERY_IMAGES = 3;
+
+export const PRICE_TYPE_FIXED = 'Fijo';
+
+export const PRICE_TYPE_VARIABLE = 'Variable';
+
+export const PRICE_TYPE_VARIABLE_WITH_AMOUNT = 'Variable con monto minimo';

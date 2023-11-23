@@ -11,5 +11,6 @@
     "addVendible.name.text": " ¡Escribí el nombre del {vendible}!",
     "addVendible.category.add": "¡Escribí el nombre de la categoría!",
     "addVendible.category.title": "Categorizá tu {vendible}",
-    "addVendible.category.text": "Para que tu {vendible} tenga más alcance a potenciales clientes, podés clasificarlo en categorías. \n\nAgregá hasta tres, y si escribís más de una, te recomendamos que haya una relación entre ellas.\n\nPor ejemplo: Plomería -> Baños -> Arreglo de duchas.\n\nHacé click en \"Terminar\" para confirmarlas, O en \"Editar\" si querés eliminar o agregar alguna."  
+    "addVendible.category.text": "Para que tu {vendible} tenga más alcance a potenciales clientes, podés clasificarlo en categorías. \n\nAgregá hasta tres, y si escribís más de una, te recomendamos que haya una relación entre ellas.\n\nPor ejemplo: Plomería -> Baños -> Arreglo de duchas.\n\nHacé click en \"Terminar\" para confirmarlas, O en \"Editar\" si querés eliminar o agregar alguna.",
+    "addVendible.price.text": "Contanos si tu {vendible} tiene un precio fijo (sabés de antemano cuánto deberías cobrarlo); un precio variable (no sabés de antemano cuánto deberías cobrarlo); o un precio variable pero con un monto mínimo (esto puede ser útil si ya contemplás gastos necesarios en la realización del {vendible} que ofrecés)." 
 }

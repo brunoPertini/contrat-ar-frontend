@@ -34,7 +34,6 @@ function ProveedorPage({
   userInfo,
   changeCurrentScreen,
 }) {
-  // eslint-disable-next-line no-nested-ternary
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
   const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
