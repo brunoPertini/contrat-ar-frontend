@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../../Header';
-import { SearcherInput, Tooltip } from '../../Shared/Components';
+import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
@@ -22,6 +23,7 @@ import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks';
 
 function ProveedorPage({
   menuOptions,
@@ -42,6 +44,26 @@ function ProveedorPage({
   const [categorySelected, setCategorySelected] = useState();
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
+
+  const [modalContent, setModalContent] = useState({ title: '', text: '' });
+
+  useEffect(() => {
+    if (localStorage.getItem('proveedor.page.screen')) {
+      setCurrentInnerScreen(localStorage.getItem('proveedor.page.screen'));
+    }
+
+    if (localStorage.getItem('backPressed') === 'true') {
+      const title = '¿Desea salir?';
+      const text = 'Perderá todos los cambios';
+      setModalContent({ title, text });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentInnerScreen) {
+      localStorage.setItem('proveedor.page.screen', currentInnerScreen);
+    }
+  }, [currentInnerScreen]);
 
   const handleSetSearchValue = (value) => {
     setSearchValue(value);
@@ -109,6 +131,11 @@ function ProveedorPage({
   };
 
   let mainContent;
+
+  const onCancelLeavingPage = () => {
+    setModalContent({ title: '', text: '' });
+    localStorage.removeItem('backPressed');
+  };
 
   if (currentInnerScreen) {
     const InnerComponent = innerScreens[currentInnerScreen].component;
@@ -210,10 +237,21 @@ function ProveedorPage({
     );
   }
 
+  useOnLeavingTabHandler();
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
       { mainContent }
+      <DialogModal
+        title={modalContent.title}
+        contextText={modalContent.text}
+        cancelText="Cancelar"
+        acceptText="Aceptar"
+        open={modalContent?.title && modalContent.text}
+        handleAccept={() => {}}
+        handleDeny={() => onCancelLeavingPage()}
+      />
     </>
   );
 }
