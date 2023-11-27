@@ -33,6 +33,16 @@ export class UserHttpClient extends HttpClient {
   }
 
   /**
+   *
+   * @param {String | number} userId
+   * @returns {Promise<Object>} userInfo that not contains session handling data
+   */
+  getUserInfo(userId) {
+    const finalRoute = usersRoutes.getUserInfo.replace('{userId}', userId);
+    return this.get(finalRoute);
+  }
+
+  /**
    * @returns {Promise<String>} the public key used to validate future incoming jwt
    */
   getPublicKey() {

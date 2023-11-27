@@ -24,12 +24,12 @@ export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION
   };
 
   useEffect(() => {
-    window.addEventListener('beforeunload', (event) => {
-      handleOnLeavingTab(event);
-    });
+    window.addEventListener('beforeunload', handleOnLeavingTab);
+    window.addEventListener('popstate', handleOnBackButtonPressed);
 
-    window.onpopstate = () => {
-      handleOnBackButtonPressed();
+    return () => {
+      window.removeEventListener('beforeunload', handleOnLeavingTab);
+      window.removeEventListener('popstate', handleOnBackButtonPressed);
     };
   }, []);
 }

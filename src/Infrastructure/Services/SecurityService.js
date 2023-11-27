@@ -65,7 +65,15 @@ class SecurityService {
     }
     return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
       const { payload } = jwtResultValue;
-      return !isEmpty(payload) ? payload : {};
+      if (!isEmpty(payload)) {
+        this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
+        return this.#httpClient.getUserInfo(payload.id).then((response) => ({
+          ...payload,
+          location: response.location,
+        })).catch(() => payload);
+      }
+
+      return {};
     }).catch((error) => this.#handleError(error));
   }
 }

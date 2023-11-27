@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   useEffect, useState,
   useCallback, useMemo,
@@ -6,7 +7,6 @@ import {
   MapContainer, TileLayer, Marker, Popup, ZoomControl,
 } from 'react-leaflet';
 import { TextField } from '@mui/material';
-import withRouter from './HighOrderComponents/withRouter';
 import { routes, thirdPartyRoutes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
@@ -16,10 +16,13 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
-export default withRouter(({
-  router: { navigate }, showTranslatedAddress,
-  location, setLocation, readableAddress, setReadableAddress,
-}) => {
+export default function LocationMap({
+  showTranslatedAddress,
+  location,
+  setLocation,
+  readableAddress,
+  setReadableAddress,
+}) {
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
@@ -40,9 +43,9 @@ export default withRouter(({
     setOpenPermissionDialog(false);
   };
 
-  const handleDialogDenied = useCallback(() => {
-    navigate(routes.index);
-  }, [navigate]);
+  const handleDialogDenied = () => {
+    window.location.href = routes.index;
+  };
 
   const getCurentLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -174,4 +177,4 @@ export default withRouter(({
       }
     </>
   );
-});
+}

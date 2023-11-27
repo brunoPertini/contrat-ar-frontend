@@ -37,12 +37,14 @@ export class HttpClientFactory {
   /**
    *
    * @param {string} baseUrl
+   * @param {HttpClientInstanceFactoryConfiguration} config
    * @returns {UserHttpClient}
    */
-  static createUserHttpClient(baseUrl) {
-    if (!HttpClientFactory.userHttpClientInstance) {
-      HttpClientFactory.userHttpClientInstance = new UserHttpClient({ baseUrl });
-    }
+  static createUserHttpClient(baseUrl, config = {}) {
+    HttpClientFactory.userHttpClientInstance = new UserHttpClient({
+      baseUrl,
+      headersValues: { Authorization: config.token },
+    });
     return HttpClientFactory.userHttpClientInstance;
   }
 

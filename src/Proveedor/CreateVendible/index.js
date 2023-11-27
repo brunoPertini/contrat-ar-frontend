@@ -4,24 +4,30 @@
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
-import { Layout, Select } from '../../Shared/Components';
+import { Layout, LocationMap, Select } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
 import { sharedLabels } from '../../StaticData/Shared';
-import { PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT } from '../../Shared/Constants/System';
+import {
+  PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT, PRODUCT, SERVICE,
+} from '../../Shared/Constants/System';
 import { stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
 function VendibleCreateForm({ userInfo, vendibleType }) {
+  const { token, location } = userInfo;
+
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const [vendibleLocation, setVendibleLocation] = useState(location);
+  const [readableAddress, setReadableAddress] = useState('');
+
   const [priceInfo, setPriceInfo] = useState({
     type: '',
     amount: null,
   });
-
-  const { token } = userInfo;
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -67,13 +73,25 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     return type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT);
   }, [priceInfo]);
 
+  const gridConfig = {
+    producto: {
+      xs: [6, 6],
+      showLocationColumn: false,
+    },
+
+    servicio: {
+      xs: [5, 3, 4],
+      showLocationColumn: true,
+    },
+  };
+
   return (
     <Layout gridProps={{
       container: true,
       flexDirection: 'row',
     }}
     >
-      <Grid item flexDirection="column" spacing={5} xs={5}>
+      <Grid item flexDirection="column" spacing={5} xs={gridConfig[vendibleType].xs[0]}>
         <Grid item>
           <Searcher
             title={(
@@ -104,7 +122,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
           <CategoryInput />
         </Grid>
       </Grid>
-      <Grid item flexDirection="column" justifyContent="space-between" xs={3}>
+      <Grid item flexDirection="column" justifyContent="space-between" xs={gridConfig[vendibleType].xs[1]}>
         <Typography variant="h4">
           { sharedLabels.price }
         </Typography>
@@ -113,6 +131,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
             __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
           }}
           textAlign="justify"
+          sx={{ paddingRight: '5px' }}
         />
         <Select
           containerStyles={{ mt: '5%' }}
@@ -137,11 +156,24 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
           )
         }
       </Grid>
-      <Grid item flexDirection="column" xs={4}>
-        <Typography>
-          fdsfsdsdffdsfds
-        </Typography>
-      </Grid>
+      {
+        gridConfig[vendibleType].showLocationColumn && (
+          <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[2]}>
+            <LocationMap
+              showTranslatedAddress
+              location={{
+                coords: {
+                  latitude: vendibleLocation.coordinates[0],
+                  longitude: vendibleLocation.coordinates[1],
+                },
+              }}
+              setLocation={setVendibleLocation}
+              readableAddress={readableAddress}
+              setReadableAddress={setReadableAddress}
+            />
+          </Grid>
+        )
+      }
     </Layout>
   );
 }
