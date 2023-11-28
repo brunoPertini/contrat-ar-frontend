@@ -1,3 +1,3 @@
 {
-    "getAddressFromCoordinates": "https://nominatim.openstreetmap.org/reverse"
+    "getAddressFromCoordinates": "/geo/translate"
 }

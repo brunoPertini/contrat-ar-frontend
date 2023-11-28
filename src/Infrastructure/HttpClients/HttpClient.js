@@ -17,19 +17,34 @@ export class HttpClient {
 
   #instance;
 
-  constructor({ baseUrl, headersValues = defaultHeadersValues }) {
+  constructor({ baseUrl, headersValues = defaultHeadersValues, useClientCredentials = true }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
     const AuthorizationHeaderValue = headersValues.Authorization
       ? `Bearer ${headersValues.Authorization}` : undefined;
-    this.#instance = axios.create({
-      baseURL: this.#baseUrl,
-      headers: {
-        TimeZone: timeZone,
+
+    let headers = {
+      TimeZone: timeZone,
+    };
+
+    if (AuthorizationHeaderValue) {
+      headers = {
+        ...headers,
+        Authorization: AuthorizationHeaderValue,
+      };
+    }
+
+    if (useClientCredentials) {
+      headers = {
+        ...headers,
         'client-id': process.env.REACT_APP_CLIENT_ID,
         'client-secret': process.env.REACT_APP_CLIENT_SECRET,
-        Authorization: AuthorizationHeaderValue,
-      },
+      };
+    }
+
+    this.#instance = axios.create({
+      baseURL: this.#baseUrl,
+      headers,
     });
   }
 

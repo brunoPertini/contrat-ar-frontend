@@ -3,18 +3,25 @@
 /* eslint-disable react/button-has-type */
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
-import { Grid, TextField, Typography } from '@mui/material';
-import { Layout, LocationMap, Select } from '../../Shared/Components';
+import {
+  Box, Grid, Link, TextField, Typography,
+} from '@mui/material';
+import {
+  CheckBoxGroup, Layout, LocationMap, Select,
+} from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
-  PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT, PRODUCT, SERVICE,
+  PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+  PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
+
+const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
 function VendibleCreateForm({ userInfo, vendibleType }) {
   const { token, location } = userInfo;
@@ -28,6 +35,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     type: '',
     amount: null,
   });
+
+  const [locationTypes, setLocationTypes] = useState();
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -60,6 +69,13 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     }
   };
 
+  const handleSetLoation = ({ coords }) => {
+    const newCoordinates = {
+      coordinates: [coords.latitude, coords.longitude],
+    };
+    setVendibleLocation(newCoordinates);
+  };
+
   const onChangePriceInfo = ({ priceAmount, priceType }) => {
     setPriceInfo((currentPriceInfo) => ({
       ...currentPriceInfo,
@@ -80,10 +96,12 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     },
 
     servicio: {
-      xs: [5, 3, 4],
+      xs: [4, 8],
       showLocationColumn: true,
     },
   };
+
+  console.log(vendibleLocation);
 
   return (
     <Layout gridProps={{
@@ -107,7 +125,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
             }}
           />
         </Grid>
-        <Grid item>
+        <Grid item sx={{ mt: '5%' }}>
           <Typography variant="h4">
             { proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
           </Typography>
@@ -115,14 +133,13 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
             dangerouslySetInnerHTML={{
               __html: proveedorLabels['addVendible.category.text'].replace('{vendible}', vendibleType),
             }}
-            sx={{
-              whiteSpace: 'pre',
-            }}
+            textAlign="justify"
+            sx={{ paddingRight: '5px', width: '70%' }}
           />
           <CategoryInput />
         </Grid>
       </Grid>
-      <Grid item flexDirection="column" justifyContent="space-between" xs={gridConfig[vendibleType].xs[1]}>
+      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
         <Typography variant="h4">
           { sharedLabels.price }
         </Typography>
@@ -131,18 +148,18 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
             __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
           }}
           textAlign="justify"
-          sx={{ paddingRight: '5px' }}
+          sx={{ paddingRight: '5px', width: '70%' }}
         />
         <Select
-          containerStyles={{ mt: '5%' }}
-          label="Tipo de precio"
+          containerStyles={{ mt: '2%', width: '50%' }}
+          label={sharedLabels.priceType}
           values={pricesTypeMock}
           handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
         />
         {
           showPriceInput && (
             <TextField
-              sx={{ mt: '5%' }}
+              sx={{ mt: '2%' }}
               autoFocus
               type="text"
               label="Precio"
@@ -155,25 +172,47 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
             />
           )
         }
-      </Grid>
-      {
+        {
         gridConfig[vendibleType].showLocationColumn && (
-          <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[2]}>
-            <LocationMap
-              showTranslatedAddress
-              location={{
-                coords: {
-                  latitude: vendibleLocation.coordinates[0],
-                  longitude: vendibleLocation.coordinates[1],
-                },
+        <>
+          <Typography sx={{ mt: '5%' }}>
+            {proveedorLabels['addVendible.location.text']}
+          </Typography>
+          <CheckBoxGroup
+            elements={serviceLocationsMock}
+            handleChange={setLocationTypes}
+          />
+          <Box display="flex" flexDirection="column">
+            <Typography
+              dangerouslySetInnerHTML={{
+                __html: proveedorLabels['addVendible.location.disclaimer'],
               }}
-              setLocation={setVendibleLocation}
-              readableAddress={readableAddress}
-              setReadableAddress={setReadableAddress}
+              textAlign="justify"
+              sx={{ paddingRight: '5px', width: '70%' }}
             />
-          </Grid>
+          </Box>
+          <LocationMap
+            showTranslatedAddress
+            location={{
+              coords: {
+                latitude: vendibleLocation.coordinates[0],
+                longitude: vendibleLocation.coordinates[1],
+              },
+            }}
+            setLocation={handleSetLoation}
+            readableAddress={readableAddress}
+            setReadableAddress={setReadableAddress}
+            containerStyles={{
+              width: '50%',
+              height: '50%',
+            }}
+            token={token}
+          />
+
+        </>
         )
       }
+      </Grid>
     </Layout>
   );
 }

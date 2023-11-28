@@ -51,11 +51,15 @@ export class HttpClientFactory {
   /**
    *
    * @param {string} baseUrl
+   * @param {HttpClientInstanceFactoryConfiguration} config
    * @returns {HttpClientFactory}
    */
-  static createExternalHttpClient(baseUrl) {
+  static createExternalHttpClient(baseUrl, config) {
     if (!HttpClientFactory.externalInstance) {
-      HttpClientFactory.externalInstance = new ExternalHttpClient({ baseUrl });
+      HttpClientFactory.externalInstance = new ExternalHttpClient({
+        baseUrl,
+        headersValues: { Authorization: config.token },
+      });
     }
     return HttpClientFactory.externalInstance;
   }

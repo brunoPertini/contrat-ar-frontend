@@ -1,7 +1,11 @@
+import { thirdPartyRoutes } from '../../Shared/Constants';
 import { HttpClient } from './HttpClient';
 
 export class ExternalHttpClient extends HttpClient {
-/**
+  constructor({ baseUrl, headersValues }) {
+    super({ baseUrl, useClientCredentials: false, headersValues });
+  }
+  /**
  * @typedef GetAddressFromLocationParams
  * @type {object}
  * @property {number} lat
@@ -14,6 +18,9 @@ export class ExternalHttpClient extends HttpClient {
    * @returns {string}
    */
   getAddressFromLocation(params) {
-    return this.get('', { ...params, format: 'json' }).then((data) => data.display_name);
+    return this.get(
+      thirdPartyRoutes.getAddressFromCoordinates,
+      { ...params },
+    ).then((data) => data.display_name);
   }
 }

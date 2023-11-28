@@ -4,6 +4,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { EMPTY_FUNCTION } from '../Constants/System';
 
+/**
+ *
+ * @param {any} value The object to be observed
+ * @returns {any} The previous object's value
+ */
 export function usePreviousPropValue(value) {
   const prevPropValue = useRef();
 
