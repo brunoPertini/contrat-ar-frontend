@@ -1,34 +1,36 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+/* eslint-disable prefer-arrow-callback */
 import {
   useEffect, useState,
-  useCallback, useMemo,
+  useCallback, useMemo, memo,
 } from 'react';
+import PropTypes from 'prop-types';
 import {
   MapContainer, TileLayer, Marker, Popup, ZoomControl,
 } from 'react-leaflet';
-import { Link } from '@mui/material';
-import axios from 'axios';
-import { routes, thirdPartyRoutes } from '../Constants';
+import Link from '@mui/material/Link';
+import { routes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { usePreviousPropValue } from '../Hooks';
 
+const shouldRender = (prevProps, nextProps) => (
+  prevProps.location.coords.latitude === nextProps.location.coords.latitude
+      && prevProps.location.coords.longitude === nextProps.location.coords.longitude
+      && prevProps.token === nextProps.token);
+
 /**
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
-export default function LocationMap({
+const LocationMap = memo(function LocationMap({
   location,
   setLocation,
-  readableAddress,
-  setReadableAddress,
   containerStyles,
   token,
 }) {
   const previousLocation = usePreviousPropValue(location);
-  console.log('PREVIOUS:  ', previousLocation);
+
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
@@ -37,6 +39,8 @@ export default function LocationMap({
     cancelText: labels['dialog.permission.request.cancelText'],
     acceptText: labels['dialog.permission.request.acceptText'],
   });
+
+  const [readableAddress, setReadableAddress] = useState('');
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -116,7 +120,7 @@ export default function LocationMap({
       && location.coords.longitude !== previousLocation.coords.longitude)) {
       translateAddress(location);
     }
-  }, [location.coords.latitude, location.coords.longitude]);
+  }, [location.coords.latitude, location.coords.longitude, previousLocation]);
 
   const LocationMarker = useCallback(() => {
     const eventHandlers = useMemo(() => ({
@@ -147,7 +151,7 @@ export default function LocationMap({
 
       </Marker>
     );
-  }, [location]);
+  }, [location.coords.latitude, location.coords.longitude, readableAddress]);
 
   return (
     <>
@@ -179,4 +183,22 @@ export default function LocationMap({
       </Link>
     </>
   );
-}
+}, shouldRender);
+
+LocationMap.defaultProps = {
+  containerStyles: {},
+};
+
+LocationMap.propTypes = {
+  location: PropTypes.shape({
+    coords: {
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+    },
+  }).isRequired,
+  setLocation: PropTypes.func.isRequired,
+  containerStyles: PropTypes.objectOf(PropTypes.any),
+  token: PropTypes.string.isRequired,
+};
+
+export default LocationMap;

@@ -1,15 +1,18 @@
-/* eslint-disable no-unused-vars */
+import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
-import {
-  Breadcrumbs, Button, ButtonGroup, Grid, Typography,
-} from '@mui/material';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Searcher from '../../Shared/Components/Searcher';
 import { proveedorLabels } from '../../StaticData/Proveedor';
+import { sharedLabels } from '../../StaticData/Shared';
 
 const MAX_ALLOWED_CATEGORIES = 3;
 
-function CategoryInput() {
+function CategoryInput({ onCategoriesSet }) {
   const [inputValue, setInputValue] = useState();
   const [enteredCategories, setEnteredCategories] = useState([]);
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -32,6 +35,7 @@ function CategoryInput() {
   const handleFinish = () => {
     if (enteredCategories.length) {
       setIsConfirmed(true);
+      onCategoriesSet([...enteredCategories]);
     }
   };
 
@@ -73,20 +77,27 @@ function CategoryInput() {
           onClick={() => handleAddCategory()}
           disabled={isAddButtonDisabled}
         >
-          Agregar
+          { sharedLabels.add }
 
         </Button>
         {
-          !isConfirmed && (<Button onClick={handleFinish}>Terminar</Button>)
+          !isConfirmed && (
+          <Button
+            onClick={handleFinish}
+            disabled={!enteredCategories.length}
+          >
+            { sharedLabels.finish }
+          </Button>
+          )
         }
         {
-          isConfirmed && (<Button onClick={handleEdit}>Editar</Button>)
+          isConfirmed && (<Button onClick={handleEdit}>{ sharedLabels.edit }</Button>)
         }
         <Button
           onClick={() => handleRemoveLastCategory()}
           disabled={isDeleteButtonDisabled}
         >
-          Borrar Última
+          { sharedLabels.deleteLast }
 
         </Button>
       </ButtonGroup>
@@ -106,5 +117,9 @@ function CategoryInput() {
     </Grid>
   );
 }
+
+CategoryInput.propTypes = {
+  onCategoriesSet: PropTypes.func.isRequired,
+};
 
 export default CategoryInput;

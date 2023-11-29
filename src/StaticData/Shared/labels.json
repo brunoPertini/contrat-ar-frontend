@@ -25,5 +25,9 @@
     "sendMessage": "Enviar mensaje",
     "seeDetail": "Ver detalle",
     "filters": "Filtros"    ,
-    "priceType": "Tipo de precio"
+    "priceType": "Tipo de precio",
+    "add": "Agregar",
+    "finish": "Terminar",
+    "edit": "Editar",
+    "deleteLast": "Borrar Última"
 }

@@ -26,10 +26,10 @@ const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 function VendibleCreateForm({ userInfo, vendibleType }) {
   const { token, location } = userInfo;
 
+  const [nombre, setNombre] = useState();
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [vendibleLocation, setVendibleLocation] = useState(location);
-  const [readableAddress, setReadableAddress] = useState('');
 
   const [priceInfo, setPriceInfo] = useState({
     type: '',
@@ -101,10 +101,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     },
   };
 
-  console.log(vendibleLocation);
-
   return (
-    <Grid container flexDirection="column" spacing={40}>
+    <Grid container flexDirection="column" spacing={35}>
       <Grid item display="flex" flexDirection="row">
         <Grid item flexDirection="column" spacing={5} xs={gridConfig[vendibleType].xs[0]}>
           <Grid item>
@@ -120,6 +118,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
                   width: '50%',
                 },
               }}
+              inputValue={nombre}
+              keyEvents={{ onKeyUp: setNombre }}
             />
           </Grid>
           <Grid item sx={{ mt: '5%' }}>
@@ -194,8 +194,6 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
                 },
               }}
               setLocation={handleSetLoation}
-              readableAddress={readableAddress}
-              setReadableAddress={setReadableAddress}
               containerStyles={{
                 width: '50%',
                 height: '50%',
@@ -209,7 +207,6 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
       </Grid>
       <Grid
         item
-        width="30%"
         sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -217,12 +214,15 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
         }}
       >
         <Button
-          onClick={() => { }}
+          onClick={() => {}}
+          sx={{
+            mr: '5%',
+          }}
         >
           {sharedLabels.back}
         </Button>
         <Button
-          onClick={() => { }}
+          onClick={() => {}}
         >
           {sharedLabels.next}
         </Button>
