@@ -28,6 +28,7 @@ export default function LocationMap({
   token,
 }) {
   const previousLocation = usePreviousPropValue(location);
+  console.log('PREVIOUS:  ', previousLocation);
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({

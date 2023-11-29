@@ -4,7 +4,7 @@
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Box, Grid, Link, TextField, Typography,
+  Box, Button, Grid, Link, TextField, Typography,
 } from '@mui/material';
 import {
   CheckBoxGroup, Layout, LocationMap, Select,
@@ -104,116 +104,130 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
   console.log(vendibleLocation);
 
   return (
-    <Layout gridProps={{
-      container: true,
-      flexDirection: 'row',
-    }}
-    >
-      <Grid item flexDirection="column" spacing={5} xs={gridConfig[vendibleType].xs[0]}>
-        <Grid item>
-          <Searcher
-            title={(
-              <Typography variant="h4">
-                { proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
-              </Typography>
+    <Grid container flexDirection="column" spacing={40}>
+      <Grid item display="flex" flexDirection="row">
+        <Grid item flexDirection="column" spacing={5} xs={gridConfig[vendibleType].xs[0]}>
+          <Grid item>
+            <Searcher
+              title={(
+                <Typography variant="h4">
+                  {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
+                </Typography>
             )}
-            placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
-            searcherConfig={{
-              sx: {
-                width: '50%',
-              },
-            }}
-          />
-        </Grid>
-        <Grid item sx={{ mt: '5%' }}>
-          <Typography variant="h4">
-            { proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
-          </Typography>
-          <Typography
-            dangerouslySetInnerHTML={{
-              __html: proveedorLabels['addVendible.category.text'].replace('{vendible}', vendibleType),
-            }}
-            textAlign="justify"
-            sx={{ paddingRight: '5px', width: '70%' }}
-          />
-          <CategoryInput />
-        </Grid>
-      </Grid>
-      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
-        <Typography variant="h4">
-          { sharedLabels.price }
-        </Typography>
-        <Typography
-          dangerouslySetInnerHTML={{
-            __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
-          }}
-          textAlign="justify"
-          sx={{ paddingRight: '5px', width: '70%' }}
-        />
-        <Select
-          containerStyles={{ mt: '2%', width: '50%' }}
-          label={sharedLabels.priceType}
-          values={pricesTypeMock}
-          handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
-        />
-        {
-          showPriceInput && (
-            <TextField
-              sx={{ mt: '2%' }}
-              autoFocus
-              type="text"
-              label="Precio"
-              onChange={(value) => {
-                if (stringHasOnlyNumbers(value)) {
-                  onChangePriceInfo({ priceAmount: value });
-                }
+              placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
+              searcherConfig={{
+                sx: {
+                  width: '50%',
+                },
               }}
-              value={priceInfo.amount}
             />
-          )
-        }
-        {
-        gridConfig[vendibleType].showLocationColumn && (
-        <>
-          <Typography sx={{ mt: '5%' }}>
-            {proveedorLabels['addVendible.location.text']}
-          </Typography>
-          <CheckBoxGroup
-            elements={serviceLocationsMock}
-            handleChange={setLocationTypes}
-          />
-          <Box display="flex" flexDirection="column">
+          </Grid>
+          <Grid item sx={{ mt: '5%' }}>
+            <Typography variant="h4">
+              {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
+            </Typography>
             <Typography
               dangerouslySetInnerHTML={{
-                __html: proveedorLabels['addVendible.location.disclaimer'],
+                __html: proveedorLabels['addVendible.category.text'].replace('{vendible}', vendibleType),
               }}
               textAlign="justify"
               sx={{ paddingRight: '5px', width: '70%' }}
             />
-          </Box>
-          <LocationMap
-            showTranslatedAddress
-            location={{
-              coords: {
-                latitude: vendibleLocation.coordinates[0],
-                longitude: vendibleLocation.coordinates[1],
-              },
+            <CategoryInput />
+          </Grid>
+        </Grid>
+        <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
+          <Typography variant="h4">
+            {sharedLabels.price}
+          </Typography>
+          <Typography
+            dangerouslySetInnerHTML={{
+              __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
             }}
-            setLocation={handleSetLoation}
-            readableAddress={readableAddress}
-            setReadableAddress={setReadableAddress}
-            containerStyles={{
-              width: '50%',
-              height: '50%',
-            }}
-            token={token}
+            textAlign="justify"
+            sx={{ paddingRight: '5px', width: '70%' }}
           />
+          <Select
+            containerStyles={{ mt: '2%', width: '50%' }}
+            label={sharedLabels.priceType}
+            values={pricesTypeMock}
+            handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
+          />
+          {showPriceInput && (
+          <TextField
+            sx={{ mt: '2%' }}
+            autoFocus
+            type="text"
+            label="Precio"
+            onChange={(value) => {
+              if (stringHasOnlyNumbers(value)) {
+                onChangePriceInfo({ priceAmount: value });
+              }
+            }}
+            value={priceInfo.amount}
+          />
+          )}
+          {gridConfig[vendibleType].showLocationColumn && (
+          <>
+            <Typography sx={{ mt: '5%' }}>
+              {proveedorLabels['addVendible.location.text']}
+            </Typography>
+            <CheckBoxGroup
+              elements={serviceLocationsMock}
+              handleChange={setLocationTypes}
+            />
+            <Box display="flex" flexDirection="column">
+              <Typography
+                dangerouslySetInnerHTML={{
+                  __html: proveedorLabels['addVendible.location.disclaimer'],
+                }}
+                textAlign="justify"
+                sx={{ paddingRight: '5px', width: '70%' }}
+              />
+            </Box>
+            <LocationMap
+              showTranslatedAddress
+              location={{
+                coords: {
+                  latitude: vendibleLocation.coordinates[0],
+                  longitude: vendibleLocation.coordinates[1],
+                },
+              }}
+              setLocation={handleSetLoation}
+              readableAddress={readableAddress}
+              setReadableAddress={setReadableAddress}
+              containerStyles={{
+                width: '50%',
+                height: '50%',
+              }}
+              token={token}
+            />
 
-        </>
-        )
-      }
+          </>
+          )}
+        </Grid>
       </Grid>
-    </Layout>
+      <Grid
+        item
+        width="30%"
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignSelf: 'center',
+        }}
+      >
+        <Button
+          onClick={() => { }}
+        >
+          {sharedLabels.back}
+        </Button>
+        <Button
+          onClick={() => { }}
+        >
+          {sharedLabels.next}
+        </Button>
+      </Grid>
+    </Grid>
   );
 }
 
