@@ -35,7 +35,7 @@ function CategoryInput({ onCategoriesSet }) {
   const handleFinish = () => {
     if (enteredCategories.length) {
       setIsConfirmed(true);
-      onCategoriesSet([...enteredCategories]);
+      onCategoriesSet({ newCategories: [...enteredCategories] });
     }
   };
 
