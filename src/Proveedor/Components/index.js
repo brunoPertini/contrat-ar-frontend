@@ -23,7 +23,6 @@ import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
-import { useOnLeavingTabHandler } from '../../Shared/Hooks';
 
 function ProveedorPage({
   menuOptions,
@@ -35,6 +34,7 @@ function ProveedorPage({
   categorias,
   userInfo,
   changeCurrentScreen,
+  handleLogout,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
@@ -237,8 +237,6 @@ function ProveedorPage({
     );
   }
 
-  useOnLeavingTabHandler();
-
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
@@ -249,7 +247,10 @@ function ProveedorPage({
         cancelText="Cancelar"
         acceptText="Aceptar"
         open={modalContent?.title && modalContent.text}
-        handleAccept={() => {}}
+        handleAccept={() => {
+          // TODO: ver como se puede mejorar esto para no acoplarlo tanto a la logica de cada pagina
+          handleLogout();
+        }}
         handleDeny={() => onCancelLeavingPage()}
       />
     </>

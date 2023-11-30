@@ -9,6 +9,7 @@ import {
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks';
 
 function VendibleCreateForm({ userInfo, vendibleType }) {
   const { token, location } = userInfo;
@@ -75,6 +76,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     backButtonEnabled: false,
     nextButtonEnabled: false,
   }];
+
+  useOnLeavingTabHandler();
 
   return (
     <Grid container flexDirection="column" spacing={35}>

@@ -19,22 +19,27 @@ export function usePreviousPropValue(value) {
   return prevPropValue.current;
 }
 
+const handleOnLeavingTab = (event) => event.preventDefault();
+
+const handleOnBackButtonPressed = (event, runBeforeLeavingFunction = EMPTY_FUNCTION) => {
+  event.preventDefault();
+  runBeforeLeavingFunction();
+  window.history.forward();
+  localStorage.setItem('backPressed', 'true');
+};
+
+const removeOnLeavingTabHandlers = () => {
+  window.removeEventListener('beforeunload', handleOnLeavingTab);
+  window.removeEventListener('popstate', handleOnBackButtonPressed);
+};
+
 export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION) {
-  const handleOnLeavingTab = (event) => event.preventDefault();
-
-  const handleOnBackButtonPressed = () => {
-    runBeforeLeavingFunction();
-    window.history.forward();
-    localStorage.setItem('backPressed', 'true');
-  };
-
   useEffect(() => {
     window.addEventListener('beforeunload', handleOnLeavingTab);
-    window.addEventListener('popstate', handleOnBackButtonPressed);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleOnLeavingTab);
-      window.removeEventListener('popstate', handleOnBackButtonPressed);
-    };
+    window.addEventListener('popstate', (e) => handleOnBackButtonPressed(e, runBeforeLeavingFunction));
   }, []);
+
+  return () => {
+    removeOnLeavingTabHandlers();
+  };
 }
