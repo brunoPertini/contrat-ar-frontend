@@ -1,23 +1,9 @@
-/* eslint-disable no-alert */
-/* eslint-disable no-restricted-globals */
-/* eslint-disable no-unused-vars */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { EMPTY_FUNCTION } from '../Constants/System';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
-/**
- *
- * @param {any} value The object to be observed
- * @returns {any} The previous object's value
- */
-export function usePreviousPropValue(value) {
-  const prevPropValue = useRef();
-
-  useEffect(() => {
-    prevPropValue.current = value;
-  }, [value]);
-
-  return prevPropValue.current;
-}
+const localStorageService = new LocalStorageService();
+const { PAGES_KEYS } = LocalStorageService;
 
 const handleOnLeavingTab = (event) => event.preventDefault();
 
@@ -25,12 +11,13 @@ const handleOnBackButtonPressed = (event, runBeforeLeavingFunction = EMPTY_FUNCT
   event.preventDefault();
   runBeforeLeavingFunction();
   window.history.forward();
-  localStorage.setItem('backPressed', 'true');
+  localStorageService.setItem(PAGES_KEYS.SHARED.BACKPRESSED, 'true');
 };
 
-const removeOnLeavingTabHandlers = () => {
+export const removeOnLeavingTabHandlers = () => {
   window.removeEventListener('beforeunload', handleOnLeavingTab);
   window.removeEventListener('popstate', handleOnBackButtonPressed);
+  localStorageService.removeItem(PAGES_KEYS.SHARED.BACKPRESSED);
 };
 
 export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION) {
@@ -38,8 +25,4 @@ export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION
     window.addEventListener('beforeunload', handleOnLeavingTab);
     window.addEventListener('popstate', (e) => handleOnBackButtonPressed(e, runBeforeLeavingFunction));
   }, []);
-
-  return () => {
-    removeOnLeavingTabHandlers();
-  };
 }

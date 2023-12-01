@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -8,8 +8,9 @@ import ProveedorPage from '../Components';
 import { routes, systemConstants } from '../../Shared/Constants';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { sharedLabels } from '../../StaticData/Shared';
 import { resetUserInfo } from '../../State/Actions/usuario';
+import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
 
@@ -54,16 +55,18 @@ function ProveedorContainer({ router }) {
   };
 
   const handleLogout = async () => {
-    // TODO: moverlo a withRouter. Abstraer lo de localStorage de las claves harcodeadas
+    removeOnLeavingTabHandlers();
     await dispatch(resetUserInfo());
     router.navigate(routes.signin);
-    localStorage.removeItem('backPressed');
-    localStorage.removeItem('proveedor.page.screen');
   };
 
   useEffect(() => {
     handleGetVendibles();
-    document.title = `${sharedLabels.siteName}|Proveedor`;
+
+    return () => {
+      const localStorageService = new LocalStorageService();
+      localStorageService.removeAllKeysOfPage(LocalStorageService.PAGES_KEYS.PROVEEDOR);
+    };
   }, []);
 
   return !isEmpty(response) ? (
@@ -77,5 +80,13 @@ function ProveedorContainer({ router }) {
     />
   ) : null;
 }
+
+ProveedorContainer.propTypes = {
+  router: PropTypes.shape({
+    location: PropTypes.any,
+    navigate: PropTypes.func,
+    params: PropTypes.any,
+  }).isRequired,
+};
 
 export default withRouter(ProveedorContainer);

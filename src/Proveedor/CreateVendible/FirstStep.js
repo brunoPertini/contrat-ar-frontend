@@ -82,6 +82,7 @@ function FirstStep({
               },
             }}
             inputValue={nombre}
+            autoFocus
             keyEvents={{ onKeyUp: setNombre }}
           />
         </Grid>
@@ -119,7 +120,6 @@ function FirstStep({
         {showPriceInput && (
         <TextField
           sx={{ mt: '2%' }}
-          autoFocus
           type="number"
           label={sharedLabels.price}
           onChange={(event) => {

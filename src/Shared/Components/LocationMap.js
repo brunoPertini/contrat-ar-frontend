@@ -12,7 +12,7 @@ import { routes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { usePreviousPropValue } from '../Hooks';
+import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
 
 const shouldRender = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude

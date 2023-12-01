@@ -9,7 +9,7 @@ import {
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
-import { useOnLeavingTabHandler } from '../../Shared/Hooks';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 
 function VendibleCreateForm({ userInfo, vendibleType }) {
   const { token, location } = userInfo;

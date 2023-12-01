@@ -23,6 +23,9 @@ import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+
+const localStorageService = new LocalStorageService();
 
 function ProveedorPage({
   menuOptions,
@@ -48,11 +51,14 @@ function ProveedorPage({
   const [modalContent, setModalContent] = useState({ title: '', text: '' });
 
   useEffect(() => {
-    if (localStorage.getItem('proveedor.page.screen')) {
-      setCurrentInnerScreen(localStorage.getItem('proveedor.page.screen'));
+    const storedScreen = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+    );
+    if (storedScreen) {
+      setCurrentInnerScreen(storedScreen);
     }
 
-    if (localStorage.getItem('backPressed') === 'true') {
+    if (localStorageService.getItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED)) {
       const title = '¿Desea salir?';
       const text = 'Perderá todos los cambios';
       setModalContent({ title, text });
@@ -61,7 +67,10 @@ function ProveedorPage({
 
   useEffect(() => {
     if (currentInnerScreen) {
-      localStorage.setItem('proveedor.page.screen', currentInnerScreen);
+      localStorageService.setItem(
+        LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+        currentInnerScreen,
+      );
     }
   }, [currentInnerScreen]);
 
@@ -134,7 +143,7 @@ function ProveedorPage({
 
   const onCancelLeavingPage = () => {
     setModalContent({ title: '', text: '' });
-    localStorage.removeItem('backPressed');
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
   };
 
   if (currentInnerScreen) {
