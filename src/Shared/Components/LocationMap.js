@@ -14,7 +14,7 @@ import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
 
-const shouldRender = (prevProps, nextProps) => (
+const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
       && prevProps.location.coords.longitude === nextProps.location.coords.longitude
       && prevProps.token === nextProps.token);
@@ -105,8 +105,6 @@ const LocationMap = memo(function LocationMap({
         longitude: coords.longitude,
       });
 
-      // eslint-disable-next-line no-shadow
-
       setReadableAddress(readableAddress);
     }
   }, [HttpClientFactory]);
@@ -116,8 +114,9 @@ const LocationMap = memo(function LocationMap({
       handlePermission();
     }
 
-    if (!(previousLocation) || (location.coords.latitude !== previousLocation.coords.latitude
-      && location.coords.longitude !== previousLocation.coords.longitude)) {
+    const locationHasChanged = (location.coords.latitude !== previousLocation.coords.latitude
+      && location.coords.longitude !== previousLocation.coords.longitude);
+    if (!(previousLocation) || locationHasChanged) {
       translateAddress(location);
     }
   }, [location.coords.latitude, location.coords.longitude, previousLocation]);
@@ -179,11 +178,11 @@ const LocationMap = memo(function LocationMap({
         <LocationMarker />
       </MapContainer>
       <Link>
-        Abrir Mapa en modal
+        { labels.openMapInModal }
       </Link>
     </>
   );
-}, shouldRender);
+}, arePropsEqual);
 
 LocationMap.defaultProps = {
   containerStyles: {},

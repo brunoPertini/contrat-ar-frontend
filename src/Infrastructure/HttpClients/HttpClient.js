@@ -78,6 +78,7 @@ export class HttpClient {
    * @param {string} url
    * @param {Object} params The query params
    * @param {{withCredentials: Boolean }} config additional config for the request
+   * @returns {Promise<Object|Error>}
    */
   get(url, params = {}, config) {
     const stringParams = Object.entries(params)

@@ -25,8 +25,6 @@ function SelectComponent({
       <FormControl fullWidth>
         <InputLabel>{label}</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={value}
           label={label}
           onChange={handleChange}

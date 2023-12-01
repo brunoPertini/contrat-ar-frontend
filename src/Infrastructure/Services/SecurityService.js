@@ -53,10 +53,14 @@ class SecurityService {
   /**
    * @returns {{exp: Date,
    *  nbf: Date,
+   *  sub: String
+   *  id: String
    *  role: String,
+   *  name: String,
+   *  surname: String,
    *  indexPage: String,
-   *  sub: String}} If the jwt is valid, returns its decoded payload,
-   * empty object otherwise
+   *  authorities: Array<String>
+   *  }} If the jwt is valid, returns its decoded payload, empty object otherwise
    * @param {string} jwt
   */
   async validateJwt(jwt) {

@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
-import isEmpty from 'lodash';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -15,7 +12,7 @@ import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import {
   PRODUCT,
-  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS, SERVICE, SERVICES,
+  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICE, SERVICES,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
@@ -36,7 +33,6 @@ function ProveedorPage({
   vendibles,
   categorias,
   userInfo,
-  changeCurrentScreen,
   handleLogout,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
@@ -256,11 +252,8 @@ function ProveedorPage({
         cancelText="Cancelar"
         acceptText="Aceptar"
         open={modalContent?.title && modalContent.text}
-        handleAccept={() => {
-          // TODO: ver como se puede mejorar esto para no acoplarlo tanto a la logica de cada pagina
-          handleLogout();
-        }}
-        handleDeny={() => onCancelLeavingPage()}
+        handleAccept={handleLogout}
+        handleDeny={onCancelLeavingPage}
       />
     </>
   );
@@ -274,6 +267,8 @@ ProveedorPage.propTypes = {
   }).isRequired,
   vendibles: proveedoresVendiblesShape.isRequired,
   categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  userInfo: PropTypes.any.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 export default ProveedorPage;

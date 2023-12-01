@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
-import PropTypes, { number } from 'prop-types';
+import PropTypes from 'prop-types';
 import { useMemo } from 'react';
-import {
-  Box, Grid, TextField, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import {
   CheckBoxGroup, LocationMap, Select,
 } from '../../Shared/Components';
@@ -13,9 +13,7 @@ import CategoryInput from './CategoryInput';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
-  PRODUCT,
-  SERVICE,
-  SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
+  PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
 
@@ -24,7 +22,7 @@ const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIAB
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
 function FirstStep({
-  nombre, setNombre, locationTypes, setLocationTypes,
+  nombre, setNombre, setLocationTypes,
   priceInfo, setPriceInfo, setVendibleLocation,
   setCategories, vendibleType, token, vendibleLocation,
 }) {
@@ -51,6 +49,13 @@ function FirstStep({
   /** @param {Array} newCategories */
   const onSetCategories = ({ newCategories }) => {
     setCategories(newCategories);
+  };
+
+  const onChangePriceAmount = (event) => {
+    const { value } = event.target;
+    if (stringHasOnlyNumbers(value) || !value) {
+      onChangePriceInfo({ priceAmount: value });
+    }
   };
 
   const gridConfig = {
@@ -122,12 +127,7 @@ function FirstStep({
           sx={{ mt: '2%' }}
           type="number"
           label={sharedLabels.price}
-          onChange={(event) => {
-            const { value } = event.target;
-            if (stringHasOnlyNumbers(value) || !value) {
-              onChangePriceInfo({ priceAmount: value });
-            }
-          }}
+          onChange={onChangePriceAmount}
           value={priceInfo.amount}
         />
         )}
@@ -175,7 +175,6 @@ function FirstStep({
 FirstStep.propTypes = {
   nombre: PropTypes.string.isRequired,
   setNombre: PropTypes.func.isRequired,
-  locationTypes: PropTypes.oneOf(serviceLocationsMock).isRequired,
   setLocationTypes: PropTypes.func.isRequired,
   priceInfo: PropTypes.shape({
     type: PropTypes.string,
@@ -186,7 +185,7 @@ FirstStep.propTypes = {
   vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
   setCategories: PropTypes.func.isRequired,
   vendibleLocation: PropTypes.shape({
-    coordinates: PropTypes.arrayOf(number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
   }).isRequired,
   token: PropTypes.string.isRequired,
 };

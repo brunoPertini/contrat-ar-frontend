@@ -1,7 +1,5 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/button-has-type */
+import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import {
   Button, Grid,
@@ -72,7 +70,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     nextButtonEnabled: canGoStepForward[0],
   },
   {
-    component: <></>,
+    component: <div />,
     backButtonEnabled: false,
     nextButtonEnabled: false,
   }];
@@ -111,6 +109,11 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
 }
 
 export default VendibleCreateForm;
+
+VendibleCreateForm.propTypes = {
+  userInfo: PropTypes.any.isRequired,
+  vendibleType: PropTypes.string.isRequired,
+};
 
 // eslint-disable-next-line no-lone-blocks
 { /* <div>
