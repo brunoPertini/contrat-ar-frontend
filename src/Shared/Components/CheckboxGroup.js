@@ -6,7 +6,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function CheckBoxGroup({
   elements, handleChange, title, bottomLabel,
@@ -15,8 +15,12 @@ function CheckBoxGroup({
 
   const handleChangeChecked = useCallback((checked, element) => {
     setCheckedElements((currentValues) => ({ ...currentValues, [element]: checked }));
-    handleChange();
   }, [setCheckedElements]);
+
+  useEffect(() => {
+    const checkedKeys = Object.keys(checkedElements).filter((key) => checkedElements[key]);
+    handleChange(checkedKeys);
+  }, [checkedElements]);
 
   return (
     <Box sx={{ display: 'flex' }}>

@@ -53,10 +53,14 @@ class SecurityService {
   /**
    * @returns {{exp: Date,
    *  nbf: Date,
+   *  sub: String
+   *  id: String
    *  role: String,
+   *  name: String,
+   *  surname: String,
    *  indexPage: String,
-   *  sub: String}} If the jwt is valid, returns its decoded payload,
-   * empty object otherwise
+   *  authorities: Array<String>
+   *  }} If the jwt is valid, returns its decoded payload, empty object otherwise
    * @param {string} jwt
   */
   async validateJwt(jwt) {
@@ -65,7 +69,15 @@ class SecurityService {
     }
     return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
       const { payload } = jwtResultValue;
-      return !isEmpty(payload) ? payload : {};
+      if (!isEmpty(payload)) {
+        this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
+        return this.#httpClient.getUserInfo(payload.id).then((response) => ({
+          ...payload,
+          location: response.location,
+        })).catch(() => payload);
+      }
+
+      return {};
     }).catch((error) => this.#handleError(error));
   }
 }

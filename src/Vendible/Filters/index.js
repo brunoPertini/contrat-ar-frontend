@@ -6,7 +6,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
-import { usePreviousPropValue } from '../../Shared/Hooks';
+import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 
 function VendiblesFilters({

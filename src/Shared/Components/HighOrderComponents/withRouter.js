@@ -14,6 +14,7 @@ import CookiesService from '../../../Infrastructure/Services/CookiesService';
 import { routes } from '../../Constants';
 import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
+import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 
 const store = createStore();
 const securityService = new SecurityService();
@@ -96,6 +97,7 @@ export default function withRouter(Component) {
 
       return () => {
         handleOnBeforeUnload();
+        removeOnLeavingTabHandlers();
       };
     }, []);
 

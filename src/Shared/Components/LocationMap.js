@@ -1,25 +1,36 @@
+/* eslint-disable prefer-arrow-callback */
 import {
   useEffect, useState,
-  useCallback, useMemo,
+  useCallback, useMemo, memo,
 } from 'react';
+import PropTypes from 'prop-types';
 import {
   MapContainer, TileLayer, Marker, Popup, ZoomControl,
 } from 'react-leaflet';
-import { TextField } from '@mui/material';
-import withRouter from './HighOrderComponents/withRouter';
-import { routes, thirdPartyRoutes } from '../Constants';
+import Link from '@mui/material/Link';
+import { routes } from '../Constants';
 import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
+
+const arePropsEqual = (prevProps, nextProps) => (
+  prevProps.location.coords.latitude === nextProps.location.coords.latitude
+      && prevProps.location.coords.longitude === nextProps.location.coords.longitude
+      && prevProps.token === nextProps.token);
 
 /**
  * Map that requests current user location, shows it in a marker and translates it
  * in a human readable address.
  */
-export default withRouter(({
-  router: { navigate }, showTranslatedAddress,
-  location, setLocation, readableAddress, setReadableAddress,
-}) => {
+const LocationMap = memo(function LocationMap({
+  location,
+  setLocation,
+  containerStyles,
+  token,
+}) {
+  const previousLocation = usePreviousPropValue(location);
+
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
@@ -28,6 +39,8 @@ export default withRouter(({
     cancelText: labels['dialog.permission.request.cancelText'],
     acceptText: labels['dialog.permission.request.acceptText'],
   });
+
+  const [readableAddress, setReadableAddress] = useState('');
 
   const geoSettings = {
     enableHighAccuracy: true,
@@ -40,9 +53,9 @@ export default withRouter(({
     setOpenPermissionDialog(false);
   };
 
-  const handleDialogDenied = useCallback(() => {
-    navigate(routes.index);
-  }, [navigate]);
+  const handleDialogDenied = () => {
+    window.location.href = routes.index;
+  };
 
   const getCurentLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -84,14 +97,12 @@ export default withRouter(({
     const { coords } = coordsObject ?? {};
 
     if (coords) {
-      const httpClient = HttpClientFactory.createExternalHttpClient(
-        thirdPartyRoutes.getAddressFromCoordinates,
-      );
+      const httpClient = HttpClientFactory.createExternalHttpClient('', { token });
 
       // eslint-disable-next-line no-shadow
       const readableAddress = await httpClient.getAddressFromLocation({
-        lat: coords.latitude,
-        lon: coords.longitude,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
       });
 
       setReadableAddress(readableAddress);
@@ -103,8 +114,13 @@ export default withRouter(({
       handlePermission();
     }
 
-    translateAddress(location);
-  }, [location]);
+    const locationHasChanged = location?.coords && previousLocation?.coords
+     && (location.coords.latitude !== previousLocation.coords.latitude
+      && location.coords.longitude !== previousLocation.coords.longitude);
+    if (!(previousLocation) || locationHasChanged) {
+      translateAddress(location);
+    }
+  }, [location.coords.latitude, location.coords.longitude, previousLocation]);
 
   const LocationMarker = useCallback(() => {
     const eventHandlers = useMemo(() => ({
@@ -126,23 +142,25 @@ export default withRouter(({
         eventHandlers={eventHandlers}
         draggable
       >
-        <Popup>
-          { labels['map.marker.title'] }
-        </Popup>
+
+        { !!readableAddress && (
+          <Popup>
+            { readableAddress}
+          </Popup>
+        )}
+
       </Marker>
     );
-  }, [location]);
-
-  // TODO: unharcode center
+  }, [location.coords.latitude, location.coords.longitude, readableAddress]);
 
   return (
     <>
       <MapContainer
-        center={[-34.9204509, -57.9944562]}
+        center={[location.coords.latitude, location.coords.longitude]}
         zoom={13}
         scrollWheelZoom
         zoomControl={false}
-        style={{ height: 500, width: '50%' }}
+        style={{ ...containerStyles }}
       >
         <ZoomControl position="bottomright" />
         <DialogModal
@@ -160,18 +178,27 @@ export default withRouter(({
         />
         <LocationMarker />
       </MapContainer>
-      {
-        showTranslatedAddress && (
-          <TextField
-            aria-readonly
-            value={readableAddress}
-            sx={{
-              mt: '2%',
-              width: '30%',
-            }}
-          />
-        )
-      }
+      <Link>
+        { labels.openMapInModal }
+      </Link>
     </>
   );
-});
+}, arePropsEqual);
+
+LocationMap.defaultProps = {
+  containerStyles: {},
+};
+
+LocationMap.propTypes = {
+  location: PropTypes.shape({
+    coords: {
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+    },
+  }).isRequired,
+  setLocation: PropTypes.func.isRequired,
+  containerStyles: PropTypes.objectOf(PropTypes.any),
+  token: PropTypes.string.isRequired,
+};
+
+export default LocationMap;

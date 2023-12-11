@@ -1,8 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
-import { combineReducers, legacy_createStore, Store } from 'redux';
+import {
+  combineReducers, legacy_createStore,
+  Store, applyMiddleware, compose,
+} from 'redux';
+import { thunk } from 'redux-thunk';
 import usuarioReducer from './Reducers/usuario';
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // TODO: differentiate dev and prod
 /**
@@ -10,5 +16,5 @@ import usuarioReducer from './Reducers/usuario';
  */
 export const createStore = () => legacy_createStore(
   combineReducers({ usuario: usuarioReducer }),
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__({ trace: true }),
+  composeEnhancers(applyMiddleware(thunk)),
 );

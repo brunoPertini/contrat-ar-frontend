@@ -13,7 +13,7 @@ import { EMPTY_FUNCTION } from '../Constants/System';
  */
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
-  isSearchDisabled, searchLabel,
+  isSearchDisabled, searchLabel, autoFocus,
   hasError, errorMessage, inputValue,
 }) {
   const {
@@ -47,10 +47,10 @@ function Searcher({
       </Typography>
       <FormControl {...searcherConfig}>
         <TextField
-          autoFocus
+          autoFocus={autoFocus}
           type="text"
           InputProps={{
-            endAdornment: (
+            endAdornment: onSearchClick ? (
               <IconButton
                 aria-label="search-input"
                 edge="end"
@@ -59,7 +59,7 @@ function Searcher({
               >
                 <SearchOutlinedIcon />
               </IconButton>
-            ),
+            ) : undefined,
           }}
           label={searchLabel}
           onKeyUp={handleKeyEvents}
@@ -79,6 +79,7 @@ Searcher.defaultProps = {
   title: '',
   placeholder: '',
   isSearchDisabled: false,
+  autoFocus: false,
   searchLabel: '',
   hasError: false,
   errorMessage: '',
@@ -97,6 +98,7 @@ Searcher.propTypes = {
   placeholder: PropTypes.string,
   onSearchClick: PropTypes.func.isRequired,
   isSearchDisabled: PropTypes.bool,
+  autoFocus: PropTypes.bool,
   searchLabel: PropTypes.string,
   hasError: PropTypes.bool,
   errorMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
