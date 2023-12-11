@@ -114,7 +114,8 @@ const LocationMap = memo(function LocationMap({
       handlePermission();
     }
 
-    const locationHasChanged = (location.coords.latitude !== previousLocation.coords.latitude
+    const locationHasChanged = location?.coords && previousLocation?.coords
+     && (location.coords.latitude !== previousLocation.coords.latitude
       && location.coords.longitude !== previousLocation.coords.longitude);
     if (!(previousLocation) || locationHasChanged) {
       translateAddress(location);

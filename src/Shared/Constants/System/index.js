@@ -8,6 +8,8 @@ export const USER_TYPE_PROVEEDOR_SERVICES = 'SERVICIOS';
 
 export const USER_TYPE_PROVEEDOR_PRODUCTS = 'PRODUCTOS';
 
+export const PROVEEDOR = 'PROVEEDOR';
+
 export const SERVICES = 'servicios';
 
 export const PRODUCTS = 'productos';

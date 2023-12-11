@@ -10,7 +10,6 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
-import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
 
@@ -41,8 +40,8 @@ function ProveedorContainer({ router }) {
     props: { userInfo },
   }];
 
-  const addVendibleLabel = addNewVendiblesLabels[role].label;
-  const addVendibleLink = addNewVendiblesLabels[role].labelLink;
+  const addVendibleLabel = addNewVendiblesLabels[role]?.label;
+  const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
 
   const [response, setResponse] = useState();
 
@@ -62,11 +61,6 @@ function ProveedorContainer({ router }) {
 
   useEffect(() => {
     handleGetVendibles();
-
-    return () => {
-      const localStorageService = new LocalStorageService();
-      localStorageService.removeAllKeysOfPage(LocalStorageService.PAGES_KEYS.PROVEEDOR);
-    };
   }, []);
 
   return !isEmpty(response) ? (
