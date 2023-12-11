@@ -12,7 +12,10 @@ import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import {
   PRODUCT,
-  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICE, SERVICES,
+  PRODUCTS,
+  ROLE_PROVEEDOR_PRODUCTOS,
+  SERVICE,
+  SERVICES,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
@@ -249,8 +252,8 @@ function ProveedorPage({
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}
-        cancelText="Cancelar"
-        acceptText="Aceptar"
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
         open={modalContent?.title && modalContent.text}
         handleAccept={handleLogout}
         handleDeny={onCancelLeavingPage}

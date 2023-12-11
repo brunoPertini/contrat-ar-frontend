@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
 import { routes, systemConstants } from '../../Shared/Constants';

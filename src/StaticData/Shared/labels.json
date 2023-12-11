@@ -30,5 +30,7 @@
     "finish": "Terminar",
     "edit": "Editar",
     "deleteLast": "Borrar Última",
-    "price": "Precio"
+    "price": "Precio",
+    "accept": "Aceptar",
+    "cancel": "Cancelar"
 }
