@@ -12,9 +12,11 @@ import { sharedLabels } from '../../StaticData/Shared';
 
 const MAX_ALLOWED_CATEGORIES = 3;
 
-function CategoryInput({ onCategoriesSet }) {
+function CategoryInput({ onCategoriesSet, defaultValues }) {
   const [inputValue, setInputValue] = useState();
-  const [enteredCategories, setEnteredCategories] = useState([]);
+  const [enteredCategories, setEnteredCategories] = useState(
+    defaultValues.length ? defaultValues : [],
+  );
   const [isConfirmed, setIsConfirmed] = useState(false);
 
   const handleAddCategory = () => {
@@ -118,7 +120,12 @@ function CategoryInput({ onCategoriesSet }) {
   );
 }
 
+CategoryInput.defaultProps = {
+  defaultValues: [],
+};
+
 CategoryInput.propTypes = {
+  defaultValues: PropTypes.arrayOf(PropTypes.string),
   onCategoriesSet: PropTypes.func.isRequired,
 };
 

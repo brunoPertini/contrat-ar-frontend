@@ -8,6 +8,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import SecondStep from './SecondStep';
 
 function VendibleCreateForm({ userInfo, vendibleType }) {
   const { token, location } = userInfo;
@@ -34,6 +35,10 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     locationTypes: '',
     categories: '',
   });
+
+  const changeCurrentStep = (newStep) => {
+    setActiveStep(newStep);
+  };
 
   const canGoStepForward = {
     0: useMemo(() => {
@@ -70,12 +75,13 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     nextButtonEnabled: canGoStepForward[0],
   },
   {
-    component: <div />,
-    backButtonEnabled: false,
-    nextButtonEnabled: false,
+    component: <SecondStep />,
+    backButtonEnabled: true,
+    nextButtonEnabled: true,
   }];
 
   useOnLeavingTabHandler();
+  console.log('RE RENDERIZANDO');
 
   return (
     <Grid container flexDirection="column" spacing={35}>
@@ -89,7 +95,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
         }}
       >
         <Button
-          onClick={() => {}}
+          onClick={() => changeCurrentStep(activeStep - 1)}
           sx={{
             mr: '5%',
           }}
@@ -98,7 +104,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
           {sharedLabels.back}
         </Button>
         <Button
-          onClick={() => {}}
+          onClick={() => changeCurrentStep(activeStep + 1)}
           disabled={!steps[activeStep].nextButtonEnabled}
         >
           {sharedLabels.next}

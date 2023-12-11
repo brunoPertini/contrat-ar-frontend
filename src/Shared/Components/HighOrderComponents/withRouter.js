@@ -63,16 +63,6 @@ export default function withRouter(Component) {
       }
     }, [securityService]);
 
-    const fetchAndSetUserInfo = useCallback(async () => {
-      const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
-      if (userToken) {
-        const userInfo = await securityService.validateJwt(userToken);
-        cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
-        store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
-        cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
-      }
-    }, [securityService]);
-
     /**
      * This is to manage user's browser events (back and forward)
      */
@@ -89,8 +79,6 @@ export default function withRouter(Component) {
     useEffect(() => {
       if (isSecuredRoute) {
         verifyToken();
-      } else {
-        fetchAndSetUserInfo();
       }
 
       window.addEventListener('beforeunload', handleOnBeforeUnload);

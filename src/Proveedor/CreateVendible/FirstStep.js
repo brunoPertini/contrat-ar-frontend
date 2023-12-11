@@ -22,7 +22,7 @@ const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIAB
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
 function FirstStep({
-  nombre, setNombre, setLocationTypes,
+  nombre, setNombre, locationTypes, setLocationTypes, categories,
   priceInfo, setPriceInfo, setVendibleLocation,
   setCategories, vendibleType, token, vendibleLocation,
 }) {
@@ -30,6 +30,10 @@ function FirstStep({
     const { type } = priceInfo;
     return type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT);
   }, [priceInfo]);
+
+  const defaultPriceTypeSelected = useMemo(() => (priceInfo.type
+    ? pricesTypeMock.findIndex((priceType) => priceType === priceInfo.type)
+    : 0), [priceInfo]);
 
   const handleSetLoation = ({ coords }) => {
     const newCoordinates = {
@@ -102,7 +106,10 @@ function FirstStep({
             textAlign="justify"
             sx={{ paddingRight: '5px', width: '70%' }}
           />
-          <CategoryInput onCategoriesSet={onSetCategories} />
+          <CategoryInput
+            onCategoriesSet={onSetCategories}
+            defaultValues={categories}
+          />
         </Grid>
       </Grid>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
@@ -120,6 +127,7 @@ function FirstStep({
           containerStyles={{ mt: '2%', width: '50%' }}
           label={sharedLabels.priceType}
           values={pricesTypeMock}
+          defaultSelected={defaultPriceTypeSelected}
           handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
         />
         {showPriceInput && (
@@ -137,6 +145,7 @@ function FirstStep({
             {proveedorLabels['addVendible.location.text']}
           </Typography>
           <CheckBoxGroup
+            defaultChecked={locationTypes}
             elements={serviceLocationsMock}
             handleChange={setLocationTypes}
           />
@@ -172,6 +181,11 @@ function FirstStep({
   );
 }
 
+FirstStep.defaultProps = {
+  locationTypes: [],
+  categories: [],
+};
+
 FirstStep.propTypes = {
   nombre: PropTypes.string.isRequired,
   setNombre: PropTypes.func.isRequired,
@@ -183,6 +197,8 @@ FirstStep.propTypes = {
   setPriceInfo: PropTypes.func.isRequired,
   setVendibleLocation: PropTypes.func.isRequired,
   vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
+  locationTypes: PropTypes.arrayOf(PropTypes.string),
+  categories: PropTypes.arrayOf(PropTypes.string),
   setCategories: PropTypes.func.isRequired,
   vendibleLocation: PropTypes.shape({
     coordinates: PropTypes.arrayOf(PropTypes.number),
