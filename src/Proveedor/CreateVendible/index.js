@@ -75,16 +75,23 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     nextButtonEnabled: canGoStepForward[0],
   },
   {
-    component: <SecondStep />,
+    component: <SecondStep
+      vendibleType={vendibleType}
+      token={token}
+    />,
     backButtonEnabled: true,
     nextButtonEnabled: true,
   }];
 
   useOnLeavingTabHandler();
-  console.log('RE RENDERIZANDO');
 
   return (
-    <Grid container flexDirection="column" spacing={35}>
+    <Grid
+      container
+      display="flex"
+      flexDirection="column"
+      spacing={35}
+    >
       { steps[activeStep].component }
       <Grid
         item
@@ -120,40 +127,3 @@ VendibleCreateForm.propTypes = {
   userInfo: PropTypes.any.isRequired,
   vendibleType: PropTypes.string.isRequired,
 };
-
-// eslint-disable-next-line no-lone-blocks
-{ /* <div>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleUpload}>Subir Imagen</button>
-      </div> */ }
-
-// const handleFileChange = (event) => {
-//   const file = event.target.files[0];
-//   setSelectedFile(file);
-// };
-
-// const handleUpload = () => {
-//   if (selectedFile) {
-//     const formData = new FormData();
-//     formData.append('file', selectedFile);
-
-//     axios.post('http://localhost:8090/image/vendible/iPhone/proveedor/5/upload', formData, {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//         'client-id': process.env.REACT_APP_CLIENT_ID,
-//         'client-secret': process.env.REACT_APP_CLIENT_SECRET,
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
-//       .then((response) => {
-//         // Manejar la respuesta del servidor
-//         console.log(response.data);
-//       })
-//       .catch((error) => {
-//         // Manejar errores
-//         console.error('Error al subir la imagen', error);
-//       });
-//   } else {
-//     console.log('No se ha seleccionado ningún archivo.');
-//   }
-// };

@@ -94,9 +94,10 @@ export class HttpClient {
    * @param {string} url
    * @param {Object} params The query params
    * @param {Object} body Request payload
+   * @param {Object} config object containing meaningful data for request (headers for instance)
    */
-  post(url, params, body) {
-    return this.instance.post(url, body, { params })
+  post(url, params, body, config) {
+    return this.instance.post(url, body, { params, headers: config.headers })
       .then((response) => response.data)
       .catch((error) => this.#handleError(error));
   }

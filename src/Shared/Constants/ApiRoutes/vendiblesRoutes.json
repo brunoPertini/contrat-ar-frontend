@@ -1,4 +1,5 @@
 {
     "getService": "/service",
-    "getProduct": "/product"
+    "getProduct": "/product",
+    "uploadImage": "/image/vendible/iPhone/proveedor/{proveedorId}/upload"
 }

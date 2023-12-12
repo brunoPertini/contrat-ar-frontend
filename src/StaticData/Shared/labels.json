@@ -32,5 +32,6 @@
     "deleteLast": "Borrar Última",
     "price": "Precio",
     "accept": "Aceptar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "uploadImage": "Subir Imagen"
 }
