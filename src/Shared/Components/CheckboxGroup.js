@@ -65,13 +65,14 @@ function CheckBoxGroup({
 CheckBoxGroup.defaultProps = {
   bottomLabel: '',
   defaultChecked: [],
+  title: null,
 };
 
 CheckBoxGroup.propTypes = {
   elements: PropTypes.arrayOf(PropTypes.string).isRequired,
   defaultChecked: PropTypes.arrayOf(PropTypes.string),
   handleChange: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   bottomLabel: PropTypes.string,
 };
 

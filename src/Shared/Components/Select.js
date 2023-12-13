@@ -33,7 +33,14 @@ function SelectComponent({
           onChange={handleChange}
         >
           {
-                values.map((valueLabel) => <MenuItem value={valueLabel}>{valueLabel}</MenuItem>)
+                values.map((valueLabel) => (
+                  <MenuItem
+                    key={`select_element${valueLabel}`}
+                    value={valueLabel}
+                  >
+                    {valueLabel}
+                  </MenuItem>
+                ))
             }
         </Select>
       </FormControl>

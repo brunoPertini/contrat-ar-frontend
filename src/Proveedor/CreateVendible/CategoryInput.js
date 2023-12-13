@@ -108,7 +108,11 @@ function CategoryInput({ onCategoriesSet, defaultValues }) {
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mt: '5%' }}>
             {
               enteredCategories.map((category) => (
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                <Typography
+                  variant="h5"
+                  sx={{ fontWeight: 'bold' }}
+                  key={`category_input_${category}`}
+                >
                   { category}
                 </Typography>
               ))

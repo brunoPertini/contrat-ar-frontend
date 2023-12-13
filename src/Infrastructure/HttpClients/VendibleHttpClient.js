@@ -34,7 +34,7 @@ export class VendibleHttpClient extends HttpClient {
   }
 
   /**
-   * 
+   *
    * @param {File} file
    * @param {String} proveedorId
    * @returns {Promise<String>} The uploaded file url

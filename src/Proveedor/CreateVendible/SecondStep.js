@@ -1,57 +1,34 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+import PropTypes from 'prop-types';
 import { useState } from 'react';
-import {
-  Box,
-  Button, Grid, ImageListItem, TextareaAutosize, Typography, styled,
-} from '@mui/material';
-import axios from 'axios';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import ImageListItem from '@mui/material/ImageListItem';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+import Typography from '@mui/material/Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
-
-function SecondStep({ vendibleType, token }) {
-  const [imageUrl, setImageUrl] = useState();
+function SecondStep({
+  vendibleType, handleUploadImage, imageUrl, setImageUrl, description, setDescription,
+}) {
   const [imageError, setImageError] = useState('');
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      axios.post('http://localhost:8090/image/vendible/iPhone/proveedor/5/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'client-id': process.env.REACT_APP_CLIENT_ID,
-          'client-secret': process.env.REACT_APP_CLIENT_SECRET,
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          setImageUrl(response.data);
-          setImageError('');
-          console.log(response.data);
-        })
-        .catch((error) => {
-          setImageError(error.response.data.error);
-          console.error('Error al subir la imagen', error);
-        });
-    } else {
-      console.log('No se ha seleccionado ningún archivo.');
+      handleUploadImage(file).then((response) => {
+        setImageUrl(response);
+        setImageError('');
+      }).catch((error) => {
+        setImageError(error);
+      });
     }
+  };
+
+  const handleChangeDescription = (event) => {
+    setDescription(event.target.value);
   };
 
   return (
@@ -59,7 +36,7 @@ function SecondStep({ vendibleType, token }) {
       item
       display="flex"
       flexDirection="row"
-      xs={12}
+      xs={10}
     >
       <Grid
         item
@@ -114,7 +91,21 @@ function SecondStep({ vendibleType, token }) {
               startIcon={<CloudUploadIcon />}
             >
               { sharedLabels.uploadImage }
-              <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+              <input
+                type="file"
+                onChange={handleFileChange}
+                style={{
+                  clip: 'rect(0 0 0 0)',
+                  clipPath: 'inset(50%)',
+                  height: 1,
+                  overflow: 'hidden',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  whiteSpace: 'nowrap',
+                  width: 1,
+                }}
+              />
             </Button>
           </Box>
         </Box>
@@ -132,10 +123,21 @@ function SecondStep({ vendibleType, token }) {
           minRows={15}
           style={{ width: '80%' }}
           placeholder={proveedorLabels['addVendible.description.placeholder'].replace('{vendible}', vendibleType)}
+          value={description}
+          onChange={handleChangeDescription}
         />
       </Grid>
     </Grid>
   );
 }
+
+SecondStep.propTypes = {
+  vendibleType: PropTypes.string.isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
+  imageUrl: PropTypes.string.isRequired,
+  setImageUrl: PropTypes.func.isRequired,
+  description: PropTypes.string.isRequired,
+  setDescription: PropTypes.func.isRequired,
+};
 
 export default SecondStep;

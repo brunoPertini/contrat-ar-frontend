@@ -10,10 +10,10 @@ import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
 
-function VendibleCreateForm({ userInfo, vendibleType }) {
+function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
   const { token, location } = userInfo;
 
-  const [nombre, setNombre] = useState();
+  const [nombre, setNombre] = useState('');
 
   const [vendibleLocation, setVendibleLocation] = useState(location);
 
@@ -26,6 +26,9 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
 
   const [categories, setCategories] = useState([]);
 
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
+
   const [activeStep, setActiveStep] = useState(0);
 
   const [errorMessages, setErrorMessages] = useState({
@@ -37,8 +40,15 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
   });
 
   const changeCurrentStep = (newStep) => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+    });
     setActiveStep(newStep);
   };
+
+  const nexButtonLabel = useMemo(() => (activeStep !== 1
+    ? sharedLabels.next : sharedLabels.finish), [activeStep]);
 
   const canGoStepForward = {
     0: useMemo(() => {
@@ -53,6 +63,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
        && isVendibleLocationValid
        && isPriceInfoValid && isLocationTypesValid && isCategoriesValid;
     }, [nombre, vendibleLocation, priceInfo, locationTypes, categories]),
+
+    1: useMemo(() => !!(imageUrl) && !!(description), [imageUrl, description]),
   };
 
   const steps = [{
@@ -78,6 +90,11 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
     component: <SecondStep
       vendibleType={vendibleType}
       token={token}
+      handleUploadImage={handleUploadImage}
+      imageUrl={imageUrl}
+      setImageUrl={setImageUrl}
+      description={description}
+      setDescription={setDescription}
     />,
     backButtonEnabled: true,
     nextButtonEnabled: true,
@@ -88,9 +105,11 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
   return (
     <Grid
       container
-      display="flex"
       flexDirection="column"
-      spacing={35}
+      sx={{
+        minHeight: '100vh',
+      }}
+      spacing={30}
     >
       { steps[activeStep].component }
       <Grid
@@ -102,6 +121,7 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
         }}
       >
         <Button
+          variant="contained"
           onClick={() => changeCurrentStep(activeStep - 1)}
           sx={{
             mr: '5%',
@@ -111,10 +131,11 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
           {sharedLabels.back}
         </Button>
         <Button
+          variant="contained"
           onClick={() => changeCurrentStep(activeStep + 1)}
           disabled={!steps[activeStep].nextButtonEnabled}
         >
-          {sharedLabels.next}
+          {nexButtonLabel}
         </Button>
       </Grid>
     </Grid>
@@ -126,4 +147,5 @@ export default VendibleCreateForm;
 VendibleCreateForm.propTypes = {
   userInfo: PropTypes.any.isRequired,
   vendibleType: PropTypes.string.isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
 };

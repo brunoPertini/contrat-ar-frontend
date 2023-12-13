@@ -86,6 +86,7 @@ Searcher.defaultProps = {
   inputValue: '',
   titleConfig: {},
   searcherConfig: {},
+  onSearchClick: EMPTY_FUNCTION,
   keyEvents: {
     onKeyUp: EMPTY_FUNCTION,
     onEnterPressed: EMPTY_FUNCTION,
@@ -94,9 +95,9 @@ Searcher.defaultProps = {
 };
 
 Searcher.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   placeholder: PropTypes.string,
-  onSearchClick: PropTypes.func.isRequired,
+  onSearchClick: PropTypes.func,
   isSearchDisabled: PropTypes.bool,
   autoFocus: PropTypes.bool,
   searchLabel: PropTypes.string,

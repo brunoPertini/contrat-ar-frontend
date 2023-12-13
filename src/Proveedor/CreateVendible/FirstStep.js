@@ -75,8 +75,8 @@ function FirstStep({
   };
 
   return (
-    <Grid item display="flex" flexDirection="row" xs={12}>
-      <Grid item flexDirection="column" spacing={5} xs={gridConfig[vendibleType].xs[0]}>
+    <Grid item display="flex" flexDirection="row" xs={10}>
+      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
         <Grid item>
           <Searcher
             title={(
