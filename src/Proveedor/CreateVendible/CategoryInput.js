@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -9,6 +9,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Searcher from '../../Shared/Components/Searcher';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
+import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const MAX_ALLOWED_CATEGORIES = 3;
 
@@ -18,6 +19,12 @@ function CategoryInput({ onCategoriesSet, defaultValues }) {
     defaultValues.length ? defaultValues : [],
   );
   const [isConfirmed, setIsConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (defaultValues?.length) {
+      setIsConfirmed(true);
+    }
+  }, []);
 
   const handleAddCategory = () => {
     const inputRegex = new RegExp(inputValue, 'i');
@@ -71,6 +78,9 @@ function CategoryInput({ onCategoriesSet, defaultValues }) {
             placeholder={proveedorLabels['addVendible.category.add']}
             keyEvents={{ onKeyUp: handleInputChange }}
             inputValue={inputValue}
+            inputProps={{
+              maxLength: maxLengthConstraints.PROVEEDOR.categories,
+            }}
           />
         )
       }

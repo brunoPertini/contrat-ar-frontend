@@ -11,6 +11,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
+import useOnUnloadTab from '../../Shared/Hooks/useOnUnloadTab';
 
 const stateSelector = (state) => state;
 
@@ -72,6 +73,8 @@ function ProveedorContainer({ router }) {
   useEffect(() => {
     handleGetVendibles();
   }, []);
+
+  useOnUnloadTab(handleLogout);
 
   return !isEmpty(response) ? (
     <ProveedorPage

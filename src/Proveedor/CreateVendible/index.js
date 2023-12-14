@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import {
@@ -19,8 +18,10 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
 
   const [priceInfo, setPriceInfo] = useState({
     type: '',
-    amount: null,
+    amount: '',
   });
+
+  const [stock, setStock] = useState('');
 
   const [locationTypes, setLocationTypes] = useState([]);
 
@@ -31,13 +32,13 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const [errorMessages, setErrorMessages] = useState({
-    nombre: '',
-    vendibleLocation: '',
-    priceInfo: '',
-    locationTypes: '',
-    categories: '',
-  });
+  // const [errorMessages, setErrorMessages] = useState({
+  //   nombre: '',
+  //   vendibleLocation: '',
+  //   priceInfo: '',
+  //   locationTypes: '',
+  //   categories: '',
+  // });
 
   const changeCurrentStep = (newStep) => {
     window.scrollTo({
@@ -50,21 +51,33 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
   const nexButtonLabel = useMemo(() => (activeStep !== 1
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
 
-  const canGoStepForward = {
-    0: useMemo(() => {
-      const isNombreValid = !!nombre;
-      const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
-      const isPriceInfoValid = (priceInfo.type && priceInfo.amount)
+  const areFirstCommonStepsValid = useMemo(() => {
+    const isNombreValid = !!nombre;
+    const areCategoriesValid = !!categories.length;
+    const isPriceInfoValid = (priceInfo.type && priceInfo.amount)
       || (priceInfo.type === PRICE_TYPE_VARIABLE);
-      const isLocationTypesValid = !!locationTypes.length;
-      const isCategoriesValid = !!categories.length;
 
-      return isNombreValid
-       && isVendibleLocationValid
-       && isPriceInfoValid && isLocationTypesValid && isCategoriesValid;
-    }, [nombre, vendibleLocation, priceInfo, locationTypes, categories]),
+    return isNombreValid && areCategoriesValid && isPriceInfoValid;
+  }, [nombre, categories, priceInfo]);
 
-    1: useMemo(() => !!(imageUrl) && !!(description), [imageUrl, description]),
+  const areSecondCommonStepsValid = useMemo(() => !!(imageUrl)
+  && !!(description), [imageUrl, description]);
+
+  const canGoStepForward = {
+    0: {
+      producto: useMemo(() => areFirstCommonStepsValid && !!(stock), [stock]),
+      servicio: useMemo(() => {
+        const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
+        const isLocationTypesValid = !!locationTypes.length;
+
+        return areFirstCommonStepsValid && isVendibleLocationValid && isLocationTypesValid;
+      }, [vendibleLocation, locationTypes]),
+    },
+
+    1: {
+      producto: areSecondCommonStepsValid,
+      servicio: areSecondCommonStepsValid,
+    },
   };
 
   const steps = [{
@@ -82,9 +95,11 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
         setCategories={setCategories}
         vendibleType={vendibleType}
         token={token}
+        stock={stock}
+        setStock={setStock}
       />),
     backButtonEnabled: false,
-    nextButtonEnabled: canGoStepForward[0],
+    nextButtonEnabled: canGoStepForward[0][vendibleType],
   },
   {
     component: <SecondStep
@@ -97,7 +112,7 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
       setDescription={setDescription}
     />,
     backButtonEnabled: true,
-    nextButtonEnabled: true,
+    nextButtonEnabled: canGoStepForward[1][vendibleType],
   }];
 
   useOnLeavingTabHandler();

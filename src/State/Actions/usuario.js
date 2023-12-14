@@ -21,6 +21,7 @@ export const resetUserInfo = () => (dispatch, getState) => {
   const { role } = getState().usuario;
   const cookiesService = new CookiesService();
   cookiesService.remove(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE);
+  cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
   if (role.startsWith(systemConstants.PROVEEDOR)) {
     const localStorageService = new LocalStorageService();
     localStorageService.removeAllKeysOfPage(systemConstants.PROVEEDOR);

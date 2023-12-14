@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
+import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 function SecondStep({
   vendibleType, handleUploadImage, imageUrl, setImageUrl, description, setDescription,
@@ -121,7 +122,8 @@ function SecondStep({
         </Typography>
         <TextareaAutosize
           minRows={15}
-          style={{ width: '80%' }}
+          maxLength={maxLengthConstraints.PROVEEDOR.description}
+          style={{ width: '80%', resize: 'none' }}
           placeholder={proveedorLabels['addVendible.description.placeholder'].replace('{vendible}', vendibleType)}
           value={description}
           onChange={handleChangeDescription}
