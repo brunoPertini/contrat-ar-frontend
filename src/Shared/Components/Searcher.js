@@ -14,7 +14,7 @@ import { EMPTY_FUNCTION } from '../Constants/System';
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
   isSearchDisabled, searchLabel, autoFocus,
-  hasError, errorMessage, inputValue,
+  hasError, errorMessage, inputValue, inputProps,
 }) {
   const {
     onKeyUp = EMPTY_FUNCTION,
@@ -49,6 +49,10 @@ function Searcher({
         <TextField
           autoFocus={autoFocus}
           type="text"
+          inputProps={{
+            ...inputProps,
+          }}
+          // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
             endAdornment: onSearchClick ? (
               <IconButton
@@ -86,17 +90,19 @@ Searcher.defaultProps = {
   inputValue: '',
   titleConfig: {},
   searcherConfig: {},
+  onSearchClick: EMPTY_FUNCTION,
   keyEvents: {
     onKeyUp: EMPTY_FUNCTION,
     onEnterPressed: EMPTY_FUNCTION,
     onDeletePressed: EMPTY_FUNCTION,
   },
+  inputProps: {},
 };
 
 Searcher.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   placeholder: PropTypes.string,
-  onSearchClick: PropTypes.func.isRequired,
+  onSearchClick: PropTypes.func,
   isSearchDisabled: PropTypes.bool,
   autoFocus: PropTypes.bool,
   searchLabel: PropTypes.string,
@@ -110,6 +116,7 @@ Searcher.propTypes = {
     onEnterPressed: PropTypes.func,
     onDeletePressed: PropTypes.func,
   }),
+  inputProps: PropTypes.object,
 };
 
 export default Searcher;

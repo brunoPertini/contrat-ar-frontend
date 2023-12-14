@@ -37,6 +37,7 @@ function ProveedorPage({
   categorias,
   userInfo,
   handleLogout,
+  handleUploadImage,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
@@ -134,6 +135,7 @@ function ProveedorPage({
         userInfo,
         vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
           .toLowerCase(),
+        handleUploadImage,
       },
     },
   };
@@ -254,7 +256,7 @@ function ProveedorPage({
         contextText={modalContent.text}
         cancelText={sharedLabels.cancel}
         acceptText={sharedLabels.accept}
-        open={modalContent?.title && modalContent.text}
+        open={!!(modalContent?.title && modalContent.text)}
         handleAccept={handleLogout}
         handleDeny={onCancelLeavingPage}
       />
@@ -272,6 +274,7 @@ ProveedorPage.propTypes = {
   categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
   userInfo: PropTypes.any.isRequired,
   handleLogout: PropTypes.func.isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
 };
 
 export default ProveedorPage;

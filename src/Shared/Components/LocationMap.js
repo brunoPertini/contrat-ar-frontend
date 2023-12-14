@@ -191,10 +191,10 @@ LocationMap.defaultProps = {
 
 LocationMap.propTypes = {
   location: PropTypes.shape({
-    coords: {
+    coords: PropTypes.shape({
       latitude: PropTypes.number,
       longitude: PropTypes.number,
-    },
+    }),
   }).isRequired,
   setLocation: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.any),

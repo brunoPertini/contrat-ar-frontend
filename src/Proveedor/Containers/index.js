@@ -10,6 +10,8 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
+import useOnUnloadTab from '../../Shared/Hooks/useOnUnloadTab';
 
 const stateSelector = (state) => state;
 
@@ -45,6 +47,15 @@ function ProveedorContainer({ router }) {
 
   const [response, setResponse] = useState();
 
+  const handleUploadImage = (file) => {
+    const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
+    const client = HttpClientFactory.createVendibleHttpClient(vendibleType, {
+      token,
+    });
+
+    return client.uploadImage(file, id);
+  };
+
   const handleGetVendibles = async () => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
@@ -63,6 +74,8 @@ function ProveedorContainer({ router }) {
     handleGetVendibles();
   }, []);
 
+  useOnUnloadTab(handleLogout);
+
   return !isEmpty(response) ? (
     <ProveedorPage
       vendibles={response.vendibles}
@@ -71,6 +84,7 @@ function ProveedorContainer({ router }) {
       addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
       userInfo={userInfo}
       handleLogout={handleLogout}
+      handleUploadImage={handleUploadImage}
     />
   ) : null;
 }

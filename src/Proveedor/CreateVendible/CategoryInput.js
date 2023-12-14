@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -9,13 +9,22 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Searcher from '../../Shared/Components/Searcher';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
+import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const MAX_ALLOWED_CATEGORIES = 3;
 
-function CategoryInput({ onCategoriesSet }) {
+function CategoryInput({ onCategoriesSet, defaultValues }) {
   const [inputValue, setInputValue] = useState();
-  const [enteredCategories, setEnteredCategories] = useState([]);
+  const [enteredCategories, setEnteredCategories] = useState(
+    defaultValues.length ? defaultValues : [],
+  );
   const [isConfirmed, setIsConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (defaultValues?.length) {
+      setIsConfirmed(true);
+    }
+  }, []);
 
   const handleAddCategory = () => {
     const inputRegex = new RegExp(inputValue, 'i');
@@ -69,6 +78,9 @@ function CategoryInput({ onCategoriesSet }) {
             placeholder={proveedorLabels['addVendible.category.add']}
             keyEvents={{ onKeyUp: handleInputChange }}
             inputValue={inputValue}
+            inputProps={{
+              maxLength: maxLengthConstraints.PROVEEDOR.categories,
+            }}
           />
         )
       }
@@ -106,7 +118,11 @@ function CategoryInput({ onCategoriesSet }) {
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} sx={{ mt: '5%' }}>
             {
               enteredCategories.map((category) => (
-                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                <Typography
+                  variant="h5"
+                  sx={{ fontWeight: 'bold' }}
+                  key={`category_input_${category}`}
+                >
                   { category}
                 </Typography>
               ))
@@ -118,7 +134,12 @@ function CategoryInput({ onCategoriesSet }) {
   );
 }
 
+CategoryInput.defaultProps = {
+  defaultValues: [],
+};
+
 CategoryInput.propTypes = {
+  defaultValues: PropTypes.arrayOf(PropTypes.string),
   onCategoriesSet: PropTypes.func.isRequired,
 };
 

@@ -9,18 +9,28 @@ import Checkbox from '@mui/material/Checkbox';
 import { useCallback, useEffect, useState } from 'react';
 
 function CheckBoxGroup({
-  elements, handleChange, title, bottomLabel,
+  elements, handleChange, title, bottomLabel, defaultChecked,
 }) {
   const [checkedElements, setCheckedElements] = useState({});
 
   const handleChangeChecked = useCallback((checked, element) => {
-    setCheckedElements((currentValues) => ({ ...currentValues, [element]: checked }));
+    setCheckedElements((currentValues) => {
+      const newChecked = ({ ...currentValues, [element]: checked });
+      const checkedKeys = Object.keys(newChecked).filter((key) => newChecked[key]);
+      handleChange(checkedKeys);
+      return newChecked;
+    });
   }, [setCheckedElements]);
 
   useEffect(() => {
-    const checkedKeys = Object.keys(checkedElements).filter((key) => checkedElements[key]);
-    handleChange(checkedKeys);
-  }, [checkedElements]);
+    if (defaultChecked?.length) {
+      const newChecked = defaultChecked.reduce((acum, key) => {
+        acum[key] = true;
+        return acum;
+      }, {});
+      setCheckedElements(newChecked);
+    }
+  }, []);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -36,7 +46,7 @@ function CheckBoxGroup({
                     key={`checkbox_${i}`}
                     control={(
                       <Checkbox
-                        checked={checkedElements[element]}
+                        checked={checkedElements[element] ?? false}
                         onChange={(event) => handleChangeChecked(event.target.checked, element)}
                         name={element}
                       />
@@ -54,12 +64,15 @@ function CheckBoxGroup({
 
 CheckBoxGroup.defaultProps = {
   bottomLabel: '',
+  defaultChecked: [],
+  title: null,
 };
 
 CheckBoxGroup.propTypes = {
   elements: PropTypes.arrayOf(PropTypes.string).isRequired,
+  defaultChecked: PropTypes.arrayOf(PropTypes.string),
   handleChange: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   bottomLabel: PropTypes.string,
 };
 

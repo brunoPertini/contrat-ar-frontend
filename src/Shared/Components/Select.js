@@ -8,11 +8,14 @@ import Select from '@mui/material/Select';
 
 function SelectComponent({
   label, handleOnChange, values, containerStyles,
+  defaultSelected,
 }) {
-  const [value, setValue] = useState(values[0]);
+  const [value, setValue] = useState(defaultSelected);
 
   useEffect(() => {
-    handleOnChange(values[0]);
+    const newValue = defaultSelected ? values[defaultSelected] : values[0];
+    setValue(newValue);
+    handleOnChange(newValue);
   }, []);
 
   const handleChange = (event) => {
@@ -30,7 +33,14 @@ function SelectComponent({
           onChange={handleChange}
         >
           {
-                values.map((valueLabel) => <MenuItem value={valueLabel}>{valueLabel}</MenuItem>)
+                values.map((valueLabel) => (
+                  <MenuItem
+                    key={`select_element${valueLabel}`}
+                    value={valueLabel}
+                  >
+                    {valueLabel}
+                  </MenuItem>
+                ))
             }
         </Select>
       </FormControl>
@@ -40,6 +50,7 @@ function SelectComponent({
 
 SelectComponent.defaultProps = {
   containerStyles: {},
+  defaultSelected: 0,
 };
 
 SelectComponent.propTypes = {
@@ -47,6 +58,7 @@ SelectComponent.propTypes = {
   label: PropTypes.string.isRequired,
   handleOnChange: PropTypes.func.isRequired,
   values: PropTypes.arrayOf(PropTypes.string).isRequired,
+  defaultSelected: PropTypes.number,
 };
 
 export default SelectComponent;

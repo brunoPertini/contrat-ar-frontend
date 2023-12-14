@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import {
@@ -8,46 +7,77 @@ import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import SecondStep from './SecondStep';
 
-function VendibleCreateForm({ userInfo, vendibleType }) {
+function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
   const { token, location } = userInfo;
 
-  const [nombre, setNombre] = useState();
+  const [nombre, setNombre] = useState('');
 
   const [vendibleLocation, setVendibleLocation] = useState(location);
 
   const [priceInfo, setPriceInfo] = useState({
     type: '',
-    amount: null,
+    amount: '',
   });
+
+  const [stock, setStock] = useState('');
 
   const [locationTypes, setLocationTypes] = useState([]);
 
   const [categories, setCategories] = useState([]);
 
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
+
   const [activeStep, setActiveStep] = useState(0);
 
-  const [errorMessages, setErrorMessages] = useState({
-    nombre: '',
-    vendibleLocation: '',
-    priceInfo: '',
-    locationTypes: '',
-    categories: '',
-  });
+  // const [errorMessages, setErrorMessages] = useState({
+  //   nombre: '',
+  //   vendibleLocation: '',
+  //   priceInfo: '',
+  //   locationTypes: '',
+  //   categories: '',
+  // });
+
+  const changeCurrentStep = (newStep) => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+    });
+    setActiveStep(newStep);
+  };
+
+  const nexButtonLabel = useMemo(() => (activeStep !== 1
+    ? sharedLabels.next : sharedLabels.finish), [activeStep]);
+
+  const areFirstCommonStepsValid = useMemo(() => {
+    const isNombreValid = !!nombre;
+    const areCategoriesValid = !!categories.length;
+    const isPriceInfoValid = (priceInfo.type && priceInfo.amount)
+      || (priceInfo.type === PRICE_TYPE_VARIABLE);
+
+    return isNombreValid && areCategoriesValid && isPriceInfoValid;
+  }, [nombre, categories, priceInfo]);
+
+  const areSecondCommonStepsValid = useMemo(() => !!(imageUrl)
+  && !!(description), [imageUrl, description]);
 
   const canGoStepForward = {
-    0: useMemo(() => {
-      const isNombreValid = !!nombre;
-      const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
-      const isPriceInfoValid = (priceInfo.type && priceInfo.amount)
-      || (priceInfo.type === PRICE_TYPE_VARIABLE);
-      const isLocationTypesValid = !!locationTypes.length;
-      const isCategoriesValid = !!categories.length;
+    0: {
+      producto: useMemo(() => areFirstCommonStepsValid && !!(stock), [stock]),
+      servicio: useMemo(() => {
+        const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
+        const isLocationTypesValid = !!locationTypes.length;
 
-      return isNombreValid
-       && isVendibleLocationValid
-       && isPriceInfoValid && isLocationTypesValid && isCategoriesValid;
-    }, [nombre, vendibleLocation, priceInfo, locationTypes, categories]),
+        return areFirstCommonStepsValid && isVendibleLocationValid && isLocationTypesValid;
+      }, [vendibleLocation, locationTypes]),
+    },
+
+    1: {
+      producto: areSecondCommonStepsValid,
+      servicio: areSecondCommonStepsValid,
+    },
   };
 
   const steps = [{
@@ -65,20 +95,37 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
         setCategories={setCategories}
         vendibleType={vendibleType}
         token={token}
+        stock={stock}
+        setStock={setStock}
       />),
     backButtonEnabled: false,
-    nextButtonEnabled: canGoStepForward[0],
+    nextButtonEnabled: canGoStepForward[0][vendibleType],
   },
   {
-    component: <div />,
-    backButtonEnabled: false,
-    nextButtonEnabled: false,
+    component: <SecondStep
+      vendibleType={vendibleType}
+      token={token}
+      handleUploadImage={handleUploadImage}
+      imageUrl={imageUrl}
+      setImageUrl={setImageUrl}
+      description={description}
+      setDescription={setDescription}
+    />,
+    backButtonEnabled: true,
+    nextButtonEnabled: canGoStepForward[1][vendibleType],
   }];
 
   useOnLeavingTabHandler();
 
   return (
-    <Grid container flexDirection="column" spacing={35}>
+    <Grid
+      container
+      flexDirection="column"
+      sx={{
+        minHeight: '100vh',
+      }}
+      spacing={30}
+    >
       { steps[activeStep].component }
       <Grid
         item
@@ -89,7 +136,8 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
         }}
       >
         <Button
-          onClick={() => {}}
+          variant="contained"
+          onClick={() => changeCurrentStep(activeStep - 1)}
           sx={{
             mr: '5%',
           }}
@@ -98,10 +146,11 @@ function VendibleCreateForm({ userInfo, vendibleType }) {
           {sharedLabels.back}
         </Button>
         <Button
-          onClick={() => {}}
+          variant="contained"
+          onClick={() => changeCurrentStep(activeStep + 1)}
           disabled={!steps[activeStep].nextButtonEnabled}
         >
-          {sharedLabels.next}
+          {nexButtonLabel}
         </Button>
       </Grid>
     </Grid>
@@ -113,41 +162,5 @@ export default VendibleCreateForm;
 VendibleCreateForm.propTypes = {
   userInfo: PropTypes.any.isRequired,
   vendibleType: PropTypes.string.isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
 };
-
-// eslint-disable-next-line no-lone-blocks
-{ /* <div>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleUpload}>Subir Imagen</button>
-      </div> */ }
-
-// const handleFileChange = (event) => {
-//   const file = event.target.files[0];
-//   setSelectedFile(file);
-// };
-
-// const handleUpload = () => {
-//   if (selectedFile) {
-//     const formData = new FormData();
-//     formData.append('file', selectedFile);
-
-//     axios.post('http://localhost:8090/image/vendible/iPhone/proveedor/5/upload', formData, {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//         'client-id': process.env.REACT_APP_CLIENT_ID,
-//         'client-secret': process.env.REACT_APP_CLIENT_SECRET,
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
-//       .then((response) => {
-//         // Manejar la respuesta del servidor
-//         console.log(response.data);
-//       })
-//       .catch((error) => {
-//         // Manejar errores
-//         console.error('Error al subir la imagen', error);
-//       });
-//   } else {
-//     console.log('No se ha seleccionado ningún archivo.');
-//   }
-// };
