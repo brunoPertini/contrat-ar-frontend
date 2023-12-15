@@ -43,7 +43,7 @@ function CheckBoxGroup({
           {
                 elements.map((element, i) => (
                   <FormControlLabel
-                    key={`checkbox_${i}`}
+                    key={`checkbox_${i}_${element}`}
                     control={(
                       <Checkbox
                         checked={checkedElements[element] ?? false}

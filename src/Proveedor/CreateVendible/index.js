@@ -8,6 +8,7 @@ import FirstStep from './FirstStep';
 import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
+import ConfirmationPage from './ConfirmationPage';
 
 function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
   const { token, location } = userInfo;
@@ -32,14 +33,6 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  // const [errorMessages, setErrorMessages] = useState({
-  //   nombre: '',
-  //   vendibleLocation: '',
-  //   priceInfo: '',
-  //   locationTypes: '',
-  //   categories: '',
-  // });
-
   const changeCurrentStep = (newStep) => {
     window.scrollTo({
       top: 0,
@@ -48,7 +41,16 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
     setActiveStep(newStep);
   };
 
-  const nexButtonLabel = useMemo(() => (activeStep !== 1
+  const containerProps = useMemo(() => ({
+    container: true,
+    flexDirection: 'column',
+    sx: {
+      minHeight: '100vh',
+    },
+    spacing: activeStep === 0 ? 35 : 10,
+  }), [activeStep]);
+
+  const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
 
   const areFirstCommonStepsValid = useMemo(() => {
@@ -113,18 +115,33 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
     />,
     backButtonEnabled: true,
     nextButtonEnabled: canGoStepForward[1][vendibleType],
+  },
+  {
+    component: <ConfirmationPage
+      vendibleType={vendibleType}
+      vendibleInfo={{
+        nombre,
+        categories,
+        priceInfo,
+        stock,
+        locationTypes,
+        vendibleLocation,
+      }}
+    />,
+    backButtonEnabled: true,
+    nextButtonEnabled: true,
   }];
+
+  // const handlePageReload = () => {
+  //   removeOnLeavingTabHandlers();
+  //   window.location.reload();
+  // };
 
   useOnLeavingTabHandler();
 
   return (
     <Grid
-      container
-      flexDirection="column"
-      sx={{
-        minHeight: '100vh',
-      }}
-      spacing={30}
+      {...containerProps}
     >
       { steps[activeStep].component }
       <Grid

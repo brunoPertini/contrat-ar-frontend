@@ -21,5 +21,6 @@
     "addVendible.image.text": "¡Elegí una foto para tu {vendible}! Esta se va a mostrar en el listado de los clientes cuando lo busquen. Te recomendamos que el tamaño de la imagen sea de 1200 x 900 píxeles, o que tenga un mínimo de 600 x 400 píxeles; con un formato JPG o PNG.",
     "addVendible.description.placeholder": "¡Agregá todo lo que creas necesario para que tus clientes sepan de tu {vendible}!",
     "addVendible.lastStep": "Ya casi terminamos! Ultimo paso",
-    "addVendible.stock": "Stock actual de tu producto: " 
+    "addVendible.stock": "Stock actual de tu producto: " ,
+    "addVendible.confirmation.title": "Por favor, confirmá la información introducida antes de guardar tu {vendible}"
 }

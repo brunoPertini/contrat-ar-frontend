@@ -34,5 +34,8 @@
     "stock": "Stock",
     "accept": "Aceptar",
     "cancel": "Cancelar",
-    "uploadImage": "Subir Imagen"
+    "uploadImage": "Subir Imagen",
+    "categories": "Categorias",
+    "serviceLocationType": "¿Dónde prestás el servicio?",
+    "units": "unidades"
 }
