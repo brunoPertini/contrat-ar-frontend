@@ -12,7 +12,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
-import useOnUnloadTab from '../../Shared/Hooks/useOnUnloadTab';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
 
@@ -32,6 +32,8 @@ const addNewVendiblesLabels = {
   },
 };
 
+const localStorageService = new LocalStorageService();
+
 function ProveedorContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
@@ -47,6 +49,15 @@ function ProveedorContainer({ router }) {
   const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
 
   const [response, setResponse] = useState();
+
+  useEffect(() => {
+    const backButtonPresed = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
+    );
+    if (!backButtonPresed && role.startsWith(systemConstants.PROVEEDOR)) {
+      localStorageService.removeAllKeysOfPage(systemConstants.PROVEEDOR);
+    }
+  }, []);
 
   const handleUploadImage = (file) => {
     const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
@@ -74,8 +85,6 @@ function ProveedorContainer({ router }) {
   useEffect(() => {
     handleGetVendibles();
   }, []);
-
-  useOnUnloadTab(handleLogout);
 
   return !isEmpty(response) ? (
     <ProveedorPage

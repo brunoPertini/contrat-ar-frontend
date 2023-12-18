@@ -126,16 +126,13 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
         stock,
         locationTypes,
         vendibleLocation,
+        imageUrl,
+        description,
       }}
     />,
     backButtonEnabled: true,
     nextButtonEnabled: true,
   }];
-
-  // const handlePageReload = () => {
-  //   removeOnLeavingTabHandlers();
-  //   window.location.reload();
-  // };
 
   useOnLeavingTabHandler();
 

@@ -1,19 +1,22 @@
-/* eslint-disable react/prop-types */
-import {
-  Card, CardContent, Grid, Typography,
-} from '@mui/material';
+import PropTypes from 'prop-types';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import ImageListItem from '@mui/material/ImageListItem';
+import Typography from '@mui/material/Typography';
+
 import { sharedLabels } from '../../StaticData/Shared';
 import {
-  PRICE_TYPE_VARIABLE, PRODUCT, SERVICE_LOCATION_FIXED,
+  PRICE_TYPE_VARIABLE, PRODUCT, SERVICE, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { LocationMap } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 
 function ConfirmationPage({ vendibleType, vendibleInfo }) {
   const {
-    categories,
+    categories, nombre,
     priceInfo: { type: priceInfoType, amount: priceInfoAmount },
-    locationTypes, vendibleLocation, stock,
+    locationTypes, vendibleLocation, stock, imageUrl, description,
   } = vendibleInfo;
 
   const categoriesString = categories.join(',  ');
@@ -41,23 +44,22 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
     <Grid
       item
       display="flex"
-      flexDirection="column"
+      flexDirection="row"
       xs={10}
-      sx={{
-        alignSelf: 'center',
-      }}
+      sx={{ minWidth: '100vw' }}
+      justifyContent="center"
     >
-      <Typography variant="h4">
-        { proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleType)}
-      </Typography>
       <Card>
+        <Typography variant="h4">
+          { proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleType)}
+        </Typography>
         <CardContent>
           <Typography>
             { sharedLabels.name }
             :
           </Typography>
           <Typography variant="h6" fontWeight="bold">
-            { vendibleInfo.nombre }
+            {nombre }
           </Typography>
         </CardContent>
         <CardContent>
@@ -106,9 +108,42 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             </CardContent>
             )
         }
-        {
+        <CardContent>
+          <Typography>
+            { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleType)}
+            :
+          </Typography>
+          <Typography fontWeight="bold">
+            { description }
+          </Typography>
+        </CardContent>
+        <CardContent>
+          <ImageListItem
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '20%',
+            }}
+          >
+            <Typography>
+              { sharedLabels['image.main'] }
+              {' '}
+              :
+            </Typography>
+            {!!imageUrl && (
+            <img
+              src={imageUrl}
+              srcSet={imageUrl}
+              alt=""
+              loading="lazy"
+            />
+            )}
+          </ImageListItem>
+        </CardContent>
+        <CardContent>
+          {
             renderLocationType && (
-            <CardContent>
+            <CardContent sx={{ width: '55%' }}>
               <Typography>
                 { sharedLabels.serviceLocationType }
               </Typography>
@@ -119,7 +154,6 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
                 renderMap && (
                 <LocationMap
                   containerStyles={{
-                    width: '50%',
                     height: '200px',
                   }}
                   enableDragEvents={false}
@@ -135,9 +169,29 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             </CardContent>
             )
         }
+        </CardContent>
       </Card>
     </Grid>
   );
 }
+
+ConfirmationPage.propTypes = {
+  vendibleInfo: PropTypes.shape({
+    nombre: PropTypes.string,
+    priceInfo: PropTypes.shape({
+      type: PropTypes.string,
+      amount: PropTypes.string,
+    }),
+    locationTypes: PropTypes.arrayOf(PropTypes.string),
+    categories: PropTypes.arrayOf(PropTypes.string),
+    stock: PropTypes.string,
+    imageUrl: PropTypes.string,
+    description: PropTypes.string,
+    vendibleLocation: PropTypes.shape({
+      coordinates: PropTypes.arrayOf(PropTypes.number),
+    }),
+  }).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
+};
 
 export default ConfirmationPage;
