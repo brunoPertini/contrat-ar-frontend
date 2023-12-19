@@ -13,7 +13,7 @@ import { EMPTY_FUNCTION } from '../Constants/System';
  */
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
-  isSearchDisabled, searchLabel, autoFocus,
+  isSearchDisabled, searchLabel, autoFocus, required,
   hasError, errorMessage, inputValue, inputProps,
 }) {
   const {
@@ -47,6 +47,7 @@ function Searcher({
       </Typography>
       <FormControl {...searcherConfig}>
         <TextField
+          required={required}
           autoFocus={autoFocus}
           type="text"
           inputProps={{
@@ -65,6 +66,7 @@ function Searcher({
               </IconButton>
             ) : undefined,
           }}
+          InputLabelProps={{ shrink: true }}
           label={searchLabel}
           onKeyUp={handleKeyEvents}
           onChange={handleOnChange}
@@ -97,6 +99,7 @@ Searcher.defaultProps = {
     onDeletePressed: EMPTY_FUNCTION,
   },
   inputProps: {},
+  required: false,
 };
 
 Searcher.propTypes = {
@@ -117,6 +120,7 @@ Searcher.propTypes = {
     onDeletePressed: PropTypes.func,
   }),
   inputProps: PropTypes.object,
+  required: PropTypes.bool,
 };
 
 export default Searcher;

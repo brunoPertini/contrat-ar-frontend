@@ -108,27 +108,27 @@ function FirstStep({
   return (
     <Grid item display="flex" flexDirection="row" xs={10}>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
-        <Grid item>
-          <Searcher
-            title={(
-              <Typography variant="h4">
-                {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
-              </Typography>
+        <Searcher
+          title={(
+            <Typography variant="h4">
+              {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
+            </Typography>
     )}
-            placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
-            searcherConfig={{
-              sx: {
-                width: '70%',
-              },
-            }}
-            inputValue={nombre}
-            autoFocus
-            keyEvents={{ onKeyUp: setNombre }}
-            inputProps={{
-              maxLength: maxLengthConstraints.PROVEEDOR.nombre,
-            }}
-          />
-        </Grid>
+          placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
+          searchLabel={sharedLabels.required}
+          searcherConfig={{
+            sx: {
+              width: '70%',
+            },
+          }}
+          inputValue={nombre}
+          autoFocus
+          required
+          keyEvents={{ onKeyUp: setNombre }}
+          inputProps={{
+            maxLength: maxLengthConstraints.PROVEEDOR.nombre,
+          }}
+        />
         <Grid item sx={{ mt: '5%' }}>
           <Typography variant="h4">
             {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
