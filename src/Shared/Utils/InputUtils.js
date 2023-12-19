@@ -1,5 +1,7 @@
 const ONLY_NUMBERS_REGEX = /[^a-z]/gi;
 
+export const DOT_AND_COMMA_REGEX = /[,.]/gi;
+
 /**
  * @param {string} string
  * @returns {boolean} if string only contains numbers

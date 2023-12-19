@@ -16,22 +16,31 @@ import {
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
   PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
-import { stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
+import { DOT_AND_COMMA_REGEX, stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
-/** @param {Event} event  */
-function filterValueIfIsNumber(event) {
+/**
+ * @param {Event} event
+ * @returns {String} The given string in event's value with only numbers and '.' and ',' chars
+ */
+function deleteNonNumericCharacters(event) {
   const { value } = event.target;
-  const stringValue = new String(value);
-  if (stringHasOnlyNumbers(stringValue) || !stringValue) {
+  const char = value.at(value.length - 1);
+
+  if (!char) {
     return value;
   }
 
-  return null;
+  if (stringHasOnlyNumbers(value) || char === ',') {
+    return value.replace(DOT_AND_COMMA_REGEX, '');
+  }
+
+  return value.slice(0, value.length - 1)
+    .replace(DOT_AND_COMMA_REGEX, '');
 }
 
 function FirstStep({
@@ -79,14 +88,12 @@ function FirstStep({
   };
 
   const onChangePriceAmount = (event) => {
-    const value = new String(filterValueIfIsNumber(event));
-    if (value.length < maxLengthConstraints.PROVEEDOR['priceInfo.amount']) {
-      onChangePriceInfo({ priceAmount: value });
-    }
+    const valueNumber = new Number(deleteNonNumericCharacters(event));
+    onChangePriceInfo({ priceAmount: valueNumber.toLocaleString('es-AR') });
   };
 
   const onChangeStock = (event) => {
-    const value = new String(filterValueIfIsNumber(event));
+    const value = new String(deleteNonNumericCharacters(event));
     if (value.length < maxLengthConstraints.PROVEEDOR.stock) {
       setStock(value);
     }
@@ -145,6 +152,10 @@ function FirstStep({
           <CategoryInput
             onCategoriesSet={onSetCategories}
             defaultValues={categories}
+            searcherProps={{
+              searchLabel: sharedLabels.addAtLeastOne,
+              required: true,
+            }}
           />
         </Grid>
       </Grid>
@@ -169,7 +180,7 @@ function FirstStep({
         {showPriceInput && (
         <TextField
           sx={{ mt: '2%' }}
-          type="number"
+          type="text"
           label={sharedLabels.price}
           onChange={onChangePriceAmount}
           value={priceInfo.amount}

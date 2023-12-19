@@ -1,7 +1,7 @@
 {
     "PROVEEDOR": {
         "nombre": 80,
-        "priceInfo.amount": 20,
+        "priceInfo.amount": 10,
         "stock": 10,
         "categories": 30,
         "description": 3000
