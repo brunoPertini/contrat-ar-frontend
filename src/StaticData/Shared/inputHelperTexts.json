@@ -1,0 +1,5 @@
+{
+    "required": "Requerido",
+    "addAtLeastOne": "Agregá al menos una",
+    "onlyIntNumbers": "Ingresá solo números sin coma"
+}

@@ -38,7 +38,5 @@
     "categories": "Categorias",
     "serviceLocationType": "¿Dónde prestás el servicio?",
     "units": "unidades",
-    "image.main": "Imagen principal",
-    "required": "Requerido",
-    "addAtLeastOne": "Agregá al menos una"
+    "image.main": "Imagen principal"
 }

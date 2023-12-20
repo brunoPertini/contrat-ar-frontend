@@ -11,37 +11,18 @@ import {
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
-import { sharedLabels } from '../../StaticData/Shared';
+import { inputHelperLabels, sharedLabels } from '../../StaticData/Shared';
 import {
+  ARGENTINA_LOCALE,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
   PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
-import { DOT_AND_COMMA_REGEX, stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
+import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
-
-/**
- * @param {Event} event
- * @returns {String} The given string in event's value with only numbers and '.' and ',' chars
- */
-function deleteNonNumericCharacters(event) {
-  const { value } = event.target;
-  const char = value.at(value.length - 1);
-
-  if (!char) {
-    return value;
-  }
-
-  if (stringHasOnlyNumbers(value) || char === ',') {
-    return value.replace(DOT_AND_COMMA_REGEX, '');
-  }
-
-  return value.slice(0, value.length - 1)
-    .replace(DOT_AND_COMMA_REGEX, '');
-}
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -88,15 +69,16 @@ function FirstStep({
   };
 
   const onChangePriceAmount = (event) => {
-    const valueNumber = new Number(deleteNonNumericCharacters(event));
-    onChangePriceInfo({ priceAmount: valueNumber.toLocaleString('es-AR') });
+    const formattedString = deleteNonNumericCharacters(event);
+    const valueNumber = formattedString ? new Number(formattedString) : 0;
+    // TODO: desharcodear el locale
+    onChangePriceInfo({ priceAmount: valueNumber.toLocaleString(ARGENTINA_LOCALE) });
   };
 
   const onChangeStock = (event) => {
-    const value = new String(deleteNonNumericCharacters(event));
-    if (value.length < maxLengthConstraints.PROVEEDOR.stock) {
-      setStock(value);
-    }
+    const formattedString = deleteNonNumericCharacters(event);
+    const valueNumber = formattedString ? new Number(formattedString) : 0;
+    setStock(valueNumber.toLocaleString(ARGENTINA_LOCALE));
   };
 
   const gridConfig = {
@@ -122,7 +104,7 @@ function FirstStep({
             </Typography>
     )}
           placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
-          searchLabel={sharedLabels.required}
+          searchLabel={inputHelperLabels.required}
           searcherConfig={{
             sx: {
               width: '70%',
@@ -153,7 +135,7 @@ function FirstStep({
             onCategoriesSet={onSetCategories}
             defaultValues={categories}
             searcherProps={{
-              searchLabel: sharedLabels.addAtLeastOne,
+              searchLabel: inputHelperLabels.addAtLeastOne,
               required: true,
             }}
           />
@@ -187,6 +169,7 @@ function FirstStep({
           inputProps={{
             maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
           }}
+          helperText={inputHelperLabels.onlyIntNumbers}
         />
         )}
         {gridConfig[vendibleType].showLocationColumn && (

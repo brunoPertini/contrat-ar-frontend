@@ -34,11 +34,14 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
   const [activeStep, setActiveStep] = useState(0);
 
   const changeCurrentStep = (newStep) => {
+    if (newStep === 3) {
+      return () => {};
+    }
     window.scrollTo({
       top: 0,
       left: 0,
     });
-    setActiveStep(newStep);
+    return setActiveStep(newStep);
   };
 
   const containerProps = useMemo(() => ({

@@ -7,10 +7,12 @@ import Typography from '@mui/material/Typography';
 
 import { sharedLabels } from '../../StaticData/Shared';
 import {
+  ARGENTINA_LOCALE,
   PRICE_TYPE_VARIABLE, PRODUCT, SERVICE, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { LocationMap } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
+import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 
 function ConfirmationPage({ vendibleType, vendibleInfo }) {
   const {
@@ -40,20 +42,24 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
 
   const renderStock = vendibleType === PRODUCT.toLowerCase();
 
+  const cardRowStyles = {
+    width: '40%',
+  };
+
   return (
     <Grid
       item
       display="flex"
       flexDirection="row"
       xs={10}
-      sx={{ minWidth: '100vw' }}
+      sx={{ alignSelf: 'center' }}
       justifyContent="center"
     >
       <Card>
         <Typography variant="h4">
           { proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleType)}
         </Typography>
-        <CardContent>
+        <CardContent sx={{ ...cardRowStyles }}>
           <Typography>
             { sharedLabels.name }
             :
@@ -62,7 +68,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             {nombre }
           </Typography>
         </CardContent>
-        <CardContent>
+        <CardContent sx={{ ...cardRowStyles }}>
           <Typography>
             { sharedLabels.categories }
             :
@@ -71,7 +77,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             { categoriesString }
           </Typography>
         </CardContent>
-        <CardContent>
+        <CardContent sx={{ ...cardRowStyles }}>
           <Typography>
             { sharedLabels.priceType }
             :
@@ -82,12 +88,13 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
         </CardContent>
         {
             renderPriceAmount && (
-            <CardContent>
+            <CardContent sx={{ ...cardRowStyles }}>
               <Typography>
                 { sharedLabels.price }
                 :
               </Typography>
               <Typography variant="h6" fontWeight="bold">
+                { getLocaleCurrencySymbol(ARGENTINA_LOCALE) }
                 { priceInfoAmount }
               </Typography>
             </CardContent>
@@ -95,7 +102,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
         }
         {
             renderStock && (
-            <CardContent>
+            <CardContent sx={{ ...cardRowStyles }}>
               <Typography>
                 { sharedLabels.stock }
                 :
@@ -108,21 +115,21 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             </CardContent>
             )
         }
-        <CardContent>
+        <CardContent sx={{ ...cardRowStyles }}>
           <Typography>
-            { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleType)}
+            { proveedorLabels['addVendible.description'].replace('{vendible}', vendibleType)}
             :
           </Typography>
           <Typography fontWeight="bold">
             { description }
           </Typography>
         </CardContent>
-        <CardContent>
+        <CardContent sx={{ ...cardRowStyles }}>
           <ImageListItem
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              width: '20%',
+              width: '50%',
             }}
           >
             <Typography>
@@ -140,10 +147,9 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             )}
           </ImageListItem>
         </CardContent>
-        <CardContent>
-          {
+        {
             renderLocationType && (
-            <CardContent sx={{ width: '55%' }}>
+            <CardContent sx={{ width: '60%' }}>
               <Typography>
                 { sharedLabels.serviceLocationType }
               </Typography>
@@ -155,6 +161,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
                 <LocationMap
                   containerStyles={{
                     height: '200px',
+                    width: '100%',
                   }}
                   enableDragEvents={false}
                   location={{
@@ -169,7 +176,6 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             </CardContent>
             )
         }
-        </CardContent>
       </Card>
     </Grid>
   );
