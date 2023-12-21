@@ -13,6 +13,7 @@ import DialogModal from './DialogModal';
 import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
+import { EMPTY_FUNCTION } from '../Constants/System';
 
 const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
@@ -28,6 +29,7 @@ const LocationMap = memo(function LocationMap({
   setLocation,
   containerStyles,
   token,
+  enableDragEvents,
 }) {
   const previousLocation = usePreviousPropValue(location);
 
@@ -140,7 +142,7 @@ const LocationMap = memo(function LocationMap({
       <Marker
         position={[location.coords.latitude, location.coords.longitude]}
         eventHandlers={eventHandlers}
-        draggable
+        draggable={enableDragEvents}
       >
 
         { !!readableAddress && (
@@ -187,6 +189,9 @@ const LocationMap = memo(function LocationMap({
 
 LocationMap.defaultProps = {
   containerStyles: {},
+  token: '',
+  setLocation: EMPTY_FUNCTION,
+  enableDragEvents: true,
 };
 
 LocationMap.propTypes = {
@@ -196,9 +201,10 @@ LocationMap.propTypes = {
       longitude: PropTypes.number,
     }),
   }).isRequired,
-  setLocation: PropTypes.func.isRequired,
+  setLocation: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.any),
-  token: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  enableDragEvents: PropTypes.bool,
 };
 
 export default LocationMap;

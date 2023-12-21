@@ -5,7 +5,9 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 const localStorageService = new LocalStorageService();
 const { PAGES_KEYS } = LocalStorageService;
 
-const handleOnLeavingTab = (event) => event.preventDefault();
+const handleOnLeavingTab = (event) => {
+  event.preventDefault();
+};
 
 const handleOnBackButtonPressed = (event, runBeforeLeavingFunction = EMPTY_FUNCTION) => {
   event.preventDefault();

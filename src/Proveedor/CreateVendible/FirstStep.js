@@ -11,28 +11,18 @@ import {
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
-import { sharedLabels } from '../../StaticData/Shared';
+import { inputHelperLabels, sharedLabels } from '../../StaticData/Shared';
 import {
+  ARGENTINA_LOCALE,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
   PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
-import { stringHasOnlyNumbers } from '../../Shared/Utils/InputUtils';
+import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
-
-/** @param {Event} event  */
-function filterValueIfIsNumber(event) {
-  const { value } = event.target;
-  const stringValue = new String(value);
-  if (stringHasOnlyNumbers(stringValue) || !stringValue) {
-    return value;
-  }
-
-  return null;
-}
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -79,17 +69,16 @@ function FirstStep({
   };
 
   const onChangePriceAmount = (event) => {
-    const value = new String(filterValueIfIsNumber(event));
-    if (value.length < maxLengthConstraints.PROVEEDOR['priceInfo.amount']) {
-      onChangePriceInfo({ priceAmount: value });
-    }
+    const formattedString = deleteNonNumericCharacters(event);
+    const valueNumber = formattedString ? new Number(formattedString) : 0;
+    // TODO: desharcodear el locale
+    onChangePriceInfo({ priceAmount: valueNumber.toLocaleString(ARGENTINA_LOCALE) });
   };
 
   const onChangeStock = (event) => {
-    const value = new String(filterValueIfIsNumber(event));
-    if (value.length < maxLengthConstraints.PROVEEDOR.stock) {
-      setStock(value);
-    }
+    const formattedString = deleteNonNumericCharacters(event);
+    const valueNumber = formattedString ? new Number(formattedString) : 0;
+    setStock(valueNumber.toLocaleString(ARGENTINA_LOCALE));
   };
 
   const gridConfig = {
@@ -108,27 +97,27 @@ function FirstStep({
   return (
     <Grid item display="flex" flexDirection="row" xs={10}>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
-        <Grid item>
-          <Searcher
-            title={(
-              <Typography variant="h4">
-                {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
-              </Typography>
+        <Searcher
+          title={(
+            <Typography variant="h4">
+              {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
+            </Typography>
     )}
-            placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
-            searcherConfig={{
-              sx: {
-                width: '70%',
-              },
-            }}
-            inputValue={nombre}
-            autoFocus
-            keyEvents={{ onKeyUp: setNombre }}
-            inputProps={{
-              maxLength: maxLengthConstraints.PROVEEDOR.nombre,
-            }}
-          />
-        </Grid>
+          placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
+          searchLabel={inputHelperLabels.required}
+          searcherConfig={{
+            sx: {
+              width: '70%',
+            },
+          }}
+          inputValue={nombre}
+          autoFocus
+          required
+          keyEvents={{ onKeyUp: setNombre }}
+          inputProps={{
+            maxLength: maxLengthConstraints.PROVEEDOR.nombre,
+          }}
+        />
         <Grid item sx={{ mt: '5%' }}>
           <Typography variant="h4">
             {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
@@ -145,6 +134,10 @@ function FirstStep({
           <CategoryInput
             onCategoriesSet={onSetCategories}
             defaultValues={categories}
+            searcherProps={{
+              searchLabel: inputHelperLabels.addAtLeastOne,
+              required: true,
+            }}
           />
         </Grid>
       </Grid>
@@ -169,13 +162,14 @@ function FirstStep({
         {showPriceInput && (
         <TextField
           sx={{ mt: '2%' }}
-          type="number"
+          type="text"
           label={sharedLabels.price}
           onChange={onChangePriceAmount}
           value={priceInfo.amount}
           inputProps={{
             maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
           }}
+          helperText={inputHelperLabels.onlyIntNumbers}
         />
         )}
         {gridConfig[vendibleType].showLocationColumn && (

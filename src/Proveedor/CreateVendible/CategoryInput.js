@@ -13,7 +13,7 @@ import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 const MAX_ALLOWED_CATEGORIES = 3;
 
-function CategoryInput({ onCategoriesSet, defaultValues }) {
+function CategoryInput({ onCategoriesSet, defaultValues, searcherProps }) {
   const [inputValue, setInputValue] = useState();
   const [enteredCategories, setEnteredCategories] = useState(
     defaultValues.length ? defaultValues : [],
@@ -81,6 +81,7 @@ function CategoryInput({ onCategoriesSet, defaultValues }) {
             inputProps={{
               maxLength: maxLengthConstraints.PROVEEDOR.categories,
             }}
+            {...searcherProps}
           />
         )
       }
@@ -136,11 +137,13 @@ function CategoryInput({ onCategoriesSet, defaultValues }) {
 
 CategoryInput.defaultProps = {
   defaultValues: [],
+  searcherProps: {},
 };
 
 CategoryInput.propTypes = {
   defaultValues: PropTypes.arrayOf(PropTypes.string),
   onCategoriesSet: PropTypes.func.isRequired,
+  searcherProps: PropTypes.object,
 };
 
 export default CategoryInput;
