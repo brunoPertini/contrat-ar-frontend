@@ -13,8 +13,8 @@ import { EMPTY_FUNCTION } from '../Constants/System';
  */
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
-  isSearchDisabled, searchLabel,
-  hasError, errorMessage, inputValue,
+  isSearchDisabled, searchLabel, autoFocus, required,
+  hasError, errorMessage, inputValue, inputProps,
 }) {
   const {
     onKeyUp = EMPTY_FUNCTION,
@@ -47,10 +47,15 @@ function Searcher({
       </Typography>
       <FormControl {...searcherConfig}>
         <TextField
-          autoFocus
+          required={required}
+          autoFocus={autoFocus}
           type="text"
+          inputProps={{
+            ...inputProps,
+          }}
+          // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
-            endAdornment: (
+            endAdornment: onSearchClick ? (
               <IconButton
                 aria-label="search-input"
                 edge="end"
@@ -59,8 +64,9 @@ function Searcher({
               >
                 <SearchOutlinedIcon />
               </IconButton>
-            ),
+            ) : undefined,
           }}
+          InputLabelProps={{ shrink: true }}
           label={searchLabel}
           onKeyUp={handleKeyEvents}
           onChange={handleOnChange}
@@ -79,24 +85,29 @@ Searcher.defaultProps = {
   title: '',
   placeholder: '',
   isSearchDisabled: false,
+  autoFocus: false,
   searchLabel: '',
   hasError: false,
   errorMessage: '',
   inputValue: '',
   titleConfig: {},
   searcherConfig: {},
+  onSearchClick: EMPTY_FUNCTION,
   keyEvents: {
     onKeyUp: EMPTY_FUNCTION,
     onEnterPressed: EMPTY_FUNCTION,
     onDeletePressed: EMPTY_FUNCTION,
   },
+  inputProps: {},
+  required: false,
 };
 
 Searcher.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   placeholder: PropTypes.string,
-  onSearchClick: PropTypes.func.isRequired,
+  onSearchClick: PropTypes.func,
   isSearchDisabled: PropTypes.bool,
+  autoFocus: PropTypes.bool,
   searchLabel: PropTypes.string,
   hasError: PropTypes.bool,
   errorMessage: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
@@ -108,6 +119,8 @@ Searcher.propTypes = {
     onEnterPressed: PropTypes.func,
     onDeletePressed: PropTypes.func,
   }),
+  inputProps: PropTypes.object,
+  required: PropTypes.bool,
 };
 
 export default Searcher;

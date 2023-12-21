@@ -24,5 +24,19 @@
     "priceToBeAgreed": "Precio a  convenir",
     "sendMessage": "Enviar mensaje",
     "seeDetail": "Ver detalle",
-    "filters": "Filtros"    
+    "filters": "Filtros"    ,
+    "priceType": "Tipo de precio",
+    "add": "Agregar",
+    "finish": "Terminar",
+    "edit": "Editar",
+    "deleteLast": "Borrar Última",
+    "price": "Precio",
+    "stock": "Stock",
+    "accept": "Aceptar",
+    "cancel": "Cancelar",
+    "uploadImage": "Subir Imagen",
+    "categories": "Categorias",
+    "serviceLocationType": "¿Dónde prestás el servicio?",
+    "units": "unidades",
+    "image.main": "Imagen principal"
 }

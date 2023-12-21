@@ -32,4 +32,25 @@ export class VendibleHttpClient extends HttpClient {
 
     return this.get(finalUrl, queryParams);
   }
+
+  /**
+   *
+   * @param {File} file
+   * @param {String} proveedorId
+   * @returns {Promise<String>} The uploaded file url
+   */
+  uploadImage(file, proveedorId) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = vendiblesRoutes.uploadImage.replace('{proveedorId}', proveedorId);
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    return this.post(url, null, formData, config);
+  }
 }

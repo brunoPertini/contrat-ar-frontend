@@ -2,5 +2,6 @@
     "createClient": "/usuarios/cliente",
     "createProveedor": "/usuarios/proveedor",
     "login": "/oauth/login",
-    "getPublicKey": "/oauth/public_key"
+    "getPublicKey": "/oauth/public_key",
+    "getUserInfo": "/usuarios/{userId}/info"
 }

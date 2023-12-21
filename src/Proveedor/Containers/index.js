@@ -1,12 +1,17 @@
+import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
-import { systemConstants } from '../../Shared/Constants';
+import { routes, systemConstants } from '../../Shared/Constants';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { resetUserInfo } from '../../State/Actions/usuario';
+import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
 
@@ -26,8 +31,11 @@ const addNewVendiblesLabels = {
   },
 };
 
-function ProveedorContainer() {
+const localStorageService = new LocalStorageService();
+
+function ProveedorContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
+  const dispatch = useDispatch();
 
   const { role, token, id } = userInfo;
 
@@ -36,10 +44,28 @@ function ProveedorContainer() {
     props: { userInfo },
   }];
 
-  const addVendibleLabel = addNewVendiblesLabels[role].label;
-  const addVendibleLink = addNewVendiblesLabels[role].labelLink;
+  const addVendibleLabel = addNewVendiblesLabels[role]?.label;
+  const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
 
   const [response, setResponse] = useState();
+
+  useEffect(() => {
+    const backButtonPresed = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
+    );
+    if (!backButtonPresed && role.startsWith(systemConstants.PROVEEDOR)) {
+      localStorageService.removeAllKeysOfPage(systemConstants.PROVEEDOR);
+    }
+  }, []);
+
+  const handleUploadImage = (file) => {
+    const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
+    const client = HttpClientFactory.createVendibleHttpClient(vendibleType, {
+      token,
+    });
+
+    return client.uploadImage(file, id);
+  };
 
   const handleGetVendibles = async () => {
     const client = HttpClientFactory.createProveedorHttpClient({
@@ -47,6 +73,12 @@ function ProveedorContainer() {
     });
     const newResponse = await client.getVendibles(id);
     setResponse(newResponse);
+  };
+
+  const handleLogout = async () => {
+    removeOnLeavingTabHandlers();
+    await dispatch(resetUserInfo());
+    router.navigate(routes.signin);
   };
 
   useEffect(() => {
@@ -59,9 +91,19 @@ function ProveedorContainer() {
       categorias={response.categorias}
       menuOptions={menuOptions}
       addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
-      role={role}
+      userInfo={userInfo}
+      handleLogout={handleLogout}
+      handleUploadImage={handleUploadImage}
     />
   ) : null;
 }
+
+ProveedorContainer.propTypes = {
+  router: PropTypes.shape({
+    location: PropTypes.any,
+    navigate: PropTypes.func,
+    params: PropTypes.any,
+  }).isRequired,
+};
 
 export default withRouter(ProveedorContainer);

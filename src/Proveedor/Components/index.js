@@ -4,20 +4,28 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../../Header';
-import { SearcherInput, Tooltip } from '../../Shared/Components';
+import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
 import {
-  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS, SERVICES,
+  PRODUCT,
+  PRODUCTS,
+  ROLE_PROVEEDOR_PRODUCTOS,
+  SERVICE,
+  SERVICES,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
+import VendibleCreateForm from '../CreateVendible';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+
+const localStorageService = new LocalStorageService();
 
 function ProveedorPage({
   menuOptions,
@@ -27,14 +35,44 @@ function ProveedorPage({
   },
   vendibles,
   categorias,
-  role,
+  userInfo,
+  handleLogout,
+  handleUploadImage,
 }) {
-  const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
+  const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
   const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
 
   const [searchValue, setSearchValue] = useState('');
   const [categorySelected, setCategorySelected] = useState();
+
+  const [currentInnerScreen, setCurrentInnerScreen] = useState();
+
+  const [modalContent, setModalContent] = useState({ title: '', text: '' });
+
+  useEffect(() => {
+    const storedScreen = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+    );
+    if (storedScreen) {
+      setCurrentInnerScreen(storedScreen);
+    }
+
+    if (localStorageService.getItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED)) {
+      const title = '¿Desea salir?';
+      const text = 'Perderá todos los cambios';
+      setModalContent({ title, text });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentInnerScreen) {
+      localStorageService.setItem(
+        LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+        currentInnerScreen,
+      );
+    }
+  }, [currentInnerScreen]);
 
   const handleSetSearchValue = (value) => {
     setSearchValue(value);
@@ -86,9 +124,36 @@ function ProveedorPage({
     });
   };
 
-  return (
-    <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+  const onChangeCurrentScreen = ({ newScreen }) => {
+    setCurrentInnerScreen(newScreen);
+  };
+
+  const innerScreens = {
+    addNewVendible: {
+      component: VendibleCreateForm,
+      props: {
+        userInfo,
+        vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
+          .toLowerCase(),
+        handleUploadImage,
+      },
+    },
+  };
+
+  let mainContent;
+
+  const onCancelLeavingPage = () => {
+    setModalContent({ title: '', text: '' });
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
+  };
+
+  if (currentInnerScreen) {
+    const InnerComponent = innerScreens[currentInnerScreen].component;
+    const innerProps = innerScreens[currentInnerScreen].props;
+
+    mainContent = <InnerComponent {...innerProps} />;
+  } else {
+    mainContent = (
       <Grid
         container
         sx={{
@@ -128,7 +193,7 @@ function ProveedorPage({
               <Typography variant="h6">
                 {proveedorLabels.filterByCategory}
               </Typography>
-            )}
+        )}
           />
         </Grid>
         <Grid
@@ -152,7 +217,7 @@ function ProveedorPage({
                   <Typography variant="h6">
                     {proveedorLabels.tooltipLabel}
                   </Typography>
-                )}
+            )}
               >
                 <HelpOutline />
               </Tooltip>
@@ -166,7 +231,10 @@ function ProveedorPage({
               <Typography variant="h6">
                 {addVendibleLabel}
               </Typography>
-              <Link sx={{ mt: '10px', cursor: 'pointer' }}>
+              <Link
+                sx={{ mt: '10px', cursor: 'pointer' }}
+                onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+              >
                 {addVendibleLink}
               </Link>
             </div>
@@ -176,6 +244,22 @@ function ProveedorPage({
           </Box>
         </Grid>
       </Grid>
+    );
+  }
+
+  return (
+    <>
+      <Header withMenuComponent menuOptions={menuOptions} />
+      { mainContent }
+      <DialogModal
+        title={modalContent.title}
+        contextText={modalContent.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+        open={!!(modalContent?.title && modalContent.text)}
+        handleAccept={handleLogout}
+        handleDeny={onCancelLeavingPage}
+      />
     </>
   );
 }
@@ -188,7 +272,9 @@ ProveedorPage.propTypes = {
   }).isRequired,
   vendibles: proveedoresVendiblesShape.isRequired,
   categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
-  role: PropTypes.oneOf([ROLE_PROVEEDOR_PRODUCTOS, ROLE_PROVEEDOR_SERVICIOS]).isRequired,
+  userInfo: PropTypes.any.isRequired,
+  handleLogout: PropTypes.func.isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
 };
 
 export default ProveedorPage;

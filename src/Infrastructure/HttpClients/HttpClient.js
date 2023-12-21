@@ -17,19 +17,34 @@ export class HttpClient {
 
   #instance;
 
-  constructor({ baseUrl, headersValues = defaultHeadersValues }) {
+  constructor({ baseUrl, headersValues = defaultHeadersValues, useClientCredentials = true }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
     const AuthorizationHeaderValue = headersValues.Authorization
       ? `Bearer ${headersValues.Authorization}` : undefined;
-    this.#instance = axios.create({
-      baseURL: this.#baseUrl,
-      headers: {
-        TimeZone: timeZone,
+
+    let headers = {
+      TimeZone: timeZone,
+    };
+
+    if (AuthorizationHeaderValue) {
+      headers = {
+        ...headers,
+        Authorization: AuthorizationHeaderValue,
+      };
+    }
+
+    if (useClientCredentials) {
+      headers = {
+        ...headers,
         'client-id': process.env.REACT_APP_CLIENT_ID,
         'client-secret': process.env.REACT_APP_CLIENT_SECRET,
-        Authorization: AuthorizationHeaderValue,
-      },
+      };
+    }
+
+    this.#instance = axios.create({
+      baseURL: this.#baseUrl,
+      headers,
     });
   }
 
@@ -63,6 +78,7 @@ export class HttpClient {
    * @param {string} url
    * @param {Object} params The query params
    * @param {{withCredentials: Boolean }} config additional config for the request
+   * @returns {Promise<Object|Error>}
    */
   get(url, params = {}, config) {
     const stringParams = Object.entries(params)
@@ -78,9 +94,10 @@ export class HttpClient {
    * @param {string} url
    * @param {Object} params The query params
    * @param {Object} body Request payload
+   * @param {Object} config object containing meaningful data for request (headers for instance)
    */
-  post(url, params, body) {
-    return this.instance.post(url, body, { params })
+  post(url, params, body, config) {
+    return this.instance.post(url, body, { params, headers: config.headers })
       .then((response) => response.data)
       .catch((error) => this.#handleError(error));
   }
