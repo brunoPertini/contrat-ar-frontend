@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
@@ -37,6 +37,8 @@ function ProveedorContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
+  const [response, setResponse] = useState();
+
   const { role, token, id } = userInfo;
 
   const menuOptions = [{
@@ -47,7 +49,8 @@ function ProveedorContainer({ router }) {
   const addVendibleLabel = addNewVendiblesLabels[role]?.label;
   const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
 
-  const [response, setResponse] = useState();
+  const vendibleType = useMemo(() => (role === ROLE_PROVEEDOR_PRODUCTOS
+    ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
     const backButtonPresed = localStorageService.getItem(
@@ -59,7 +62,6 @@ function ProveedorContainer({ router }) {
   }, []);
 
   const handleUploadImage = (file) => {
-    const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
     const client = HttpClientFactory.createVendibleHttpClient(vendibleType, {
       token,
     });
@@ -81,6 +83,14 @@ function ProveedorContainer({ router }) {
     router.navigate(routes.signin);
   };
 
+  const handlePostVendible = async (vendibleData) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+    });
+
+    await client.postVendible({ role, proveedorId: id, body: vendibleData });
+  };
+
   useEffect(() => {
     handleGetVendibles();
   }, []);
@@ -94,6 +104,7 @@ function ProveedorContainer({ router }) {
       userInfo={userInfo}
       handleLogout={handleLogout}
       handleUploadImage={handleUploadImage}
+      handlePostVendible={handlePostVendible}
     />
   ) : null;
 }

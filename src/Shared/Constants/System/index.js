@@ -32,6 +32,12 @@ export const PRICE_TYPE_VARIABLE = 'Variable';
 
 export const PRICE_TYPE_VARIABLE_WITH_AMOUNT = 'Variable con monto minimo';
 
+export const PRICE_TYPES = {
+  FIXED: PRICE_TYPE_FIXED,
+  VARIABLE: PRICE_TYPE_VARIABLE,
+  VARIABLE_WITH_AMOUNT: PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+};
+
 export const SERVICE_LOCATION_AT_HOME = 'A domicilio';
 
 export const SERVICE_LOCATION_FIXED = 'En un domicilio particular';

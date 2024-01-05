@@ -18,7 +18,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
   const {
     categories, nombre,
     priceInfo: { type: priceInfoType, amount: priceInfoAmount },
-    locationTypes, vendibleLocation, stock, imageUrl, description,
+    locationTypes, vendibleLocation, stock, imagenUrl, descripcion,
   } = vendibleInfo;
 
   const categoriesString = categories.join(',  ');
@@ -121,7 +121,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
             :
           </Typography>
           <Typography fontWeight="bold">
-            { description }
+            { descripcion }
           </Typography>
         </CardContent>
         <CardContent sx={{ ...cardRowStyles }}>
@@ -137,10 +137,10 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
               {' '}
               :
             </Typography>
-            {!!imageUrl && (
+            {!!imagenUrl && (
             <img
-              src={imageUrl}
-              srcSet={imageUrl}
+              src={imagenUrl}
+              srcSet={imagenUrl}
               alt=""
               loading="lazy"
             />
@@ -191,8 +191,8 @@ ConfirmationPage.propTypes = {
     locationTypes: PropTypes.arrayOf(PropTypes.string),
     categories: PropTypes.arrayOf(PropTypes.string),
     stock: PropTypes.string,
-    imageUrl: PropTypes.string,
-    description: PropTypes.string,
+    imagenUrl: PropTypes.string,
+    descripcion: PropTypes.string,
     vendibleLocation: PropTypes.shape({
       coordinates: PropTypes.arrayOf(PropTypes.number),
     }),

@@ -38,6 +38,7 @@ function ProveedorPage({
   userInfo,
   handleLogout,
   handleUploadImage,
+  handlePostVendible,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
@@ -136,6 +137,7 @@ function ProveedorPage({
         vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
           .toLowerCase(),
         handleUploadImage,
+        handlePostVendible,
       },
     },
   };
@@ -275,6 +277,7 @@ ProveedorPage.propTypes = {
   userInfo: PropTypes.any.isRequired,
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
+  handlePostVendible: PropTypes.func.isRequired,
 };
 
 export default ProveedorPage;

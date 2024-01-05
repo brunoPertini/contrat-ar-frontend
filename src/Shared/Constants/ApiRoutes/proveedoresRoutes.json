@@ -1,3 +1,5 @@
 {
-    "getVendibles": "/proveedor/{proveedorId}/vendible"
+    "getVendibles": "/proveedor/{proveedorId}/vendible",
+    "servicioBaseUrl": "/service",
+    "productoBaseUrl": "/product"
 }
