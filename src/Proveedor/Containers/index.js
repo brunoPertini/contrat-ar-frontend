@@ -96,9 +96,7 @@ function ProveedorContainer({ router }) {
     }).then((postVendibleResponse) => {
       handleGetVendibles();
       return postVendibleResponse;
-    }).catch(() => {
-      // Manejar caso de error
-    });
+    }).catch((error) => Promise.reject(error));
   };
 
   useEffect(() => {

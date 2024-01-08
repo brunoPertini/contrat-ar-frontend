@@ -4,7 +4,8 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Snackbar } from '@mui/material';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -44,6 +45,10 @@ function ProveedorPage({
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
+  const labelVendibleType = (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS
+    ? PRODUCT
+    : SERVICE).toLowerCase();
+
   const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
 
   const [searchValue, setSearchValue] = useState('');
@@ -52,6 +57,8 @@ function ProveedorPage({
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
   const [modalContent, setModalContent] = useState({ title: '', text: '' });
+
+  const [crudOperationResult, setCrudOperationResult] = useState();
 
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
@@ -80,6 +87,27 @@ function ProveedorPage({
   const handleSetSearchValue = (value) => {
     setSearchValue(value);
   };
+
+  const { openSnackbar, alertSeverity, alertLabel } = useMemo(() => {
+    let alertForLabel = null;
+    let severityForAlert;
+
+    if (crudOperationResult) {
+      alertForLabel = proveedorLabels['addVendible.alert.success'].replace('{vendible}', labelVendibleType);
+      severityForAlert = 'success';
+    }
+
+    if (crudOperationResult === false) {
+      alertForLabel = proveedorLabels['addVendible.alert.error'].replace('{vendible}', labelVendibleType);
+      severityForAlert = 'error';
+    }
+
+    return ({
+      openSnackbar: crudOperationResult !== undefined,
+      alertSeverity: severityForAlert,
+      alertLabel: alertForLabel,
+    });
+  }, [crudOperationResult]);
 
   const handleOnSelectCategory = ({ category }) => {
     setSearchValue((currentSearchValue) => {
@@ -132,7 +160,14 @@ function ProveedorPage({
   };
 
   const managePostVendibleResults = (body) => handlePostVendible(body)
-    .then((response) => response)
+    .then((response) => {
+      setCrudOperationResult(true);
+      return response;
+    })
+    .catch((error) => {
+      setCrudOperationResult(false);
+      return error;
+    })
     .finally(() => {
       localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
       setCurrentInnerScreen(undefined);
@@ -263,6 +298,24 @@ function ProveedorPage({
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
       { mainContent }
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setCrudOperationResult(undefined)}
+      >
+        <Alert
+          severity={alertSeverity}
+          sx={{
+            width: '100%',
+            fontSize: 'h5.fontSize',
+            '.MuiAlert-icon': {
+              fontSize: '35px;',
+            },
+          }}
+        >
+          { alertLabel }
+        </Alert>
+      </Snackbar>
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}
