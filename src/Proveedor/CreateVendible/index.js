@@ -7,7 +7,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
-import { PRICE_TYPES, PRICE_TYPE_VARIABLE, PRODUCT } from '../../Shared/Constants/System';
+import {
+  PRICE_TYPES, PRICE_TYPE_VARIABLE, PRODUCT,
+  SERVICE_LOCATION_AT_HOME,
+} from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
 import ConfirmationPage from './ConfirmationPage';
@@ -84,6 +87,7 @@ function VendibleCreateForm({
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
       const category = buildCategoryObject(categories.reverse());
+      const isProduct = vendibleType === PRODUCT.toLowerCase();
       const proveedoresVendibles = [
         {
           descripcion,
@@ -91,7 +95,8 @@ function VendibleCreateForm({
           tipoPrecio: buildPriceType(priceInfo.type),
           imagenUrl,
           location: vendibleLocation,
-          stock: vendibleType === PRODUCT.toLowerCase() ? stock : undefined,
+          stock: isProduct ? stock : undefined,
+          offersDelivery: !isProduct && locationTypes.includes(SERVICE_LOCATION_AT_HOME),
         },
       ];
 
