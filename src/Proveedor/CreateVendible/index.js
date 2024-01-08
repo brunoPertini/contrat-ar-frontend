@@ -78,6 +78,9 @@ function VendibleCreateForm({
 
   const [activeStep, setActiveStep] = useState(0);
 
+  // undefined = no result; false = something went wrong; true= all good
+  const [operationResult, setOperationResult] = useState();
+
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
       const category = buildCategoryObject(categories.reverse());
@@ -96,6 +99,10 @@ function VendibleCreateForm({
         nombre,
         category,
         proveedoresVendibles,
+      }).then(() => {
+        setOperationResult(true);
+      }).catch(() => {
+        setOperationResult(false);
       });
     }
     window.scrollTo({
@@ -201,7 +208,7 @@ function VendibleCreateForm({
     component: (
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={activeStep === 3}
+        open={activeStep === 3 && operationResult === undefined}
       >
         <CircularProgress color="inherit" />
       </Backdrop>),

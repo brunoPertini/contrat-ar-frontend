@@ -24,6 +24,7 @@ import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { routerShape } from '../../Shared/PropTypes/Shared';
 
 const localStorageService = new LocalStorageService();
 
@@ -39,6 +40,7 @@ function ProveedorPage({
   handleLogout,
   handleUploadImage,
   handlePostVendible,
+  router,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
@@ -129,6 +131,13 @@ function ProveedorPage({
     setCurrentInnerScreen(newScreen);
   };
 
+  const managePostVendibleResults = (body) => handlePostVendible(body)
+    .then((response) => response)
+    .finally(() => {
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
+      setCurrentInnerScreen(undefined);
+    });
+
   const innerScreens = {
     addNewVendible: {
       component: VendibleCreateForm,
@@ -137,7 +146,8 @@ function ProveedorPage({
         vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
           .toLowerCase(),
         handleUploadImage,
-        handlePostVendible,
+        handlePostVendible: managePostVendibleResults,
+        router,
       },
     },
   };
@@ -278,6 +288,7 @@ ProveedorPage.propTypes = {
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
   handlePostVendible: PropTypes.func.isRequired,
+  router: PropTypes.shape(routerShape).isRequired,
 };
 
 export default ProveedorPage;
