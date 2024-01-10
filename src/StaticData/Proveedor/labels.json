@@ -23,5 +23,7 @@
     "addVendible.description.placeholder": "¡Agregá todo lo que creas necesario para que tus clientes sepan de tu {vendible}!",
     "addVendible.lastStep": "Ya casi terminamos! Ultimo paso",
     "addVendible.stock": "Stock actual de tu producto: " ,
-    "addVendible.confirmation.title": "Por favor, confirmá la información introducida antes de guardar tu {vendible}"
+    "addVendible.confirmation.title": "Por favor, confirmá la información introducida antes de guardar tu {vendible}",
+    "addVendible.alert.success": "¡Tu {vendible} fue agregado!",
+    "addVendible.alert.error": "¡Tu {vendible} no pudo ser agregado!"
 }

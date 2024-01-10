@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -24,6 +24,8 @@ import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { routerShape } from '../../Shared/PropTypes/Shared';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 const localStorageService = new LocalStorageService();
 
@@ -38,10 +40,16 @@ function ProveedorPage({
   userInfo,
   handleLogout,
   handleUploadImage,
+  handlePostVendible,
+  router,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
 
-  const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
+  const labelVendibleType = (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS
+    ? PRODUCT
+    : SERVICE).toLowerCase();
+
+  const [filteredVendibles, setFilteredVendibles] = useState();
 
   const [searchValue, setSearchValue] = useState('');
   const [categorySelected, setCategorySelected] = useState();
@@ -49,6 +57,8 @@ function ProveedorPage({
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
   const [modalContent, setModalContent] = useState({ title: '', text: '' });
+
+  const [crudOperationResult, setCrudOperationResult] = useState();
 
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
@@ -66,6 +76,10 @@ function ProveedorPage({
   }, []);
 
   useEffect(() => {
+    setFilteredVendibles(vendibles);
+  }, [vendibles]);
+
+  useEffect(() => {
     if (currentInnerScreen) {
       localStorageService.setItem(
         LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
@@ -77,6 +91,27 @@ function ProveedorPage({
   const handleSetSearchValue = (value) => {
     setSearchValue(value);
   };
+
+  const { openSnackbar, alertSeverity, alertLabel } = useMemo(() => {
+    let alertForLabel = null;
+    let severityForAlert;
+
+    if (crudOperationResult) {
+      alertForLabel = proveedorLabels['addVendible.alert.success'].replace('{vendible}', labelVendibleType);
+      severityForAlert = 'success';
+    }
+
+    if (crudOperationResult === false) {
+      alertForLabel = proveedorLabels['addVendible.alert.error'].replace('{vendible}', labelVendibleType);
+      severityForAlert = 'error';
+    }
+
+    return ({
+      openSnackbar: crudOperationResult !== undefined,
+      alertSeverity: severityForAlert,
+      alertLabel: alertForLabel,
+    });
+  }, [crudOperationResult]);
 
   const handleOnSelectCategory = ({ category }) => {
     setSearchValue((currentSearchValue) => {
@@ -128,6 +163,20 @@ function ProveedorPage({
     setCurrentInnerScreen(newScreen);
   };
 
+  const managePostVendibleResults = (body) => handlePostVendible(body)
+    .then((response) => {
+      setCrudOperationResult(true);
+      return response;
+    })
+    .catch((error) => {
+      setCrudOperationResult(false);
+      return error;
+    })
+    .finally(() => {
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
+      setCurrentInnerScreen(undefined);
+    });
+
   const innerScreens = {
     addNewVendible: {
       component: VendibleCreateForm,
@@ -136,6 +185,8 @@ function ProveedorPage({
         vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
           .toLowerCase(),
         handleUploadImage,
+        handlePostVendible: managePostVendibleResults,
+        router,
       },
     },
   };
@@ -251,6 +302,12 @@ function ProveedorPage({
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
       { mainContent }
+      <InformativeAlert
+        open={openSnackbar}
+        onClose={() => setCrudOperationResult(undefined)}
+        label={alertLabel}
+        severity={alertSeverity}
+      />
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}
@@ -275,6 +332,8 @@ ProveedorPage.propTypes = {
   userInfo: PropTypes.any.isRequired,
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
+  handlePostVendible: PropTypes.func.isRequired,
+  router: PropTypes.shape(routerShape).isRequired,
 };
 
 export default ProveedorPage;

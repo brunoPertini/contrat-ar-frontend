@@ -66,6 +66,10 @@ export default function VendiblesList({ vendibles }) {
   );
 }
 
+VendiblesList.defaultProps = {
+  vendibles: [],
+};
+
 VendiblesList.propTypes = {
-  vendibles: proveedoresVendiblesShape.isRequired,
+  vendibles: proveedoresVendiblesShape,
 };

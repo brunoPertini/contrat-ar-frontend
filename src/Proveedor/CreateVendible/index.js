@@ -1,16 +1,24 @@
+/* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
-import {
-  Button, Grid,
-} from '@mui/material';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
-import { PRICE_TYPE_VARIABLE } from '../../Shared/Constants/System';
+import {
+  PRICE_TYPE_VARIABLE, PRODUCT,
+  SERVICE_LOCATION_AT_HOME,
+} from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
 import ConfirmationPage from './ConfirmationPage';
+import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
+import { buildCategoryObject, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
+import BackdropLoader from '../../Shared/Components/BackdropLoader';
 
-function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
+function VendibleCreateForm({
+  userInfo, vendibleType, handleUploadImage, handlePostVendible,
+}) {
   const { token, location } = userInfo;
 
   const [nombre, setNombre] = useState('');
@@ -28,14 +36,39 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
 
   const [categories, setCategories] = useState([]);
 
-  const [imageUrl, setImageUrl] = useState('');
-  const [description, setDescription] = useState('');
+  const [imagenUrl, setImagenUrl] = useState('');
+  const [descripcion, setDescripcion] = useState('');
 
   const [activeStep, setActiveStep] = useState(0);
 
+  // undefined = no result; false = something went wrong; true= all good
+  const [operationResult, setOperationResult] = useState();
+
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
-      return () => {};
+      const category = buildCategoryObject(categories.reverse());
+      const isProduct = vendibleType === PRODUCT.toLowerCase();
+      const proveedoresVendibles = [
+        {
+          category,
+          descripcion,
+          precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
+          tipoPrecio: buildPriceType(priceInfo.type),
+          imagenUrl,
+          location: vendibleLocation,
+          stock: isProduct ? new Number(stock) : undefined,
+          offersDelivery: !isProduct && locationTypes.includes(SERVICE_LOCATION_AT_HOME),
+        },
+      ];
+
+      handlePostVendible({
+        nombre,
+        proveedoresVendibles,
+      }).then(() => {
+        setOperationResult(true);
+      }).catch(() => {
+        setOperationResult(false);
+      });
     }
     window.scrollTo({
       top: 0,
@@ -65,8 +98,8 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
     return isNombreValid && areCategoriesValid && isPriceInfoValid;
   }, [nombre, categories, priceInfo]);
 
-  const areSecondCommonStepsValid = useMemo(() => !!(imageUrl)
-  && !!(description), [imageUrl, description]);
+  const areSecondCommonStepsValid = useMemo(() => !!(imagenUrl)
+  && !!(descripcion), [imagenUrl, descripcion]);
 
   const canGoStepForward = {
     0: {
@@ -111,10 +144,10 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
       vendibleType={vendibleType}
       token={token}
       handleUploadImage={handleUploadImage}
-      imageUrl={imageUrl}
-      setImageUrl={setImageUrl}
-      description={description}
-      setDescription={setDescription}
+      imageUrl={imagenUrl}
+      setImageUrl={setImagenUrl}
+      description={descripcion}
+      setDescription={setDescripcion}
     />,
     backButtonEnabled: true,
     nextButtonEnabled: canGoStepForward[1][vendibleType],
@@ -129,12 +162,17 @@ function VendibleCreateForm({ userInfo, vendibleType, handleUploadImage }) {
         stock,
         locationTypes,
         vendibleLocation,
-        imageUrl,
-        description,
+        imagenUrl,
+        descripcion,
       }}
     />,
     backButtonEnabled: true,
     nextButtonEnabled: true,
+  },
+  {
+    component: <BackdropLoader open={activeStep === 3 && operationResult === undefined} />,
+    backButtonEnabled: false,
+    nextButtonEnabled: false,
   }];
 
   useOnLeavingTabHandler();
@@ -180,4 +218,5 @@ VendibleCreateForm.propTypes = {
   userInfo: PropTypes.any.isRequired,
   vendibleType: PropTypes.string.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
+  handlePostVendible: PropTypes.func.isRequired,
 };

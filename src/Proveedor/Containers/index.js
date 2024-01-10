@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import { useEffect, useMemo, useState } from 'react';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
 import { routes, systemConstants } from '../../Shared/Constants';
@@ -12,6 +11,7 @@ import { resetUserInfo } from '../../State/Actions/usuario';
 import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { routerShape } from '../../Shared/PropTypes/Shared';
 
 const stateSelector = (state) => state;
 
@@ -37,6 +37,8 @@ function ProveedorContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
+  const [response, setResponse] = useState({ vendibles: [], categorias: {} });
+
   const { role, token, id } = userInfo;
 
   const menuOptions = [{
@@ -47,7 +49,8 @@ function ProveedorContainer({ router }) {
   const addVendibleLabel = addNewVendiblesLabels[role]?.label;
   const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
 
-  const [response, setResponse] = useState();
+  const vendibleType = useMemo(() => (role === ROLE_PROVEEDOR_PRODUCTOS
+    ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
     const backButtonPresed = localStorageService.getItem(
@@ -59,7 +62,6 @@ function ProveedorContainer({ router }) {
   }, []);
 
   const handleUploadImage = (file) => {
-    const vendibleType = role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
     const client = HttpClientFactory.createVendibleHttpClient(vendibleType, {
       token,
     });
@@ -81,11 +83,26 @@ function ProveedorContainer({ router }) {
     router.navigate(routes.signin);
   };
 
+  const handlePostVendible = async (vendibleData) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+    });
+
+    return client.postVendible({
+      role,
+      proveedorId: id,
+      body: vendibleData,
+    }).then((postVendibleResponse) => {
+      handleGetVendibles();
+      return postVendibleResponse;
+    }).catch((error) => Promise.reject(error));
+  };
+
   useEffect(() => {
     handleGetVendibles();
   }, []);
 
-  return !isEmpty(response) ? (
+  return (
     <ProveedorPage
       vendibles={response.vendibles}
       categorias={response.categorias}
@@ -94,16 +111,14 @@ function ProveedorContainer({ router }) {
       userInfo={userInfo}
       handleLogout={handleLogout}
       handleUploadImage={handleUploadImage}
+      handlePostVendible={handlePostVendible}
+      router={router}
     />
-  ) : null;
+  );
 }
 
 ProveedorContainer.propTypes = {
-  router: PropTypes.shape({
-    location: PropTypes.any,
-    navigate: PropTypes.func,
-    params: PropTypes.any,
-  }).isRequired,
+  router: PropTypes.shape(routerShape).isRequired,
 };
 
 export default withRouter(ProveedorContainer);

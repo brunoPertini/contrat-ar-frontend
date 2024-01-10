@@ -37,3 +37,7 @@ export function deleteNonNumericCharacters(event) {
   return value.slice(0, value.length - 1)
     .replace(DOT_AND_COMMA_REGEX, '');
 }
+
+export function escapeRegExpChars(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
