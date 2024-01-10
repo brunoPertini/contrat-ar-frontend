@@ -49,7 +49,7 @@ function ProveedorPage({
     ? PRODUCT
     : SERVICE).toLowerCase();
 
-  const [filteredVendibles, setFilteredVendibles] = useState(vendibles);
+  const [filteredVendibles, setFilteredVendibles] = useState();
 
   const [searchValue, setSearchValue] = useState('');
   const [categorySelected, setCategorySelected] = useState();
@@ -74,6 +74,10 @@ function ProveedorPage({
       setModalContent({ title, text });
     }
   }, []);
+
+  useEffect(() => {
+    setFilteredVendibles(vendibles);
+  }, [vendibles]);
 
   useEffect(() => {
     if (currentInnerScreen) {

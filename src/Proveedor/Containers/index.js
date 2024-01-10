@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
 import { routes, systemConstants } from '../../Shared/Constants';
@@ -38,7 +37,7 @@ function ProveedorContainer({ router }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
-  const [response, setResponse] = useState();
+  const [response, setResponse] = useState({ vendibles: [], categorias: {} });
 
   const { role, token, id } = userInfo;
 
@@ -103,7 +102,7 @@ function ProveedorContainer({ router }) {
     handleGetVendibles();
   }, []);
 
-  return !isEmpty(response) ? (
+  return (
     <ProveedorPage
       vendibles={response.vendibles}
       categorias={response.categorias}
@@ -115,7 +114,7 @@ function ProveedorContainer({ router }) {
       handlePostVendible={handlePostVendible}
       router={router}
     />
-  ) : null;
+  );
 }
 
 ProveedorContainer.propTypes = {

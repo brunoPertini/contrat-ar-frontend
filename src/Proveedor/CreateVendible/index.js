@@ -90,19 +90,19 @@ function VendibleCreateForm({
       const isProduct = vendibleType === PRODUCT.toLowerCase();
       const proveedoresVendibles = [
         {
+          category,
           descripcion,
           precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
           tipoPrecio: buildPriceType(priceInfo.type),
           imagenUrl,
           location: vendibleLocation,
-          stock: isProduct ? stock : undefined,
+          stock: isProduct ? new Number(stock) : undefined,
           offersDelivery: !isProduct && locationTypes.includes(SERVICE_LOCATION_AT_HOME),
         },
       ];
 
       handlePostVendible({
         nombre,
-        category,
         proveedoresVendibles,
       }).then(() => {
         setOperationResult(true);
