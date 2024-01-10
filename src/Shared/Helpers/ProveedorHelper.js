@@ -1,11 +1,12 @@
 import { PRICE_TYPES } from '../Constants/System';
+import { escapeRegExpChars } from '../Utils/InputUtils';
 
 /**
  *
  * @param {{sourceVendibles: Array<T>, term: String}}
  */
 export function filterVendiblesByTerm({ sourceVendibles, term }) {
-  const regEx = new RegExp(term, 'i');
+  const regEx = new RegExp(escapeRegExpChars(term), 'i');
   return sourceVendibles.filter((v) => regEx.test(v.vendibleNombre));
 }
 
