@@ -5,7 +5,6 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Snackbar } from '@mui/material';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -26,6 +25,7 @@ import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/H
 import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 const localStorageService = new LocalStorageService();
 
@@ -302,24 +302,12 @@ function ProveedorPage({
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
       { mainContent }
-      <Snackbar
+      <InformativeAlert
         open={openSnackbar}
-        autoHideDuration={6000}
         onClose={() => setCrudOperationResult(undefined)}
-      >
-        <Alert
-          severity={alertSeverity}
-          sx={{
-            width: '100%',
-            fontSize: 'h5.fontSize',
-            '.MuiAlert-icon': {
-              fontSize: '35px;',
-            },
-          }}
-        >
-          { alertLabel }
-        </Alert>
-      </Snackbar>
+        label={alertLabel}
+        severity={alertSeverity}
+      />
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}

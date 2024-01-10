@@ -1,3 +1,5 @@
+import { PRICE_TYPES } from '../Constants/System';
+
 /**
  *
  * @param {{sourceVendibles: Array<T>, term: String}}
@@ -13,4 +15,54 @@ export function filterVendiblesByTerm({ sourceVendibles, term }) {
    */
 export function filterVendiblesByCategory({ vendibles, categoryName }) {
   return vendibles.filter((vendible) => vendible.categoryNames.includes(categoryName));
+}
+
+/**
+ *
+ * @param {Array<String>} categories
+ * @returns {{name: String, parent: Object }} The category hierachy composed by those in array
+ */
+export function buildCategoryObject(categories) {
+  let category = {};
+  const roots = [];
+  let i = 0;
+
+  for (i; i < categories.length; i++) {
+    roots.push({ name: categories[i] });
+  }
+
+  i = 0;
+
+  for (i; i < roots.length; i++) {
+    if (i === 0) {
+      category = { ...category, ...roots[i] };
+    }
+
+    if (i === 1) {
+      category = { ...category, parent: { ...roots[i] } };
+    }
+
+    if (i === 2) {
+      category = {
+        ...category,
+        parent: {
+          ...category.parent,
+          parent: {
+            ...roots[i],
+          },
+        },
+      };
+    }
+  }
+
+  return category;
+}
+
+/**
+ *
+ * @param {"Fijo" | "Variable" | "Variable con monto minimo"} priceTypeValue
+ * @returns {String} the price type key that matches with priceTypeValue
+ */
+export function buildPriceType(priceTypeValue) {
+  return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
 }

@@ -1,60 +1,20 @@
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
-import Backdrop from '@mui/material/Backdrop';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import {
-  PRICE_TYPES, PRICE_TYPE_VARIABLE, PRODUCT,
+  PRICE_TYPE_VARIABLE, PRODUCT,
   SERVICE_LOCATION_AT_HOME,
 } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
 import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
-
-function buildCategoryObject(categories) {
-  let category = {};
-  const roots = [];
-  let i = 0;
-
-  for (i; i < categories.length; i++) {
-    roots.push({ name: categories[i] });
-  }
-
-  i = 0;
-
-  for (i; i < roots.length; i++) {
-    if (i === 0) {
-      category = { ...category, ...roots[i] };
-    }
-
-    if (i === 1) {
-      category = { ...category, parent: { ...roots[i] } };
-    }
-
-    if (i === 2) {
-      category = {
-        ...category,
-        parent: {
-          ...category.parent,
-          parent: {
-            ...roots[i],
-          },
-        },
-      };
-    }
-  }
-
-  return category;
-}
-
-function buildPriceType(priceTypeValue) {
-  return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
-}
+import { buildCategoryObject, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
+import BackdropLoader from '../../Shared/Components/BackdropLoader';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
@@ -210,13 +170,7 @@ function VendibleCreateForm({
     nextButtonEnabled: true,
   },
   {
-    component: (
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={activeStep === 3 && operationResult === undefined}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>),
+    component: <BackdropLoader open={activeStep === 3 && operationResult === undefined} />,
     backButtonEnabled: false,
     nextButtonEnabled: false,
   }];
