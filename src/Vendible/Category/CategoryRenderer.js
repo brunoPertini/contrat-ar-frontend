@@ -9,6 +9,9 @@ class CategoryRenderer {
   /** @type {String} */
   #rootName;
 
+  /** @type {Number} */
+  #rootId;
+
   /** @type {JSX.Element} */
   #root;
 
@@ -19,6 +22,7 @@ class CategoryRenderer {
   #isExpanded;
 
   constructor({
+    rootId,
     rootName,
     onChange,
     isExpanded,
@@ -29,6 +33,7 @@ class CategoryRenderer {
     this.#rootName = rootName;
     this.key = `accordion_${rootName}`;
     this.#isExpanded = isExpanded;
+    this.#rootId = rootId;
   }
 
   set root(value) {
@@ -57,6 +62,14 @@ class CategoryRenderer {
 
   get children() {
     return [];
+  }
+
+  set rootId(value) {
+    this.#rootId = value;
+  }
+
+  get rootId() {
+    return this.#rootId;
   }
 
   render() {

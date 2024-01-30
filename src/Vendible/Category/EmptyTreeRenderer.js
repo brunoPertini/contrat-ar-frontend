@@ -5,11 +5,13 @@ import CategoryRenderer from './CategoryRenderer';
 class EmptyTreeRenderer extends CategoryRenderer {
   constructor({
     rootName,
+    rootId,
     isExpanded,
     handleCategorySelected,
   }) {
     super({
       rootName,
+      rootId,
       isExpanded,
     });
     this.root = (

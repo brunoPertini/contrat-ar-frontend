@@ -5,12 +5,14 @@ import CategoryRenderer from './CategoryRenderer';
 class LeafRenderer extends CategoryRenderer {
   constructor({
     rootName,
+    rootId,
     onChange,
     isExpanded,
     handleCategorySelected,
   }) {
     super({
       rootName,
+      rootId,
       onChange,
       isExpanded,
     });

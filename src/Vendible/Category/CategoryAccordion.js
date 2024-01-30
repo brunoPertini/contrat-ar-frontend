@@ -10,16 +10,16 @@ import LeafRenderer from './LeafRenderer';
 
 /**
  * @param {AccordionElement} categoryTree
- * @param {String} categoryName
+ * @param {Number} categoryId
  * @returns { AccordionElement} */
-function searchCategoryInTree(categoryTree, categoryName) {
+function searchCategoryInTree(categoryTree, categoryId) {
   let found = null;
   const queue = [categoryTree];
 
   while (queue.length && !found) {
     const current = queue.at(0);
     queue.shift();
-    if (current.rootName === categoryName) {
+    if (current.rootId === categoryId) {
       found = current;
     }
 
@@ -38,7 +38,7 @@ function CategoryAccordion({
     onCategorySelected(categoryName);
   };
 
-  const handleAccordionClick = ({ root, children }) => (
+  const handleAccordionClick = ({ rootId, children }) => (
     _,
     expanded,
   ) => {
@@ -49,13 +49,13 @@ function CategoryAccordion({
       let toUpdateElement = null;
 
       for (let i = 0; !toUpdateElement; i++) {
-        toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
+        toUpdateElement = searchCategoryInTree(updatedCategories[i], rootId);
       }
 
       if (expanded) {
-        children.forEach(({ root: childRoot, children: newChildren }) => {
+        children.forEach(({ root: childRoot, rootId: childRootId, children: newChildren }) => {
           const onChangeChildren = () => handleAccordionClick({
-            root: childRoot,
+            rootId: childRootId,
             children: newChildren,
           });
 
@@ -63,11 +63,13 @@ function CategoryAccordion({
 
           const toInsertElement = isSuperCategory ? new RootRenderer({
             rootName: childRoot,
+            rootId: childRootId,
             onChange: onChangeChildren,
             isExpanded: false,
             children: [],
           }) : new LeafRenderer({
             rootName: childRoot,
+            rootId: childRootId,
             onChange: onChangeChildren,
             isExpanded: false,
             handleCategorySelected,
@@ -89,19 +91,20 @@ function CategoryAccordion({
     const firstCategoriesSections = [];
     if (!isEmpty(categories)) {
       Object.keys(categories).forEach((rootCategoryName) => {
-        const { root, children } = categories[rootCategoryName];
+        const { root, rootId, children } = categories[rootCategoryName];
 
         const isSuperCategory = !!(children.length);
 
         const childrenJsx = [];
 
-        const onChange = () => handleAccordionClick({ root, children });
+        const onChange = () => handleAccordionClick({ rootId, children });
 
         const accordionElement = isSuperCategory ? new RootRenderer({
-          rootName: root, onChange, isExpanded: false, children: childrenJsx,
+          rootName: root, rootId, onChange, isExpanded: false, children: childrenJsx,
         })
           : new EmptyTreeRenderer({
             rootName: root,
+            rootId,
             isExpanded: true,
             handleCategorySelected,
           });
