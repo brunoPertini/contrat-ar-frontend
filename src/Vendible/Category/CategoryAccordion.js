@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
@@ -89,9 +91,9 @@ function CategoryAccordion({
 
   useEffect(() => {
     const firstCategoriesSections = [];
-    if (!isEmpty(categories)) {
-      Object.keys(categories).forEach((rootCategoryName) => {
-        const { root, rootId, children } = categories[rootCategoryName];
+    Object.values(categories).forEach((hierarchiesList) => {
+      hierarchiesList.forEach((hierarchy) => {
+        const { root, rootId, children } = hierarchy;
 
         const isSuperCategory = !!(children.length);
 
@@ -111,7 +113,8 @@ function CategoryAccordion({
 
         firstCategoriesSections.push(accordionElement);
       });
-    }
+    });
+
     setCategoriesSubSection(firstCategoriesSections);
   }, [categories]);
 
