@@ -31,14 +31,16 @@ function InformativeAlert({
 InformativeAlert.defaultProps = {
   autoHideDuration: 5000,
   onClose: EMPTY_FUNCTION,
+  severity: null,
+  label: null,
 };
 
 InformativeAlert.propTypes = {
   open: PropTypes.bool.isRequired,
   autoHideDuration: PropTypes.number,
   onClose: PropTypes.func,
-  severity: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  severity: PropTypes.string,
+  label: PropTypes.string,
 };
 
 export default InformativeAlert;

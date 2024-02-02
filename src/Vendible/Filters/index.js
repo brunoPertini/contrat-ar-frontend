@@ -91,13 +91,12 @@ function VendiblesFilters({
 }
 
 VendiblesFilters.defaultProps = {
-  categories: {},
   containerStyles: {},
   showAccordionTitle: true,
   alternativeAccordionTitle: null,
 };
 VendiblesFilters.propTypes = {
-  categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
+  categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   onFiltersApplied: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.string),

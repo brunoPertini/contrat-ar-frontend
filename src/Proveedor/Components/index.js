@@ -328,7 +328,7 @@ ProveedorPage.propTypes = {
     addVendibleLink: PropTypes.string,
   }).isRequired,
   vendibles: proveedoresVendiblesShape.isRequired,
-  categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  categorias: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)).isRequired,
   userInfo: PropTypes.any.isRequired,
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
