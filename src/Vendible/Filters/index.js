@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import { useEffect, useMemo, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -18,32 +19,37 @@ function VendiblesFilters({
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
   const [filtersApplied, setFiltersApplied] = useState({
-    category: '',
+    category: null,
+    categoryName: '',
   });
 
-  const handleOnCategorySelected = (categoryName) => {
+  const handleOnCategorySelected = (categoryId, categoryName) => {
     let newAppliedFilters = {};
     setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous, category: categoryName };
+      newAppliedFilters = { ...previous, category: categoryId, categoryName };
       return newAppliedFilters;
     });
     onFiltersApplied(newAppliedFilters);
   };
 
-  const handleFilterDeleted = (filterValue) => {
+  const handleFilterDeleted = (filtersKeys = []) => {
     let newAppliedFilters = {};
-    const filterToDelete = Object.keys(filtersApplied)
-      .find((key) => filtersApplied[key] === filterValue);
     setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous, [filterToDelete]: '' };
-      return newAppliedFilters;
+      newAppliedFilters = { ...previous };
     });
+
+    filtersKeys.forEach((key) => {
+      newAppliedFilters[key] = null;
+    });
+
+    setFiltersApplied(newAppliedFilters);
     onFiltersApplied(newAppliedFilters);
   };
 
-  const filtersLabels = useMemo(() => Object.values(
-    filtersApplied,
-  ).filter((label) => label), [filtersApplied]);
+  const filtersLabels = useMemo(() => {
+    const filtersOfInterest = pick(filtersApplied, ['categoryName']);
+    return Object.values(filtersOfInterest).filter((label) => label);
+  }, [filtersApplied]);
 
   useEffect(() => {
     if (previousVendibleType && previousVendibleType !== vendibleType) {
@@ -79,7 +85,7 @@ function VendiblesFilters({
                   key={`selected_filter_${label}`}
                   label={label}
                   variant="outlined"
-                  onDelete={() => handleFilterDeleted(label)}
+                  onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
                 />
               ))
             }

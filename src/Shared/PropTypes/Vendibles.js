@@ -46,5 +46,5 @@ export const getUserInfoResponseShape = {
 export const getVendiblesResponseShape = {
   vendibles: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape))),
   proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)),
-  categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)),
+  categorias: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
 };

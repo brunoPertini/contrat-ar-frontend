@@ -113,15 +113,15 @@ function ProveedorPage({
     });
   }, [crudOperationResult]);
 
-  const handleOnSelectCategory = ({ category }) => {
+  const handleOnSelectCategory = ({ categoryName }) => {
     setSearchValue((currentSearchValue) => {
       setFilteredVendibles((previous) => {
         let newFilteredVendibles;
         const vendiblesSource = currentSearchValue ? previous : vendibles;
-        if (category) {
+        if (categoryName) {
           newFilteredVendibles = filterVendiblesByCategory({
             vendibles: vendiblesSource,
-            categoryName: category,
+            categoryName,
           });
         } else if (currentSearchValue) {
           newFilteredVendibles = filterVendiblesByTerm({
@@ -137,7 +137,7 @@ function ProveedorPage({
       return currentSearchValue;
     });
 
-    setCategorySelected(category || null);
+    setCategorySelected(categoryName || null);
   };
 
   const handleOnDeleteVendibleTerm = () => {

@@ -36,8 +36,8 @@ function CategoryAccordion({
 }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
-  const handleCategorySelected = (categoryName) => {
-    onCategorySelected(categoryName);
+  const handleCategorySelected = (categoryId, categoryName) => {
+    onCategorySelected(categoryId, categoryName);
   };
 
   const handleAccordionClick = ({ rootId, children }) => (
