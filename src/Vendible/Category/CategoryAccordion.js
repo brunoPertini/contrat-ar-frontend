@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
@@ -10,16 +12,16 @@ import LeafRenderer from './LeafRenderer';
 
 /**
  * @param {AccordionElement} categoryTree
- * @param {String} categoryName
+ * @param {Number} categoryId
  * @returns { AccordionElement} */
-function searchCategoryInTree(categoryTree, categoryName) {
+function searchCategoryInTree(categoryTree, categoryId) {
   let found = null;
   const queue = [categoryTree];
 
   while (queue.length && !found) {
     const current = queue.at(0);
     queue.shift();
-    if (current.rootName === categoryName) {
+    if (current.rootId === categoryId) {
       found = current;
     }
 
@@ -34,11 +36,11 @@ function CategoryAccordion({
 }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
 
-  const handleCategorySelected = (categoryName) => {
-    onCategorySelected(categoryName);
+  const handleCategorySelected = (categoryId, categoryName) => {
+    onCategorySelected(categoryId, categoryName);
   };
 
-  const handleAccordionClick = ({ root, children }) => (
+  const handleAccordionClick = ({ rootId, children }) => (
     _,
     expanded,
   ) => {
@@ -49,13 +51,13 @@ function CategoryAccordion({
       let toUpdateElement = null;
 
       for (let i = 0; !toUpdateElement; i++) {
-        toUpdateElement = searchCategoryInTree(updatedCategories[i], root);
+        toUpdateElement = searchCategoryInTree(updatedCategories[i], rootId);
       }
 
       if (expanded) {
-        children.forEach(({ root: childRoot, children: newChildren }) => {
+        children.forEach(({ root: childRoot, rootId: childRootId, children: newChildren }) => {
           const onChangeChildren = () => handleAccordionClick({
-            root: childRoot,
+            rootId: childRootId,
             children: newChildren,
           });
 
@@ -63,11 +65,13 @@ function CategoryAccordion({
 
           const toInsertElement = isSuperCategory ? new RootRenderer({
             rootName: childRoot,
+            rootId: childRootId,
             onChange: onChangeChildren,
             isExpanded: false,
             children: [],
           }) : new LeafRenderer({
             rootName: childRoot,
+            rootId: childRootId,
             onChange: onChangeChildren,
             isExpanded: false,
             handleCategorySelected,
@@ -87,28 +91,30 @@ function CategoryAccordion({
 
   useEffect(() => {
     const firstCategoriesSections = [];
-    if (!isEmpty(categories)) {
-      Object.keys(categories).forEach((rootCategoryName) => {
-        const { root, children } = categories[rootCategoryName];
+    Object.values(categories).forEach((hierarchiesList) => {
+      hierarchiesList.forEach((hierarchy) => {
+        const { root, rootId, children } = hierarchy;
 
         const isSuperCategory = !!(children.length);
 
         const childrenJsx = [];
 
-        const onChange = () => handleAccordionClick({ root, children });
+        const onChange = () => handleAccordionClick({ rootId, children });
 
         const accordionElement = isSuperCategory ? new RootRenderer({
-          rootName: root, onChange, isExpanded: false, children: childrenJsx,
+          rootName: root, rootId, onChange, isExpanded: false, children: childrenJsx,
         })
           : new EmptyTreeRenderer({
             rootName: root,
+            rootId,
             isExpanded: true,
             handleCategorySelected,
           });
 
         firstCategoriesSections.push(accordionElement);
       });
-    }
+    });
+
     setCategoriesSubSection(firstCategoriesSections);
   }, [categories]);
 
@@ -132,11 +138,12 @@ function CategoryAccordion({
 
 CategoryAccordion.defaultProps = {
   showTitle: true,
+  categories: {},
 };
 
 CategoryAccordion.propTypes = {
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
-  categories: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
   onCategorySelected: PropTypes.func.isRequired,
   showTitle: PropTypes.bool,
 };

@@ -24,11 +24,15 @@ export class VendibleHttpClient extends HttpClient {
 
     const queryParams = { nombre };
 
-    Object.keys(filters).forEach((key) => {
-      if (filters[key]) {
-        queryParams[key] = filters[key];
-      }
-    });
+    const acceptedFilters = ['category'];
+
+    Object.keys(filters)
+      .filter((f) => acceptedFilters.includes(f))
+      .forEach((key) => {
+        if (filters[key]) {
+          queryParams[key] = filters[key];
+        }
+      });
 
     return this.get(finalUrl, queryParams);
   }

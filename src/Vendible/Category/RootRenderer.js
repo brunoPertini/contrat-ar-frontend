@@ -9,12 +9,14 @@ class RootRenderer extends CategoryRenderer {
 
   constructor({
     rootName,
+    rootId,
     onChange,
     isExpanded,
     children,
   }) {
     super({
       rootName,
+      rootId,
       onChange,
       isExpanded,
     });

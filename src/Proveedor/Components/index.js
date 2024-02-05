@@ -113,15 +113,15 @@ function ProveedorPage({
     });
   }, [crudOperationResult]);
 
-  const handleOnSelectCategory = ({ category }) => {
+  const handleOnSelectCategory = ({ categoryName }) => {
     setSearchValue((currentSearchValue) => {
       setFilteredVendibles((previous) => {
         let newFilteredVendibles;
         const vendiblesSource = currentSearchValue ? previous : vendibles;
-        if (category) {
+        if (categoryName) {
           newFilteredVendibles = filterVendiblesByCategory({
             vendibles: vendiblesSource,
-            categoryName: category,
+            categoryName,
           });
         } else if (currentSearchValue) {
           newFilteredVendibles = filterVendiblesByTerm({
@@ -137,7 +137,7 @@ function ProveedorPage({
       return currentSearchValue;
     });
 
-    setCategorySelected(category || null);
+    setCategorySelected(categoryName || null);
   };
 
   const handleOnDeleteVendibleTerm = () => {
@@ -328,7 +328,7 @@ ProveedorPage.propTypes = {
     addVendibleLink: PropTypes.string,
   }).isRequired,
   vendibles: proveedoresVendiblesShape.isRequired,
-  categorias: PropTypes.objectOf(PropTypes.shape(vendibleCategoryShape)).isRequired,
+  categorias: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)).isRequired,
   userInfo: PropTypes.any.isRequired,
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,

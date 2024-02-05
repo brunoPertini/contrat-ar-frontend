@@ -5,19 +5,21 @@ import CategoryRenderer from './CategoryRenderer';
 class LeafRenderer extends CategoryRenderer {
   constructor({
     rootName,
+    rootId,
     onChange,
     isExpanded,
     handleCategorySelected,
   }) {
     super({
       rootName,
+      rootId,
       onChange,
       isExpanded,
     });
     this.root = (
       <AccordionDetails>
         <Link
-          onClick={() => handleCategorySelected(rootName)}
+          onClick={() => handleCategorySelected(rootId, rootName)}
           variant="caption"
           sx={{
             cursor: 'pointer',
