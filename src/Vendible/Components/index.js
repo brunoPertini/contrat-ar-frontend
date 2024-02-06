@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
-import { systemConstants } from '../../Shared/Constants';
+import { systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
@@ -25,22 +25,39 @@ import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTy
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, filtersEnabled,
 }) {
+  const [contactText, setContactText] = useState();
+
   const getPriceLabel = useCallback((price) => {
     if (price === 0) {
       return sharedLabels.priceToBeAgreed;
     }
     if (vendibleType === systemConstants.PRODUCTS) {
-      return `${sharedLabels.price}${price}`;
+      return `${sharedLabels.price}: ${price}`;
     }
 
     return `${sharedLabels.minimalPrice}${price}`;
   }, [vendibleType]);
+
+  const handleSetContactText = useCallback(
+    (event) => setContactText(event.target.value),
+    [setContactText],
+  );
+
+  const handleSendMessageClick = () => {
+    setTimeout(() => {
+      setContactText('');
+    }, 1000);
+  };
 
   // TODO: modularizar en el componente Header
   const menuOptions = [{
     component: UserAccountOptions,
     props: { userInfo },
   }];
+
+  const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', proveedoresInfo[0].vendibleNombre)
+    .replace('{contractArLink}', 'www.contractar.com')
+    .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
 
   const firstColumnBreakpoint = filtersEnabled ? 2 : 'auto';
 
@@ -64,12 +81,14 @@ function VendiblePage({
             {
               proveedoresInfo.map((info) => {
                 const {
-                  name, surname, fotoPerfilUrl, distanceFrom,
+                  name, surname, fotoPerfilUrl, distanceFrom, phone,
                 } = info.proveedorInfo;
 
                 const { precio } = info;
 
                 const fullName = `${name} ${surname}`;
+
+                const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}&text=${messageText.replace('{proveedor}', name)}`;
 
                 return (
                   <Fragment key={`${proveedoresInfo[0].vendibleNombre}_${fullName}`}>
@@ -141,8 +160,19 @@ function VendiblePage({
                         <Typography variant="h5" sx={{ mt: '50px' }}>
                           {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
                         </Typography>
-                        <TextareaAutosize minRows={15} style={{ width: '100%' }} />
-                        <Button variant="contained" sx={{ mt: '5px', alignSelf: 'flex-start' }}>
+                        <TextareaAutosize
+                          minRows={15}
+                          style={{ width: '100%' }}
+                          value={contactText}
+                          onChange={handleSetContactText}
+                        />
+                        <Button
+                          onClick={handleSendMessageClick}
+                          href={contactLink}
+                          target="_blank"
+                          variant="contained"
+                          sx={{ mt: '5px', alignSelf: 'flex-start' }}
+                        >
                           { sharedLabels.sendMessage }
                         </Button>
                       </ListItem>

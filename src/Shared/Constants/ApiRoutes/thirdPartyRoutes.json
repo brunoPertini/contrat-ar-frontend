@@ -1,3 +1,4 @@
 {
-    "getAddressFromCoordinates": "/geo/translate"
+    "getAddressFromCoordinates": "/geo/translate",
+    "sendWhatsappMesageUrl": "https://api.whatsapp.com/send/"
 }
