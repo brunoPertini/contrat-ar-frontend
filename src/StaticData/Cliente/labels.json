@@ -6,5 +6,6 @@
     "searchErrorMessage": "Por favor introducí el nombre de un producto o servicio",
     "linkVendibleCardProduct": "Fijate quién lo vende",
     "linkVendibleCardService": "Fijate quién lo puede hacer",
-    "contactProvider": "¡Contactá a {nombreProveedor}!"
+    "contactProvider": "¡Contactá a {nombreProveedor} por Whatsapp!",
+    "sendWhatsappLink": "¡Hola {proveedor}! Esta es una consulta por {vendible} que ví en {contractArLink}: {additionalText}"
 }

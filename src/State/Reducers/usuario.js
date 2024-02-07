@@ -9,7 +9,8 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @property {Number[]} location
  * @property {String} role
  * @property {String} token
- * @property {String} indexPage
+ * @property {String} indexPage,
+ * @property {String} phone
  */
 
 /**
@@ -25,6 +26,7 @@ export const userState = {
   role: '',
   token: '',
   indexPage: '',
+  phone: '',
 };
 
 function usuarioReducer(state = userState, action) {
