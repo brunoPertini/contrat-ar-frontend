@@ -3,5 +3,6 @@
     "createProveedor": "/usuarios/proveedor",
     "login": "/oauth/login",
     "getPublicKey": "/oauth/public_key",
-    "getUserInfo": "/usuarios/{userId}/info"
+    "getUserInfo": "/usuarios/{userId}/info",
+    "getProveedoresOfVendible": "/vendible/{vendibleId}/proveedores"
 }

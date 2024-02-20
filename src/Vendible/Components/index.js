@@ -55,7 +55,9 @@ function VendiblePage({
     props: { userInfo },
   }];
 
-  const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', proveedoresInfo[0].vendibleNombre)
+  const { vendibleNombre } = proveedoresInfo.vendibles[0];
+
+  const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
     .replace('{contractArLink}', 'www.contractar.com')
     .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
 
@@ -73,25 +75,28 @@ function VendiblePage({
       >
         <Grid item xs={firstColumnBreakpoint}>
           <Typography variant="h3">
-            { proveedoresInfo[0].vendibleNombre}
+            { vendibleNombre }
           </Typography>
         </Grid>
         <Grid item xs={10}>
           <List sx={{ width: '100%' }}>
             {
-              proveedoresInfo.map((info) => {
+              proveedoresInfo.vendibles.map((info) => {
+                const { precio, proveedorId, imagenUrl } = info;
+
+                const proveedorInfo = proveedoresInfo.proveedores
+                  .find((proveedor) => proveedor.id === proveedorId);
+
                 const {
                   name, surname, fotoPerfilUrl, distanceFrom, phone,
-                } = info.proveedorInfo;
-
-                const { precio } = info;
+                } = proveedorInfo;
 
                 const fullName = `${name} ${surname}`;
 
                 const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}&text=${messageText.replace('{proveedor}', name)}`;
 
                 return (
-                  <Fragment key={`${proveedoresInfo[0].vendibleNombre}_${fullName}`}>
+                  <Fragment key={`${vendibleNombre}_${fullName}`}>
                     <ListItem
                       alignItems="flex-start"
                     >
@@ -129,11 +134,11 @@ function VendiblePage({
                           width: '100%',
                         }}
                       >
-                        {!!info.imagenUrl && (
+                        {!!imagenUrl && (
                         <img
-                          src={info.imagenUrl}
-                          srcSet={info.imagenUrl}
-                          alt={info.proveedorInfo.name}
+                          src={imagenUrl}
+                          srcSet={imagenUrl}
+                          alt={vendibleNombre}
                           loading="lazy"
                         />
                         )}

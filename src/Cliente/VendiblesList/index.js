@@ -29,18 +29,8 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
 
   const navigate = useNavigate();
 
-  const handleGoToVendiblePage = useCallback((vendibleName) => {
-    const parsedChosenVendible = vendiblesObject.vendibles[vendibleName].map((
-      proveedorVendible,
-    ) => {
-      proveedorVendible.proveedorInfo = vendiblesObject.proveedores.find(
-        (proveedor) => proveedor.id === proveedorVendible.proveedorId,
-      );
-      // TODO: desharcodearlo cuando se integre el cálculo de distancia en el backend
-      proveedorVendible.proveedorInfo.distanceFrom = 0.5;
-      return proveedorVendible;
-    });
-    navigate(redirectLink, { state: { proveedoresInfo: parsedChosenVendible, vendibleType } });
+  const handleGoToVendiblePage = useCallback((vendibleId) => {
+    navigate(redirectLink, { state: { vendibleType, vendibleId } });
   }, [navigate]);
 
   return (
@@ -56,11 +46,13 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
           }
         }
 
+        const { vendibleId } = vendiblesObject.vendibles[vendibleName][0];
+
         const linkSection = (
           <>
             <Groups2Icon fontSize="large" />
             <Link
-              onClick={() => handleGoToVendiblePage(vendibleName)}
+              onClick={() => handleGoToVendiblePage(vendibleId)}
               variant="h5"
               sx={{
                 ml: '10px',
