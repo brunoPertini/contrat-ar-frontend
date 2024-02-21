@@ -1,4 +1,6 @@
-import { Fragment, useCallback, useState } from 'react';
+import {
+  Fragment, useCallback, useMemo, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
@@ -21,11 +23,17 @@ import { systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
+import VendiblesFilters from '../Filters';
 
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, filtersEnabled,
 }) {
   const [contactText, setContactText] = useState();
+
+  const distancesForSlider = useMemo(
+    () => proveedoresInfo.vendibles.map((pv) => pv.distance),
+    [proveedoresInfo],
+  );
 
   const getPriceLabel = useCallback((price) => {
     if (price === 0) {
@@ -61,7 +69,7 @@ function VendiblePage({
     .replace('{contractArLink}', 'www.contractar.com')
     .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
 
-  const firstColumnBreakpoint = filtersEnabled ? 2 : 'auto';
+  const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
 
   return (
     <>
@@ -71,15 +79,18 @@ function VendiblePage({
         sx={{
           flexDirection: 'row',
         }}
-        justifyContent="center"
       >
         <Grid item xs={firstColumnBreakpoint}>
           <Typography variant="h3">
             { vendibleNombre }
           </Typography>
+          <VendiblesFilters
+            enabledFilters={{ category: false, distance: true }}
+            distances={distancesForSlider}
+          />
         </Grid>
-        <Grid item xs={10}>
-          <List sx={{ width: '100%' }}>
+        <Grid item xs={9}>
+          <List sx={{ width: '80%' }}>
             {
               proveedoresInfo.vendibles.map((info) => {
                 const { precio, proveedorId, imagenUrl } = info;
