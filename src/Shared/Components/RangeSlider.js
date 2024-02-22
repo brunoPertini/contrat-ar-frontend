@@ -5,11 +5,11 @@ import Box from '@mui/material/Box';
 import { useState } from 'react';
 
 function RangeSlider({
-  values, handleOnChange, getInputTextFunction, inputTextsHelpers, shouldShowBottomInputs,
+  values, handleOnChange, getInputTextFunction, inputTextsHelpers, shouldShowBottomInputs, step,
 }) {
   const [stateValues, setStateValues] = useState(values);
 
-  const handleOnChangeStateValues = (event, newValues) => {
+  const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
     handleOnChange(newValues);
   };
@@ -20,9 +20,8 @@ function RangeSlider({
         aria-labelledby="input-slider"
         valueLabelDisplay="auto"
         value={stateValues}
-        onChange={handleOnChangeStateValues}
-        step={0.5}
-        shiftStep={0.5}
+        step={step}
+        onChangeCommitted={onChangeCommitted}
       />
       {
         shouldShowBottomInputs && (
@@ -58,6 +57,7 @@ RangeSlider.defaultProps = {
   inputTextsHelpers: [],
   getInputTextFunction: () => {},
   shouldShowBottomInputs: false,
+  step: 1,
 };
 
 RangeSlider.propTypes = {
@@ -66,6 +66,7 @@ RangeSlider.propTypes = {
   handleOnChange: PropTypes.func.isRequired,
   getInputTextFunction: PropTypes.func,
   inputTextsHelpers: PropTypes.arrayOf(PropTypes.string),
+  step: PropTypes.number,
 };
 
 export default RangeSlider;

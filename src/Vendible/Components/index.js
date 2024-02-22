@@ -24,17 +24,29 @@ import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
+import { Layout } from '../../Shared/Components';
+
+const vendiblesGridProps = {
+  item: true,
+  xs: 9,
+  display: 'flex',
+  flexDirection: 'column',
+};
 
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, filtersEnabled,
+  proveedoresInfo, vendibleType, userInfo, filtersEnabled, getVendibles,
 }) {
   const [contactText, setContactText] = useState();
 
-  const distancesForSlider = useMemo(
-    () => [proveedoresInfo.vendibles[0].distance,
-      proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance],
-    [proveedoresInfo],
-  );
+  const { distancesForSlider, vendibleNombre } = useMemo(() => {
+    const distances = !proveedoresInfo.vendibles.length ? []
+      : [proveedoresInfo.vendibles[0].distance,
+        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance];
+
+    const nombre = !proveedoresInfo.vendibles.length ? '' : proveedoresInfo.vendibles[0].vendibleNombre;
+
+    return { distancesForSlider: distances, vendibleNombre: nombre };
+  }, [proveedoresInfo]);
 
   const getPriceLabel = useCallback((price) => {
     if (price === 0) {
@@ -64,8 +76,6 @@ function VendiblePage({
     props: { userInfo },
   }];
 
-  const { vendibleNombre } = proveedoresInfo.vendibles[0];
-
   const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
     .replace('{contractArLink}', 'www.contractar.com')
     .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
@@ -88,19 +98,22 @@ function VendiblePage({
           <VendiblesFilters
             enabledFilters={{ category: false, distance: true }}
             distances={distancesForSlider}
+            onFiltersApplied={getVendibles}
           />
         </Grid>
-        <Grid item xs={9} display="flex" flexDirection="column">
+        <Layout gridProps={vendiblesGridProps}>
           <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
             {
               proveedoresInfo.vendibles.map((info) => {
-                const { precio, proveedorId, imagenUrl } = info;
+                const {
+                  precio, proveedorId, imagenUrl, distance,
+                } = info;
 
                 const proveedorInfo = proveedoresInfo.proveedores
                   .find((proveedor) => proveedor.id === proveedorId);
 
                 const {
-                  name, surname, fotoPerfilUrl, distanceFrom, phone,
+                  name, surname, fotoPerfilUrl, phone,
                 } = proveedorInfo;
 
                 const fullName = `${name} ${surname}`;
@@ -122,12 +135,12 @@ function VendiblePage({
                           }}
                         />
                         <ListItemText primary={fullName} />
-                        {!!distanceFrom && (
+                        {!!distance && (
                         <>
                           <Typography variant="body2" color="text.secondary">
                             {sharedLabels.to}
                             {' '}
-                            {distanceFrom}
+                            {distance}
                             {' '}
                             {sharedLabels.kilometersAway}
                             <PlaceIcon fontSize="medium" />
@@ -201,13 +214,14 @@ function VendiblePage({
               })
             }
           </List>
-        </Grid>
+        </Layout>
       </Grid>
     </>
   );
 }
 
 VendiblePage.propTypes = {
+  getVendibles: PropTypes.func.isRequired,
   proveedoresInfo: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,

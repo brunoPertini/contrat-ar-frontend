@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-bind */
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
@@ -40,7 +38,12 @@ function VendiblesFilters({
   };
 
   const handleOnDistancesChanged = (newValue) => {
-    setFiltersApplied((previous) => ({ ...previous, toFilterDistances: newValue }));
+    let newAppliedFilters = {};
+    setFiltersApplied((previous) => {
+      newAppliedFilters = ({ ...previous, toFilterDistances: newValue });
+      return newAppliedFilters;
+    });
+    onFiltersApplied(newAppliedFilters);
   };
 
   const handleFilterDeleted = (filtersKeys = []) => {
@@ -128,6 +131,7 @@ function VendiblesFilters({
           handleOnChange={handleOnDistancesChanged}
           inputTextsHelpers={locationSliderInputHelperTexts}
           getInputTextFunction={getTextForDistanceSliderInput}
+          step={0.5}
         />
       </Box>
     </Grid>

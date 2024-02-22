@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import VendiblePage from '../Components';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
@@ -22,11 +22,12 @@ function VendibleContainer() {
 
   const userInfo = useSelector(userInfoSelector);
 
-  const handleGetProveedoresInfo = async () => {
+  const handleGetProveedoresInfo = async (filters) => {
     const httpClient = HttpClientFactory.createClienteHttpClient({ token: userInfo.token });
-    return httpClient.getProveedoresInfoOfVendible(vendibleId).then((newProveedoresInfo) => {
-      setProveedoresInfo(newProveedoresInfo);
-    });
+    return httpClient.getProveedoresInfoOfVendible(vendibleId, filters)
+      .then((newProveedoresInfo) => {
+        setProveedoresInfo(newProveedoresInfo);
+      });
   };
 
   useEffect(() => {
@@ -35,6 +36,7 @@ function VendibleContainer() {
 
   return !isEmpty(proveedoresInfo) ? (
     <VendiblePage
+      getVendibles={handleGetProveedoresInfo}
       proveedoresInfo={proveedoresInfo}
       vendibleType={vendibleType}
       userInfo={userInfo}
