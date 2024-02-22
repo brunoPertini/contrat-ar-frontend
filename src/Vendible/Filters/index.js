@@ -7,14 +7,14 @@ import { useEffect, useMemo, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import {
-  Box, Input, Slider, TextField,
-} from '@mui/material';
+import Box from '@mui/material/Box';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { labels } from '../../StaticData/Cliente';
+import RangeSlider from '../../Shared/Components/RangeSlider';
+import { getTextForDistanceSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 
 function VendiblesFilters({
   categories, distances, vendibleType,
@@ -39,7 +39,7 @@ function VendiblesFilters({
     onFiltersApplied(newAppliedFilters);
   };
 
-  const handleOnDistancesChanged = (event, newValue) => {
+  const handleOnDistancesChanged = (newValue) => {
     setFiltersApplied((previous) => ({ ...previous, toFilterDistances: newValue }));
   };
 
@@ -61,11 +61,6 @@ function VendiblesFilters({
     const filtersOfInterest = pick(filtersApplied, ['categoryName']);
     return Object.values(filtersOfInterest).filter((label) => label);
   }, [filtersApplied]);
-
-  const { minValueSlider, maxValueSlider } = useMemo(() => ({
-    minValueSlider: distances[0],
-    maxValueSlider: distances[distances.length - 1],
-  }), [distances]);
 
   useEffect(() => {
     if (previousVendibleType && previousVendibleType !== vendibleType) {
@@ -112,41 +107,27 @@ function VendiblesFilters({
   );
 
   const locationsDistanceSection = (
-    <Grid item sx={{ mt: '5%', ml: '5%' }}>
+    <Grid
+      item
+      sx={{ mt: '5%', ml: '5%' }}
+    >
       <Typography variant="h4">
         { labels.filterByDistanceTitle }
       </Typography>
-      <Box sx={{ mt: '5%', ml: '5%' }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        sx={{ mt: '5%', ml: '5%' }}
+      >
         <Typography id="input-slider" gutterBottom>
           { labels.filterByDistanceExplanation }
         </Typography>
-        <Slider
-          aria-labelledby="input-slider"
-          valueLabelDisplay="auto"
-          value={filtersApplied.toFilterDistances}
-          onChange={handleOnDistancesChanged}
-          step={0.5}
-          shiftStep={0.5}
-          min={minValueSlider}
-          max={maxValueSlider}
-        />
-        <TextField
-          value={`${minValueSlider} Km`}
-          helperText="Mínimo"
-          size="small"
-          readOnly
-          inputProps={{
-            'aria-labelledby': 'input-slider',
-          }}
-        />
-        <TextField
-          value={`${maxValueSlider} Km`}
-          helperText="Máximo"
-          size="small"
-          readOnly
-          inputProps={{
-            'aria-labelledby': 'input-slider',
-          }}
+        <RangeSlider
+          shouldShowBottomInputs
+          values={filtersApplied.toFilterDistances}
+          handleOnChange={handleOnDistancesChanged}
+          inputTextsHelpers={locationSliderInputHelperTexts}
+          getInputTextFunction={getTextForDistanceSliderInput}
         />
       </Box>
     </Grid>

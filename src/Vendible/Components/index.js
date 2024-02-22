@@ -31,7 +31,8 @@ function VendiblePage({
   const [contactText, setContactText] = useState();
 
   const distancesForSlider = useMemo(
-    () => proveedoresInfo.vendibles.map((pv) => pv.distance),
+    () => [proveedoresInfo.vendibles[0].distance,
+      proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance],
     [proveedoresInfo],
   );
 
@@ -81,7 +82,7 @@ function VendiblePage({
         }}
       >
         <Grid item xs={firstColumnBreakpoint}>
-          <Typography variant="h3">
+          <Typography variant="h3" sx={{ ml: '5%' }}>
             { vendibleNombre }
           </Typography>
           <VendiblesFilters
@@ -89,8 +90,8 @@ function VendiblePage({
             distances={distancesForSlider}
           />
         </Grid>
-        <Grid item xs={9}>
-          <List sx={{ width: '80%' }}>
+        <Grid item xs={9} display="flex" flexDirection="column">
+          <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
             {
               proveedoresInfo.vendibles.map((info) => {
                 const { precio, proveedorId, imagenUrl } = info;
