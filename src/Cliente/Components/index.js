@@ -5,10 +5,9 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import Alert from '@mui/material/Alert';
 import Header from '../../Header';
 import {
-  RadioList, Layout, SearcherInput,
+  RadioList, Layout, SearcherInput, StaticAlert,
 } from '../../Shared/Components';
 import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
@@ -215,22 +214,20 @@ function Cliente({
           </Typography>
           )}
           <VendiblesList />
-          { thereIsNoResults
-          && (
-          <Alert
-            severity="info"
-            variant="filled"
-            sx={{
-              mt: '2%',
-              fontSize: 'h4.fontSize',
-              '.MuiAlert-icon': {
-                fontSize: '50px;',
-              },
-            }}
-          >
-            { vendiblesLabels.noResultsFound}
-          </Alert>
-          ) }
+          {
+            thereIsNoResults && (
+              <StaticAlert
+                label={vendiblesLabels.noResultsFound}
+                styles={{
+                  mt: '2%',
+                  fontSize: 'h4.fontSize',
+                  '.MuiAlert-icon': {
+                    fontSize: '50px;',
+                  },
+                }}
+              />
+            )
+          }
         </Layout>
       </Grid>
     </>
