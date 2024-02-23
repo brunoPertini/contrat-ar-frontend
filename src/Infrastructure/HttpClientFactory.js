@@ -1,3 +1,4 @@
+import ClienteHttpClient from './HttpClients/ClienteHttpClient';
 import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 // eslint-disable-next-line import/named
 import { HttpClient, HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
@@ -21,6 +22,8 @@ export class HttpClientFactory {
   static vendibleHttpClientInstance;
 
   static proveedorHttpClientInstance;
+
+  static clienteHttpClientInstance;
 
   /**
    *
@@ -93,5 +96,19 @@ export class HttpClientFactory {
       });
     }
     return HttpClientFactory.proveedorHttpClientInstance;
+  }
+
+  /**
+   *
+   * @param {HttpClientInstanceFactoryConfiguration} config
+   * @returns {ClienteHttpClient}
+   */
+  static createClienteHttpClient(config) {
+    if (!HttpClientFactory.clienteHttpClientInstance) {
+      HttpClientFactory.clienteHttpClientInstance = new ClienteHttpClient({
+        headersValues: { Authorization: config.token },
+      });
+    }
+    return HttpClientFactory.clienteHttpClientInstance;
   }
 }

@@ -7,5 +7,7 @@
     "linkVendibleCardProduct": "Fijate quién lo vende",
     "linkVendibleCardService": "Fijate quién lo puede hacer",
     "contactProvider": "¡Contactá a {nombreProveedor} por Whatsapp!",
-    "sendWhatsappLink": "¡Hola {proveedor}! Esta es una consulta por {vendible} que ví en {contractArLink}: {additionalText}"
+    "sendWhatsappLink": "¡Hola {proveedor}! Esta es una consulta por {vendible} que ví en {contractArLink}: {additionalText}",
+    "filterByDistanceTitle": "¡Filtrá a los proveedores por distancia!",
+    "filterByDistanceExplanation": "Seleccioná a cuántos km de distancia como mínimo y máximo querés que se encuentren tus proveedores/vendedores"
 }

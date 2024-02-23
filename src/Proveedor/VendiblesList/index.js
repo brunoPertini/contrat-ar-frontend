@@ -1,11 +1,11 @@
 import List from '@mui/material/List';
 import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
 import VendibleCard from '../../Shared/Components/VendibleCard';
 import { sharedLabels } from '../../StaticData/Shared';
 import ProveedorVendibleCard from '../../Shared/Components/VendibleCard/ProveedorVendibleCard';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 
 /**
  * Vendibles list of Provider page.
@@ -46,10 +46,9 @@ export default function VendiblesList({ vendibles }) {
       </List>
       {
         !vendibles.length && (
-          <Alert
-            severity="info"
-            variant="filled"
-            sx={{
+          <StaticAlert
+            label={vendiblesLabels.noResultsFound}
+            styles={{
               mt: '2%',
               fontSize: 'h4.fontSize',
               '.MuiAlert-icon': {
@@ -57,9 +56,7 @@ export default function VendiblesList({ vendibles }) {
               },
               width: '50%',
             }}
-          >
-            {vendiblesLabels.noResultsFound}
-          </Alert>
+          />
         )
       }
     </>
