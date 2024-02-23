@@ -14,6 +14,20 @@ import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 
+/**
+ * @typedef ProveedoresVendiblesFiltersType
+ * @property {Number} category
+ * @property {String} categoryName
+ * @property {Array<Number>} toFilterDistances
+ */
+
+/** @type {ProveedoresVendiblesFiltersType } */
+const proveedoresVendiblesFiltersModel = {
+  category: null,
+  categoryName: '',
+  toFilterDistances: [],
+};
+
 function VendiblesFilters({
   categories, distances, vendibleType,
   onFiltersApplied, containerStyles,
@@ -23,8 +37,7 @@ function VendiblesFilters({
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
   const [filtersApplied, setFiltersApplied] = useState({
-    category: null,
-    categoryName: '',
+    ...proveedoresVendiblesFiltersModel,
     toFilterDistances: distances,
   });
 

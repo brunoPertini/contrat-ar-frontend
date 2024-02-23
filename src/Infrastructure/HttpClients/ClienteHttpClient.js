@@ -12,9 +12,6 @@ export default class ClienteHttpClient extends HttpClient {
     const finalUrl = usersRoutes.getProveedoresOfVendible.replace('{vendibleId}', vendibleId);
     const queryParams = {};
 
-    // filter_distance_min: filters.toFilterDistances[0],
-    // filter_distance_max: filters.toFilterDistances[1],
-
     if (filters?.toFilterDistances?.length) {
       queryParams.filter_distance_min = filters.toFilterDistances[0];
       queryParams.filter_distance_max = filters.toFilterDistances[1];

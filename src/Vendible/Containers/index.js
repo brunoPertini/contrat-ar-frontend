@@ -22,6 +22,11 @@ function VendibleContainer() {
 
   const userInfo = useSelector(userInfoSelector);
 
+  /**
+   *
+   * @param {import('../Filters').ProveedoresVendiblesFiltersType} filters
+   * @returns
+   */
   const handleGetProveedoresInfo = async (filters) => {
     const httpClient = HttpClientFactory.createClienteHttpClient({ token: userInfo.token });
     return httpClient.getProveedoresInfoOfVendible(vendibleId, filters)

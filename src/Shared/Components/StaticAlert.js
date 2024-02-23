@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Alert from '@mui/material/Alert';
 
+/** Alert that shows a message which remains visible until component is unmounted */
 function StaticAlert({
   severity, variant, styles, label,
 }) {
