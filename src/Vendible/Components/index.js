@@ -24,19 +24,23 @@ import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
-import { Layout } from '../../Shared/Components';
+import { Layout, StaticAlert } from '../../Shared/Components';
 
 const vendiblesGridProps = {
   item: true,
   xs: 9,
   display: 'flex',
   flexDirection: 'column',
+  flexWrap: 'wrap',
+  alignContent: 'center',
 };
 
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, filtersEnabled, getVendibles,
 }) {
   const [contactText, setContactText] = useState();
+  const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState();
 
   const { distancesForSlider, vendibleNombre } = useMemo(() => {
     const distances = !proveedoresInfo.vendibles.length ? []
@@ -70,6 +74,17 @@ function VendiblePage({
     }, 1000);
   };
 
+  const handleOnFiltersApplied = (filters) => {
+    setIsLoadingVendibles(true);
+    setTimeout(() => {
+      getVendibles(filters).then((thereAreResults) => {
+        setNoResultsFound(!thereAreResults);
+      })
+        .catch(() => setNoResultsFound(true))
+        .finally(() => setIsLoadingVendibles(false));
+    }, 1000);
+  };
+
   // TODO: modularizar en el componente Header
   const menuOptions = [{
     component: UserAccountOptions,
@@ -98,122 +113,136 @@ function VendiblePage({
           <VendiblesFilters
             enabledFilters={{ category: false, distance: true }}
             distances={distancesForSlider}
-            onFiltersApplied={getVendibles}
+            onFiltersApplied={handleOnFiltersApplied}
           />
         </Grid>
-        <Layout gridProps={vendiblesGridProps}>
+        <Layout gridProps={vendiblesGridProps} isLoading={isLoadingVendibles}>
           <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
             {
-              proveedoresInfo.vendibles.map((info) => {
-                const {
-                  precio, proveedorId, imagenUrl, distance,
-                } = info;
+                proveedoresInfo.vendibles.map((info) => {
+                  const {
+                    precio, proveedorId, imagenUrl, distance,
+                  } = info;
 
-                const proveedorInfo = proveedoresInfo.proveedores
-                  .find((proveedor) => proveedor.id === proveedorId);
+                  const proveedorInfo = proveedoresInfo.proveedores
+                    .find((proveedor) => proveedor.id === proveedorId);
 
-                const {
-                  name, surname, fotoPerfilUrl, phone,
-                } = proveedorInfo;
+                  const {
+                    name, surname, fotoPerfilUrl, phone,
+                  } = proveedorInfo;
 
-                const fullName = `${name} ${surname}`;
+                  const fullName = `${name} ${surname}`;
 
-                const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}&text=${messageText.replace('{proveedor}', name)}`;
+                  const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}&text=${messageText.replace('{proveedor}', name)}`;
 
-                return (
-                  <Fragment key={`${vendibleNombre}_${fullName}`}>
-                    <ListItem
-                      alignItems="flex-start"
-                    >
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={fullName}
-                          src={fotoPerfilUrl}
-                          sx={{
-                            height: 100,
-                            width: 100,
-                          }}
-                        />
-                        <ListItemText primary={fullName} />
-                        {!!distance && (
-                        <>
-                          <Typography variant="body2" color="text.secondary">
-                            {sharedLabels.to}
-                            {' '}
-                            {distance}
-                            {' '}
-                            {sharedLabels.kilometersAway}
-                            <PlaceIcon fontSize="medium" />
-                          </Typography>
-                          <Link href="#">
-                            {vendiblesLabels.seeInMap}
-                          </Link>
-                        </>
-                        )}
-                      </ListItemAvatar>
-                      <ImageListItem
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}
+                  return (
+                    <Fragment key={`${vendibleNombre}_${fullName}`}>
+                      <ListItem
+                        alignItems="flex-start"
                       >
-                        {!!imagenUrl && (
-                        <img
-                          src={imagenUrl}
-                          srcSet={imagenUrl}
-                          alt={vendibleNombre}
-                          loading="lazy"
-                        />
-                        )}
-                        <Box sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          width: '100%',
-                        }}
-                        >
-                          <Typography
-                            paragraph
+                        <ListItemAvatar>
+                          <Avatar
+                            alt={fullName}
+                            src={fotoPerfilUrl}
                             sx={{
-                              wordBreak: 'break-word',
+                              height: 100,
+                              width: 100,
                             }}
-                          >
-                            {info.descripcion}
-                          </Typography>
-                        </Box>
-                      </ImageListItem>
-                      <ListItem sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="h5">
-                          {getPriceLabel(precio)}
-                        </Typography>
-                        <Typography variant="h5" sx={{ mt: '50px' }}>
-                          {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
-                        </Typography>
-                        <TextareaAutosize
-                          minRows={15}
-                          style={{ width: '100%' }}
-                          value={contactText}
-                          onChange={handleSetContactText}
-                        />
-                        <Button
-                          onClick={handleSendMessageClick}
-                          href={contactLink}
-                          target="_blank"
-                          variant="contained"
-                          sx={{ mt: '5px', alignSelf: 'flex-start' }}
+                          />
+                          <ListItemText primary={fullName} />
+                          {!!distance && (
+                          <>
+                            <Typography variant="body2" color="text.secondary">
+                              {sharedLabels.to}
+                              {' '}
+                              {distance}
+                              {' '}
+                              {sharedLabels.kilometersAway}
+                              <PlaceIcon fontSize="medium" />
+                            </Typography>
+                            <Link href="#">
+                              {vendiblesLabels.seeInMap}
+                            </Link>
+                          </>
+                          )}
+                        </ListItemAvatar>
+                        <ImageListItem
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            width: '100%',
+                          }}
                         >
-                          { sharedLabels.sendMessage }
-                        </Button>
+                          {!!imagenUrl && (
+                          <img
+                            src={imagenUrl}
+                            srcSet={imagenUrl}
+                            alt={vendibleNombre}
+                            loading="lazy"
+                          />
+                          )}
+                          <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            width: '100%',
+                          }}
+                          >
+                            <Typography
+                              paragraph
+                              sx={{
+                                wordBreak: 'break-word',
+                              }}
+                            >
+                              {info.descripcion}
+                            </Typography>
+                          </Box>
+                        </ImageListItem>
+                        <ListItem sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="h5">
+                            {getPriceLabel(precio)}
+                          </Typography>
+                          <Typography variant="h5" sx={{ mt: '50px' }}>
+                            {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
+                          </Typography>
+                          <TextareaAutosize
+                            minRows={15}
+                            style={{ width: '100%' }}
+                            value={contactText}
+                            onChange={handleSetContactText}
+                          />
+                          <Button
+                            onClick={handleSendMessageClick}
+                            href={contactLink}
+                            target="_blank"
+                            variant="contained"
+                            sx={{ mt: '5px', alignSelf: 'flex-start' }}
+                          >
+                            { sharedLabels.sendMessage }
+                          </Button>
+                        </ListItem>
                       </ListItem>
-                    </ListItem>
-                    <Divider variant="outlined" sx={{ borderColor: 'black' }} />
+                      <Divider variant="outlined" sx={{ borderColor: 'black' }} />
 
-                  </Fragment>
-                );
-              })
-            }
+                    </Fragment>
+                  );
+                })
+              }
           </List>
+          {
+            !isLoadingVendibles && noResultsFound && (
+              <StaticAlert
+                label={vendiblesLabels.noResultsFound}
+                styles={{
+                  mt: '2%',
+                  fontSize: 'h4.fontSize',
+                  '.MuiAlert-icon': {
+                    fontSize: '50px;',
+                  },
+                }}
+              />
+            )
+          }
         </Layout>
       </Grid>
     </>

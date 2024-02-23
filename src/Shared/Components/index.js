@@ -12,3 +12,4 @@ export { default as Layout } from './Layout';
 export { default as CheckBoxGroup } from './CheckboxGroup';
 export { default as SearcherInput } from './Searcher';
 export { default as Select } from './Select';
+export { default as StaticAlert } from './StaticAlert';

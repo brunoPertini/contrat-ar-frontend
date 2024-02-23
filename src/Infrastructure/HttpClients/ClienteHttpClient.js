@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { usersRoutes } from '../../Shared/Constants';
 import { HttpClient } from './HttpClient';
 

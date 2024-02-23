@@ -27,7 +27,9 @@ function VendibleContainer() {
     return httpClient.getProveedoresInfoOfVendible(vendibleId, filters)
       .then((newProveedoresInfo) => {
         setProveedoresInfo(newProveedoresInfo);
-      });
+        return Promise.resolve(!!(newProveedoresInfo?.vendibles.length));
+      })
+      .catch(() => Promise.resolve(false));
   };
 
   useEffect(() => {
