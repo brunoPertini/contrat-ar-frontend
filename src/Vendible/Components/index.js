@@ -1,5 +1,5 @@
 import {
-  Fragment, useCallback, useMemo, useState,
+  Fragment, useCallback, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -36,11 +36,19 @@ const vendiblesGridProps = {
 };
 
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, filtersEnabled, getVendibles,
+  proveedoresInfo, vendibleType, userInfo, getVendibles,
 }) {
   const [contactText, setContactText] = useState();
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
+
+  const [filtersEnabled, setFiltersEnabled] = useState(false);
+
+  useEffect(() => {
+    if (proveedoresInfo?.vendibles.length >= 2) {
+      setFiltersEnabled(true);
+    }
+  }, []);
 
   const { distancesForSlider, vendibleNombre } = useMemo(() => {
     const distances = !proveedoresInfo.vendibles.length ? []
@@ -97,6 +105,19 @@ function VendiblePage({
 
   const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
 
+  const filtersSection = filtersEnabled ? (
+    <Grid item xs={firstColumnBreakpoint}>
+      <Typography variant="h3" sx={{ ml: '5%' }}>
+        { vendibleNombre }
+      </Typography>
+      <VendiblesFilters
+        enabledFilters={{ category: false, distance: true }}
+        distances={distancesForSlider}
+        onFiltersApplied={handleOnFiltersApplied}
+      />
+    </Grid>
+  ) : null;
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} renderNavigationLinks />
@@ -106,16 +127,7 @@ function VendiblePage({
           flexDirection: 'row',
         }}
       >
-        <Grid item xs={firstColumnBreakpoint}>
-          <Typography variant="h3" sx={{ ml: '5%' }}>
-            { vendibleNombre }
-          </Typography>
-          <VendiblesFilters
-            enabledFilters={{ category: false, distance: true }}
-            distances={distancesForSlider}
-            onFiltersApplied={handleOnFiltersApplied}
-          />
-        </Grid>
+        { filtersSection }
         <Layout gridProps={vendiblesGridProps} isLoading={isLoadingVendibles}>
           <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
             {
@@ -254,7 +266,6 @@ VendiblePage.propTypes = {
   proveedoresInfo: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
-  filtersEnabled: PropTypes.bool.isRequired,
 };
 
 export default VendiblePage;

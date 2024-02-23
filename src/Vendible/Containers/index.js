@@ -42,7 +42,6 @@ function VendibleContainer() {
       proveedoresInfo={proveedoresInfo}
       vendibleType={vendibleType}
       userInfo={userInfo}
-      filtersEnabled // TODO: aislarlo a una variable de entorno
     />
   ) : null;
 }
