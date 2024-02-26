@@ -7,6 +7,9 @@ export const proveedorVendibleShape = {
   imagenUrl: PropTypes.string,
   stock: PropTypes.number,
   proveedorId: PropTypes.number,
+  vendibleCategoryId: PropTypes.number,
+  vendibleId: PropTypes.number,
+  distance: PropTypes.number,
 };
 
 export const proveedorDTOShape = {
@@ -22,7 +25,7 @@ export const proveedorDTOShape = {
   dni: PropTypes.string,
   fotoPerfilUrl: PropTypes.string,
   active: PropTypes.bool,
-  distanceFrom: PropTypes.number,
+  phone: PropTypes.string,
 };
 
 export const vendibleCategoryShape = PropTypes.shape({

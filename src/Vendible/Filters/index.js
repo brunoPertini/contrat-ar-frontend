@@ -165,11 +165,13 @@ VendiblesFilters.defaultProps = {
   showAccordionTitle: true,
   alternativeAccordionTitle: null,
   enabledFilters: { category: true, distance: false },
+  vendibleType: undefined,
+  categories: {},
 };
 VendiblesFilters.propTypes = {
   distances: PropTypes.arrayOf(PropTypes.number),
-  categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)).isRequired,
-  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
+  categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   onFiltersApplied: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.string),
   showAccordionTitle: PropTypes.bool,

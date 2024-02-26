@@ -139,10 +139,11 @@ function CategoryAccordion({
 CategoryAccordion.defaultProps = {
   showTitle: true,
   categories: {},
+  vendibleType: undefined,
 };
 
 CategoryAccordion.propTypes = {
-  vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
+  vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
   onCategorySelected: PropTypes.func.isRequired,
   showTitle: PropTypes.bool,

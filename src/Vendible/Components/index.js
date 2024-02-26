@@ -22,7 +22,7 @@ import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
-import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
+import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
 import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
@@ -265,7 +265,10 @@ function VendiblePage({
 
 VendiblePage.propTypes = {
   getVendibles: PropTypes.func.isRequired,
-  proveedoresInfo: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)).isRequired,
+  proveedoresInfo: PropTypes.shape({
+    proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)),
+    vendibles: PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape)),
+  }).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
 };
