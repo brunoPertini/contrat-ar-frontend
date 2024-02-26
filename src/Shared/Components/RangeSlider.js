@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers, shouldShowBottomInputs, step,
 }) {
   const [stateValues, setStateValues] = useState(values);
+
+  const { min, max } = useMemo(() => ({ min: values[0], max: values[values.length - 1] }), []);
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
@@ -22,6 +24,8 @@ function RangeSlider({
         value={stateValues}
         step={step}
         onChangeCommitted={onChangeCommitted}
+        min={min}
+        max={max}
       />
       {
         shouldShowBottomInputs && (

@@ -25,6 +25,8 @@ import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
+import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
+import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 
 const vendiblesGridProps = {
   item: true,
@@ -65,7 +67,7 @@ function VendiblePage({
       return sharedLabels.priceToBeAgreed;
     }
     if (vendibleType === systemConstants.PRODUCTS) {
-      return `${sharedLabels.price}: ${price}`;
+      return `${sharedLabels.price}: ${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
     }
 
     return `${sharedLabels.minimalPrice}${price}`;
