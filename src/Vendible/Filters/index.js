@@ -32,7 +32,7 @@ function VendiblesFilters({
   categories, distances, vendibleType,
   onFiltersApplied, containerStyles,
   showAccordionTitle, enabledFilters,
-  alternativeAccordionTitle,
+  alternativeAccordionTitle, sliderAdditionalProps,
 }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
@@ -144,7 +144,7 @@ function VendiblesFilters({
           handleOnChange={handleOnDistancesChanged}
           inputTextsHelpers={locationSliderInputHelperTexts}
           getInputTextFunction={getTextForDistanceSliderInput}
-          step={0.5}
+          {...sliderAdditionalProps}
         />
       </Box>
     </Grid>
@@ -167,6 +167,7 @@ VendiblesFilters.defaultProps = {
   enabledFilters: { category: true, distance: false },
   vendibleType: undefined,
   categories: {},
+  sliderAdditionalProps: {},
 };
 VendiblesFilters.propTypes = {
   distances: PropTypes.arrayOf(PropTypes.number),
@@ -177,6 +178,7 @@ VendiblesFilters.propTypes = {
   showAccordionTitle: PropTypes.bool,
   alternativeAccordionTitle: PropTypes.node,
   enabledFilters: PropTypes.objectOf(PropTypes.bool),
+  sliderAdditionalProps: PropTypes.object,
 };
 
 export default VendiblesFilters;

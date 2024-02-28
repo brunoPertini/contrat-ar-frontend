@@ -45,6 +45,7 @@ function VendiblePage({
   const [noResultsFound, setNoResultsFound] = useState();
 
   const [filtersEnabled, setFiltersEnabled] = useState(false);
+  const [firstSearchDone, setFirstSearchDone] = useState(false);
 
   useEffect(() => {
     if (proveedoresInfo?.vendibles.length >= 2) {
@@ -53,10 +54,16 @@ function VendiblePage({
   }, []);
 
   const { distancesForSlider, vendibleNombre } = useMemo(() => {
-    const distances = !proveedoresInfo.vendibles.length ? []
-      : [proveedoresInfo.vendibles[0].distance,
-        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance];
+    let distances;
 
+    if (!firstSearchDone) {
+      distances = [proveedoresInfo.minDistance, proveedoresInfo.maxDistance];
+    } else if (!proveedoresInfo.vendibles.length) {
+      distances = [];
+    } else {
+      distances = [proveedoresInfo.vendibles[0].distance,
+        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance];
+    }
     const nombre = !proveedoresInfo.vendibles.length ? '' : proveedoresInfo.vendibles[0].vendibleNombre;
 
     return { distancesForSlider: distances, vendibleNombre: nombre };
@@ -85,6 +92,7 @@ function VendiblePage({
   };
 
   const handleOnFiltersApplied = (filters) => {
+    setFirstSearchDone(true);
     setIsLoadingVendibles(true);
     setTimeout(() => {
       getVendibles(filters).then((thereAreResults) => {
@@ -116,6 +124,11 @@ function VendiblePage({
         enabledFilters={{ category: false, distance: true }}
         distances={distancesForSlider}
         onFiltersApplied={handleOnFiltersApplied}
+        sliderAdditionalProps={{
+          step: 0.5,
+          min: proveedoresInfo.minDistance,
+          max: proveedoresInfo.maxDistance,
+        }}
       />
     </Grid>
   ) : null;
@@ -268,6 +281,8 @@ VendiblePage.propTypes = {
   proveedoresInfo: PropTypes.shape({
     proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)),
     vendibles: PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape)),
+    minDistance: PropTypes.number,
+    maxDistance: PropTypes.number,
   }).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
