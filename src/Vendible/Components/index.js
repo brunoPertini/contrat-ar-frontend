@@ -53,20 +53,29 @@ function VendiblePage({
     }
   }, []);
 
-  const { distancesForSlider, vendibleNombre } = useMemo(() => {
-    let distances;
+  const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
+    let distances; let prices;
 
     if (!firstSearchDone) {
       distances = [proveedoresInfo.minDistance, proveedoresInfo.maxDistance];
+      prices = [proveedoresInfo.minPrice, proveedoresInfo.maxPrice];
     } else if (!proveedoresInfo.vendibles.length) {
       distances = [];
+      prices = [];
     } else {
       distances = [proveedoresInfo.vendibles[0].distance,
         proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance];
+
+      prices = [proveedoresInfo.vendibles[0].precio,
+        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].precio];
     }
     const nombre = !proveedoresInfo.vendibles.length ? '' : proveedoresInfo.vendibles[0].vendibleNombre;
 
-    return { distancesForSlider: distances, vendibleNombre: nombre };
+    return {
+      distancesForSlider: distances,
+      pricesForSlider: prices,
+      vendibleNombre: nombre,
+    };
   }, [proveedoresInfo]);
 
   const getPriceLabel = useCallback((price) => {
@@ -115,19 +124,27 @@ function VendiblePage({
 
   const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
 
+  const distanceFiltersEnabled = proveedoresInfo.minDistance !== proveedoresInfo.maxDistance;
+
   const filtersSection = filtersEnabled ? (
     <Grid item xs={firstColumnBreakpoint}>
       <Typography variant="h3" sx={{ ml: '5%' }}>
         { vendibleNombre }
       </Typography>
       <VendiblesFilters
-        enabledFilters={{ category: false, distance: true }}
+        enabledFilters={{ category: false, distance: distanceFiltersEnabled, price: true }}
         distances={distancesForSlider}
+        prices={pricesForSlider}
         onFiltersApplied={handleOnFiltersApplied}
-        sliderAdditionalProps={{
+        distanceSliderAdditionalProps={{
           step: 0.5,
           min: proveedoresInfo.minDistance,
           max: proveedoresInfo.maxDistance,
+        }}
+        priceSliderAdditionalProps={{
+          step: 0.5,
+          min: proveedoresInfo.minPrice,
+          max: proveedoresInfo.maxPrice,
         }}
       />
     </Grid>
@@ -283,6 +300,8 @@ VendiblePage.propTypes = {
     vendibles: PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape)),
     minDistance: PropTypes.number,
     maxDistance: PropTypes.number,
+    minPrice: PropTypes.number,
+    maxPrice: PropTypes.number,
   }).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,

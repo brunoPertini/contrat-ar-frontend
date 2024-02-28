@@ -19,6 +19,7 @@ import { getTextForDistanceSliderInput, locationSliderInputHelperTexts } from '.
  * @property {Number} category
  * @property {String} categoryName
  * @property {Array<Number>} toFilterDistances
+ * @property{Array<number>} prices
  */
 
 /** @type {ProveedoresVendiblesFiltersType } */
@@ -26,19 +27,21 @@ const proveedoresVendiblesFiltersModel = {
   category: null,
   categoryName: '',
   toFilterDistances: [],
+  prices: [],
 };
 
 function VendiblesFilters({
-  categories, distances, vendibleType,
+  categories, distances, prices, vendibleType,
   onFiltersApplied, containerStyles,
-  showAccordionTitle, enabledFilters,
-  alternativeAccordionTitle, sliderAdditionalProps,
+  showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
+  alternativeAccordionTitle, distanceSliderAdditionalProps,
 }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
   const [filtersApplied, setFiltersApplied] = useState({
     ...proveedoresVendiblesFiltersModel,
     toFilterDistances: distances,
+    prices,
   });
 
   const handleOnCategorySelected = (categoryId, categoryName) => {
@@ -144,32 +147,60 @@ function VendiblesFilters({
           handleOnChange={handleOnDistancesChanged}
           inputTextsHelpers={locationSliderInputHelperTexts}
           getInputTextFunction={getTextForDistanceSliderInput}
-          {...sliderAdditionalProps}
+          {...distanceSliderAdditionalProps}
         />
       </Box>
     </Grid>
 
   );
 
+  const priceSection = (
+    <Grid
+      item
+      sx={{ mt: '5%', ml: '5%' }}
+    >
+      <Typography variant="h4">
+        { labels.filterByPriceTitle }
+      </Typography>
+      <Box
+        display="flex"
+        flexDirection="column"
+        sx={{ mt: '5%', ml: '5%' }}
+      >
+        <RangeSlider
+          shouldShowBottomInputs
+          values={filtersApplied.prices}
+          handleOnChange={() => {}}
+          getInputTextFunction={() => {}}
+          {...priceSliderAdditionalProps}
+        />
+      </Box>
+    </Grid>
+  );
+
   return (
     <Grid container flexDirection="column" sx={{ ...containerStyles }}>
       {enabledFilters.category && categoriesSection}
       {enabledFilters.distance && locationsDistanceSection}
+      {enabledFilters.price && priceSection }
     </Grid>
   );
 }
 
 VendiblesFilters.defaultProps = {
+  prices: [],
   distances: [],
   containerStyles: {},
   showAccordionTitle: true,
   alternativeAccordionTitle: null,
-  enabledFilters: { category: true, distance: false },
+  enabledFilters: { category: true, distance: false, price: false },
   vendibleType: undefined,
   categories: {},
-  sliderAdditionalProps: {},
+  distanceSliderAdditionalProps: {},
+  priceSliderAdditionalProps: {},
 };
 VendiblesFilters.propTypes = {
+  prices: PropTypes.arrayOf(PropTypes.number),
   distances: PropTypes.arrayOf(PropTypes.number),
   categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
   vendibleType: PropTypes.oneOf(['servicios', 'productos']),
@@ -178,7 +209,8 @@ VendiblesFilters.propTypes = {
   showAccordionTitle: PropTypes.bool,
   alternativeAccordionTitle: PropTypes.node,
   enabledFilters: PropTypes.objectOf(PropTypes.bool),
-  sliderAdditionalProps: PropTypes.object,
+  distanceSliderAdditionalProps: PropTypes.object,
+  priceSliderAdditionalProps: PropTypes.object,
 };
 
 export default VendiblesFilters;
