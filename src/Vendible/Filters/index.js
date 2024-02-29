@@ -12,7 +12,9 @@ import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
-import { getTextForDistanceSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
+import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
+import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -40,7 +42,7 @@ function VendiblesFilters({
 
   const [filtersApplied, setFiltersApplied] = useState({
     ...proveedoresVendiblesFiltersModel,
-    toFilterDistances: distances,
+    toFilterDistances: enabledFilters.distance ? distances : [],
     prices,
   });
 
@@ -60,6 +62,36 @@ function VendiblesFilters({
       return newAppliedFilters;
     });
     onFiltersApplied(newAppliedFilters);
+  };
+
+  /**
+   *
+   * @param {Array<String | Number>} newValue
+   */
+  const handleOnPricesChanged = (newValue) => {
+    // Handling the case where it may be changed from input
+    let shouldParse = false;
+    const argentinaCurrencySymbol = getLocaleCurrencySymbol(ARGENTINA_LOCALE);
+    if (typeof newValue[0] === 'string' && newValue[0].indexOf(argentinaCurrencySymbol) !== -1) {
+      newValue[0] = newValue[0].replace(argentinaCurrencySymbol, '');
+      shouldParse = true;
+    }
+
+    if (typeof newValue[1] === 'string' && newValue[1].indexOf(argentinaCurrencySymbol) !== -1) {
+      newValue[1] = newValue[1].replace(argentinaCurrencySymbol, '');
+      shouldParse = true;
+    }
+
+    // eslint-disable-next-line no-new-wrappers
+    const parsedValues = shouldParse ? newValue.map((value) => new Number(value)) : newValue;
+
+    let newAppliedFilters = {};
+    setFiltersApplied((previous) => {
+      newAppliedFilters = ({ ...previous, prices: parsedValues });
+      return newAppliedFilters;
+    });
+    onFiltersApplied(newAppliedFilters);
+    return parsedValues;
   };
 
   const handleFilterDeleted = (filtersKeys = []) => {
@@ -170,8 +202,12 @@ function VendiblesFilters({
         <RangeSlider
           shouldShowBottomInputs
           values={filtersApplied.prices}
-          handleOnChange={() => {}}
-          getInputTextFunction={() => {}}
+          inputTextsHelpers={locationSliderInputHelperTexts}
+          handleOnChange={handleOnPricesChanged}
+          getInputTextFunction={getTextForPricesSliderInput}
+          bottomInputsProps={{
+            readOnly: false,
+          }}
           {...priceSliderAdditionalProps}
         />
       </Box>

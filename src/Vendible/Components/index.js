@@ -142,7 +142,7 @@ function VendiblePage({
           max: proveedoresInfo.maxDistance,
         }}
         priceSliderAdditionalProps={{
-          step: 0.5,
+          step: 10,
           min: proveedoresInfo.minPrice,
           max: proveedoresInfo.maxPrice,
         }}

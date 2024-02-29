@@ -6,13 +6,31 @@ import { useState } from 'react';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers,
-  shouldShowBottomInputs, step, min, max,
+  shouldShowBottomInputs, bottomInputsProps, step, min, max,
 }) {
   const [stateValues, setStateValues] = useState(values);
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
     handleOnChange(newValues);
+  };
+
+  const onInputChange = (event, inputType) => {
+    let newValues = [];
+    if (inputType === 'min') {
+      newValues = handleOnChange([event.target.value, stateValues[1]]);
+    }
+
+    if (inputType === 'max') {
+      newValues = handleOnChange([stateValues[0], event.target.value]);
+    }
+
+    setStateValues(newValues);
+  };
+
+  const inputCommonProps = {
+    size: 'small',
+    sx: { width: '30%' },
   };
 
   return (
@@ -32,22 +50,26 @@ function RangeSlider({
           <TextField
             value={getInputTextFunction(stateValues[0])}
             helperText={inputTextsHelpers[0]}
-            size="small"
-            readOnly
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            sx={{ width: '30%' }}
+            onChange={(e) => onInputChange(e, 'min')}
+            id={bottomInputsProps.firstInputId}
+            {...inputCommonProps}
+            {...bottomInputsProps}
+
           />
           <TextField
             value={getInputTextFunction(stateValues[1])}
             helperText={inputTextsHelpers[1]}
-            size="small"
-            readOnly
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            sx={{ width: '30%' }}
+            onChange={(e) => onInputChange(e, 'max')}
+            id={bottomInputsProps.secondInputId}
+            {...inputCommonProps}
+            {...bottomInputsProps}
+
           />
         </Box>
         )
@@ -63,9 +85,11 @@ RangeSlider.defaultProps = {
   step: 1,
   min: undefined,
   max: undefined,
+  bottomInputsProps: { readOnly: true },
 };
 
 RangeSlider.propTypes = {
+  bottomInputsProps: PropTypes.object,
   shouldShowBottomInputs: PropTypes.bool,
   values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
   handleOnChange: PropTypes.func.isRequired,
