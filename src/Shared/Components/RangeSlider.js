@@ -13,7 +13,6 @@ function RangeSlider({
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
-    handleOnChange(newValues);
   };
 
   const onInputChange = (event, inputType) => {
@@ -43,7 +42,8 @@ function RangeSlider({
         valueLabelDisplay="auto"
         value={stateValues}
         step={step}
-        onChangeCommitted={onChangeCommitted}
+        onChange={onChangeCommitted}
+        onChangeCommitted={() => handleOnChange(stateValues)}
         min={min}
         max={max}
       />
@@ -56,7 +56,7 @@ function RangeSlider({
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={(e) => onInputChange(e, 'min')}
+            onChange={bottomInputsProps.readOnly ? () => {} : (e) => onInputChange(e, 'min')}
             id={bottomInputsProps.firstInputId}
             {...inputCommonProps}
             {...bottomInputsProps}
@@ -68,7 +68,7 @@ function RangeSlider({
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={(e) => onInputChange(e, 'max')}
+            onChange={bottomInputsProps.readOnly ? () => {} : (e) => onInputChange(e, 'max')}
             id={bottomInputsProps.secondInputId}
             {...inputCommonProps}
             {...bottomInputsProps}
