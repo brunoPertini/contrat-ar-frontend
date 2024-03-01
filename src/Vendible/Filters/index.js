@@ -68,7 +68,7 @@ function VendiblesFilters({
    *
    * @param {Array<String | Number>} newValue
    */
-  const handleOnPricesChanged = (newValue) => {
+  const handleOnPricesChanged = (newValue, comesFromInput, iconPressed = false) => {
     // Handling the case where it may be changed from input
     let shouldParse = false;
     const argentinaCurrencySymbol = getLocaleCurrencySymbol(ARGENTINA_LOCALE);
@@ -90,7 +90,10 @@ function VendiblesFilters({
       newAppliedFilters = ({ ...previous, prices: parsedValues });
       return newAppliedFilters;
     });
-    onFiltersApplied(newAppliedFilters);
+
+    if (!comesFromInput || (comesFromInput && iconPressed)) {
+      onFiltersApplied(newAppliedFilters);
+    }
     return parsedValues;
   };
 
@@ -199,7 +202,11 @@ function VendiblesFilters({
         flexDirection="column"
         sx={{ mt: '5%', ml: '5%' }}
       >
+        <Typography gutterBottom>
+          { labels.filterByPriceExplanation }
+        </Typography>
         <RangeSlider
+          showInputsIcon
           shouldShowBottomInputs
           values={filtersApplied.prices}
           inputTextsHelpers={locationSliderInputHelperTexts}

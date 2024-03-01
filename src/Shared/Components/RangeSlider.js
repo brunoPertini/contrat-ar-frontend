@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useState } from 'react';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers,
-  shouldShowBottomInputs, bottomInputsProps, step, min, max,
+  shouldShowBottomInputs, bottomInputsProps, step, min, max, showInputsIcon,
 }) {
   const [stateValues, setStateValues] = useState(values);
 
@@ -18,15 +19,17 @@ function RangeSlider({
   const onInputChange = (event, inputType) => {
     let newValues = [];
     if (inputType === 'min') {
-      newValues = handleOnChange([event.target.value, stateValues[1]]);
+      newValues = handleOnChange([event.target.value, stateValues[1]], true);
     }
 
     if (inputType === 'max') {
-      newValues = handleOnChange([stateValues[0], event.target.value]);
+      newValues = handleOnChange([stateValues[0], event.target.value], true);
     }
 
     setStateValues(newValues);
   };
+
+  const onIconClick = () => handleOnChange(stateValues, true, true);
 
   const inputCommonProps = {
     size: 'small',
@@ -46,7 +49,7 @@ function RangeSlider({
       />
       {
         shouldShowBottomInputs && (
-        <Box display="flex" flexDirection="row" justifyContent="space-between">
+        <Box display="flex" flexDirection="row" justifyContent="space-evenly">
           <TextField
             value={getInputTextFunction(stateValues[0])}
             helperText={inputTextsHelpers[0]}
@@ -71,6 +74,14 @@ function RangeSlider({
             {...bottomInputsProps}
 
           />
+          {
+            showInputsIcon && (
+            <SearchOutlinedIcon
+              style={{ fontSize: '2.5rem', cursor: 'pointer' }}
+              onClick={onIconClick}
+            />
+            )
+          }
         </Box>
         )
       }
@@ -86,6 +97,7 @@ RangeSlider.defaultProps = {
   min: undefined,
   max: undefined,
   bottomInputsProps: { readOnly: true },
+  showInputsIcon: false,
 };
 
 RangeSlider.propTypes = {
@@ -98,6 +110,7 @@ RangeSlider.propTypes = {
   step: PropTypes.number,
   min: PropTypes.number,
   max: PropTypes.number,
+  showInputsIcon: PropTypes.bool,
 };
 
 export default RangeSlider;

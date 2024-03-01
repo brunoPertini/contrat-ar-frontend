@@ -5,6 +5,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import { useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -60,6 +61,8 @@ function ProveedorPage({
 
   const [crudOperationResult, setCrudOperationResult] = useState();
 
+  const categoriesFiltersEnabled = useMemo(() => !isEmpty(categorias), [categorias]);
+
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
@@ -107,7 +110,7 @@ function ProveedorPage({
     }
 
     return ({
-      openSnackbar: crudOperationResult !== undefined,
+      openSnackbar: crudOperationResult !== undefined && alertForLabel,
       alertSeverity: severityForAlert,
       alertLabel: alertForLabel,
     });
@@ -244,7 +247,10 @@ function ProveedorPage({
               <Typography variant="h6">
                 {proveedorLabels.filterByCategory}
               </Typography>
-        )}
+            )}
+            enabledFilters={{
+              category: categoriesFiltersEnabled,
+            }}
           />
         </Grid>
         <Grid

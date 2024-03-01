@@ -10,5 +10,6 @@
     "sendWhatsappLink": "¡Hola {proveedor}! Esta es una consulta por {vendible} que ví en {contractArLink}: {additionalText}",
     "filterByDistanceTitle": "¡Filtrá a los proveedores por distancia!",
     "filterByDistanceExplanation": "Seleccioná a cuántos km de distancia como mínimo y máximo querés que se encuentren tus proveedores/vendedores",
-    "filterByPriceTitle": "¡Filtrá por precio!"
+    "filterByPriceTitle": "¡Filtrá por precio!",
+    "filterByPriceExplanation": "Elegí un rango o escribilo abajo si necesitás que sea más exacto"
 }
