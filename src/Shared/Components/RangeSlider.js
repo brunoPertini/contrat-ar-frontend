@@ -12,9 +12,18 @@ function RangeSlider({
 }) {
   const [stateValues, setStateValues] = useState(values);
   const [iconDisabled, setIconDisabled] = useState(false);
+  const [isSliderDisabled, setIsSliderDisabled] = useState(false);
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
+  };
+
+  const onMouseUp = () => {
+    setIsSliderDisabled(true);
+    handleOnChange(stateValues);
+    setTimeout(() => {
+      setIsSliderDisabled(false);
+    }, 1300);
   };
 
   const onInputChange = (event, inputType) => {
@@ -34,10 +43,12 @@ function RangeSlider({
     }
 
     setIconDisabled(true);
+    setIsSliderDisabled(true);
     handleOnChange(stateValues, true, true);
 
     return setTimeout(() => {
       setIconDisabled(false);
+      setIsSliderDisabled(false);
     }, 2000);
   };
 
@@ -49,12 +60,13 @@ function RangeSlider({
   return (
     <>
       <Slider
+        disabled={isSliderDisabled}
         aria-labelledby="input-slider"
         valueLabelDisplay="auto"
         value={stateValues}
         step={step}
         onChange={onChangeCommitted}
-        onChangeCommitted={() => handleOnChange(stateValues)}
+        onChangeCommitted={onMouseUp}
         min={min}
         max={max}
       />
