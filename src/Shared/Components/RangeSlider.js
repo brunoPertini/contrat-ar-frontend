@@ -2,43 +2,44 @@ import PropTypes from 'prop-types';
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers,
   shouldShowBottomInputs, bottomInputsProps, step, min, max, showInputsIcon,
 }) {
   const [stateValues, setStateValues] = useState(values);
+  const [iconDisabled, setIconDisabled] = useState(false);
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
   };
 
-  const onInputChange = useCallback((event, inputType) => {
+  const onInputChange = (event, inputType) => {
     if (bottomInputsProps.readOnly) {
       return () => {};
     }
 
-    let newValues = [];
-    if (inputType === 'min') {
-      newValues = handleOnChange([event.target.value, stateValues[1]], true);
-    }
-
-    if (inputType === 'max') {
-      newValues = handleOnChange([stateValues[0], event.target.value], true);
-    }
+    const newValues = inputType === 'min' ? handleOnChange([event.target.value, stateValues[1]], true)
+      : handleOnChange([stateValues[0], event.target.value], true);
 
     return setStateValues(newValues);
-  }, [bottomInputsProps.readOnly]);
+  };
 
-  const onIconClick = useCallback(() => {
+  const onIconClick = () => {
     if (!showInputsIcon) {
       return () => {};
     }
 
-    return handleOnChange(stateValues, true, true);
-  }, [showInputsIcon]);
+    setIconDisabled(true);
+    handleOnChange(stateValues, true, true);
+
+    return setTimeout(() => {
+      setIconDisabled(false);
+    }, 2000);
+  };
 
   const inputCommonProps = {
     size: 'small',
@@ -86,10 +87,12 @@ function RangeSlider({
           />
           {
             showInputsIcon && (
-            <SearchOutlinedIcon
-              style={{ fontSize: '2.5rem', cursor: 'pointer' }}
-              onClick={onIconClick}
-            />
+              <IconButton disabled={iconDisabled}>
+                <SearchOutlinedIcon
+                  style={{ fontSize: '2.5rem', cursor: 'pointer' }}
+                  onClick={onIconClick}
+                />
+              </IconButton>
             )
           }
         </Box>
