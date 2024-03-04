@@ -3,7 +3,7 @@ import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers,
@@ -15,7 +15,11 @@ function RangeSlider({
     setStateValues(newValues);
   };
 
-  const onInputChange = (event, inputType) => {
+  const onInputChange = useCallback((event, inputType) => {
+    if (bottomInputsProps.readOnly) {
+      return () => {};
+    }
+
     let newValues = [];
     if (inputType === 'min') {
       newValues = handleOnChange([event.target.value, stateValues[1]], true);
@@ -25,10 +29,16 @@ function RangeSlider({
       newValues = handleOnChange([stateValues[0], event.target.value], true);
     }
 
-    setStateValues(newValues);
-  };
+    return setStateValues(newValues);
+  }, [bottomInputsProps.readOnly]);
 
-  const onIconClick = () => handleOnChange(stateValues, true, true);
+  const onIconClick = useCallback(() => {
+    if (!showInputsIcon) {
+      return () => {};
+    }
+
+    return handleOnChange(stateValues, true, true);
+  }, [showInputsIcon]);
 
   const inputCommonProps = {
     size: 'small',
@@ -56,7 +66,7 @@ function RangeSlider({
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={bottomInputsProps.readOnly ? () => {} : (e) => onInputChange(e, 'min')}
+            onChange={(e) => onInputChange(e, 'min')}
             id={bottomInputsProps.firstInputId}
             {...inputCommonProps}
             {...bottomInputsProps}
@@ -68,7 +78,7 @@ function RangeSlider({
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={bottomInputsProps.readOnly ? () => {} : (e) => onInputChange(e, 'max')}
+            onChange={(e) => onInputChange(e, 'max')}
             id={bottomInputsProps.secondInputId}
             {...inputCommonProps}
             {...bottomInputsProps}

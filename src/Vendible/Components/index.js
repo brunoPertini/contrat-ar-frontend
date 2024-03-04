@@ -56,6 +56,7 @@ function VendiblePage({
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
     let distances; let prices;
 
+    // First render, slider is loaded with the min and max values
     if (!firstSearchDone) {
       distances = [proveedoresInfo.minDistance, proveedoresInfo.maxDistance];
       prices = [proveedoresInfo.minPrice, proveedoresInfo.maxPrice];

@@ -32,6 +32,16 @@ const proveedoresVendiblesFiltersModel = {
   prices: [],
 };
 
+function replaceArgentinianCurrencySymbol(toCheckValue) {
+  const argentinaCurrencySymbol = getLocaleCurrencySymbol(ARGENTINA_LOCALE);
+  if (typeof toCheckValue === 'string' && toCheckValue.indexOf(argentinaCurrencySymbol) !== -1) {
+    toCheckValue = toCheckValue.replace(argentinaCurrencySymbol, '');
+    return true;
+  }
+
+  return false;
+}
+
 function VendiblesFilters({
   categories, distances, prices, vendibleType,
   onFiltersApplied, containerStyles,
@@ -71,16 +81,9 @@ function VendiblesFilters({
   const handleOnPricesChanged = (newValue, comesFromInput, iconPressed = false) => {
     // Handling the case where it may be changed from input
     let shouldParse = false;
-    const argentinaCurrencySymbol = getLocaleCurrencySymbol(ARGENTINA_LOCALE);
-    if (typeof newValue[0] === 'string' && newValue[0].indexOf(argentinaCurrencySymbol) !== -1) {
-      newValue[0] = newValue[0].replace(argentinaCurrencySymbol, '');
-      shouldParse = true;
-    }
 
-    if (typeof newValue[1] === 'string' && newValue[1].indexOf(argentinaCurrencySymbol) !== -1) {
-      newValue[1] = newValue[1].replace(argentinaCurrencySymbol, '');
-      shouldParse = true;
-    }
+    shouldParse = shouldParse || replaceArgentinianCurrencySymbol(newValue[0]);
+    shouldParse = shouldParse || replaceArgentinianCurrencySymbol(newValue[1]);
 
     // eslint-disable-next-line no-new-wrappers
     const parsedValues = shouldParse ? newValue.map((value) => new Number(value)) : newValue;
