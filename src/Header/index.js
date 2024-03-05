@@ -5,7 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
@@ -60,7 +59,7 @@ export default function Header({
         height: '100%',
       }}
     >
-      <Grid container sx={{ width: '100%', justifyContent: 'space-between' }}>
+      <Grid container sx={{ justifyContent: 'space-between' }}>
         <Grid item>
           <Typography variant="h3" sx={{ width: '30%' }}>
             { sharedLabels.siteName }
@@ -68,17 +67,7 @@ export default function Header({
         </Grid>
         { renderNavigationLinks
         && (
-        <Grid container sx={{ justifyContent: 'space-between' }}>
-          <Grid item sx={{ height: '50%', mt: '2%' }}>
-            <Link
-              variant="h5"
-              onClick={() => window.history.back()}
-              color="#fff"
-              sx={{ width: '30%', cursor: 'pointer' }}
-            >
-              Volver
-            </Link>
-          </Grid>
+        <Grid item>
           { menusMarkup }
         </Grid>
         )}

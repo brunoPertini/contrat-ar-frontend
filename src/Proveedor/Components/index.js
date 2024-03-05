@@ -27,6 +27,7 @@ import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import InformativeAlert from '../../Shared/Components/Alert';
+import GoBackLink from '../../Shared/Components/GoBackLink';
 
 const localStorageService = new LocalStorageService();
 
@@ -306,7 +307,8 @@ function ProveedorPage({
 
   return (
     <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+      <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
+      <GoBackLink goBackFunction={handleLogout} />
       { mainContent }
       <InformativeAlert
         open={openSnackbar}
