@@ -43,3 +43,14 @@ export const SERVICE_LOCATION_AT_HOME = 'A domicilio';
 export const SERVICE_LOCATION_FIXED = 'En un domicilio particular';
 
 export const ARGENTINA_LOCALE = 'es-AR';
+
+export const dialogModalTexts = {
+  EXIT_APP: {
+    title: '¿Desea salir?',
+    text: 'Deberá iniciar sesión nuevamente',
+  },
+  SAVE_CHANGES: {
+    title: '¿Desea salir?',
+    text: 'Perderá todos los cambios',
+  },
+};

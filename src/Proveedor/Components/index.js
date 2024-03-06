@@ -17,6 +17,7 @@ import {
   ROLE_PROVEEDOR_PRODUCTOS,
   SERVICE,
   SERVICES,
+  dialogModalTexts,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
@@ -27,7 +28,8 @@ import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import InformativeAlert from '../../Shared/Components/Alert';
-import GoBackLink from '../../Shared/Components/GoBackLink';
+import { useGoBackLink } from '../../Shared/Hooks/useGoBackLink';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 
 const localStorageService = new LocalStorageService();
 
@@ -58,11 +60,15 @@ function ProveedorPage({
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
-  const [modalContent, setModalContent] = useState({ title: '', text: '' });
+  const [modalContent, setModalContent] = useState({ title: '', text: '', handleAccept: () => {} });
 
   const [crudOperationResult, setCrudOperationResult] = useState();
 
   const categoriesFiltersEnabled = useMemo(() => !isEmpty(categorias), [categorias]);
+
+  const isGoingBack = localStorageService.getItem(
+    LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
+  );
 
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
@@ -71,13 +77,24 @@ function ProveedorPage({
     if (storedScreen) {
       setCurrentInnerScreen(storedScreen);
     }
-
-    if (localStorageService.getItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED)) {
-      const title = '¿Desea salir?';
-      const text = 'Perderá todos los cambios';
-      setModalContent({ title, text });
-    }
   }, []);
+
+  useEffect(() => {
+    if (isGoingBack && currentInnerScreen) {
+      setModalContent({
+        title: dialogModalTexts.SAVE_CHANGES.title,
+        text: dialogModalTexts.SAVE_CHANGES.text,
+      });
+    }
+
+    if (isGoingBack && !currentInnerScreen) {
+      setModalContent({
+        title: dialogModalTexts.EXIT_APP.title,
+        text: dialogModalTexts.EXIT_APP.text,
+        handleAccept: handleLogout,
+      });
+    }
+  }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
     setFilteredVendibles(vendibles);
@@ -190,6 +207,7 @@ function ProveedorPage({
           .toLowerCase(),
         handleUploadImage,
         handlePostVendible: managePostVendibleResults,
+        handleGoBack: onChangeCurrentScreen,
         router,
       },
     },
@@ -200,6 +218,14 @@ function ProveedorPage({
   const onCancelLeavingPage = () => {
     setModalContent({ title: '', text: '' });
     localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
+  };
+
+  const showExitAppAlertModal = () => {
+    setModalContent({
+      title: dialogModalTexts.EXIT_APP.title,
+      text: dialogModalTexts.EXIT_APP.text,
+      handleAccept: handleLogout,
+    });
   };
 
   if (currentInnerScreen) {
@@ -305,10 +331,12 @@ function ProveedorPage({
     );
   }
 
+  useOnLeavingTabHandler();
+  useGoBackLink({ handleGoBack: showExitAppAlertModal });
+
   return (
     <>
       <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
-      <GoBackLink goBackFunction={handleLogout} />
       { mainContent }
       <InformativeAlert
         open={openSnackbar}
