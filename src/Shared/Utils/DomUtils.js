@@ -57,12 +57,3 @@ export function isDeletePressed(event) {
 export function isKeyEvent(event) {
   return !!event && event.type.includes('key');
 }
-
-/**
- * Inserts newNode after referenceNode
- * @param {Element} newNode
- * @param {Element} referenceNode
- */
-export function insertElementAfter(newNode, referenceNode) {
-  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
