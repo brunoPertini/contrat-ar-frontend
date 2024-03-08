@@ -7,6 +7,7 @@ import Cliente from '../Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { routes } from '../../Shared/Constants';
 import { resetUserInfo } from '../../State/Actions/usuario';
+import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 
 const stateSelector = (state) => state;
 
@@ -15,7 +16,7 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function ClienteContainer() {
+function ClienteContainer({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
@@ -41,15 +42,19 @@ function ClienteContainer() {
       });
   };
 
-  return <Cliente menuOptions={menuOptions} dispatchHandleSearch={dispatchHandleSearch} />;
+  return (
+    <NavigationContextProvider>
+      <Cliente
+        menuOptions={menuOptions}
+        dispatchHandleSearch={dispatchHandleSearch}
+        handleLogout={handleLogout}
+      />
+    </NavigationContextProvider>
+  );
 }
 
 export default withRouter(ClienteContainer);
 
 ClienteContainer.propTypes = {
-  router: PropTypes.shape({
-    location: PropTypes.any,
-    navigate: PropTypes.func,
-    params: PropTypes.any,
-  }).isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };

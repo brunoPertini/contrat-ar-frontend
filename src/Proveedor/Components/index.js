@@ -4,7 +4,9 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useCallback, useContext, useEffect, useMemo, useState,
+} from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
@@ -17,6 +19,7 @@ import {
   ROLE_PROVEEDOR_PRODUCTOS,
   SERVICE,
   SERVICES,
+  dialogModalTexts,
 } from '../../Shared/Constants/System';
 import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
@@ -27,6 +30,9 @@ import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import InformativeAlert from '../../Shared/Components/Alert';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import GoBackLink from '../../Shared/Components/GoBackLink';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
 
 const localStorageService = new LocalStorageService();
 
@@ -57,11 +63,29 @@ function ProveedorPage({
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
-  const [modalContent, setModalContent] = useState({ title: '', text: '' });
+  const [modalContent, setModalContent] = useState({ title: '', text: '', handleAccept: () => {} });
 
   const [crudOperationResult, setCrudOperationResult] = useState();
 
   const categoriesFiltersEnabled = useMemo(() => !isEmpty(categorias), [categorias]);
+
+  const { setHandleGoBack } = useContext(NavigationContext);
+
+  const isGoingBack = localStorageService.getItem(
+    LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
+  );
+
+  const onChangeCurrentScreen = ({ newScreen } = {}) => {
+    setCurrentInnerScreen(newScreen);
+  };
+
+  const showExitAppAlertModal = useCallback(() => {
+    setModalContent({
+      title: dialogModalTexts.EXIT_APP.title,
+      text: dialogModalTexts.EXIT_APP.text,
+      handleAccept: handleLogout,
+    });
+  }, [setModalContent]);
 
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
@@ -71,12 +95,25 @@ function ProveedorPage({
       setCurrentInnerScreen(storedScreen);
     }
 
-    if (localStorageService.getItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED)) {
-      const title = '¿Desea salir?';
-      const text = 'Perderá todos los cambios';
-      setModalContent({ title, text });
-    }
+    setHandleGoBack(() => showExitAppAlertModal);
   }, []);
+
+  useEffect(() => {
+    if (isGoingBack && currentInnerScreen) {
+      setModalContent({
+        title: dialogModalTexts.SAVE_CHANGES.title,
+        text: dialogModalTexts.SAVE_CHANGES.text,
+      });
+    }
+
+    if (isGoingBack && !currentInnerScreen) {
+      setModalContent({
+        title: dialogModalTexts.EXIT_APP.title,
+        text: dialogModalTexts.EXIT_APP.text,
+        handleAccept: handleLogout,
+      });
+    }
+  }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
     setFilteredVendibles(vendibles);
@@ -88,6 +125,10 @@ function ProveedorPage({
         LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
         currentInnerScreen,
       );
+
+      setHandleGoBack(() => onChangeCurrentScreen);
+    } else {
+      setHandleGoBack(() => showExitAppAlertModal);
     }
   }, [currentInnerScreen]);
 
@@ -160,10 +201,6 @@ function ProveedorPage({
 
       return newFilteredVendibles;
     });
-  };
-
-  const onChangeCurrentScreen = ({ newScreen }) => {
-    setCurrentInnerScreen(newScreen);
   };
 
   const managePostVendibleResults = (body) => handlePostVendible(body)
@@ -304,9 +341,12 @@ function ProveedorPage({
     );
   }
 
+  useOnLeavingTabHandler();
+
   return (
     <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+      <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
+      <GoBackLink />
       { mainContent }
       <InformativeAlert
         open={openSnackbar}

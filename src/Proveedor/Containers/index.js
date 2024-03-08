@@ -1,17 +1,16 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
 import { UserAccountOptions, withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
-import { routes, systemConstants } from '../../Shared/Constants';
+import { systemConstants } from '../../Shared/Constants';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { resetUserInfo } from '../../State/Actions/usuario';
-import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
+import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 
 const stateSelector = (state) => state;
 
@@ -33,9 +32,8 @@ const addNewVendiblesLabels = {
 
 const localStorageService = new LocalStorageService();
 
-function ProveedorContainer({ router }) {
+function ProveedorContainer({ router, handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
-  const dispatch = useDispatch();
 
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
 
@@ -77,12 +75,6 @@ function ProveedorContainer({ router }) {
     setResponse(newResponse);
   };
 
-  const handleLogout = async () => {
-    removeOnLeavingTabHandlers();
-    await dispatch(resetUserInfo());
-    router.navigate(routes.signin);
-  };
-
   const handlePostVendible = async (vendibleData) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
@@ -103,22 +95,26 @@ function ProveedorContainer({ router }) {
   }, []);
 
   return (
-    <ProveedorPage
-      vendibles={response.vendibles}
-      categorias={response.categorias}
-      menuOptions={menuOptions}
-      addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
-      userInfo={userInfo}
-      handleLogout={handleLogout}
-      handleUploadImage={handleUploadImage}
-      handlePostVendible={handlePostVendible}
-      router={router}
-    />
+    <NavigationContextProvider>
+      <ProveedorPage
+        vendibles={response.vendibles}
+        categorias={response.categorias}
+        menuOptions={menuOptions}
+        addVendibleSectionProps={{ addVendibleLabel, addVendibleLink }}
+        userInfo={userInfo}
+        handleLogout={handleLogout}
+        handleUploadImage={handleUploadImage}
+        handlePostVendible={handlePostVendible}
+        router={router}
+      />
+    </NavigationContextProvider>
+
   );
 }
 
 ProveedorContainer.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 export default withRouter(ProveedorContainer);

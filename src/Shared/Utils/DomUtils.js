@@ -1,3 +1,4 @@
+/* eslint-disable valid-typeof */
 /**
  * Creates and appends elementType in elementLocation, assigning attributes to elementType
  * @param {string} elementType
@@ -22,7 +23,8 @@ export function createDomElement(elementType, elementLocation, attributes) {
  */
 export function isElementBeingShown(selector) {
   const element = document.querySelector(selector);
-  return !element || window.getComputedStyle(element).display === 'none';
+  return element || ((typeof element === 'Element')
+    && window.getComputedStyle(element).display === 'none');
 }
 
 /**

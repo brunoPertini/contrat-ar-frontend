@@ -73,6 +73,13 @@ export default function withRouter(Component) {
       }
     };
 
+    /** This cleans site's info such as localStorage, cookies, etc and performs log out */
+    const handleLogout = async () => {
+      removeOnLeavingTabHandlers();
+      await store.dispatch(resetUserInfo());
+      navigate(routes.signin);
+    };
+
     /**
      * This is to handle when the url is replaced in the browser
      */
@@ -101,6 +108,7 @@ export default function withRouter(Component) {
             router={{ location, navigate, params }}
             securityService={securityService}
             cookiesService={cookiesService}
+            handleLogout={handleLogout}
           />
         </Provider>
       );

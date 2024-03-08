@@ -1,5 +1,5 @@
 import {
-  Fragment, useCallback, useEffect, useMemo, useState,
+  Fragment, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
-import { systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
+import { routes, systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
@@ -27,6 +27,9 @@ import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
 import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
 import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import GoBackLink from '../../Shared/Components/GoBackLink';
+import { routerShape } from '../../Shared/PropTypes/Shared';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
 
 const vendiblesGridProps = {
   item: true,
@@ -38,7 +41,7 @@ const vendiblesGridProps = {
 };
 
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, getVendibles,
+  proveedoresInfo, vendibleType, userInfo, getVendibles, router,
 }) {
   const [contactText, setContactText] = useState();
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
@@ -47,10 +50,15 @@ function VendiblePage({
   const [filtersEnabled, setFiltersEnabled] = useState(false);
   const [firstSearchDone, setFirstSearchDone] = useState(false);
 
+  const { setHandleGoBack, setParams } = useContext(NavigationContext);
+
   useEffect(() => {
     if (proveedoresInfo?.vendibles.length >= 2) {
       setFiltersEnabled(true);
     }
+
+    setHandleGoBack(() => router.navigate);
+    setParams([routes.ROLE_CLIENTE]);
   }, []);
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
@@ -154,6 +162,7 @@ function VendiblePage({
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} renderNavigationLinks />
+      <GoBackLink />
       <Grid
         container
         sx={{
@@ -304,6 +313,7 @@ VendiblePage.propTypes = {
     minPrice: PropTypes.number,
     maxPrice: PropTypes.number,
   }).isRequired,
+  router: PropTypes.shape(routerShape).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
 };
