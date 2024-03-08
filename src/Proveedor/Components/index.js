@@ -4,7 +4,9 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useCallback, useContext, useEffect, useMemo, useState,
+} from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
@@ -28,8 +30,9 @@ import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import InformativeAlert from '../../Shared/Components/Alert';
-import { useGoBackLink } from '../../Shared/Hooks/useGoBackLink';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import GoBackLink from '../../Shared/Components/GoBackLink';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
 
 const localStorageService = new LocalStorageService();
 
@@ -66,9 +69,23 @@ function ProveedorPage({
 
   const categoriesFiltersEnabled = useMemo(() => !isEmpty(categorias), [categorias]);
 
+  const { setHandleGoBack } = useContext(NavigationContext);
+
   const isGoingBack = localStorageService.getItem(
     LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
   );
+
+  const onChangeCurrentScreen = ({ newScreen } = {}) => {
+    setCurrentInnerScreen(newScreen);
+  };
+
+  const showExitAppAlertModal = useCallback(() => {
+    setModalContent({
+      title: dialogModalTexts.EXIT_APP.title,
+      text: dialogModalTexts.EXIT_APP.text,
+      handleAccept: handleLogout,
+    });
+  }, [setModalContent]);
 
   useEffect(() => {
     const storedScreen = localStorageService.getItem(
@@ -77,6 +94,8 @@ function ProveedorPage({
     if (storedScreen) {
       setCurrentInnerScreen(storedScreen);
     }
+
+    setHandleGoBack(() => showExitAppAlertModal);
   }, []);
 
   useEffect(() => {
@@ -106,6 +125,10 @@ function ProveedorPage({
         LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
         currentInnerScreen,
       );
+
+      setHandleGoBack(() => onChangeCurrentScreen);
+    } else {
+      setHandleGoBack(() => showExitAppAlertModal);
     }
   }, [currentInnerScreen]);
 
@@ -180,10 +203,6 @@ function ProveedorPage({
     });
   };
 
-  const onChangeCurrentScreen = ({ newScreen }) => {
-    setCurrentInnerScreen(newScreen);
-  };
-
   const managePostVendibleResults = (body) => handlePostVendible(body)
     .then((response) => {
       setCrudOperationResult(true);
@@ -207,7 +226,6 @@ function ProveedorPage({
           .toLowerCase(),
         handleUploadImage,
         handlePostVendible: managePostVendibleResults,
-        handleGoBack: onChangeCurrentScreen,
         router,
       },
     },
@@ -218,14 +236,6 @@ function ProveedorPage({
   const onCancelLeavingPage = () => {
     setModalContent({ title: '', text: '' });
     localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
-  };
-
-  const showExitAppAlertModal = () => {
-    setModalContent({
-      title: dialogModalTexts.EXIT_APP.title,
-      text: dialogModalTexts.EXIT_APP.text,
-      handleAccept: handleLogout,
-    });
   };
 
   if (currentInnerScreen) {
@@ -332,11 +342,11 @@ function ProveedorPage({
   }
 
   useOnLeavingTabHandler();
-  useGoBackLink({ handleGoBack: showExitAppAlertModal });
 
   return (
     <>
       <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
+      <GoBackLink />
       { mainContent }
       <InformativeAlert
         open={openSnackbar}

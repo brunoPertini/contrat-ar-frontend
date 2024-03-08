@@ -15,7 +15,6 @@ import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
 import { buildCategoryObject, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
-import { useGoBackLink } from '../../Shared/Hooks/useGoBackLink';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
@@ -177,7 +176,6 @@ function VendibleCreateForm({
   }];
 
   useOnLeavingTabHandler();
-  useGoBackLink({});
 
   return (
     <Grid

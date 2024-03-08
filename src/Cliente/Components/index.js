@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  useCallback, useContext, useEffect, useMemo, useState,
+} from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Header from '../../Header';
 import {
-  RadioList, Layout, SearcherInput, StaticAlert,
+  RadioList, Layout, SearcherInput, StaticAlert, DialogModal,
 } from '../../Shared/Components';
 import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
@@ -16,9 +18,15 @@ import { sharedLabels } from '../../StaticData/Shared';
 import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
+import GoBackLink from '../../Shared/Components/GoBackLink';
+import { dialogModalTexts } from '../../Shared/Constants/System';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
+
+const localStorageService = new LocalStorageService();
 
 function Cliente({
-  menuOptions, dispatchHandleSearch,
+  menuOptions, dispatchHandleSearch, handleLogout,
 }) {
   const [searchErrorMessage, setErrorMessage] = useState('');
 
@@ -35,6 +43,10 @@ function Cliente({
   const [thereIsNoResults, setThereIsNoResults] = useState(false);
 
   const [filtersEnabled, setFiltersEnabled] = useState(false);
+
+  const [modalContent, setModalContent] = useState({ title: '', text: '', handleAccept: () => {} });
+
+  const { setHandleGoBack } = useContext(NavigationContext);
 
   const handleSetSearchType = (event) => {
     setErrorMessage('');
@@ -80,6 +92,11 @@ function Cliente({
 
   const handleKeyUp = (newValue) => {
     setSearchInputValue(newValue);
+  };
+
+  const onCancelLeavingPage = () => {
+    setModalContent({ title: '', text: '' });
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
   };
 
   const radioGroupConfig = {
@@ -130,15 +147,37 @@ function Cliente({
     [vendiblesResponse],
   );
 
+  const showExitAppAlertModal = useCallback(() => {
+    setModalContent({
+      title: dialogModalTexts.EXIT_APP.title,
+      text: dialogModalTexts.EXIT_APP.text,
+      handleAccept: handleLogout,
+    });
+  }, [setModalContent]);
+
   const isSearchDisabled = useMemo(
     () => (!!previousSearchInputValue
     && previousSearchInputValue === searchInputValue),
     [previousSearchInputValue, searchInputValue],
   );
 
+  useEffect(() => {
+    setHandleGoBack(() => showExitAppAlertModal);
+  }, []);
+
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
+      <GoBackLink />
+      <DialogModal
+        title={modalContent.title}
+        contextText={modalContent.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+        open={!!(modalContent?.title && modalContent.text)}
+        handleAccept={handleLogout}
+        handleDeny={onCancelLeavingPage}
+      />
       <Grid
         container
         sx={{
@@ -237,6 +276,7 @@ function Cliente({
 Cliente.propTypes = {
   menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   dispatchHandleSearch: PropTypes.func.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 export default Cliente;

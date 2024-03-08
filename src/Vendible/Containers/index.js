@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
@@ -6,10 +7,12 @@ import isEmpty from 'lodash/isEmpty';
 import VendiblePage from '../Components';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
+import { routerShape } from '../../Shared/PropTypes/Shared';
 
 const stateSelector = (state) => state;
 
-function VendibleContainer() {
+function VendibleContainer({ router }) {
   const location = useLocation();
   const { vendibleType, vendibleId } = location.state;
 
@@ -42,13 +45,21 @@ function VendibleContainer() {
   }, []);
 
   return !isEmpty(proveedoresInfo) ? (
-    <VendiblePage
-      getVendibles={handleGetProveedoresInfo}
-      proveedoresInfo={proveedoresInfo}
-      vendibleType={vendibleType}
-      userInfo={userInfo}
-    />
+    <NavigationContextProvider>
+      <VendiblePage
+        getVendibles={handleGetProveedoresInfo}
+        proveedoresInfo={proveedoresInfo}
+        vendibleType={vendibleType}
+        userInfo={userInfo}
+        router={router}
+      />
+    </NavigationContextProvider>
+
   ) : null;
 }
+
+VendibleContainer.propTypes = {
+  router: PropTypes.shape(routerShape).isRequired,
+};
 
 export default withRouter(VendibleContainer);
