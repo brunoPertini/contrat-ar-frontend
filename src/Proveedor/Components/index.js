@@ -334,7 +334,7 @@ function ProveedorPage({
             </div>
           </Box>
           <Box>
-            <VendiblesList vendibles={filteredVendibles} />
+            <VendiblesList vendibles={filteredVendibles} vendibleType={vendibleType} />
           </Box>
         </Grid>
       </Grid>

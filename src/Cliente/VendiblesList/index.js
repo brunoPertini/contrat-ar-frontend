@@ -48,7 +48,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
 
         const { vendibleId } = vendiblesObject.vendibles[vendibleName][0];
 
-        const linkSection = (
+        const linkSection = () => (
           <>
             <Groups2Icon fontSize="large" />
             <Link

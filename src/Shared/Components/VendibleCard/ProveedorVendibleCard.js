@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 
-export default function ProveedorVendibleCard({ imageSection, titleSection, linkSection }) {
+export default function ProveedorVendibleCard({
+  imageSection,
+  titleSection,
+  linkSection,
+  vendibleType,
+}) {
   return (
     <>
       { titleSection }

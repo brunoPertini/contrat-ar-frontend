@@ -41,5 +41,8 @@
     "image.main": "Imagen principal",
     "minimum": "Mínimo",
     "maximum": "Máximo",
-    "goBack": "Volver"
+    "goBack": "Volver",
+    "actions": "Acciones",
+    "modify": "Modificar",
+    "delete": "Borrar"
 }
