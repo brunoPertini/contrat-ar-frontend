@@ -11,6 +11,7 @@ import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import OptionsMenu from '../../Shared/Components/OptionsMenu';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
+import { PRICE_TYPES, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED } from '../../Shared/Constants/System';
 
 const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabels.delete];
 
@@ -19,16 +20,46 @@ const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabe
  */
 export default function VendiblesList({ vendibles, vendibleType }) {
   const [isOperationsModalOpen, setIsOperationsModalOpen] = useState(false);
-  const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(null);
+  const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(<div />);
 
-  const cardStyles = { display: 'flex', flexDirection: 'row', justifyContent: 'space-between' };
+  const cardStyles = {
+    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+  };
 
   const optionsMenuHandlers = ({ vendibleInfo, option }) => {
+    const locationTypes = [];
+
+    if (vendibleInfo.offersDelivery) {
+      locationTypes.push(SERVICE_LOCATION_AT_HOME);
+    }
+
+    if (vendibleInfo.offersInCustomAddress) {
+      locationTypes.push(SERVICE_LOCATION_FIXED);
+    }
+
+    const parsedVendibleInfo = {
+      ...vendibleInfo,
+      priceInfo: {
+        type: PRICE_TYPES[vendibleInfo.tipoPrecio],
+        amount: vendibleInfo.precio,
+      },
+      vendibleLocation: vendibleInfo.location,
+      categories: vendibleInfo.categoryNames,
+      locationTypes,
+      nombre: vendibleInfo.vendibleNombre,
+    };
+
     const handlers = {
       [sharedLabels.seeDetail]: () => (
         <VendibleInfo
           vendibleType={vendibleType}
-          vendibleInfo={vendibleInfo}
+          vendibleInfo={parsedVendibleInfo}
+          cardStyles={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '60%',
+            overflow: 'scroll',
+          }}
         />
       ),
       [sharedLabels.modify]: () => {},
@@ -41,7 +72,8 @@ export default function VendiblesList({ vendibles, vendibleType }) {
   // eslint-disable-next-line no-unused-vars
   const handleOnOptionClicked = (option, vendibleInfo) => {
     setIsOperationsModalOpen(true);
-    optionsMenuHandlers[option]();
+    const ModalComponent = optionsMenuHandlers({ vendibleInfo, option });
+    setVendibleOperationsComponent(ModalComponent);
   };
 
   const linkSection = (vendible) => (
@@ -57,13 +89,17 @@ export default function VendiblesList({ vendibles, vendibleType }) {
     <>
       <Modal
         open={isOperationsModalOpen}
-        onClose={() => {}}
+        onClose={() => setIsOperationsModalOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexWrap: 'wrap',
+          alignContent: 'center',
+        }}
       >
-        <div>
-          rreeeeeeeeeeeee
-        </div>
+        { vendibleOperationsComponent }
       </Modal>
       <List>
         {vendibles.map((vendible) => (

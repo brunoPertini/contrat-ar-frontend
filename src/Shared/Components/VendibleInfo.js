@@ -15,7 +15,9 @@ import {
 } from '../Constants/System';
 import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 
-export default function VendibleInfo({ title, vendibleInfo, vendibleType }) {
+export default function VendibleInfo({
+  title, vendibleInfo, vendibleType, cardStyles, cardRowStyles,
+}) {
   const {
     categories, nombre,
     priceInfo: { type: priceInfoType, amount: priceInfoAmount },
@@ -45,12 +47,8 @@ export default function VendibleInfo({ title, vendibleInfo, vendibleType }) {
 
   const renderTitle = !!title;
 
-  const cardRowStyles = {
-    width: '40%',
-  };
-
   return (
-    <Card>
+    <Card sx={{ ...cardStyles }}>
       {
             renderTitle && (
             <Typography variant="h4">

@@ -21,6 +21,9 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
         vendibleInfo={vendibleInfo}
         vendibleType={vendibleType}
         title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleType)}
+        cardRowStyles={{
+          width: '40%',
+        }}
       />
     </Grid>
   );

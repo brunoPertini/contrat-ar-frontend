@@ -11,6 +11,25 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
 import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
 
+// eslint-disable-next-line react/prop-types
+function LinkSection({ linkLabel, onClick, vendibleId }) {
+  return (
+    <>
+      <Groups2Icon fontSize="large" />
+      <Link
+        onClick={() => onClick(vendibleId)}
+        variant="h5"
+        sx={{
+          ml: '10px',
+          cursor: 'pointer',
+        }}
+      >
+        {linkLabel}
+      </Link>
+    </>
+  );
+}
+
 /**
  * List that shows each service or product info, including its provider
  * @param {Object<String, Array>} vendiblesObject
@@ -48,29 +67,19 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
 
         const { vendibleId } = vendiblesObject.vendibles[vendibleName][0];
 
-        const linkSection = () => (
-          <>
-            <Groups2Icon fontSize="large" />
-            <Link
-              onClick={() => handleGoToVendiblePage(vendibleId)}
-              variant="h5"
-              sx={{
-                ml: '10px',
-                cursor: 'pointer',
-              }}
-            >
-              {linkLabel}
-            </Link>
-          </>
-        );
-
         return (
           <VendibleCard
             vendibleTitle={vendibleName}
             images={images}
             key={`vendibleCard_${vendibleName}`}
             cardStyles={{ mb: '2%', display: 'flex', flexDirection: 'column' }}
-            linkSection={linkSection}
+            LinkSection={(
+              <LinkSection
+                vendibleId={vendibleId}
+                onClick={handleGoToVendiblePage}
+                linkLabel={linkLabel}
+              />
+)}
             linkCardStyles={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
             imageListProps={{
               cols: 3,
