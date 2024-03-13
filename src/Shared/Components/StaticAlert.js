@@ -25,7 +25,7 @@ StaticAlert.defaultProps = {
 StaticAlert.propTypes = {
   severity: PropTypes.string,
   variant: PropTypes.string,
-  styles: PropTypes.objectOf(PropTypes.string),
+  styles: PropTypes.object,
   label: PropTypes.string.isRequired,
 };
 

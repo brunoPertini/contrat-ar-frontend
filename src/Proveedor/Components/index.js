@@ -334,7 +334,11 @@ function ProveedorPage({
             </div>
           </Box>
           <Box>
-            <VendiblesList vendibles={filteredVendibles} vendibleType={vendibleType} />
+            <VendiblesList
+              vendibles={filteredVendibles}
+              vendibleType={vendibleType}
+              userToken={userInfo.token}
+            />
           </Box>
         </Grid>
       </Grid>

@@ -18,7 +18,7 @@ const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabe
 /**
  * Vendibles list of Proveedor page.
  */
-export default function VendiblesList({ vendibles, vendibleType }) {
+export default function VendiblesList({ vendibles, vendibleType, userToken }) {
   const [isOperationsModalOpen, setIsOperationsModalOpen] = useState(false);
   const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(<div />);
 
@@ -60,6 +60,7 @@ export default function VendiblesList({ vendibles, vendibleType }) {
             width: '60%',
             overflow: 'scroll',
           }}
+          userToken={userToken}
         />
       ),
       [sharedLabels.modify]: () => {},
@@ -71,9 +72,11 @@ export default function VendiblesList({ vendibles, vendibleType }) {
 
   // eslint-disable-next-line no-unused-vars
   const handleOnOptionClicked = (option, vendibleInfo) => {
-    setIsOperationsModalOpen(true);
-    const ModalComponent = optionsMenuHandlers({ vendibleInfo, option });
-    setVendibleOperationsComponent(ModalComponent);
+    if (option) {
+      setIsOperationsModalOpen(true);
+      const ModalComponent = optionsMenuHandlers({ vendibleInfo, option });
+      setVendibleOperationsComponent(ModalComponent);
+    }
   };
 
   const linkSection = (vendible) => (
@@ -88,6 +91,7 @@ export default function VendiblesList({ vendibles, vendibleType }) {
   return (
     <>
       <Modal
+        disableEnforceFocus
         open={isOperationsModalOpen}
         onClose={() => setIsOperationsModalOpen(false)}
         aria-labelledby="modal-modal-title"
@@ -143,4 +147,5 @@ VendiblesList.defaultProps = {
 VendiblesList.propTypes = {
   vendibles: proveedoresVendiblesShape,
   vendibleType: PropTypes.string.isRequired,
+  userToken: PropTypes.string.isRequired,
 };

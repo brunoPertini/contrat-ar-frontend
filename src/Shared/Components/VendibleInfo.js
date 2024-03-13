@@ -11,12 +11,14 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_VARIABLE, PRODUCT,
+  PRODUCTS,
+  SERVICE,
   SERVICE_LOCATION_FIXED,
 } from '../Constants/System';
 import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 
 export default function VendibleInfo({
-  title, vendibleInfo, vendibleType, cardStyles, cardRowStyles,
+  title, vendibleInfo, vendibleType, cardStyles, cardRowStyles, userToken,
 }) {
   const {
     categories, nombre,
@@ -43,9 +45,11 @@ export default function VendibleInfo({
   const renderLocationType = vendibleType !== PRODUCT.toLowerCase();
   const renderMap = renderLocationType && locationTypes.includes(SERVICE_LOCATION_FIXED);
 
-  const renderStock = vendibleType === PRODUCT.toLowerCase();
+  const renderStock = vendibleType === PRODUCTS;
 
   const renderTitle = !!title;
+
+  const vendibleUnit = (vendibleType === PRODUCTS ? PRODUCT : SERVICE).toLowerCase();
 
   return (
     <Card sx={{ ...cardStyles }}>
@@ -114,7 +118,7 @@ export default function VendibleInfo({
         }
       <CardContent sx={{ ...cardRowStyles }}>
         <Typography>
-          { proveedorLabels['addVendible.description'].replace('{vendible}', vendibleType)}
+          { proveedorLabels['addVendible.description'].replace('{vendible}', vendibleUnit)}
           :
         </Typography>
         <Typography fontWeight="bold">
@@ -148,7 +152,7 @@ export default function VendibleInfo({
             renderLocationType && (
             <CardContent sx={{ width: '60%' }}>
               <Typography>
-                { sharedLabels.serviceLocationType }
+                { sharedLabels.locationType[vendibleUnit] }
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 { locationTypesString }
@@ -156,6 +160,7 @@ export default function VendibleInfo({
               {
                 renderMap && (
                 <LocationMap
+                  token={userToken}
                   containerStyles={{
                     height: '200px',
                     width: '100%',

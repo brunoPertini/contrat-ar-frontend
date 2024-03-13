@@ -36,7 +36,10 @@
     "cancel": "Cancelar",
     "uploadImage": "Subir Imagen",
     "categories": "Categorias",
-    "serviceLocationType": "¿Dónde prestás el servicio?",
+    "locationType": {
+        "producto" : "¿Dónde vendés el producto?",
+        "servicio": "¿Dónde prestás el servicio?"
+    },
     "units": "unidades",
     "image.main": "Imagen principal",
     "minimum": "Mínimo",

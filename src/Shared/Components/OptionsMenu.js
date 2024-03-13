@@ -44,7 +44,11 @@ export default function OptionsMenu({
       >
         {
         options.map((option) => (
-          <MenuItem onClick={handleClose} disableRipple>
+          <MenuItem
+            key={`option_menu_${option}`}
+            onClick={handleClose}
+            disableRipple
+          >
             {option}
           </MenuItem>
         ))

@@ -7,5 +7,5 @@
     "dialog.permission.revoke.textContext": "Dado que rechaz\u00F3 los permisos de ubicaci\u00F3n, deber\u00E1 configuarlos manualmente para poder continuar. Si su navegador es Google Chrome, <a href=\"https:\/\/support.google.com\/chrome\/answer\/114662?hl=es&co=GENIE.Platform%3DDesktop&oco=0\" target=\"_blank\">siga estas instrucciones<\/a>",
     "dialog.permission.revoke.finish": "Volver al inicio",
     "map.marker.title": "Esta es su ubicación estimada",
-    "openMapInModal": "Abrir Mapa en modal"
+    "openMapInModal": "Ampliar mapa"
 }
