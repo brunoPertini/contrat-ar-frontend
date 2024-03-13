@@ -21,7 +21,6 @@ export class ExternalHttpClient extends HttpClient {
     return this.get(
       thirdPartyRoutes.getAddressFromCoordinates,
       { ...params },
-    ).then((data) => data.display_name)
-      .catch((error) => error);
+    ).then((data) => data.display_name);
   }
 }

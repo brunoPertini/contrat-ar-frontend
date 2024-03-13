@@ -2,6 +2,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import { routes } from '../../Constants';
+import { errorMessages } from '../../../StaticData/Shared';
 
 export default function withErrorHandler(Component) {
   function ComponentWithErrorHandler(props) {
@@ -13,7 +14,7 @@ export default function withErrorHandler(Component) {
      */
     const handleError = (error) => {
       if (error.status === 401) {
-        navigate(routes.signin);
+        navigate(routes.signin, { state: { errorMessage: errorMessages.sessionExpired } });
       }
     };
 
