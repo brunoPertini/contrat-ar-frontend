@@ -1,8 +1,7 @@
-/* eslint-disable react/no-unstable-nested-components */
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
 import Modal from '@mui/material/Modal';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import VendibleCard from '../../Shared/Components/VendibleCard';
 import { sharedLabels } from '../../StaticData/Shared';
 import ProveedorVendibleCard from '../../Shared/Components/VendibleCard/ProveedorVendibleCard';
@@ -15,6 +14,53 @@ import { PRICE_TYPES, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED } from '.
 
 const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabels.delete];
 
+const optionsMenuHandlers = ({
+  vendibleInfo,
+  option, vendibleType, userToken,
+}) => {
+  const locationTypes = [];
+
+  if (vendibleInfo.offersDelivery) {
+    locationTypes.push(SERVICE_LOCATION_AT_HOME);
+  }
+
+  if (vendibleInfo.offersInCustomAddress) {
+    locationTypes.push(SERVICE_LOCATION_FIXED);
+  }
+
+  const parsedVendibleInfo = {
+    ...vendibleInfo,
+    priceInfo: {
+      type: PRICE_TYPES[vendibleInfo.tipoPrecio],
+      amount: vendibleInfo.precio,
+    },
+    vendibleLocation: vendibleInfo.location,
+    categories: vendibleInfo.categoryNames,
+    locationTypes,
+    nombre: vendibleInfo.vendibleNombre,
+  };
+
+  const handlers = {
+    [sharedLabels.seeDetail]: () => (
+      <VendibleInfo
+        vendibleType={vendibleType}
+        vendibleInfo={parsedVendibleInfo}
+        cardStyles={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '60%',
+          overflow: 'scroll',
+        }}
+        userToken={userToken}
+      />
+    ),
+    [sharedLabels.modify]: () => {},
+    [sharedLabels.delete]: () => {},
+  };
+
+  return handlers[option]();
+};
+
 /**
  * Vendibles list of Proveedor page.
  */
@@ -26,67 +72,27 @@ export default function VendiblesList({ vendibles, vendibleType, userToken }) {
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
   };
 
-  const optionsMenuHandlers = ({ vendibleInfo, option }) => {
-    const locationTypes = [];
-
-    if (vendibleInfo.offersDelivery) {
-      locationTypes.push(SERVICE_LOCATION_AT_HOME);
-    }
-
-    if (vendibleInfo.offersInCustomAddress) {
-      locationTypes.push(SERVICE_LOCATION_FIXED);
-    }
-
-    const parsedVendibleInfo = {
-      ...vendibleInfo,
-      priceInfo: {
-        type: PRICE_TYPES[vendibleInfo.tipoPrecio],
-        amount: vendibleInfo.precio,
-      },
-      vendibleLocation: vendibleInfo.location,
-      categories: vendibleInfo.categoryNames,
-      locationTypes,
-      nombre: vendibleInfo.vendibleNombre,
-    };
-
-    const handlers = {
-      [sharedLabels.seeDetail]: () => (
-        <VendibleInfo
-          vendibleType={vendibleType}
-          vendibleInfo={parsedVendibleInfo}
-          cardStyles={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '60%',
-            overflow: 'scroll',
-          }}
-          userToken={userToken}
-        />
-      ),
-      [sharedLabels.modify]: () => {},
-      [sharedLabels.delete]: () => {},
-    };
-
-    return handlers[option]();
-  };
-
-  // eslint-disable-next-line no-unused-vars
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       setIsOperationsModalOpen(true);
-      const ModalComponent = optionsMenuHandlers({ vendibleInfo, option });
+      const ModalComponent = optionsMenuHandlers({
+        vendibleInfo,
+        option,
+        vendibleType,
+        userToken,
+      });
       setVendibleOperationsComponent(ModalComponent);
     }
   };
 
-  const linkSection = (vendible) => (
+  const linkSection = useCallback((vendible) => (
     <OptionsMenu
       title={sharedLabels.actions}
       options={vendibleOptions}
       onOptionClicked={(option) => handleOnOptionClicked(option, vendible)}
       vendibleName={vendible.vendibleNombre}
     />
-  );
+  ), [handleOnOptionClicked]);
 
   return (
     <>

@@ -11,7 +11,6 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
 import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
 
-// eslint-disable-next-line react/prop-types
 function LinkSection({ linkLabel, onClick, vendibleId }) {
   return (
     <>
@@ -92,6 +91,12 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
     </List>
   );
 }
+
+LinkSection.propTypes = {
+  linkLabel: PropTypes.element.isRequired,
+  onClick: PropTypes.func.isRequired,
+  vendibleId: PropTypes.number.isRequired,
+};
 
 VendiblesList.propTypes = {
   vendiblesObject: PropTypes.shape(getVendiblesResponseShape).isRequired,

@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { useState } from 'react';
-import { Menu } from '@mui/material';
 
+/**
+ * Menu that shows options related to a vendible, specified
+ *  by vendibleName prop
+ */
 export default function OptionsMenu({
   options, title, onOptionClicked, vendibleName,
 }) {
@@ -25,8 +29,6 @@ export default function OptionsMenu({
   return (
     <div>
       <Button
-        id="demo-customized-button"
-        aria-controls={isOpen ? 'demo-customized-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={isOpen ? 'true' : undefined}
         variant="contained"
