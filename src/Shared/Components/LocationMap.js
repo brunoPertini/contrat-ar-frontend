@@ -14,6 +14,8 @@ import { labels } from '../../StaticData/LocationMap';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
 import { EMPTY_FUNCTION } from '../Constants/System';
+import withErrorHandler from './HighOrderComponents/withErrorHandler';
+import { locationShape } from '../PropTypes/Shared';
 
 const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
@@ -30,6 +32,7 @@ const LocationMap = memo(function LocationMap({
   containerStyles,
   token,
   enableDragEvents,
+  handleError,
 }) {
   const previousLocation = usePreviousPropValue(location);
 
@@ -101,13 +104,11 @@ const LocationMap = memo(function LocationMap({
     if (coords) {
       const httpClient = HttpClientFactory.createExternalHttpClient('', { token });
 
-      // eslint-disable-next-line no-shadow
-      const readableAddress = await httpClient.getAddressFromLocation({
+      httpClient.getAddressFromLocation({
         latitude: coords.latitude,
         longitude: coords.longitude,
-      });
-
-      setReadableAddress(readableAddress);
+      }).then((readableAddressResponseData) => setReadableAddress(readableAddressResponseData))
+        .catch((error) => handleError(error));
     }
   }, [HttpClientFactory]);
 
@@ -195,16 +196,12 @@ LocationMap.defaultProps = {
 };
 
 LocationMap.propTypes = {
-  location: PropTypes.shape({
-    coords: PropTypes.shape({
-      latitude: PropTypes.number,
-      longitude: PropTypes.number,
-    }),
-  }).isRequired,
+  location: locationShape.isRequired,
   setLocation: PropTypes.func,
+  handleError: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.any),
   token: PropTypes.string,
   enableDragEvents: PropTypes.bool,
 };
 
-export default LocationMap;
+export default withErrorHandler(LocationMap);

@@ -31,8 +31,8 @@ function InformativeAlert({
 InformativeAlert.defaultProps = {
   autoHideDuration: 5000,
   onClose: EMPTY_FUNCTION,
-  severity: null,
-  label: null,
+  severity: 'info',
+  label: '',
 };
 
 InformativeAlert.propTypes = {

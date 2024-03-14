@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { locationShape } from './Shared';
 
 export const proveedoresVendiblesShape = PropTypes.arrayOf(PropTypes.shape({
   vendibleNombre: PropTypes.string,
@@ -9,3 +10,14 @@ export const proveedoresVendiblesShape = PropTypes.arrayOf(PropTypes.shape({
   vendibleId: PropTypes.number,
   categoryNames: PropTypes.arrayOf(PropTypes.string),
 }));
+
+export const vendibleInfoShape = {
+  categories: PropTypes.arrayOf(PropTypes.string),
+  nombre: PropTypes.string,
+  priceInfo: PropTypes.shape({ type: PropTypes.string, amount: PropTypes.number }),
+  locationTypes: PropTypes.arrayOf(PropTypes.string),
+  vendibleLocation: PropTypes.shape(locationShape),
+  stock: PropTypes.number,
+  imagenUrl: PropTypes.string,
+  descripcion: PropTypes.string,
+};

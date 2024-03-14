@@ -151,7 +151,7 @@ function ProveedorPage({
     }
 
     return ({
-      openSnackbar: crudOperationResult !== undefined && alertForLabel,
+      openSnackbar: crudOperationResult !== undefined && !!(alertForLabel),
       alertSeverity: severityForAlert,
       alertLabel: alertForLabel,
     });
@@ -334,7 +334,11 @@ function ProveedorPage({
             </div>
           </Box>
           <Box>
-            <VendiblesList vendibles={filteredVendibles} />
+            <VendiblesList
+              vendibles={filteredVendibles}
+              vendibleType={vendibleType}
+              userToken={userInfo.token}
+            />
           </Box>
         </Grid>
       </Grid>

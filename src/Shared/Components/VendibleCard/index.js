@@ -6,7 +6,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 export default function VendibleCard({
-  vendibleTitle, images, linkSection,
+  vendibleTitle, images, LinkSection,
   imageListProps: { cols, gap, sx },
   cardStyles, linkCardStyles, ChildrenComponent,
 }) {
@@ -35,13 +35,14 @@ export default function VendibleCard({
 
   const linkContent = (
     <CardContent sx={{ ...linkCardStyles }}>
-      {linkSection}
+      { LinkSection }
     </CardContent>
   );
 
   return (
     <Card sx={{ ...cardStyles }}>
       <ChildrenComponent
+        vendibleTitle={vendibleTitle}
         linkSection={linkContent}
         imageSection={imageSection}
         titleSection={titleSection}
@@ -58,7 +59,7 @@ VendibleCard.defaultProps = {
 VendibleCard.propTypes = {
   vendibleTitle: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  linkSection: PropTypes.node.isRequired,
+  LinkSection: PropTypes.node.isRequired,
   cardStyles: PropTypes.objectOf(PropTypes.string),
   linkCardStyles: PropTypes.objectOf(PropTypes.string),
   imageListProps: PropTypes.shape({

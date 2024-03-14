@@ -1,4 +1,4 @@
-import { PRICE_TYPES } from '../Constants/System';
+import { PRICE_TYPES, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED } from '../Constants/System';
 import { escapeRegExpChars } from '../Utils/InputUtils';
 
 /**
@@ -21,7 +21,7 @@ export function filterVendiblesByCategory({ vendibles, categoryName }) {
 /**
  *
  * @param {Array<String>} categories
- * @returns {{name: String, parent: Object }} The category hierachy composed by those in array
+ * @returns {{name: String, parent: Object }} The category hierarchy composed by those in array
  */
 export function buildCategoryObject(categories) {
   let category = {};
@@ -66,4 +66,37 @@ export function buildCategoryObject(categories) {
  */
 export function buildPriceType(priceTypeValue) {
   return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
+}
+
+/**
+ *
+ * @param {Object} vendibleInfo
+ * @returns The vendible info parsed for being shown at page
+ */
+export function buildVendibleInfo(vendibleInfo) {
+  const locationTypes = [];
+
+  if (vendibleInfo.offersDelivery) {
+    locationTypes.push(SERVICE_LOCATION_AT_HOME);
+  }
+
+  if (vendibleInfo.offersInCustomAddress) {
+    locationTypes.push(SERVICE_LOCATION_FIXED);
+  }
+
+  const { stock, imagenUrl, descripcion } = vendibleInfo;
+
+  return {
+    priceInfo: {
+      type: PRICE_TYPES[vendibleInfo.tipoPrecio],
+      amount: vendibleInfo.precio,
+    },
+    vendibleLocation: vendibleInfo.location,
+    categories: vendibleInfo.categoryNames,
+    locationTypes,
+    nombre: vendibleInfo.vendibleNombre,
+    stock,
+    imagenUrl,
+    descripcion,
+  };
 }
