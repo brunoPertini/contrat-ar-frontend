@@ -1,9 +1,6 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid';
 import ImageListItem from '@mui/material/ImageListItem';
 import Typography from '@mui/material/Typography';
 import LocationMap from './LocationMap';
@@ -13,9 +10,11 @@ import {
   ARGENTINA_LOCALE, PRICE_TYPE_VARIABLE, PRODUCT,
   PRODUCTS,
   SERVICE,
+  SERVICES,
   SERVICE_LOCATION_FIXED,
 } from '../Constants/System';
 import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
+import { vendibleInfoShape } from '../PropTypes/Proveedor';
 
 export default function VendibleInfo({
   title, vendibleInfo, vendibleType, cardStyles, cardRowStyles, userToken,
@@ -181,3 +180,18 @@ export default function VendibleInfo({
     </Card>
   );
 }
+
+VendibleInfo.defaultProps = {
+  title: '',
+  cardRowStyles: {},
+  cardStyles: {},
+};
+
+VendibleInfo.propTypes = {
+  title: PropTypes.string,
+  vendibleInfo: PropTypes.shape(vendibleInfoShape).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCTS, SERVICES]).isRequired,
+  cardStyles: PropTypes.object,
+  cardRowStyles: PropTypes.object,
+  userToken: PropTypes.string.isRequired,
+};

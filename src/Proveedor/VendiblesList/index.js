@@ -10,7 +10,7 @@ import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import OptionsMenu from '../../Shared/Components/OptionsMenu';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
-import { PRICE_TYPES, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED } from '../../Shared/Constants/System';
+import { buildVendibleInfo } from '../../Shared/Helpers/ProveedorHelper';
 
 const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabels.delete];
 
@@ -18,33 +18,11 @@ const optionsMenuHandlers = ({
   vendibleInfo,
   option, vendibleType, userToken,
 }) => {
-  const locationTypes = [];
-
-  if (vendibleInfo.offersDelivery) {
-    locationTypes.push(SERVICE_LOCATION_AT_HOME);
-  }
-
-  if (vendibleInfo.offersInCustomAddress) {
-    locationTypes.push(SERVICE_LOCATION_FIXED);
-  }
-
-  const parsedVendibleInfo = {
-    ...vendibleInfo,
-    priceInfo: {
-      type: PRICE_TYPES[vendibleInfo.tipoPrecio],
-      amount: vendibleInfo.precio,
-    },
-    vendibleLocation: vendibleInfo.location,
-    categories: vendibleInfo.categoryNames,
-    locationTypes,
-    nombre: vendibleInfo.vendibleNombre,
-  };
-
   const handlers = {
     [sharedLabels.seeDetail]: () => (
       <VendibleInfo
         vendibleType={vendibleType}
-        vendibleInfo={parsedVendibleInfo}
+        vendibleInfo={buildVendibleInfo(vendibleInfo)}
         cardStyles={{
           display: 'flex',
           flexDirection: 'column',
@@ -100,8 +78,6 @@ export default function VendiblesList({ vendibles, vendibleType, userToken }) {
         disableEnforceFocus
         open={isOperationsModalOpen}
         onClose={() => setIsOperationsModalOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
         sx={{
           display: 'flex',
           flexDirection: 'column',

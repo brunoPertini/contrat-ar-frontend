@@ -5,3 +5,10 @@ export const routerShape = {
   navigate: PropTypes.func,
   params: PropTypes.any,
 };
+
+export const locationShape = PropTypes.shape({
+  coords: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+  }),
+});

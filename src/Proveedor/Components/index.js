@@ -151,7 +151,7 @@ function ProveedorPage({
     }
 
     return ({
-      openSnackbar: crudOperationResult !== undefined && alertForLabel,
+      openSnackbar: crudOperationResult !== undefined && !!(alertForLabel),
       alertSeverity: severityForAlert,
       alertLabel: alertForLabel,
     });

@@ -15,6 +15,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { usePreviousPropValue } from '../Hooks/usePreviousPropValue';
 import { EMPTY_FUNCTION } from '../Constants/System';
 import withErrorHandler from './HighOrderComponents/withErrorHandler';
+import { locationShape } from '../PropTypes/Shared';
 
 const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
@@ -195,12 +196,7 @@ LocationMap.defaultProps = {
 };
 
 LocationMap.propTypes = {
-  location: PropTypes.shape({
-    coords: PropTypes.shape({
-      latitude: PropTypes.number,
-      longitude: PropTypes.number,
-    }),
-  }).isRequired,
+  location: locationShape.isRequired,
   setLocation: PropTypes.func,
   handleError: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.any),
