@@ -27,12 +27,13 @@ const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
   priceInfo, setPriceInfo, setVendibleLocation, stock, setStock,
-  setCategories, vendibleType, token, vendibleLocation,
+  setCategories, vendibleType, token, vendibleLocation, isEditionEnabled,
 }) {
   const showPriceInput = useMemo(() => {
     const { type } = priceInfo;
-    return type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT);
-  }, [priceInfo]);
+    return (isEditionEnabled
+    || (type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT)));
+  }, [priceInfo, isEditionEnabled]);
 
   const defaultPriceTypeSelected = useMemo(() => (priceInfo.type
     ? pricesTypeMock.findIndex((priceType) => priceType === priceInfo.type)
@@ -82,28 +83,34 @@ function FirstStep({
   };
 
   const gridConfig = {
-    producto: {
+    productos: {
       xs: [6, 6],
       showLocationColumn: false,
     },
 
-    servicio: {
+    servicios: {
       xs: [4, 8],
       showLocationColumn: true,
       showMap: locationTypes.includes(SERVICE_LOCATION_FIXED),
     },
   };
 
+  const { nameFieldTitle, nameFieldPlaceholder } = useMemo(() => ({
+    nameFieldTitle: isEditionEnabled ? null : (
+      <Typography variant="h4">
+        {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
+      </Typography>
+    ),
+    nameFieldPlaceholder: isEditionEnabled ? proveedorLabels.nameOfYourVendible
+      : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType),
+  }), [isEditionEnabled]);
+
   return (
     <Grid item display="flex" flexDirection="row" xs={10}>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
         <Searcher
-          title={(
-            <Typography variant="h4">
-              {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
-            </Typography>
-    )}
-          placeholder={proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType)}
+          title={nameFieldTitle}
+          placeholder={nameFieldPlaceholder}
           searchLabel={inputHelperLabels.required}
           searcherConfig={{
             sx: {
@@ -118,28 +125,32 @@ function FirstStep({
             maxLength: maxLengthConstraints.PROVEEDOR.nombre,
           }}
         />
-        <Grid item sx={{ mt: '5%' }}>
-          <Typography variant="h4">
-            {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
-          </Typography>
-          <Typography
-            dangerouslySetInnerHTML={{
-              __html: proveedorLabels['addVendible.category.text']
-                .replace('{vendible}', vendibleType)
-                .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType.toUpperCase()}.example`]),
-            }}
-            textAlign="justify"
-            sx={{ paddingRight: '5px', width: '70%' }}
-          />
-          <CategoryInput
-            onCategoriesSet={onSetCategories}
-            defaultValues={categories}
-            searcherProps={{
-              searchLabel: inputHelperLabels.addAtLeastOne,
-              required: true,
-            }}
-          />
-        </Grid>
+        {
+          !isEditionEnabled && (
+            <Grid item sx={{ mt: '5%' }}>
+              <Typography variant="h4">
+                {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
+              </Typography>
+              <Typography
+                dangerouslySetInnerHTML={{
+                  __html: proveedorLabels['addVendible.category.text']
+                    .replace('{vendible}', vendibleType)
+                    .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType.toUpperCase()}.example`]),
+                }}
+                textAlign="justify"
+                sx={{ paddingRight: '5px', width: '70%' }}
+              />
+              <CategoryInput
+                onCategoriesSet={onSetCategories}
+                defaultValues={categories}
+                searcherProps={{
+                  searchLabel: inputHelperLabels.addAtLeastOne,
+                  required: true,
+                }}
+              />
+            </Grid>
+          )
+        }
       </Grid>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
         <Typography variant="h4">
@@ -236,8 +247,10 @@ function FirstStep({
 }
 
 FirstStep.defaultProps = {
+  setCategories: () => {},
   locationTypes: [],
   categories: [],
+  isEditionEnabled: false,
 };
 
 FirstStep.propTypes = {
@@ -253,13 +266,14 @@ FirstStep.propTypes = {
   vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
   locationTypes: PropTypes.arrayOf(PropTypes.string),
   categories: PropTypes.arrayOf(PropTypes.string),
-  setCategories: PropTypes.func.isRequired,
+  setCategories: PropTypes.func,
   vendibleLocation: PropTypes.shape({
     coordinates: PropTypes.arrayOf(PropTypes.number),
   }).isRequired,
   token: PropTypes.string.isRequired,
   stock: PropTypes.string.isRequired,
   setStock: PropTypes.func.isRequired,
+  isEditionEnabled: PropTypes.bool,
 };
 
 export default FirstStep;

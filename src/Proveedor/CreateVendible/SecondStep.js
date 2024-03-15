@@ -12,7 +12,8 @@ import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 
 function SecondStep({
-  vendibleType, handleUploadImage, imageUrl, setImageUrl, description, setDescription,
+  vendibleType, handleUploadImage, imageUrl, setImageUrl, description,
+  setDescription, isEditionEnabled,
 }) {
   const [imageError, setImageError] = useState('');
 
@@ -133,6 +134,10 @@ function SecondStep({
   );
 }
 
+SecondStep.defaultProps = {
+  isEditionEnabled: false,
+};
+
 SecondStep.propTypes = {
   vendibleType: PropTypes.string.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
@@ -140,6 +145,7 @@ SecondStep.propTypes = {
   setImageUrl: PropTypes.func.isRequired,
   description: PropTypes.string.isRequired,
   setDescription: PropTypes.func.isRequired,
+  isEditionEnabled: PropTypes.bool,
 };
 
 export default SecondStep;

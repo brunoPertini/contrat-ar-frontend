@@ -68,12 +68,7 @@ export function buildPriceType(priceTypeValue) {
   return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
 }
 
-/**
- *
- * @param {Object} vendibleInfo
- * @returns The vendible info parsed for being shown at page
- */
-export function buildVendibleInfo(vendibleInfo) {
+export function buildLocationTypesArray(vendibleInfo) {
   const locationTypes = [];
 
   if (vendibleInfo.offersDelivery) {
@@ -83,6 +78,17 @@ export function buildVendibleInfo(vendibleInfo) {
   if (vendibleInfo.offersInCustomAddress) {
     locationTypes.push(SERVICE_LOCATION_FIXED);
   }
+
+  return locationTypes;
+}
+
+/**
+ *
+ * @param {Object} vendibleInfo
+ * @returns The vendible info parsed for being shown at page
+ */
+export function buildVendibleInfo(vendibleInfo) {
+  const locationTypes = buildLocationTypesArray(vendibleInfo);
 
   const { stock, imagenUrl, descripcion } = vendibleInfo;
 
