@@ -55,7 +55,7 @@ function Searcher({
           }}
           // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
-            endAdornment: onSearchClick ? (
+            endAdornment: onSearchClick !== EMPTY_FUNCTION ? (
               <IconButton
                 aria-label="search-input"
                 edge="end"

@@ -36,8 +36,10 @@ function FirstStep({
   }, [priceInfo, isEditionEnabled]);
 
   const defaultPriceTypeSelected = useMemo(() => (priceInfo.type
-    ? pricesTypeMock.findIndex((priceType) => priceType === priceInfo.type)
-    : 0), [priceInfo]);
+    ? pricesTypeMock.findIndex((priceType) => {
+      const priceTypeRegex = new RegExp(priceType, 'i');
+      return priceInfo.type.match(priceTypeRegex);
+    }) : 0), [priceInfo]);
 
   const shouldRenderStock = useMemo(() => vendibleType === PRODUCT.toLowerCase(), [vendibleType]);
 
@@ -95,7 +97,7 @@ function FirstStep({
     },
   };
 
-  const { nameFieldTitle, nameFieldPlaceholder } = useMemo(() => ({
+  const { nameFieldTitle, nameFieldPlaceholder, searchLabel } = useMemo(() => ({
     nameFieldTitle: isEditionEnabled ? null : (
       <Typography variant="h4">
         {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
@@ -103,7 +105,69 @@ function FirstStep({
     ),
     nameFieldPlaceholder: isEditionEnabled ? proveedorLabels.nameOfYourVendible
       : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType),
+
+    searchLabel: !isEditionEnabled ? inputHelperLabels.required : inputHelperLabels.nonEditable,
   }), [isEditionEnabled]);
+
+  const categoriesSection = (
+    <Grid item sx={{ mt: '5%' }}>
+      <Typography variant="h4">
+        {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
+      </Typography>
+      <Typography
+        dangerouslySetInnerHTML={{
+          __html: proveedorLabels['addVendible.category.text']
+            .replace('{vendible}', vendibleType)
+            .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType.toUpperCase()}.example`]),
+        }}
+        textAlign="justify"
+        sx={{ paddingRight: '5px', width: '70%' }}
+      />
+      <CategoryInput
+        onCategoriesSet={onSetCategories}
+        defaultValues={categories}
+        searcherProps={{
+          searchLabel: inputHelperLabels.addAtLeastOne,
+          required: true,
+        }}
+      />
+    </Grid>
+  );
+
+  const priceSection = (
+    <>
+      <Typography variant="h4">
+        {sharedLabels.price}
+      </Typography>
+      <Typography
+        dangerouslySetInnerHTML={{
+          __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
+        }}
+        textAlign="justify"
+        sx={{ paddingRight: '5px', width: '70%' }}
+      />
+      <Select
+        containerStyles={{ mt: '2%', width: '50%' }}
+        label={sharedLabels.priceType}
+        values={pricesTypeMock}
+        defaultSelected={defaultPriceTypeSelected}
+        handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
+      />
+      {showPriceInput && (
+      <TextField
+        sx={{ mt: '2%' }}
+        type="text"
+        label={sharedLabels.price}
+        onChange={onChangePriceAmount}
+        value={priceInfo.amount}
+        inputProps={{
+          maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
+        }}
+        helperText={inputHelperLabels.onlyIntNumbers}
+      />
+      )}
+    </>
+  );
 
   return (
     <Grid item display="flex" flexDirection="row" xs={10}>
@@ -111,7 +175,7 @@ function FirstStep({
         <Searcher
           title={nameFieldTitle}
           placeholder={nameFieldPlaceholder}
-          searchLabel={inputHelperLabels.required}
+          searchLabel={searchLabel}
           searcherConfig={{
             sx: {
               width: '70%',
@@ -119,70 +183,19 @@ function FirstStep({
           }}
           inputValue={nombre}
           autoFocus
-          required
+          required={!isEditionEnabled}
           keyEvents={{ onKeyUp: setNombre }}
           inputProps={{
             maxLength: maxLengthConstraints.PROVEEDOR.nombre,
+            readOnly: isEditionEnabled,
           }}
         />
         {
-          !isEditionEnabled && (
-            <Grid item sx={{ mt: '5%' }}>
-              <Typography variant="h4">
-                {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
-              </Typography>
-              <Typography
-                dangerouslySetInnerHTML={{
-                  __html: proveedorLabels['addVendible.category.text']
-                    .replace('{vendible}', vendibleType)
-                    .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType.toUpperCase()}.example`]),
-                }}
-                textAlign="justify"
-                sx={{ paddingRight: '5px', width: '70%' }}
-              />
-              <CategoryInput
-                onCategoriesSet={onSetCategories}
-                defaultValues={categories}
-                searcherProps={{
-                  searchLabel: inputHelperLabels.addAtLeastOne,
-                  required: true,
-                }}
-              />
-            </Grid>
-          )
+          !isEditionEnabled ? categoriesSection : priceSection
         }
       </Grid>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
-        <Typography variant="h4">
-          {sharedLabels.price}
-        </Typography>
-        <Typography
-          dangerouslySetInnerHTML={{
-            __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
-          }}
-          textAlign="justify"
-          sx={{ paddingRight: '5px', width: '70%' }}
-        />
-        <Select
-          containerStyles={{ mt: '2%', width: '50%' }}
-          label={sharedLabels.priceType}
-          values={pricesTypeMock}
-          defaultSelected={defaultPriceTypeSelected}
-          handleOnChange={(value) => onChangePriceInfo({ priceType: value })}
-        />
-        {showPriceInput && (
-        <TextField
-          sx={{ mt: '2%' }}
-          type="text"
-          label={sharedLabels.price}
-          onChange={onChangePriceAmount}
-          value={priceInfo.amount}
-          inputProps={{
-            maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
-          }}
-          helperText={inputHelperLabels.onlyIntNumbers}
-        />
-        )}
+
         {gridConfig[vendibleType].showLocationColumn && (
         <>
           <Typography sx={{ mt: '5%' }}>

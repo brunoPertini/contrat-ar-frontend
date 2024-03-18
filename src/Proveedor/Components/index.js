@@ -71,7 +71,7 @@ const optionsMenuHandlers = ({
       </Modal>
     ),
     [sharedLabels.modify]: () => {
-      onChangeCurrentInnerScreen({ newScreen: 'modifyVendible ' });
+      onChangeCurrentInnerScreen({ newScreen: 'modifyVendible' });
       setModifyVendibleProps({
         userToken,
         vendibleInfo,
@@ -427,8 +427,6 @@ function ProveedorPage({
   }
 
   useOnLeavingTabHandler();
-
-  console.log(currentInnerScreen);
 
   return (
     <>

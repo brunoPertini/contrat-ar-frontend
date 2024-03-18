@@ -98,18 +98,31 @@ function ModifyVendibleForm({
 
   const canGoStepForward = {
     0: {
-      producto: useMemo(() => areFirstCommonStepsValid && !!(stock), [stock]),
-      servicio: useMemo(() => {
+      productos: useMemo(
+        () => areFirstCommonStepsValid && !!(stock),
+        [stock, areFirstCommonStepsValid],
+      ),
+      servicios: useMemo(() => {
         const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
         const isLocationTypesValid = !!locationTypes.length;
 
         return areFirstCommonStepsValid && isVendibleLocationValid && isLocationTypesValid;
-      }, [vendibleLocation, locationTypes]),
+      }, [vendibleLocation, locationTypes, areFirstCommonStepsValid]),
     },
 
     1: {
-      producto: areSecondCommonStepsValid,
-      servicio: areSecondCommonStepsValid,
+      productos: areSecondCommonStepsValid,
+      servicios: areSecondCommonStepsValid,
+    },
+
+    2: {
+      productos: true,
+      servicios: true,
+    },
+
+    3: {
+      productos: true,
+      servicios: true,
     },
   };
 
@@ -131,7 +144,6 @@ function ModifyVendibleForm({
         setStock={setStock}
       />),
     backButtonEnabled: false,
-    nextButtonEnabled: canGoStepForward[0][vendibleType],
   },
   {
     component: <SecondStep
@@ -145,7 +157,6 @@ function ModifyVendibleForm({
       setDescription={setDescripcion}
     />,
     backButtonEnabled: true,
-    nextButtonEnabled: canGoStepForward[1][vendibleType],
   },
   {
     component: <ConfirmationPage
@@ -161,12 +172,10 @@ function ModifyVendibleForm({
       }}
     />,
     backButtonEnabled: true,
-    nextButtonEnabled: true,
   },
   {
     component: <BackdropLoader open={activeStep === 3 && operationResult === undefined} />,
     backButtonEnabled: false,
-    nextButtonEnabled: false,
   }];
 
   useOnLeavingTabHandler();
@@ -197,7 +206,7 @@ function ModifyVendibleForm({
         <Button
           variant="contained"
           onClick={() => changeCurrentStep(activeStep + 1)}
-          disabled={!steps[activeStep].nextButtonEnabled}
+          disabled={!canGoStepForward[activeStep][vendibleType]}
         >
           {nexButtonLabel}
         </Button>
