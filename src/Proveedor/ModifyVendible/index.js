@@ -160,6 +160,7 @@ function ModifyVendibleForm({
   },
   {
     component: <ConfirmationPage
+      isEditionEnabled
       vendibleType={vendibleType}
       vendibleInfo={{
         nombre,

@@ -14,11 +14,13 @@ import CategoryInput from './CategoryInput';
 import { inputHelperLabels, sharedLabels } from '../../StaticData/Shared';
 import {
   ARGENTINA_LOCALE,
+  PRICE_TYPES,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
   PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
+import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
@@ -35,11 +37,14 @@ function FirstStep({
     || (type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT)));
   }, [priceInfo, isEditionEnabled]);
 
-  const defaultPriceTypeSelected = useMemo(() => (priceInfo.type
-    ? pricesTypeMock.findIndex((priceType) => {
-      const priceTypeRegex = new RegExp(priceType, 'i');
-      return priceInfo.type.match(priceTypeRegex);
-    }) : 0), [priceInfo]);
+  const defaultPriceTypeSelected = useMemo(() => {
+    if (priceInfo.type) {
+      const priceLabel = PRICE_TYPES[priceInfo.type];
+      return pricesTypeMock.findIndex((priceType) => priceType === priceLabel);
+    }
+
+    return 0;
+  }, [priceInfo.type]);
 
   const shouldRenderStock = useMemo(() => vendibleType === PRODUCT.toLowerCase(), [vendibleType]);
 
@@ -100,11 +105,11 @@ function FirstStep({
   const { nameFieldTitle, nameFieldPlaceholder, searchLabel } = useMemo(() => ({
     nameFieldTitle: isEditionEnabled ? null : (
       <Typography variant="h4">
-        {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleType)}
+        {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleUnit(vendibleType))}
       </Typography>
     ),
     nameFieldPlaceholder: isEditionEnabled ? proveedorLabels.nameOfYourVendible
-      : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleType),
+      : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleUnit(vendibleType)),
 
     searchLabel: !isEditionEnabled ? inputHelperLabels.required : inputHelperLabels.nonEditable,
   }), [isEditionEnabled]);
@@ -112,13 +117,13 @@ function FirstStep({
   const categoriesSection = (
     <Grid item sx={{ mt: '5%' }}>
       <Typography variant="h4">
-        {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleType)}
+        {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleUnit(vendibleType))}
       </Typography>
       <Typography
         dangerouslySetInnerHTML={{
           __html: proveedorLabels['addVendible.category.text']
-            .replace('{vendible}', vendibleType)
-            .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType.toUpperCase()}.example`]),
+            .replace('{vendible}', vendibleUnit(vendibleType))
+            .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType}.example`]),
         }}
         textAlign="justify"
         sx={{ paddingRight: '5px', width: '70%' }}
@@ -141,7 +146,7 @@ function FirstStep({
       </Typography>
       <Typography
         dangerouslySetInnerHTML={{
-          __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleType),
+          __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleUnit(vendibleType)),
         }}
         textAlign="justify"
         sx={{ paddingRight: '5px', width: '70%' }}
@@ -195,7 +200,9 @@ function FirstStep({
         }
       </Grid>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
-
+        {
+          !isEditionEnabled && priceSection
+        }
         {gridConfig[vendibleType].showLocationColumn && (
         <>
           <Typography sx={{ mt: '5%' }}>

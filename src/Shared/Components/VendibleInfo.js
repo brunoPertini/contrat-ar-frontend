@@ -17,7 +17,8 @@ import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 import { vendibleInfoShape } from '../PropTypes/Proveedor';
 
 export default function VendibleInfo({
-  title, vendibleInfo, vendibleType, cardStyles, cardRowStyles, userToken,
+  title, vendibleInfo, vendibleType,
+  cardStyles, cardRowStyles, userToken, isEditionEnabled,
 }) {
   const {
     categories, nombre,
@@ -25,7 +26,7 @@ export default function VendibleInfo({
     locationTypes, vendibleLocation, stock, imagenUrl, descripcion,
   } = vendibleInfo;
 
-  const categoriesString = categories.join(',  ');
+  const categoriesString = isEditionEnabled ? null : categories.join(',  ');
   let locationTypesString;
 
   if (locationTypes.length === 1) {
@@ -50,6 +51,8 @@ export default function VendibleInfo({
 
   const vendibleUnit = (vendibleType === PRODUCTS ? PRODUCT : SERVICE).toLowerCase();
 
+  const renderCategories = !isEditionEnabled;
+
   return (
     <Card sx={{ ...cardStyles }}>
       {
@@ -68,15 +71,19 @@ export default function VendibleInfo({
           { nombre }
         </Typography>
       </CardContent>
-      <CardContent sx={{ ...cardRowStyles }}>
-        <Typography>
-          { sharedLabels.categories }
-          :
-        </Typography>
-        <Typography variant="h6" fontWeight="bold">
-          { categoriesString }
-        </Typography>
-      </CardContent>
+      {
+        renderCategories && (
+          <CardContent sx={{ ...cardRowStyles }}>
+            <Typography>
+              { sharedLabels.categories }
+              :
+            </Typography>
+            <Typography variant="h6" fontWeight="bold">
+              { categoriesString }
+            </Typography>
+          </CardContent>
+        )
+      }
       <CardContent sx={{ ...cardRowStyles }}>
         <Typography>
           { sharedLabels.priceType }
@@ -185,6 +192,7 @@ VendibleInfo.defaultProps = {
   title: '',
   cardRowStyles: {},
   cardStyles: {},
+  isEditionEnabled: false,
 };
 
 VendibleInfo.propTypes = {
@@ -194,4 +202,5 @@ VendibleInfo.propTypes = {
   cardStyles: PropTypes.object,
   cardRowStyles: PropTypes.object,
   userToken: PropTypes.string.isRequired,
+  isEditionEnabled: PropTypes.bool,
 };

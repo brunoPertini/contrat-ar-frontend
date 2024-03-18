@@ -42,7 +42,7 @@ const localStorageService = new LocalStorageService();
 const optionsMenuHandlers = ({
   vendibleInfo, onCloseInnerComponent,
   option, vendibleType, userToken, onChangeCurrentInnerScreen,
-  setModifyVendibleProps,
+  setModifyVendibleProps, handleUploadImage,
 }) => {
   const handlers = {
     [sharedLabels.seeDetail]: () => (
@@ -76,7 +76,7 @@ const optionsMenuHandlers = ({
         userToken,
         vendibleInfo,
         vendibleType,
-        handleUploadImage: () => {},
+        handleUploadImage,
         handlePutVendible: () => {},
       });
 
@@ -282,8 +282,7 @@ function ProveedorPage({
       component: VendibleCreateForm,
       props: {
         userInfo,
-        vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
-          .toLowerCase(),
+        vendibleType: vendibleType.toLowerCase(),
         handleUploadImage,
         handlePostVendible: managePostVendibleResults,
         router,
@@ -305,6 +304,7 @@ function ProveedorPage({
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
+        handleUploadImage,
         vendibleInfo,
         option,
         vendibleType,

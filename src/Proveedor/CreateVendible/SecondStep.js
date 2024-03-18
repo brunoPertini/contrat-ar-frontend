@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -10,6 +10,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
+import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 function SecondStep({
   vendibleType, handleUploadImage, imageUrl, setImageUrl, description,
@@ -33,6 +34,21 @@ function SecondStep({
     setDescription(event.target.value);
   };
 
+  const { imageTitle, mainTitle } = useMemo(() => (isEditionEnabled ? {
+    imageTitle:
+    <Typography variant="h5" sx={{ paddingRight: '5%' }}>
+      { sharedLabels.currentImage }
+    </Typography>,
+    mainTitle: null,
+  } : {
+    mainTitle: (
+      <Typography variant="h4" sx={{ paddingLeft: '5%' }}>
+        { proveedorLabels['addVendible.lastStep'] }
+      </Typography>
+    ),
+    imageTitle: null,
+  }), [isEditionEnabled]);
+
   return (
     <Grid
       item
@@ -46,12 +62,11 @@ function SecondStep({
         flexDirection="column"
         xs={6}
       >
-        <Typography variant="h4" sx={{ paddingLeft: '5%' }}>
-          { proveedorLabels['addVendible.lastStep'] }
-        </Typography>
+
+        { mainTitle }
         <Typography
           dangerouslySetInnerHTML={{
-            __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleType),
+            __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit(vendibleType)),
           }}
           textAlign="justify"
           sx={{ width: '50%', mt: '2%' }}
@@ -66,6 +81,7 @@ function SecondStep({
               mt: '5%',
             }}
           >
+            { imageTitle }
             {!!imageUrl && (
             <img
               src={imageUrl}
@@ -119,7 +135,7 @@ function SecondStep({
         xs={6}
       >
         <Typography variant="h4" sx={{ paddingRight: '5%' }}>
-          { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleType)}
+          { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleUnit(vendibleType))}
         </Typography>
         <TextareaAutosize
           minRows={15}
