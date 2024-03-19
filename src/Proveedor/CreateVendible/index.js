@@ -7,7 +7,10 @@ import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import {
   PRICE_TYPE_VARIABLE, PRODUCT,
+  PRODUCT_LOCATION_AT_HOME,
+  PRODUCT_LOCATION_FIXED,
   SERVICE_LOCATION_AT_HOME,
+  SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import SecondStep from './SecondStep';
@@ -48,6 +51,10 @@ function VendibleCreateForm({
     if (newStep === 3) {
       const category = buildCategoryObject(categories.reverse());
       const isProduct = vendibleType === PRODUCT.toLowerCase();
+      const offersDelivery = locationTypes.includes(SERVICE_LOCATION_AT_HOME)
+       || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
+      const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
+       || locationTypes.includes(PRODUCT_LOCATION_FIXED);
       const proveedoresVendibles = [
         {
           category,
@@ -57,7 +64,8 @@ function VendibleCreateForm({
           imagenUrl,
           location: vendibleLocation,
           stock: isProduct ? new Number(stock) : undefined,
-          offersDelivery: !isProduct && locationTypes.includes(SERVICE_LOCATION_AT_HOME),
+          offersDelivery,
+          offersInCustomAddress,
         },
       ];
 
@@ -104,8 +112,8 @@ function VendibleCreateForm({
   const canGoStepForward = {
     0: {
       productos: useMemo(
-        () => areFirstCommonStepsValid && !!(stock),
-        [stock, areFirstCommonStepsValid],
+        () => areFirstCommonStepsValid && !!(stock) && !!(locationTypes.length),
+        [stock, areFirstCommonStepsValid, locationTypes],
       ),
       servicios: useMemo(() => {
         const isVendibleLocationValid = !!vendibleLocation.coordinates.length;

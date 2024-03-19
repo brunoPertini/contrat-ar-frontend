@@ -9,6 +9,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_VARIABLE, PRODUCT,
   PRODUCTS,
+  PRODUCT_LOCATION_FIXED,
   SERVICE,
   SERVICES,
   SERVICE_LOCATION_FIXED,
@@ -42,8 +43,8 @@ export default function VendibleInfo({
   }
 
   const renderPriceAmount = priceInfoType !== PRICE_TYPE_VARIABLE;
-  const renderLocationType = vendibleType !== PRODUCT.toLowerCase();
-  const renderMap = renderLocationType && locationTypes.includes(SERVICE_LOCATION_FIXED);
+  const renderMap = locationTypes.includes(SERVICE_LOCATION_FIXED)
+  || locationTypes.includes(PRODUCT_LOCATION_FIXED);
 
   const renderStock = vendibleType === PRODUCTS;
 
@@ -127,11 +128,14 @@ export default function VendibleInfo({
           { proveedorLabels['addVendible.description'].replace('{vendible}', vendibleUnit)}
           :
         </Typography>
-        <Typography fontWeight="bold">
+        <Typography
+          fontWeight="bold"
+          sx={{ wordWrap: 'break-word' }}
+        >
           { descripcion }
         </Typography>
       </CardContent>
-      <CardContent sx={{ ...cardRowStyles }}>
+      <CardContent>
         <ImageListItem
           sx={{
             display: 'flex',
@@ -154,16 +158,14 @@ export default function VendibleInfo({
           )}
         </ImageListItem>
       </CardContent>
-      {
-            renderLocationType && (
-            <CardContent sx={{ width: '60%' }}>
-              <Typography>
-                { sharedLabels.locationType[vendibleUnit] }
-              </Typography>
-              <Typography variant="h6" fontWeight="bold">
-                { locationTypesString }
-              </Typography>
-              {
+      <CardContent sx={{ width: '60%' }}>
+        <Typography>
+          { sharedLabels.locationType[vendibleUnit] }
+        </Typography>
+        <Typography variant="h6" fontWeight="bold">
+          { locationTypesString }
+        </Typography>
+        {
                 renderMap && (
                 <LocationMap
                   token={userToken}
@@ -181,9 +183,7 @@ export default function VendibleInfo({
                 />
                 )
               }
-            </CardContent>
-            )
-        }
+      </CardContent>
     </Card>
   );
 }

@@ -16,7 +16,9 @@ import {
   ARGENTINA_LOCALE,
   PRICE_TYPES,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
-  PRODUCT, SERVICE, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED,
+  PRODUCT, PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED, SERVICE,
+  SERVICE_LOCATION_AT_HOME,
+  SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
@@ -25,6 +27,8 @@ import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
+
+const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -44,9 +48,14 @@ function FirstStep({
     }
 
     return 0;
-  }, [priceInfo.type]);
+  }, []);
 
-  const shouldRenderStock = useMemo(() => vendibleType === PRODUCT.toLowerCase(), [vendibleType]);
+  const {
+    shouldRenderStock,
+    locationTypesMock,
+  } = useMemo(() => (vendibleType === PRODUCTS.toLowerCase()
+    ? { shouldRenderStock: true, locationTypesMock: productLocationsMock }
+    : { shouldRenderStock: false, locationTypesMock: serviceLocationsMock }), [vendibleType]);
 
   const handleSetLoation = ({ coords }) => {
     const newCoordinates = {
@@ -92,7 +101,8 @@ function FirstStep({
   const gridConfig = {
     productos: {
       xs: [6, 6],
-      showLocationColumn: false,
+      showLocationColumn: true,
+      showMap: locationTypes.includes(PRODUCT_LOCATION_FIXED),
     },
 
     servicios: {
@@ -198,6 +208,21 @@ function FirstStep({
         {
           !isEditionEnabled ? categoriesSection : priceSection
         }
+        {
+          shouldRenderStock && (
+            <Box sx={{ mt: '5%' }}>
+              <Typography variant="h4">
+                { proveedorLabels['addVendible.stock'] }
+              </Typography>
+              <TextField
+                type="number"
+                label={sharedLabels.stock}
+                onChange={onChangeStock}
+                value={stock}
+              />
+            </Box>
+          )
+        }
       </Grid>
       <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
         {
@@ -206,11 +231,11 @@ function FirstStep({
         {gridConfig[vendibleType].showLocationColumn && (
         <>
           <Typography sx={{ mt: '5%' }}>
-            {proveedorLabels['addVendible.location.text']}
+            {proveedorLabels['addVendible.location.text'][vendibleType]}
           </Typography>
           <CheckBoxGroup
             defaultChecked={locationTypes}
-            elements={serviceLocationsMock}
+            elements={locationTypesMock}
             handleChange={setLocationTypes}
           />
           {
@@ -219,7 +244,7 @@ function FirstStep({
                 <Box display="flex" flexDirection="column">
                   <Typography
                     dangerouslySetInnerHTML={{
-                      __html: proveedorLabels['addVendible.location.disclaimer'],
+                      __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],
                     }}
                     textAlign="justify"
                     sx={{ paddingRight: '5px', width: '70%' }}
@@ -246,21 +271,6 @@ function FirstStep({
 
         </>
         )}
-        {
-          shouldRenderStock && (
-            <>
-              <Typography variant="h4" sx={{ mt: '5%' }}>
-                { proveedorLabels['addVendible.stock'] }
-              </Typography>
-              <TextField
-                type="number"
-                label={sharedLabels.stock}
-                onChange={onChangeStock}
-                value={stock}
-              />
-            </>
-          )
-        }
       </Grid>
     </Grid>
   );

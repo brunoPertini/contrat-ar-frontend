@@ -59,7 +59,7 @@ const optionsMenuHandlers = ({
       >
         <VendibleInfo
           vendibleType={vendibleType}
-          vendibleInfo={buildVendibleInfo(vendibleInfo)}
+          vendibleInfo={buildVendibleInfo(vendibleInfo, vendibleType)}
           cardStyles={{
             display: 'flex',
             flexDirection: 'column',

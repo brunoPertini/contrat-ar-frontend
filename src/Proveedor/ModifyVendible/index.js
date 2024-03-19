@@ -30,9 +30,12 @@ function ModifyVendibleForm({
     amount: vendibleInfo.precio,
   });
 
-  const [stock, setStock] = useState(vendibleInfo.stock);
+  const [stock, setStock] = useState(new String(vendibleInfo.stock));
 
-  const [locationTypes, setLocationTypes] = useState(buildLocationTypesArray(vendibleInfo));
+  const [locationTypes, setLocationTypes] = useState(buildLocationTypesArray(
+    vendibleInfo,
+    vendibleType,
+  ));
 
   const [imagenUrl, setImagenUrl] = useState(vendibleInfo.imagenUrl);
   const [descripcion, setDescripcion] = useState(vendibleInfo.descripcion);
