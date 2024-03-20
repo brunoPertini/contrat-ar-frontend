@@ -42,7 +42,7 @@ const localStorageService = new LocalStorageService();
 const optionsMenuHandlers = ({
   vendibleInfo, onCloseInnerComponent,
   option, vendibleType, userToken, onChangeCurrentInnerScreen,
-  setModifyVendibleProps, handleUploadImage,
+  setModifyVendibleProps, handleUploadImage, showSaveChangesAlertModal,
 }) => {
   const handlers = {
     [sharedLabels.seeDetail]: () => (
@@ -77,6 +77,7 @@ const optionsMenuHandlers = ({
         vendibleInfo,
         vendibleType,
         handleUploadImage,
+        showSaveChangesAlertModal,
         handlePutVendible: () => {},
       });
 
@@ -135,6 +136,15 @@ function ProveedorPage({
     setVendibleOperationsComponent(null);
   };
 
+  const onCleanModalContent = () => {
+    setModalContent({ title: '', text: '', handleAccept: () => {} });
+  };
+
+  const onCancelLeavingPage = () => {
+    onCleanModalContent();
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
+  };
+
   const onChangeCurrentScreen = ({ newScreen } = {}) => {
     setCurrentInnerScreen(newScreen);
   };
@@ -144,6 +154,17 @@ function ProveedorPage({
       title: dialogModalTexts.EXIT_APP.title,
       text: dialogModalTexts.EXIT_APP.text,
       handleAccept: handleLogout,
+    });
+  }, [setModalContent]);
+
+  const showSaveChangesAlertModal = useCallback(() => {
+    setModalContent({
+      title: dialogModalTexts.SAVE_CHANGES.title,
+      text: dialogModalTexts.SAVE_CHANGES.text,
+      handleAccept: () => {
+        onCleanModalContent();
+        setCurrentInnerScreen();
+      },
     });
   }, [setModalContent]);
 
@@ -296,11 +317,6 @@ function ProveedorPage({
 
   let mainContent;
 
-  const onCancelLeavingPage = () => {
-    setModalContent({ title: '', text: '' });
-    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
-  };
-
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
@@ -312,6 +328,7 @@ function ProveedorPage({
         onCloseInnerComponent: cleanOperationsComponents,
         onChangeCurrentInnerScreen: onChangeCurrentScreen,
         setModifyVendibleProps,
+        showSaveChangesAlertModal,
 
       });
       setVendibleOperationsComponent(OperationsComponent);
@@ -446,7 +463,7 @@ function ProveedorPage({
         cancelText={sharedLabels.cancel}
         acceptText={sharedLabels.accept}
         open={!!(modalContent?.title && modalContent.text)}
-        handleAccept={handleLogout}
+        handleAccept={modalContent.handleAccept}
         handleDeny={onCancelLeavingPage}
       />
     </>

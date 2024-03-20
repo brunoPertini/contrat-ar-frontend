@@ -54,6 +54,8 @@ export default function VendibleInfo({
 
   const renderCategories = !isEditionEnabled;
 
+  const formattedStock = stock.toLocaleString(ARGENTINA_LOCALE);
+
   return (
     <Card sx={{ ...cardStyles }}>
       {
@@ -116,7 +118,7 @@ export default function VendibleInfo({
                 :
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                { stock }
+                { formattedStock }
                 {' '}
                 {sharedLabels.units}
               </Typography>

@@ -2,7 +2,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import {
+  useCallback,
+  useContext, useEffect, useMemo,
+  useState,
+} from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
@@ -17,9 +21,14 @@ import BackdropLoader from '../../Shared/Components/BackdropLoader';
 import ConfirmationPage from '../CreateVendible/ConfirmationPage';
 import SecondStep from '../CreateVendible/SecondStep';
 import FirstStep from '../CreateVendible/FirstStep';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+
+const localStorageService = new LocalStorageService();
 
 function ModifyVendibleForm({
   userToken, vendibleInfo, vendibleType, handleUploadImage, handlePutVendible,
+  showSaveChangesAlertModal,
 }) {
   const [nombre, setNombre] = useState(vendibleInfo.vendibleNombre);
 
@@ -44,6 +53,10 @@ function ModifyVendibleForm({
 
   // undefined = no result; false = something went wrong; true= all good
   const [operationResult, setOperationResult] = useState();
+
+  const { setHandleGoBack } = useContext(NavigationContext);
+
+  setHandleGoBack(() => showSaveChangesAlertModal);
 
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
@@ -182,7 +195,11 @@ function ModifyVendibleForm({
     backButtonEnabled: false,
   }];
 
-  useOnLeavingTabHandler();
+  useOnLeavingTabHandler(() => localStorageService.removeItem(
+    LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+  ));
+
+  console.log(vendibleInfo);
 
   return (
     <Grid
