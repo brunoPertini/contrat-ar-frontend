@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
+import Modal from '@mui/material/Modal';
 import {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import Header from '../../Header';
 import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -25,7 +26,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
-import { filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
+import { buildVendibleInfo, filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
@@ -33,8 +34,60 @@ import InformativeAlert from '../../Shared/Components/Alert';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
+import VendibleInfo from '../../Shared/Components/VendibleInfo';
+import ModifyVendibleForm from '../ModifyVendible';
 
 const localStorageService = new LocalStorageService();
+
+const optionsMenuHandlers = ({
+  vendibleInfo, onCloseInnerComponent,
+  option, vendibleType, userToken, onChangeCurrentInnerScreen,
+  setModifyVendibleProps, handleUploadImage, showSaveChangesAlertModal,
+}) => {
+  const handlers = {
+    [sharedLabels.seeDetail]: () => (
+      <Modal
+        disableEnforceFocus
+        open
+        onClose={onCloseInnerComponent}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexWrap: 'wrap',
+          alignContent: 'center',
+        }}
+      >
+        <VendibleInfo
+          vendibleType={vendibleType}
+          vendibleInfo={buildVendibleInfo(vendibleInfo, vendibleType)}
+          cardStyles={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '60%',
+            overflow: 'scroll',
+          }}
+          userToken={userToken}
+        />
+      </Modal>
+    ),
+    [sharedLabels.modify]: () => {
+      onChangeCurrentInnerScreen({ newScreen: 'modifyVendible' });
+      setModifyVendibleProps({
+        userToken,
+        vendibleInfo,
+        vendibleType,
+        handleUploadImage,
+        showSaveChangesAlertModal,
+        handlePutVendible: () => {},
+      });
+
+      return null;
+    },
+    [sharedLabels.delete]: () => {},
+  };
+
+  return handlers[option]();
+};
 
 function ProveedorPage({
   menuOptions,
@@ -67,6 +120,10 @@ function ProveedorPage({
 
   const [crudOperationResult, setCrudOperationResult] = useState();
 
+  const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(null);
+
+  const [modifyVendibleProps, setModifyVendibleProps] = useState({});
+
   const categoriesFiltersEnabled = useMemo(() => !isEmpty(categorias), [categorias]);
 
   const { setHandleGoBack } = useContext(NavigationContext);
@@ -74,6 +131,19 @@ function ProveedorPage({
   const isGoingBack = localStorageService.getItem(
     LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
   );
+
+  const cleanOperationsComponents = () => {
+    setVendibleOperationsComponent(null);
+  };
+
+  const onCleanModalContent = () => {
+    setModalContent({ title: '', text: '', handleAccept: () => {} });
+  };
+
+  const onCancelLeavingPage = () => {
+    onCleanModalContent();
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
+  };
 
   const onChangeCurrentScreen = ({ newScreen } = {}) => {
     setCurrentInnerScreen(newScreen);
@@ -84,6 +154,17 @@ function ProveedorPage({
       title: dialogModalTexts.EXIT_APP.title,
       text: dialogModalTexts.EXIT_APP.text,
       handleAccept: handleLogout,
+    });
+  }, [setModalContent]);
+
+  const showSaveChangesAlertModal = useCallback(() => {
+    setModalContent({
+      title: dialogModalTexts.SAVE_CHANGES.title,
+      text: dialogModalTexts.SAVE_CHANGES.text,
+      handleAccept: () => {
+        onCleanModalContent();
+        setCurrentInnerScreen();
+      },
     });
   }, [setModalContent]);
 
@@ -222,20 +303,36 @@ function ProveedorPage({
       component: VendibleCreateForm,
       props: {
         userInfo,
-        vendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCT : SERVICE)
-          .toLowerCase(),
+        vendibleType: vendibleType.toLowerCase(),
         handleUploadImage,
         handlePostVendible: managePostVendibleResults,
         router,
       },
     },
+    modifyVendible: {
+      component: ModifyVendibleForm,
+      props: modifyVendibleProps,
+    },
   };
 
   let mainContent;
 
-  const onCancelLeavingPage = () => {
-    setModalContent({ title: '', text: '' });
-    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
+  const handleOnOptionClicked = (option, vendibleInfo) => {
+    if (option) {
+      const OperationsComponent = optionsMenuHandlers({
+        handleUploadImage,
+        vendibleInfo,
+        option,
+        vendibleType,
+        userToken: userInfo.token,
+        onCloseInnerComponent: cleanOperationsComponents,
+        onChangeCurrentInnerScreen: onChangeCurrentScreen,
+        setModifyVendibleProps,
+        showSaveChangesAlertModal,
+
+      });
+      setVendibleOperationsComponent(OperationsComponent);
+    }
   };
 
   if (currentInnerScreen) {
@@ -338,6 +435,7 @@ function ProveedorPage({
               vendibles={filteredVendibles}
               vendibleType={vendibleType}
               userToken={userInfo.token}
+              handleOnOptionClicked={handleOnOptionClicked}
             />
           </Box>
         </Grid>
@@ -352,6 +450,7 @@ function ProveedorPage({
       <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
       <GoBackLink />
       { mainContent }
+      { vendibleOperationsComponent }
       <InformativeAlert
         open={openSnackbar}
         onClose={() => setCrudOperationResult(undefined)}
@@ -364,7 +463,7 @@ function ProveedorPage({
         cancelText={sharedLabels.cancel}
         acceptText={sharedLabels.accept}
         open={!!(modalContent?.title && modalContent.text)}
-        handleAccept={handleLogout}
+        handleAccept={modalContent.handleAccept}
         handleDeny={onCancelLeavingPage}
       />
     </>

@@ -6,8 +6,10 @@ import {
 } from '../../Shared/Constants/System';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
-function ConfirmationPage({ vendibleType, vendibleInfo }) {
+function ConfirmationPage({ vendibleType, vendibleInfo, isEditionEnabled }) {
+  const vendibleUnit = parseVendibleUnit(vendibleType);
   return (
     <Grid
       item
@@ -18,9 +20,10 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
       justifyContent="center"
     >
       <VendibleInfo
+        isEditionEnabled={isEditionEnabled}
         vendibleInfo={vendibleInfo}
         vendibleType={vendibleType}
-        title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleType)}
+        title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleUnit(vendibleType))}
         cardRowStyles={{
           width: '40%',
         }}
@@ -28,6 +31,10 @@ function ConfirmationPage({ vendibleType, vendibleInfo }) {
     </Grid>
   );
 }
+
+ConfirmationPage.defaultProps = {
+  isEditionEnabled: false,
+};
 
 ConfirmationPage.propTypes = {
   vendibleInfo: PropTypes.shape({
@@ -46,6 +53,7 @@ ConfirmationPage.propTypes = {
     }),
   }).isRequired,
   vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
+  isEditionEnabled: PropTypes.bool,
 };
 
 export default ConfirmationPage;

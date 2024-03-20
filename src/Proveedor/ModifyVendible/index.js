@@ -1,62 +1,75 @@
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import {
+  useContext, useMemo,
+  useState,
+} from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
-import FirstStep from './FirstStep';
 import {
   PRICE_TYPE_VARIABLE,
+  PRODUCTS,
   PRODUCT_LOCATION_AT_HOME,
   PRODUCT_LOCATION_FIXED,
+  SERVICES,
   SERVICE_LOCATION_AT_HOME,
   SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
-import SecondStep from './SecondStep';
-import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
-import { buildCategoryObject, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
+import { buildLocationTypesArray, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
+import ConfirmationPage from '../CreateVendible/ConfirmationPage';
+import SecondStep from '../CreateVendible/SecondStep';
+import FirstStep from '../CreateVendible/FirstStep';
+import { NavigationContext } from '../../State/Contexts/NavigationContext';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { vendibleInfoShape } from '../../Shared/PropTypes/Proveedor';
 
-function VendibleCreateForm({
-  userInfo, vendibleType, handleUploadImage, handlePostVendible,
+const localStorageService = new LocalStorageService();
+
+function ModifyVendibleForm({
+  userToken, vendibleInfo, vendibleType, handleUploadImage, handlePutVendible,
+  showSaveChangesAlertModal,
 }) {
-  const { token, location } = userInfo;
+  const [nombre, setNombre] = useState(vendibleInfo.vendibleNombre);
 
-  const [nombre, setNombre] = useState('');
-
-  const [vendibleLocation, setVendibleLocation] = useState(location);
+  const [vendibleLocation, setVendibleLocation] = useState(vendibleInfo.location);
 
   const [priceInfo, setPriceInfo] = useState({
-    type: '',
-    amount: '',
+    type: vendibleInfo.tipoPrecio,
+    amount: vendibleInfo.precio,
   });
 
-  const [stock, setStock] = useState('');
+  const [stock, setStock] = useState(new String(vendibleInfo.stock));
 
-  const [locationTypes, setLocationTypes] = useState([]);
+  const [locationTypes, setLocationTypes] = useState(buildLocationTypesArray(
+    vendibleInfo,
+    vendibleType,
+  ));
 
-  const [categories, setCategories] = useState([]);
-
-  const [imagenUrl, setImagenUrl] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+  const [imagenUrl, setImagenUrl] = useState(vendibleInfo.imagenUrl);
+  const [descripcion, setDescripcion] = useState(vendibleInfo.descripcion);
 
   const [activeStep, setActiveStep] = useState(0);
 
   // undefined = no result; false = something went wrong; true= all good
   const [operationResult, setOperationResult] = useState();
 
+  const { setHandleGoBack } = useContext(NavigationContext);
+
+  setHandleGoBack(() => showSaveChangesAlertModal);
+
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
-      const category = buildCategoryObject(categories.reverse());
       const offersDelivery = locationTypes.includes(SERVICE_LOCATION_AT_HOME)
-       || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
+      || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
       const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
-       || locationTypes.includes(PRODUCT_LOCATION_FIXED);
+      || locationTypes.includes(PRODUCT_LOCATION_FIXED);
+
       const proveedoresVendibles = [
         {
-          category,
           descripcion,
           precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
           tipoPrecio: buildPriceType(priceInfo.type),
@@ -68,7 +81,7 @@ function VendibleCreateForm({
         },
       ];
 
-      handlePostVendible({
+      handlePutVendible({
         nombre,
         proveedoresVendibles,
       }).then(() => {
@@ -98,12 +111,11 @@ function VendibleCreateForm({
 
   const areFirstCommonStepsValid = useMemo(() => {
     const isNombreValid = !!nombre;
-    const areCategoriesValid = !!categories.length;
     const isPriceInfoValid = (priceInfo.type && priceInfo.amount)
       || (priceInfo.type === PRICE_TYPE_VARIABLE);
 
-    return isNombreValid && areCategoriesValid && isPriceInfoValid;
-  }, [nombre, categories, priceInfo]);
+    return isNombreValid && isPriceInfoValid;
+  }, [nombre, priceInfo]);
 
   const areSecondCommonStepsValid = useMemo(() => !!(imagenUrl)
   && !!(descripcion), [imagenUrl, descripcion]);
@@ -111,8 +123,8 @@ function VendibleCreateForm({
   const canGoStepForward = {
     0: {
       productos: useMemo(
-        () => areFirstCommonStepsValid && !!(stock) && !!(locationTypes.length),
-        [stock, areFirstCommonStepsValid, locationTypes],
+        () => areFirstCommonStepsValid && !!(stock),
+        [stock, areFirstCommonStepsValid],
       ),
       servicios: useMemo(() => {
         const isVendibleLocationValid = !!vendibleLocation.coordinates.length;
@@ -141,6 +153,7 @@ function VendibleCreateForm({
   const steps = [{
     component: (
       <FirstStep
+        isEditionEnabled
         nombre={nombre}
         setNombre={setNombre}
         locationTypes={locationTypes}
@@ -149,10 +162,8 @@ function VendibleCreateForm({
         setPriceInfo={setPriceInfo}
         vendibleLocation={vendibleLocation}
         setVendibleLocation={setVendibleLocation}
-        categories={categories}
-        setCategories={setCategories}
         vendibleType={vendibleType}
-        token={token}
+        token={userToken}
         stock={stock}
         setStock={setStock}
       />),
@@ -160,8 +171,9 @@ function VendibleCreateForm({
   },
   {
     component: <SecondStep
+      isEditionEnabled
       vendibleType={vendibleType}
-      token={token}
+      token={userToken}
       handleUploadImage={handleUploadImage}
       imageUrl={imagenUrl}
       setImageUrl={setImagenUrl}
@@ -172,10 +184,10 @@ function VendibleCreateForm({
   },
   {
     component: <ConfirmationPage
+      isEditionEnabled
       vendibleType={vendibleType}
       vendibleInfo={{
         nombre,
-        categories,
         priceInfo,
         stock,
         locationTypes,
@@ -191,7 +203,9 @@ function VendibleCreateForm({
     backButtonEnabled: false,
   }];
 
-  useOnLeavingTabHandler();
+  useOnLeavingTabHandler(() => localStorageService.removeItem(
+    LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
+  ));
 
   return (
     <Grid
@@ -228,11 +242,13 @@ function VendibleCreateForm({
   );
 }
 
-export default VendibleCreateForm;
-
-VendibleCreateForm.propTypes = {
-  userInfo: PropTypes.any.isRequired,
-  vendibleType: PropTypes.string.isRequired,
+ModifyVendibleForm.propTypes = {
+  userToken: PropTypes.string.isRequired,
+  vendibleInfo: PropTypes.shape(vendibleInfoShape).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCTS, SERVICES]).isRequired,
   handleUploadImage: PropTypes.func.isRequired,
-  handlePostVendible: PropTypes.func.isRequired,
+  handlePutVendible: PropTypes.func.isRequired,
+  showSaveChangesAlertModal: PropTypes.func.isRequired,
 };
+
+export default ModifyVendibleForm;

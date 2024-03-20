@@ -38,6 +38,10 @@ export const PRICE_TYPES = {
   VARIABLE_WITH_AMOUNT: PRICE_TYPE_VARIABLE_WITH_AMOUNT,
 };
 
+export const PRODUCT_LOCATION_FIXED = 'Para retirar en un domicilio particular';
+
+export const PRODUCT_LOCATION_AT_HOME = 'Ofrezco envío a domicilio';
+
 export const SERVICE_LOCATION_AT_HOME = 'A domicilio';
 
 export const SERVICE_LOCATION_FIXED = 'En un domicilio particular';

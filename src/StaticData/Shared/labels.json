@@ -47,5 +47,6 @@
     "goBack": "Volver",
     "actions": "Acciones",
     "modify": "Modificar",
-    "delete": "Borrar"
+    "delete": "Borrar",
+    "currentImage": "Imágen actual"
 }

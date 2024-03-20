@@ -5,7 +5,8 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 const localStorageService = new LocalStorageService();
 const { PAGES_KEYS } = LocalStorageService;
 
-const handleOnLeavingTab = (event) => {
+const handleOnLeavingTab = (event, runBeforeLeavingFunction = EMPTY_FUNCTION) => {
+  runBeforeLeavingFunction();
   event.preventDefault();
 };
 
@@ -24,7 +25,7 @@ export const removeOnLeavingTabHandlers = () => {
 
 export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION) {
   useEffect(() => {
-    window.addEventListener('beforeunload', handleOnLeavingTab);
+    window.addEventListener('beforeunload', (e) => handleOnLeavingTab(e, runBeforeLeavingFunction));
     window.addEventListener('popstate', (e) => handleOnBackButtonPressed(e, runBeforeLeavingFunction));
   }, []);
 }

@@ -9,6 +9,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_VARIABLE, PRODUCT,
   PRODUCTS,
+  PRODUCT_LOCATION_FIXED,
   SERVICE,
   SERVICES,
   SERVICE_LOCATION_FIXED,
@@ -17,7 +18,8 @@ import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 import { vendibleInfoShape } from '../PropTypes/Proveedor';
 
 export default function VendibleInfo({
-  title, vendibleInfo, vendibleType, cardStyles, cardRowStyles, userToken,
+  title, vendibleInfo, vendibleType,
+  cardStyles, cardRowStyles, userToken, isEditionEnabled,
 }) {
   const {
     categories, nombre,
@@ -25,7 +27,7 @@ export default function VendibleInfo({
     locationTypes, vendibleLocation, stock, imagenUrl, descripcion,
   } = vendibleInfo;
 
-  const categoriesString = categories.join(',  ');
+  const categoriesString = isEditionEnabled ? null : categories.join(',  ');
   let locationTypesString;
 
   if (locationTypes.length === 1) {
@@ -41,14 +43,18 @@ export default function VendibleInfo({
   }
 
   const renderPriceAmount = priceInfoType !== PRICE_TYPE_VARIABLE;
-  const renderLocationType = vendibleType !== PRODUCT.toLowerCase();
-  const renderMap = renderLocationType && locationTypes.includes(SERVICE_LOCATION_FIXED);
+  const renderMap = locationTypes.includes(SERVICE_LOCATION_FIXED)
+  || locationTypes.includes(PRODUCT_LOCATION_FIXED);
 
   const renderStock = vendibleType === PRODUCTS;
 
   const renderTitle = !!title;
 
   const vendibleUnit = (vendibleType === PRODUCTS ? PRODUCT : SERVICE).toLowerCase();
+
+  const renderCategories = !isEditionEnabled;
+
+  const formattedStock = stock.toLocaleString(ARGENTINA_LOCALE);
 
   return (
     <Card sx={{ ...cardStyles }}>
@@ -68,15 +74,19 @@ export default function VendibleInfo({
           { nombre }
         </Typography>
       </CardContent>
-      <CardContent sx={{ ...cardRowStyles }}>
-        <Typography>
-          { sharedLabels.categories }
-          :
-        </Typography>
-        <Typography variant="h6" fontWeight="bold">
-          { categoriesString }
-        </Typography>
-      </CardContent>
+      {
+        renderCategories && (
+          <CardContent sx={{ ...cardRowStyles }}>
+            <Typography>
+              { sharedLabels.categories }
+              :
+            </Typography>
+            <Typography variant="h6" fontWeight="bold">
+              { categoriesString }
+            </Typography>
+          </CardContent>
+        )
+      }
       <CardContent sx={{ ...cardRowStyles }}>
         <Typography>
           { sharedLabels.priceType }
@@ -108,7 +118,7 @@ export default function VendibleInfo({
                 :
               </Typography>
               <Typography variant="h6" fontWeight="bold">
-                { stock }
+                { formattedStock }
                 {' '}
                 {sharedLabels.units}
               </Typography>
@@ -120,11 +130,14 @@ export default function VendibleInfo({
           { proveedorLabels['addVendible.description'].replace('{vendible}', vendibleUnit)}
           :
         </Typography>
-        <Typography fontWeight="bold">
+        <Typography
+          fontWeight="bold"
+          sx={{ wordWrap: 'break-word' }}
+        >
           { descripcion }
         </Typography>
       </CardContent>
-      <CardContent sx={{ ...cardRowStyles }}>
+      <CardContent>
         <ImageListItem
           sx={{
             display: 'flex',
@@ -147,16 +160,14 @@ export default function VendibleInfo({
           )}
         </ImageListItem>
       </CardContent>
-      {
-            renderLocationType && (
-            <CardContent sx={{ width: '60%' }}>
-              <Typography>
-                { sharedLabels.locationType[vendibleUnit] }
-              </Typography>
-              <Typography variant="h6" fontWeight="bold">
-                { locationTypesString }
-              </Typography>
-              {
+      <CardContent sx={{ width: '60%' }}>
+        <Typography>
+          { sharedLabels.locationType[vendibleUnit] }
+        </Typography>
+        <Typography variant="h6" fontWeight="bold">
+          { locationTypesString }
+        </Typography>
+        {
                 renderMap && (
                 <LocationMap
                   token={userToken}
@@ -174,9 +185,7 @@ export default function VendibleInfo({
                 />
                 )
               }
-            </CardContent>
-            )
-        }
+      </CardContent>
     </Card>
   );
 }
@@ -185,6 +194,7 @@ VendibleInfo.defaultProps = {
   title: '',
   cardRowStyles: {},
   cardStyles: {},
+  isEditionEnabled: false,
 };
 
 VendibleInfo.propTypes = {
@@ -194,4 +204,5 @@ VendibleInfo.propTypes = {
   cardStyles: PropTypes.object,
   cardRowStyles: PropTypes.object,
   userToken: PropTypes.string.isRequired,
+  isEditionEnabled: PropTypes.bool,
 };

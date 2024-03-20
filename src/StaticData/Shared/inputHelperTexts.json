@@ -1,5 +1,6 @@
 {
     "required": "Requerido",
     "addAtLeastOne": "Agregá al menos una",
-    "onlyIntNumbers": "Ingresá solo números sin coma"
+    "onlyIntNumbers": "Ingresá solo números sin coma",
+    "nonEditable": "¡No se puede modificar!"
 }

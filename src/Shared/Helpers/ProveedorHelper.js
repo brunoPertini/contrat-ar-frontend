@@ -1,4 +1,7 @@
-import { PRICE_TYPES, SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED } from '../Constants/System';
+import {
+  PRICE_TYPES, SERVICE_LOCATION_AT_HOME,
+  SERVICE_LOCATION_FIXED, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
+} from '../Constants/System';
 import { escapeRegExpChars } from '../Utils/InputUtils';
 
 /**
@@ -68,21 +71,44 @@ export function buildPriceType(priceTypeValue) {
   return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
 }
 
+export function buildLocationTypesArray(vendibleInfo, vendibleType) {
+  const locationTypes = [];
+
+  const actions = {
+    servicios: () => {
+      if (vendibleInfo.offersDelivery) {
+        locationTypes.push(SERVICE_LOCATION_AT_HOME);
+      }
+
+      if (vendibleInfo.offersInCustomAddress) {
+        locationTypes.push(SERVICE_LOCATION_FIXED);
+      }
+    },
+
+    productos: () => {
+      if (vendibleInfo.offersDelivery) {
+        locationTypes.push(PRODUCT_LOCATION_AT_HOME);
+      }
+
+      if (vendibleInfo.offersInCustomAddress) {
+        locationTypes.push(PRODUCT_LOCATION_FIXED);
+      }
+    },
+  };
+
+  actions[vendibleType]();
+
+  return locationTypes;
+}
+
 /**
  *
  * @param {Object} vendibleInfo
+ * @param {String} vendibleType
  * @returns The vendible info parsed for being shown at page
  */
-export function buildVendibleInfo(vendibleInfo) {
-  const locationTypes = [];
-
-  if (vendibleInfo.offersDelivery) {
-    locationTypes.push(SERVICE_LOCATION_AT_HOME);
-  }
-
-  if (vendibleInfo.offersInCustomAddress) {
-    locationTypes.push(SERVICE_LOCATION_FIXED);
-  }
+export function buildVendibleInfo(vendibleInfo, vendibleType) {
+  const locationTypes = buildLocationTypesArray(vendibleInfo, vendibleType);
 
   const { stock, imagenUrl, descripcion } = vendibleInfo;
 
