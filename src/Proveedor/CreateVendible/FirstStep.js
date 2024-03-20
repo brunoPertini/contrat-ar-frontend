@@ -22,7 +22,7 @@ import {
 } from '../../Shared/Constants/System';
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
-import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
 
@@ -35,10 +35,11 @@ function FirstStep({
   priceInfo, setPriceInfo, setVendibleLocation, stock, setStock,
   setCategories, vendibleType, token, vendibleLocation, isEditionEnabled,
 }) {
+  const vendibleUnit = useMemo(() => parseVendibleUnit(vendibleType), [vendibleType]);
+
   const showPriceInput = useMemo(() => {
     const { type } = priceInfo;
-    return (isEditionEnabled
-    || (type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT)));
+    return ((type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT)));
   }, [priceInfo, isEditionEnabled]);
 
   const defaultPriceTypeSelected = useMemo(() => {
@@ -115,11 +116,11 @@ function FirstStep({
   const { nameFieldTitle, nameFieldPlaceholder, searchLabel } = useMemo(() => ({
     nameFieldTitle: isEditionEnabled ? null : (
       <Typography variant="h4">
-        {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleUnit(vendibleType))}
+        {proveedorLabels.nameOfYourVendible.replace('{vendible}', vendibleUnit)}
       </Typography>
     ),
     nameFieldPlaceholder: isEditionEnabled ? proveedorLabels.nameOfYourVendible
-      : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleUnit(vendibleType)),
+      : proveedorLabels['addVendible.name.text'].replace('{vendible}', vendibleUnit),
 
     searchLabel: !isEditionEnabled ? inputHelperLabels.required : inputHelperLabels.nonEditable,
   }), [isEditionEnabled]);
@@ -127,12 +128,12 @@ function FirstStep({
   const categoriesSection = (
     <Grid item sx={{ mt: '5%' }}>
       <Typography variant="h4">
-        {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleUnit(vendibleType))}
+        {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleUnit)}
       </Typography>
       <Typography
         dangerouslySetInnerHTML={{
           __html: proveedorLabels['addVendible.category.text']
-            .replace('{vendible}', vendibleUnit(vendibleType))
+            .replace('{vendible}', vendibleUnit)
             .replace('{ejemploCategorias}', proveedorLabels[`addVendible.category.${vendibleType}.example`]),
         }}
         textAlign="justify"
@@ -156,7 +157,7 @@ function FirstStep({
       </Typography>
       <Typography
         dangerouslySetInnerHTML={{
-          __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleUnit(vendibleType)),
+          __html: proveedorLabels['addVendible.price.text'].replace(/{vendible}/ig, vendibleUnit),
         }}
         textAlign="justify"
         sx={{ paddingRight: '5px', width: '70%' }}

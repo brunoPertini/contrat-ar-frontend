@@ -6,9 +6,10 @@ import {
 } from '../../Shared/Constants/System';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
-import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 function ConfirmationPage({ vendibleType, vendibleInfo, isEditionEnabled }) {
+  const vendibleUnit = parseVendibleUnit(vendibleType);
   return (
     <Grid
       item

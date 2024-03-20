@@ -1,18 +1,20 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import {
-  useCallback,
-  useContext, useEffect, useMemo,
+  useContext, useMemo,
   useState,
 } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
-  PRICE_TYPE_VARIABLE, PRODUCT,
+  PRICE_TYPE_VARIABLE,
+  PRODUCTS,
+  PRODUCT_LOCATION_AT_HOME,
+  PRODUCT_LOCATION_FIXED,
+  SERVICES,
   SERVICE_LOCATION_AT_HOME,
+  SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
@@ -23,6 +25,7 @@ import SecondStep from '../CreateVendible/SecondStep';
 import FirstStep from '../CreateVendible/FirstStep';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { vendibleInfoShape } from '../../Shared/PropTypes/Proveedor';
 
 const localStorageService = new LocalStorageService();
 
@@ -60,7 +63,11 @@ function ModifyVendibleForm({
 
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
-      const isProduct = vendibleType === PRODUCT.toLowerCase();
+      const offersDelivery = locationTypes.includes(SERVICE_LOCATION_AT_HOME)
+      || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
+      const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
+      || locationTypes.includes(PRODUCT_LOCATION_FIXED);
+
       const proveedoresVendibles = [
         {
           descripcion,
@@ -68,8 +75,9 @@ function ModifyVendibleForm({
           tipoPrecio: buildPriceType(priceInfo.type),
           imagenUrl,
           location: vendibleLocation,
-          stock: isProduct ? new Number(stock) : undefined,
-          offersDelivery: !isProduct && locationTypes.includes(SERVICE_LOCATION_AT_HOME),
+          stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
+          offersDelivery,
+          offersInCustomAddress,
         },
       ];
 
@@ -199,8 +207,6 @@ function ModifyVendibleForm({
     LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN,
   ));
 
-  console.log(vendibleInfo);
-
   return (
     <Grid
       {...containerProps}
@@ -235,5 +241,14 @@ function ModifyVendibleForm({
     </Grid>
   );
 }
+
+ModifyVendibleForm.propTypes = {
+  userToken: PropTypes.string.isRequired,
+  vendibleInfo: PropTypes.shape(vendibleInfoShape).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCTS, SERVICES]).isRequired,
+  handleUploadImage: PropTypes.func.isRequired,
+  handlePutVendible: PropTypes.func.isRequired,
+  showSaveChangesAlertModal: PropTypes.func.isRequired,
+};
 
 export default ModifyVendibleForm;

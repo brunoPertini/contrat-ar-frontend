@@ -1,4 +1,4 @@
 import { PRODUCT, PRODUCTS, SERVICE } from '../Constants/System';
 
-export const vendibleUnit = (vendibleType) => (vendibleType === PRODUCTS
+export const parseVendibleUnit = (vendibleType) => (vendibleType === PRODUCTS
   ? PRODUCT : SERVICE).toLowerCase();

@@ -10,7 +10,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
-import { vendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 function SecondStep({
   vendibleType, handleUploadImage, imageUrl, setImageUrl, description,
@@ -49,6 +49,8 @@ function SecondStep({
     imageTitle: null,
   }), [isEditionEnabled]);
 
+  const vendibleUnit = useMemo(() => parseVendibleUnit(vendibleType), [vendibleType]);
+
   return (
     <Grid
       item
@@ -66,7 +68,7 @@ function SecondStep({
         { mainTitle }
         <Typography
           dangerouslySetInnerHTML={{
-            __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit(vendibleType)),
+            __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit),
           }}
           textAlign="justify"
           sx={{ width: '50%', mt: '2%' }}
@@ -135,7 +137,7 @@ function SecondStep({
         xs={6}
       >
         <Typography variant="h4" sx={{ paddingRight: '5%' }}>
-          { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleUnit(vendibleType))}
+          { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleUnit)}
         </Typography>
         <TextareaAutosize
           minRows={15}
