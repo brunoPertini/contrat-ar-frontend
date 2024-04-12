@@ -23,7 +23,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo, isEditionEnabled }) {
         isEditionEnabled={isEditionEnabled}
         vendibleInfo={vendibleInfo}
         vendibleType={vendibleType}
-        title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleUnit(vendibleType))}
+        title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleUnit)}
         cardRowStyles={{
           width: '40%',
         }}
