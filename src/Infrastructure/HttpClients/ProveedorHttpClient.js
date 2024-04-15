@@ -17,4 +17,12 @@ export class ProveedorHttpClient extends HttpClient {
       : proveedoresRoutes.servicioBaseUrl;
     return this.post(url, { proveedorId }, body);
   }
+
+  putVendible({ vendibleId, proveedorId, body }) {
+    const url = proveedoresRoutes.updateVendible
+      .replace('{vendibleId}', vendibleId)
+      .replace('{proveedorId}', proveedorId);
+
+    return this.put(url, null, body);
+  }
 }

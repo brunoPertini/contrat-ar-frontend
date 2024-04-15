@@ -31,7 +31,7 @@ const localStorageService = new LocalStorageService();
 
 function ModifyVendibleForm({
   userToken, vendibleInfo, vendibleType, handleUploadImage, handlePutVendible,
-  showSaveChangesAlertModal,
+  showSaveChangesAlertModal, proveedorId,
 }) {
   const [nombre, setNombre] = useState(vendibleInfo.vendibleNombre);
 
@@ -68,22 +68,22 @@ function ModifyVendibleForm({
       const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
       || locationTypes.includes(PRODUCT_LOCATION_FIXED);
 
-      const proveedoresVendibles = [
-        {
-          descripcion,
-          precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
-          tipoPrecio: buildPriceType(priceInfo.type),
-          imagenUrl,
-          location: vendibleLocation,
-          stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
-          offersDelivery,
-          offersInCustomAddress,
-        },
-      ];
+      const body = {
+        descripcion,
+        precio: new Number(priceInfo.amount.toString().replace(DOT_AND_COMMA_REGEX, '')),
+        tipoPrecio: buildPriceType(priceInfo.type),
+        imagenUrl,
+        location: vendibleLocation,
+        stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
+        offersDelivery,
+        offersInCustomAddress,
+      };
 
       handlePutVendible({
-        nombre,
-        proveedoresVendibles,
+        proveedorId,
+        vendibleId: vendibleInfo.vendibleId,
+        body,
+
       }).then(() => {
         setOperationResult(true);
       }).catch(() => {
@@ -249,6 +249,7 @@ ModifyVendibleForm.propTypes = {
   handleUploadImage: PropTypes.func.isRequired,
   handlePutVendible: PropTypes.func.isRequired,
   showSaveChangesAlertModal: PropTypes.func.isRequired,
+  proveedorId: PropTypes.number.isRequired,
 };
 
 export default ModifyVendibleForm;
