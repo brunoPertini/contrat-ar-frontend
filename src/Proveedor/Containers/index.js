@@ -90,6 +90,19 @@ function ProveedorContainer({ router, handleLogout }) {
     }).catch((error) => Promise.reject(error));
   };
 
+  const handlePutVendible = async ({ proveedorId, vendibleId, body }) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+    });
+
+    return client.putVendible({
+      proveedorId, vendibleId, body,
+    }).then((postVendibleResponse) => {
+      handleGetVendibles();
+      return postVendibleResponse;
+    }).catch((error) => Promise.reject(error));
+  };
+
   useEffect(() => {
     handleGetVendibles();
   }, []);
@@ -105,6 +118,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handleLogout={handleLogout}
         handleUploadImage={handleUploadImage}
         handlePostVendible={handlePostVendible}
+        handlePutVendible={handlePutVendible}
         router={router}
       />
     </NavigationContextProvider>

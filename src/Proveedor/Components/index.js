@@ -40,7 +40,7 @@ import ModifyVendibleForm from '../ModifyVendible';
 const localStorageService = new LocalStorageService();
 
 const optionsMenuHandlers = ({
-  vendibleInfo, onCloseInnerComponent,
+  vendibleInfo, onCloseInnerComponent, userId, handlePutVendible,
   option, vendibleType, userToken, onChangeCurrentInnerScreen,
   setModifyVendibleProps, handleUploadImage, showSaveChangesAlertModal,
 }) => {
@@ -73,12 +73,13 @@ const optionsMenuHandlers = ({
     [sharedLabels.modify]: () => {
       onChangeCurrentInnerScreen({ newScreen: 'modifyVendible' });
       setModifyVendibleProps({
+        proveedorId: userId,
         userToken,
         vendibleInfo,
         vendibleType,
         handleUploadImage,
         showSaveChangesAlertModal,
-        handlePutVendible: () => {},
+        handlePutVendible,
       });
 
       return null;
@@ -87,6 +88,17 @@ const optionsMenuHandlers = ({
   };
 
   return handlers[option]();
+};
+
+const operationsMessages = {
+  modify: {
+    ok: (vendibleType) => proveedorLabels['modifyVendible.alert.success'].replace('{vendible}', vendibleType),
+    error: (vendibleType) => proveedorLabels['modifyVendible.alert.error'].replace('{vendible}', vendibleType),
+  },
+  add: {
+    ok: (vendibleType) => proveedorLabels['addVendible.alert.success'].replace('{vendible}', vendibleType),
+    error: (vendibleType) => proveedorLabels['addVendible.alert.error'].replace('{vendible}', vendibleType),
+  },
 };
 
 function ProveedorPage({
@@ -101,6 +113,7 @@ function ProveedorPage({
   handleLogout,
   handleUploadImage,
   handlePostVendible,
+  handlePutVendible,
   router,
 }) {
   const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
@@ -118,7 +131,10 @@ function ProveedorPage({
 
   const [modalContent, setModalContent] = useState({ title: '', text: '', handleAccept: () => {} });
 
-  const [crudOperationResult, setCrudOperationResult] = useState();
+  const [crudOperationResult, setCrudOperationResult] = useState({
+    add: null,
+    modify: null,
+  });
 
   const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(null);
 
@@ -221,18 +237,23 @@ function ProveedorPage({
     let alertForLabel = null;
     let severityForAlert;
 
-    if (crudOperationResult) {
-      alertForLabel = proveedorLabels['addVendible.alert.success'].replace('{vendible}', labelVendibleType);
-      severityForAlert = 'success';
-    }
+    const operationMade = crudOperationResult && Object.keys(crudOperationResult).find(
+      (key) => crudOperationResult[key] === true
+    || crudOperationResult[key] === false,
+    );
 
-    if (crudOperationResult === false) {
-      alertForLabel = proveedorLabels['addVendible.alert.error'].replace('{vendible}', labelVendibleType);
-      severityForAlert = 'error';
+    if (operationMade) {
+      if (crudOperationResult[operationMade]) {
+        alertForLabel = operationsMessages[operationMade].ok(labelVendibleType);
+        severityForAlert = 'success';
+      } else {
+        alertForLabel = operationsMessages[operationMade].error(labelVendibleType);
+        severityForAlert = 'error';
+      }
     }
 
     return ({
-      openSnackbar: crudOperationResult !== undefined && !!(alertForLabel),
+      openSnackbar: operationMade !== undefined && !!(alertForLabel),
       alertSeverity: severityForAlert,
       alertLabel: alertForLabel,
     });
@@ -286,11 +307,28 @@ function ProveedorPage({
 
   const managePostVendibleResults = (body) => handlePostVendible(body)
     .then((response) => {
-      setCrudOperationResult(true);
+      setCrudOperationResult({ add: true });
       return response;
     })
     .catch((error) => {
-      setCrudOperationResult(false);
+      setCrudOperationResult({ add: false });
+      return error;
+    })
+    .finally(() => {
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
+      setCurrentInnerScreen(undefined);
+    });
+
+  const managePutVendibleResults = ({ proveedorId, vendibleId, body }) => handlePutVendible({
+    proveedorId,
+    vendibleId,
+    body,
+  }).then((response) => {
+    setCrudOperationResult({ modify: true });
+    return response;
+  })
+    .catch((error) => {
+      setCrudOperationResult({ modify: false });
       return error;
     })
     .finally(() => {
@@ -320,11 +358,13 @@ function ProveedorPage({
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
+        handlePutVendible: managePutVendibleResults,
         handleUploadImage,
         vendibleInfo,
         option,
         vendibleType,
         userToken: userInfo.token,
+        userId: userInfo.id,
         onCloseInnerComponent: cleanOperationsComponents,
         onChangeCurrentInnerScreen: onChangeCurrentScreen,
         setModifyVendibleProps,
@@ -482,6 +522,7 @@ ProveedorPage.propTypes = {
   handleLogout: PropTypes.func.isRequired,
   handleUploadImage: PropTypes.func.isRequired,
   handlePostVendible: PropTypes.func.isRequired,
+  handlePutVendible: PropTypes.func.isRequired,
   router: PropTypes.shape(routerShape).isRequired,
 };
 

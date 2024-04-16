@@ -31,5 +31,7 @@
     "addVendible.stock": "Stock actual de tu producto: " ,
     "addVendible.confirmation.title": "Por favor, confirmá la información introducida antes de guardar tu {vendible}",
     "addVendible.alert.success": "¡Tu {vendible} fue agregado!",
-    "addVendible.alert.error": "¡Tu {vendible} no pudo ser agregado!"
+    "addVendible.alert.error": "¡Tu {vendible} no pudo ser agregado!",
+    "modifyVendible.alert.success": "¡Tu {vendible} fue modificado!",
+    "modifyVendible.alert.error": "¡Tu {vendible} no pudo ser modificado!"
 }
