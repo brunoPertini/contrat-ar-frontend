@@ -93,11 +93,11 @@ const optionsMenuHandlers = ({
 const operationsMessages = {
   modify: {
     ok: (vendibleType) => proveedorLabels['modifyVendible.alert.success'].replace('{vendible}', vendibleType),
-    error: proveedorLabels['modifyVendible.alert.error'],
+    error: (vendibleType) => proveedorLabels['modifyVendible.alert.error'].replace('{vendible}', vendibleType),
   },
   add: {
-    ok: proveedorLabels['addVendible.alert.success'],
-    error: proveedorLabels['addVendible.alert.error'],
+    ok: (vendibleType) => proveedorLabels['addVendible.alert.success'].replace('{vendible}', vendibleType),
+    error: (vendibleType) => proveedorLabels['addVendible.alert.error'].replace('{vendible}', vendibleType),
   },
 };
 
@@ -237,17 +237,17 @@ function ProveedorPage({
     let alertForLabel = null;
     let severityForAlert;
 
-    const operationMade = Object.keys(crudOperationResult).find(
+    const operationMade = crudOperationResult && Object.keys(crudOperationResult).find(
       (key) => crudOperationResult[key] === true
     || crudOperationResult[key] === false,
     );
 
     if (operationMade) {
       if (crudOperationResult[operationMade]) {
-        alertForLabel = operationsMessages[operationMade].ok;
+        alertForLabel = operationsMessages[operationMade].ok(labelVendibleType);
         severityForAlert = 'success';
       } else {
-        alertForLabel = operationsMessages[operationMade].error;
+        alertForLabel = operationsMessages[operationMade].error(labelVendibleType);
         severityForAlert = 'error';
       }
     }

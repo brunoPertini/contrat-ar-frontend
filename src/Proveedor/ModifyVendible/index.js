@@ -195,6 +195,7 @@ function ModifyVendibleForm({
         imagenUrl,
         descripcion,
       }}
+      userToken={userToken}
     />,
     backButtonEnabled: true,
   },
@@ -249,7 +250,7 @@ ModifyVendibleForm.propTypes = {
   handleUploadImage: PropTypes.func.isRequired,
   handlePutVendible: PropTypes.func.isRequired,
   showSaveChangesAlertModal: PropTypes.func.isRequired,
-  proveedorId: PropTypes.number.isRequired,
+  proveedorId: PropTypes.string.isRequired,
 };
 
 export default ModifyVendibleForm;

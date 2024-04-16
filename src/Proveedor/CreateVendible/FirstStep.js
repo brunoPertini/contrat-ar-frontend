@@ -16,7 +16,8 @@ import {
   ARGENTINA_LOCALE,
   PRICE_TYPES,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
-  PRODUCT, PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED, SERVICE,
+  PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
+  SERVICES,
   SERVICE_LOCATION_AT_HOME,
   SERVICE_LOCATION_FIXED,
 } from '../../Shared/Constants/System';
@@ -290,11 +291,11 @@ FirstStep.propTypes = {
   setLocationTypes: PropTypes.func.isRequired,
   priceInfo: PropTypes.shape({
     type: PropTypes.string,
-    amount: PropTypes.string,
+    amount: PropTypes.number,
   }).isRequired,
   setPriceInfo: PropTypes.func.isRequired,
   setVendibleLocation: PropTypes.func.isRequired,
-  vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCTS.toLowerCase(), SERVICES.toLowerCase()]).isRequired,
   locationTypes: PropTypes.arrayOf(PropTypes.string),
   categories: PropTypes.arrayOf(PropTypes.string),
   setCategories: PropTypes.func,
@@ -302,7 +303,7 @@ FirstStep.propTypes = {
     coordinates: PropTypes.arrayOf(PropTypes.number),
   }).isRequired,
   token: PropTypes.string.isRequired,
-  stock: PropTypes.string.isRequired,
+  stock: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(String)]).isRequired,
   setStock: PropTypes.func.isRequired,
   isEditionEnabled: PropTypes.bool,
 };

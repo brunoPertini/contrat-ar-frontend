@@ -2,13 +2,17 @@ import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
 
 import {
-  PRODUCT, SERVICE,
+  PRODUCTS, SERVICES,
 } from '../../Shared/Constants/System';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
-function ConfirmationPage({ vendibleType, vendibleInfo, isEditionEnabled }) {
+function ConfirmationPage({
+  vendibleType,
+  vendibleInfo, isEditionEnabled,
+  userToken,
+}) {
   const vendibleUnit = parseVendibleUnit(vendibleType);
   return (
     <Grid
@@ -20,6 +24,7 @@ function ConfirmationPage({ vendibleType, vendibleInfo, isEditionEnabled }) {
       justifyContent="center"
     >
       <VendibleInfo
+        userToken={userToken}
         isEditionEnabled={isEditionEnabled}
         vendibleInfo={vendibleInfo}
         vendibleType={vendibleType}
@@ -41,19 +46,20 @@ ConfirmationPage.propTypes = {
     nombre: PropTypes.string,
     priceInfo: PropTypes.shape({
       type: PropTypes.string,
-      amount: PropTypes.string,
+      amount: PropTypes.number,
     }),
     locationTypes: PropTypes.arrayOf(PropTypes.string),
     categories: PropTypes.arrayOf(PropTypes.string),
-    stock: PropTypes.string,
+    stock: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(String)]).isRequired,
     imagenUrl: PropTypes.string,
     descripcion: PropTypes.string,
     vendibleLocation: PropTypes.shape({
       coordinates: PropTypes.arrayOf(PropTypes.number),
     }),
   }).isRequired,
-  vendibleType: PropTypes.oneOf([PRODUCT.toLowerCase(), SERVICE.toLowerCase()]).isRequired,
+  vendibleType: PropTypes.oneOf([PRODUCTS.toLowerCase(), SERVICES.toLowerCase()]).isRequired,
   isEditionEnabled: PropTypes.bool,
+  userToken: PropTypes.string.isRequired,
 };
 
 export default ConfirmationPage;
