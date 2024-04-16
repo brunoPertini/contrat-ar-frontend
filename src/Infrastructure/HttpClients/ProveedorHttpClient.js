@@ -19,10 +19,18 @@ export class ProveedorHttpClient extends HttpClient {
   }
 
   putVendible({ vendibleId, proveedorId, body }) {
-    const url = proveedoresRoutes.updateVendible
+    const url = proveedoresRoutes.vendibleOperations
       .replace('{vendibleId}', vendibleId)
       .replace('{proveedorId}', proveedorId);
 
     return this.put(url, null, body);
+  }
+
+  deleteVendible({ vendibleId, proveedorId }) {
+    const url = proveedoresRoutes.vendibleOperations
+      .replace('{vendibleId}', vendibleId)
+      .replace('{proveedorId}', proveedorId);
+
+    return this.delete(url);
   }
 }

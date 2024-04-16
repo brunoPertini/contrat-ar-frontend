@@ -57,4 +57,8 @@ export const dialogModalTexts = {
     title: '¿Desea salir?',
     text: 'Perderá todos los cambios',
   },
+  DELETE_VENDIBLE: {
+    title: '¿Desea eliminar el {vendible} {vendibleNombre}?',
+    text: 'Esta acción es irreversible',
+  },
 };

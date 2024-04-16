@@ -33,5 +33,7 @@
     "addVendible.alert.success": "¡Tu {vendible} fue agregado!",
     "addVendible.alert.error": "¡Tu {vendible} no pudo ser agregado!",
     "modifyVendible.alert.success": "¡Tu {vendible} fue modificado!",
-    "modifyVendible.alert.error": "¡Tu {vendible} no pudo ser modificado!"
+    "modifyVendible.alert.error": "¡Tu {vendible} no pudo ser modificado!",
+    "deleteVendible.alert.success": "¡Tu {vendible} fue borrado!",
+    "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!"
 }

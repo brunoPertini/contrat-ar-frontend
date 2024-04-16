@@ -103,6 +103,17 @@ function ProveedorContainer({ router, handleLogout }) {
     }).catch((error) => Promise.reject(error));
   };
 
+  const handleDeleteVendible = async ({ proveedorId, vendibleId }) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+    });
+
+    return client.deleteVendible({ proveedorId, vendibleId }).then((postVendibleResponse) => {
+      handleGetVendibles();
+      return postVendibleResponse;
+    }).catch((error) => Promise.reject(error));
+  };
+
   useEffect(() => {
     handleGetVendibles();
   }, []);
@@ -119,6 +130,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handleUploadImage={handleUploadImage}
         handlePostVendible={handlePostVendible}
         handlePutVendible={handlePutVendible}
+        handleDeleteVendible={handleDeleteVendible}
         router={router}
       />
     </NavigationContextProvider>
