@@ -320,7 +320,12 @@ function ProveedorPage({
     });
   };
 
-  const managePostVendibleResults = (body) => handlePostVendible(body)
+  const handlePostServiceCall = () => {
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
+    setCurrentInnerScreen(undefined);
+  };
+
+  const managePostVendibleResults = useCallback((body) => handlePostVendible(body)
     .then((response) => {
       setCrudOperationResult({ add: true });
       return response;
@@ -330,11 +335,14 @@ function ProveedorPage({
       return error;
     })
     .finally(() => {
-      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
-      setCurrentInnerScreen(undefined);
-    });
+      handlePostServiceCall();
+    }), [setCrudOperationResult]);
 
-  const managePutVendibleResults = ({ proveedorId, vendibleId, body }) => handlePutVendible({
+  const managePutVendibleResults = useCallback(({
+    proveedorId,
+    vendibleId,
+    body,
+  }) => handlePutVendible({
     proveedorId,
     vendibleId,
     body,
@@ -347,24 +355,31 @@ function ProveedorPage({
       return error;
     })
     .finally(() => {
-      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
-      setCurrentInnerScreen(undefined);
-    });
+      handlePostServiceCall();
+    }), [setCrudOperationResult]);
 
-  const showDeleteConfirmationModal = useCallback(({ proveedorId, vendibleId, vendibleNombre }) => {
-    const onAccept = () => handleDeleteVendible({ proveedorId, vendibleId }).then((response) => {
+  const handleDeleteVendibleResults = useCallback(({
+    proveedorId,
+    vendibleId,
+  }) => handleDeleteVendible({
+    proveedorId,
+    vendibleId,
+  })
+    .then((response) => {
       setCrudOperationResult({ delete: true });
       return response;
     })
-      .catch((error) => {
-        setCrudOperationResult({ delete: false });
-        return error;
-      })
-      .finally(() => {
-        localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
-        setCurrentInnerScreen(undefined);
-        onCleanModalContent();
-      });
+    .catch((error) => {
+      setCrudOperationResult({ delete: false });
+      return error;
+    })
+    .finally(() => {
+      handlePostServiceCall();
+      onCleanModalContent();
+    }), [setCrudOperationResult]);
+
+  const showDeleteConfirmationModal = useCallback(({ proveedorId, vendibleId, vendibleNombre }) => {
+    const onAccept = () => handleDeleteVendibleResults({ proveedorId, vendibleId });
     const vendibleUnit = parseVendibleUnit(vendibleType);
     setModalContent({
       title: dialogModalTexts.DELETE_VENDIBLE.title.replace('{vendible}', vendibleUnit).replace(
