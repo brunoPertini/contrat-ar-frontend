@@ -24,7 +24,10 @@ function SignInContainer({ router, securityService, cookiesService }) {
     return httpClient.login(params).then(async (response) => {
       const userInfo = await securityService.validateJwt(response);
       if (userInfo.indexPage) {
-        cookiesService.add(CookiesService.COOKIES_NAMES.USER_TOKEN, response);
+        cookiesService.add(CookiesService.COOKIES_NAMES.USER_TOKEN, response, [{
+          key: 'max-age',
+          value: (60 * 60 * 24),
+        }]);
         router.navigate(userInfo.indexPage);
       }
     }).catch((error) => {

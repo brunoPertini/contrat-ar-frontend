@@ -55,6 +55,7 @@ export default function withRouter(Component) {
           setTokenVerified(true);
           await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
           cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
+          navigate(userInfo.indexPage);
         }
       } catch (error) {
         setTokenVerified(false);
@@ -84,11 +85,17 @@ export default function withRouter(Component) {
      * This is to handle when the url is replaced in the browser
      */
     useEffect(() => {
-      if (isSecuredRoute) {
-        verifyToken();
-      }
+      verifyToken();
 
       window.addEventListener('beforeunload', handleOnBeforeUnload);
+
+      window.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          console.log('User opened another tab');
+        } else {
+          console.log('User is on this tab');
+        }
+      });
 
       return () => {
         handleOnBeforeUnload();
