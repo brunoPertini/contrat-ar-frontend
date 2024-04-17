@@ -36,12 +36,13 @@ import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import ModifyVendibleForm from '../ModifyVendible';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 const localStorageService = new LocalStorageService();
 
 const optionsMenuHandlers = ({
   vendibleInfo, onCloseInnerComponent, userId, handlePutVendible,
-  option, vendibleType, userToken, onChangeCurrentInnerScreen,
+  option, vendibleType, userToken, onChangeCurrentInnerScreen, handleDeleteVendible,
   setModifyVendibleProps, handleUploadImage, showSaveChangesAlertModal,
 }) => {
   const handlers = {
@@ -84,7 +85,14 @@ const optionsMenuHandlers = ({
 
       return null;
     },
-    [sharedLabels.delete]: () => {},
+    [sharedLabels.delete]: () => {
+      handleDeleteVendible({
+        proveedorId: userId,
+        vendibleId: vendibleInfo.vendibleId,
+        vendibleNombre: vendibleInfo.vendibleNombre,
+      });
+      return null;
+    },
   };
 
   return handlers[option]();
@@ -98,6 +106,10 @@ const operationsMessages = {
   add: {
     ok: (vendibleType) => proveedorLabels['addVendible.alert.success'].replace('{vendible}', vendibleType),
     error: (vendibleType) => proveedorLabels['addVendible.alert.error'].replace('{vendible}', vendibleType),
+  },
+  delete: {
+    ok: (vendibleType) => proveedorLabels['deleteVendible.alert.success'].replace('{vendible}', vendibleType),
+    error: (vendibleType) => proveedorLabels['deleteVendible.alert.error'].replace('{vendible}', vendibleType),
   },
 };
 
@@ -114,13 +126,15 @@ function ProveedorPage({
   handleUploadImage,
   handlePostVendible,
   handlePutVendible,
+  handleDeleteVendible,
   router,
 }) {
-  const vendibleType = userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES;
-
-  const labelVendibleType = (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS
-    ? PRODUCT
-    : SERVICE).toLowerCase();
+  const { vendibleType, labelVendibleType } = useMemo(() => ({
+    vendibleType: userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES,
+    labelVendibleType: (userInfo.role === ROLE_PROVEEDOR_PRODUCTOS
+      ? PRODUCT
+      : SERVICE).toLowerCase(),
+  }), [userInfo.role]);
 
   const [filteredVendibles, setFilteredVendibles] = useState();
 
@@ -134,6 +148,7 @@ function ProveedorPage({
   const [crudOperationResult, setCrudOperationResult] = useState({
     add: null,
     modify: null,
+    delete: null,
   });
 
   const [vendibleOperationsComponent, setVendibleOperationsComponent] = useState(null);
@@ -305,7 +320,12 @@ function ProveedorPage({
     });
   };
 
-  const managePostVendibleResults = (body) => handlePostVendible(body)
+  const handlePostServiceCall = () => {
+    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
+    setCurrentInnerScreen(undefined);
+  };
+
+  const managePostVendibleResults = useCallback((body) => handlePostVendible(body)
     .then((response) => {
       setCrudOperationResult({ add: true });
       return response;
@@ -315,11 +335,14 @@ function ProveedorPage({
       return error;
     })
     .finally(() => {
-      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
-      setCurrentInnerScreen(undefined);
-    });
+      handlePostServiceCall();
+    }), [setCrudOperationResult]);
 
-  const managePutVendibleResults = ({ proveedorId, vendibleId, body }) => handlePutVendible({
+  const managePutVendibleResults = useCallback(({
+    proveedorId,
+    vendibleId,
+    body,
+  }) => handlePutVendible({
     proveedorId,
     vendibleId,
     body,
@@ -332,9 +355,41 @@ function ProveedorPage({
       return error;
     })
     .finally(() => {
-      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
-      setCurrentInnerScreen(undefined);
+      handlePostServiceCall();
+    }), [setCrudOperationResult]);
+
+  const handleDeleteVendibleResults = useCallback(({
+    proveedorId,
+    vendibleId,
+  }) => handleDeleteVendible({
+    proveedorId,
+    vendibleId,
+  })
+    .then((response) => {
+      setCrudOperationResult({ delete: true });
+      return response;
+    })
+    .catch((error) => {
+      setCrudOperationResult({ delete: false });
+      return error;
+    })
+    .finally(() => {
+      handlePostServiceCall();
+      onCleanModalContent();
+    }), [setCrudOperationResult]);
+
+  const showDeleteConfirmationModal = useCallback(({ proveedorId, vendibleId, vendibleNombre }) => {
+    const onAccept = () => handleDeleteVendibleResults({ proveedorId, vendibleId });
+    const vendibleUnit = parseVendibleUnit(vendibleType);
+    setModalContent({
+      title: dialogModalTexts.DELETE_VENDIBLE.title.replace('{vendible}', vendibleUnit).replace(
+        '{vendibleNombre}',
+        vendibleNombre,
+      ),
+      text: dialogModalTexts.DELETE_VENDIBLE.text,
+      handleAccept: onAccept,
     });
+  }, [setModalContent]);
 
   const innerScreens = {
     addNewVendible: {
@@ -369,6 +424,7 @@ function ProveedorPage({
         onChangeCurrentInnerScreen: onChangeCurrentScreen,
         setModifyVendibleProps,
         showSaveChangesAlertModal,
+        handleDeleteVendible: showDeleteConfirmationModal,
 
       });
       setVendibleOperationsComponent(OperationsComponent);
@@ -523,6 +579,7 @@ ProveedorPage.propTypes = {
   handleUploadImage: PropTypes.func.isRequired,
   handlePostVendible: PropTypes.func.isRequired,
   handlePutVendible: PropTypes.func.isRequired,
+  handleDeleteVendible: PropTypes.func.isRequired,
   router: PropTypes.shape(routerShape).isRequired,
 };
 
