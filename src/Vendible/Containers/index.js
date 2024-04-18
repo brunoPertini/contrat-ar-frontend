@@ -9,6 +9,9 @@ import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { routerShape } from '../../Shared/PropTypes/Shared';
+import { useOnSaveDataBeforeLeaving } from '../../Shared/Hooks/useOnSaveDataBeforeLeaving';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { CLIENTE, PRODUCTS } from '../../Shared/Constants/System';
 
 const stateSelector = (state) => state;
 
@@ -41,6 +44,9 @@ function VendibleContainer({ router }) {
   };
 
   useEffect(() => {
+    if (userInfo.role !== CLIENTE) {
+      throw new Response('', { status: 401 });
+    }
     handleGetProveedoresInfo();
   }, []);
 

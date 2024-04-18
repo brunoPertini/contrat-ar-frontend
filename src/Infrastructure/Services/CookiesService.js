@@ -5,7 +5,7 @@ class CookiesService {
   };
 
   /**
- * @typedef CookieAttribute
+ * @typedef KeyValueAttribute
  * @type {object}
  * @property {String} key
  * @property {String} value
@@ -15,7 +15,7 @@ class CookiesService {
    * Adds the passed cookie with the given attributes
    * @param {String} key
    * @param {String} value
-   * @param {Array<CookieAttribute>} attributes
+   * @param {Array<KeyValueAttribute>} attributes
    */
   add(key, value, attributes = []) {
     const appendIfExists = (cookieAttributeKey, cookieAttributeValue) => `${cookieAttributeKey}=${cookieAttributeValue}`;

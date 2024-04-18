@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
   RouterProvider,
+  useRouteError,
 } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -12,6 +14,27 @@ import { SignIn } from './SignIn';
 import { Cliente } from './Cliente';
 import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
+
+function ErrorComponent() {
+  const error = useRouteError();
+  const handlers = {
+    401: () => (
+      <div>
+        NO ESTA AUTORIZADO A VER ESTE CONTENIDO
+      </div>
+    ),
+    500: () => (
+      <div>
+        ERROR INESPERADO
+      </div>
+    ),
+  };
+  return error.status ? handlers[error.status]() : (
+    <div>
+      ERROR INESPERADO
+    </div>
+  );
+}
 
 const router = createBrowserRouter([
   {
@@ -29,6 +52,8 @@ const router = createBrowserRouter([
   {
     path: '/cliente',
     element: <Cliente />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/producto',
@@ -41,6 +66,8 @@ const router = createBrowserRouter([
   {
     path: '/proveedor',
     element: <Proveedor />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
 ]);
 

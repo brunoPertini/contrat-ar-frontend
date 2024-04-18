@@ -7,7 +7,10 @@ import ProveedorPage from '../Components';
 import { systemConstants } from '../../Shared/Constants';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS, SERVICES } from '../../Shared/Constants/System';
+import {
+  PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS,
+  ROLE_PROVEEDOR_SERVICIOS, SERVICES,
+} from '../../Shared/Constants/System';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
@@ -115,6 +118,9 @@ function ProveedorContainer({ router, handleLogout }) {
   };
 
   useEffect(() => {
+    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
+      throw new Response('', { status: 401 });
+    }
     handleGetVendibles();
   }, []);
 

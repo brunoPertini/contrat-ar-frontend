@@ -9,10 +9,24 @@ export class LocalStorageService {
     SHARED: {
       BACKPRESSED: 'backPressed',
     },
+    PRODUCT: {
+      INDEX: 'producto',
+    },
+    SERVICE: {
+      INDEX: 'servicio',
+    },
   };
 
   setItem(key, value) {
-    localStorage.setItem(key, value);
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      if (e instanceof DOMException) {
+        Object.keys(LocalStorageService.PAGES_KEYS).forEach((pageKey) => {
+          this.removeAllKeysOfPage(pageKey);
+        });
+      }
+    }
   }
 
   getItem(key) {
