@@ -4,8 +4,26 @@ class CookiesService {
     USER_INDEX_PAGE: 'userIndexPage',
   };
 
-  add(key, value) {
-    document.cookie = `${key}=${value}`;
+  /**
+ * @typedef KeyValueAttribute
+ * @type {object}
+ * @property {String} key
+ * @property {String} value
+ */
+
+  /**
+   * Adds the passed cookie with the given attributes
+   * @param {String} key
+   * @param {String} value
+   * @param {Array<KeyValueAttribute>} attributes
+   */
+  add(key, value, attributes = []) {
+    const append = (cookieAttributeKey, cookieAttributeValue) => `${cookieAttributeKey}=${cookieAttributeValue}`;
+    const initialCookieValue = `${key}=${value}`;
+    const parsedAttributes = attributes.map(
+      (attribute) => append(attribute.key, attribute.value),
+    );
+    document.cookie = parsedAttributes.length ? `${initialCookieValue};${parsedAttributes.join(';')}` : initialCookieValue;
   }
 
   remove(key) {

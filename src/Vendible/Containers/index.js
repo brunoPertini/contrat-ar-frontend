@@ -9,6 +9,8 @@ import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { routerShape } from '../../Shared/PropTypes/Shared';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import { waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
 
 const stateSelector = (state) => state;
 
@@ -43,6 +45,8 @@ function VendibleContainer({ router }) {
   useEffect(() => {
     handleGetProveedoresInfo();
   }, []);
+
+  useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
   return !isEmpty(proveedoresInfo) ? (
     <NavigationContextProvider>

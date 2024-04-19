@@ -36,7 +36,7 @@ import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import ModifyVendibleForm from '../ModifyVendible';
-import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
 
 const localStorageService = new LocalStorageService();
 
@@ -539,7 +539,7 @@ function ProveedorPage({
     );
   }
 
-  useOnLeavingTabHandler();
+  useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
   return (
     <>

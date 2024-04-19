@@ -73,6 +73,13 @@ export default function withRouter(Component) {
       }
     };
 
+    const handleOnDuplicateTab = () => {
+        if (document.hidden) {
+          handleOnBeforeUnload();
+        }
+      }
+    }
+
     /** This cleans site's info such as localStorage, cookies, etc and performs log out */
     const handleLogout = async () => {
       removeOnLeavingTabHandlers();
@@ -90,9 +97,12 @@ export default function withRouter(Component) {
 
       window.addEventListener('beforeunload', handleOnBeforeUnload);
 
+      window.addEventListener('visibilitychange', handleOnDuplicateTab);
+
       return () => {
         handleOnBeforeUnload();
         removeOnLeavingTabHandlers();
+        window.removeEventListener('visibilitychange', handleOnDuplicateTab);
       };
     }, []);
 

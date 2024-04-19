@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
   RouterProvider,
+  useRouteError,
 } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -13,10 +15,39 @@ import { Cliente } from './Cliente';
 import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
 
+function ErrorComponent() {
+  // TODO: crear páginas de errores
+  const error = useRouteError();
+  const handlers = {
+    401: () => (
+      <div>
+        NO ESTA AUTORIZADO A VER ESTE CONTENIDO
+      </div>
+    ),
+    500: () => (
+      <div>
+        ERROR INESPERADO
+      </div>
+    ),
+    404: () => (
+      <div>
+        PAGINA NO ENCONTRADA
+      </div>
+    ),
+  };
+  return error.status ? handlers[error.status]() : (
+    <div>
+      ERROR INESPERADO
+    </div>
+  );
+}
+
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/signup',
@@ -29,18 +60,26 @@ const router = createBrowserRouter([
   {
     path: '/cliente',
     element: <Cliente />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/producto',
     element: <VendiblePage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/servicio',
     element: <VendiblePage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/proveedor',
     element: <Proveedor />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
 ]);
 
