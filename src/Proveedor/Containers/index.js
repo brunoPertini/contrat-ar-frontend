@@ -9,6 +9,7 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import {
   PRODUCTS, ROLE_PROVEEDOR_PRODUCTOS,
+  ROLE_PROVEEDOR_SERVICIOS,
   SERVICES,
 } from '../../Shared/Constants/System';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
@@ -54,6 +55,10 @@ function ProveedorContainer({ router, handleLogout }) {
     ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
+    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
+      throw new Response('', { status: 404 });
+    }
+
     const backButtonPresed = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED,
     );

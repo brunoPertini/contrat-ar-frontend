@@ -8,6 +8,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { routes } from '../../Shared/Constants';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
+import { CLIENTE } from '../../Shared/Constants/System';
 
 const stateSelector = (state) => state;
 
@@ -41,6 +42,10 @@ function ClienteContainer({ handleLogout }) {
         return error;
       });
   };
+
+  if (userInfo.role !== CLIENTE) {
+    throw new Response('', { status: 404 });
+  }
 
   return (
     <NavigationContextProvider>

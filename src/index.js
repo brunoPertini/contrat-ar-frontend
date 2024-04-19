@@ -29,6 +29,11 @@ function ErrorComponent() {
         ERROR INESPERADO
       </div>
     ),
+    404: () => (
+      <div>
+        PAGINA NO ENCONTRADA
+      </div>
+    ),
   };
   return error.status ? handlers[error.status]() : (
     <div>
