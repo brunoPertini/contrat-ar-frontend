@@ -18,10 +18,10 @@ class CookiesService {
    * @param {Array<KeyValueAttribute>} attributes
    */
   add(key, value, attributes = []) {
-    const appendIfExists = (cookieAttributeKey, cookieAttributeValue) => `${cookieAttributeKey}=${cookieAttributeValue}`;
+    const append = (cookieAttributeKey, cookieAttributeValue) => `${cookieAttributeKey}=${cookieAttributeValue}`;
     const initialCookieValue = `${key}=${value}`;
     const parsedAttributes = attributes.map(
-      (attribute) => appendIfExists(attribute.key, attribute.value),
+      (attribute) => append(attribute.key, attribute.value),
     );
     document.cookie = parsedAttributes.length ? `${initialCookieValue};${parsedAttributes.join(';')}` : initialCookieValue;
   }

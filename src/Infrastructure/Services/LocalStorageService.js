@@ -22,6 +22,7 @@ export class LocalStorageService {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       if (e instanceof DOMException) {
+        // Quota exceeded, removing all data in local storage
         Object.keys(LocalStorageService.PAGES_KEYS).forEach((pageKey) => {
           this.removeAllKeysOfPage(pageKey);
         });

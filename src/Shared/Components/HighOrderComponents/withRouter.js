@@ -55,7 +55,6 @@ export default function withRouter(Component) {
           setTokenVerified(true);
           await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
           cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
-          // navigate(userInfo.indexPage);
         }
       } catch (error) {
         setTokenVerified(false);
@@ -74,6 +73,13 @@ export default function withRouter(Component) {
       }
     };
 
+    const handleOnDuplicateTab = () => {
+        if (document.hidden) {
+          handleOnBeforeUnload();
+        }
+      }
+    }
+
     /** This cleans site's info such as localStorage, cookies, etc and performs log out */
     const handleLogout = async () => {
       removeOnLeavingTabHandlers();
@@ -91,15 +97,12 @@ export default function withRouter(Component) {
 
       window.addEventListener('beforeunload', handleOnBeforeUnload);
 
-      window.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          handleOnBeforeUnload();
-        }
-      });
+      window.addEventListener('visibilitychange', handleOnDuplicateTab);
 
       return () => {
         handleOnBeforeUnload();
         removeOnLeavingTabHandlers();
+        window.removeEventListener('visibilitychange', handleOnDuplicateTab);
       };
     }, []);
 
