@@ -74,11 +74,10 @@ export default function withRouter(Component) {
     };
 
     const handleOnDuplicateTab = () => {
-        if (document.hidden) {
-          handleOnBeforeUnload();
-        }
+      if (document.hidden) {
+        handleOnBeforeUnload();
       }
-    }
+    };
 
     /** This cleans site's info such as localStorage, cookies, etc and performs log out */
     const handleLogout = async () => {
