@@ -16,6 +16,7 @@ import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
 
 function ErrorComponent() {
+  // TODO: crear páginas de errores
   const error = useRouteError();
   const handlers = {
     401: () => (
@@ -40,6 +41,8 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/signup',
@@ -58,10 +61,14 @@ const router = createBrowserRouter([
   {
     path: '/producto',
     element: <VendiblePage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/servicio',
     element: <VendiblePage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
   },
   {
     path: '/proveedor',
