@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Header from '../../Header';
 import {
-  RadioList, Layout, SearcherInput, StaticAlert, DialogModal,
+  RadioList, Layout, SearcherInput, StaticAlert,
 } from '../../Shared/Components';
 import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
@@ -19,11 +19,8 @@ import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import GoBackLink from '../../Shared/Components/GoBackLink';
-import { dialogModalTexts } from '../../Shared/Constants/System';
-import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
-
-const localStorageService = new LocalStorageService();
+import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout,
@@ -44,9 +41,13 @@ function Cliente({
 
   const [filtersEnabled, setFiltersEnabled] = useState(false);
 
-  const [modalContent, setModalContent] = useState({ title: '', text: '', handleAccept: () => {} });
+  const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
   const { setHandleGoBack } = useContext(NavigationContext);
+
+  const showlExitAppModal = () => setIsExitAppModalOpen(true);
+
+  const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
   const handleSetSearchType = (event) => {
     setErrorMessage('');
@@ -92,11 +93,6 @@ function Cliente({
 
   const handleKeyUp = (newValue) => {
     setSearchInputValue(newValue);
-  };
-
-  const onCancelLeavingPage = () => {
-    setModalContent({ title: '', text: '' });
-    localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SHARED.BACKPRESSED);
   };
 
   const radioGroupConfig = {
@@ -147,14 +143,6 @@ function Cliente({
     [vendiblesResponse],
   );
 
-  const showExitAppAlertModal = useCallback(() => {
-    setModalContent({
-      title: dialogModalTexts.EXIT_APP.title,
-      text: dialogModalTexts.EXIT_APP.text,
-      handleAccept: handleLogout,
-    });
-  }, [setModalContent]);
-
   const isSearchDisabled = useMemo(
     () => (!!previousSearchInputValue
     && previousSearchInputValue === searchInputValue),
@@ -162,22 +150,16 @@ function Cliente({
   );
 
   useEffect(() => {
-    setHandleGoBack(() => showExitAppAlertModal);
+    setHandleGoBack(() => showlExitAppModal);
   }, []);
+
+  const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   return (
     <>
       <Header withMenuComponent menuOptions={menuOptions} />
       <GoBackLink />
-      <DialogModal
-        title={modalContent.title}
-        contextText={modalContent.text}
-        cancelText={sharedLabels.cancel}
-        acceptText={sharedLabels.accept}
-        open={!!(modalContent?.title && modalContent.text)}
-        handleAccept={handleLogout}
-        handleDeny={onCancelLeavingPage}
-      />
+      { ExitAppDialog }
       <Grid
         container
         sx={{

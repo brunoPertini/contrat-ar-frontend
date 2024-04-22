@@ -6,8 +6,12 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Avatar from '@mui/material/Avatar';
+import isEmpty from 'lodash/isEmpty';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
+import { UserAccountOptions } from '../Shared/Components';
+import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 
 function HeaderMenu({ options }) {
   return (
@@ -42,13 +46,25 @@ HeaderMenu.propTypes = {
 };
 
 export default function Header({
-  withMenu,
-  menuOptions, withMenuComponent, renderNavigationLinks,
+  userInfo, menuOptions, withMenuComponent, renderNavigationLinks,
 }) {
+  const mainMenuOption = <Avatar sx={{ width: 80, height: 80 }}>{sharedLabels.menu}</Avatar>;
+
+  const showUserInfo = !isEmpty(userInfo);
+
   const menusMarkup = (
     <Grid item>
-      { withMenu && <HeaderMenu options={menuOptions} />}
-      { withMenuComponent && <Menu options={menuOptions} />}
+      { showUserInfo && (
+      <HeaderMenu options={[{
+        component: UserAccountOptions,
+        props: { userInfo },
+      }]}
+      />
+      )}
+      {
+        !showUserInfo && <HeaderMenu options={menuOptions} />
+      }
+      { withMenuComponent && <Menu options={menuOptions} buttonLabel={mainMenuOption} />}
     </Grid>
   );
 
@@ -78,14 +94,14 @@ export default function Header({
 }
 
 Header.defaultProps = {
-  withMenu: false,
+  userInfo: {},
   withMenuComponent: false,
   renderNavigationLinks: false,
   menuOptions: [],
 };
 
 Header.propTypes = {
-  withMenu: PropTypes.bool,
+  userInfo: PropTypes.shape(getUserInfoResponseShape),
   withMenuComponent: PropTypes.bool,
   menuOptions: PropTypes.array,
   renderNavigationLinks: PropTypes.bool,
