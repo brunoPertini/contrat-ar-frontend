@@ -4,6 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import isEmpty from 'lodash/isEmpty';
@@ -13,6 +14,7 @@ import { UserAccountOptions } from '../Shared/Components';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 
 function HeaderMenu({ options }) {
+  const isNonComponentMenu = !!(options[0]?.label);
   return (
     <Toolbar>
       <IconButton
@@ -23,11 +25,28 @@ function HeaderMenu({ options }) {
         sx={{ mr: 2 }}
       />
       {
-      options.map((option, index) => {
+      isNonComponentMenu && options.map((option, index) => {
+        const {
+          label, onClick,
+        } = option;
+        return (
+          <Button
+            color="inherit"
+            onClick={onClick}
+            key={`menu-${index}`}
+          >
+            {label}
+          </Button>
+        );
+      })
+     }
+      {
+      !isNonComponentMenu && options.map((option, index) => {
         const { component: Component, props } = option;
+
         return <Component key={`header-menu-${index}`} {...props} />;
       })
-    }
+     }
     </Toolbar>
   );
 }
@@ -56,6 +75,7 @@ export default function Header({
       />
       )}
       { withMenuComponent && <Menu options={menuOptions} buttonLabel={mainMenuOption} />}
+      {!showUserInfo && <HeaderMenu options={menuOptions} /> }
     </Grid>
   );
 
