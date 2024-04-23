@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
+import { useState } from 'react';
 import { withRouter } from '../../Shared/Components';
-import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import Cliente from '../Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { routes } from '../../Shared/Constants';
 import { resetUserInfo } from '../../State/Actions/usuario';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { CLIENTE } from '../../Shared/Constants/System';
+import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
+import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 
 const stateSelector = (state) => state;
 
@@ -21,10 +23,12 @@ function ClienteContainer({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
-  const menuOptions = [{
-    component: UserAccountOptions,
-    props: { userInfo },
-  }];
+  const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
+
+  const onCancelExitApp = () => setIsExitAppModalOpen(false);
+
+  const menuOptions = getUserMenuOptions([{ props: userInfo },
+    { onClick: () => setIsExitAppModalOpen(true) }]);
 
   const dispatchHandleSearch = ({ searchType, searchInput, filters }) => {
     const httpClient = HttpClientFactory.createVendibleHttpClient(
@@ -47,9 +51,13 @@ function ClienteContainer({ handleLogout }) {
     throw new Response('', { status: 404 });
   }
 
+  const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
+
   return (
     <NavigationContextProvider>
+      { ExitAppDialog }
       <Cliente
+        userInfo={userInfo}
         menuOptions={menuOptions}
         dispatchHandleSearch={dispatchHandleSearch}
         handleLogout={handleLogout}

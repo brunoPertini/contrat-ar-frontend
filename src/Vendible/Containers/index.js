@@ -14,7 +14,7 @@ import { waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
 
 const stateSelector = (state) => state;
 
-function VendibleContainer({ router }) {
+function VendibleContainer({ router, handleLogout }) {
   const location = useLocation();
   const { vendibleType, vendibleId } = location.state;
 
@@ -51,6 +51,7 @@ function VendibleContainer({ router }) {
   return !isEmpty(proveedoresInfo) ? (
     <NavigationContextProvider>
       <VendiblePage
+        handleLogout={handleLogout}
         getVendibles={handleGetProveedoresInfo}
         proveedoresInfo={proveedoresInfo}
         vendibleType={vendibleType}
@@ -64,6 +65,7 @@ function VendibleContainer({ router }) {
 
 VendibleContainer.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
 export default withRouter(VendibleContainer);

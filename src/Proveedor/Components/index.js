@@ -543,7 +543,12 @@ function ProveedorPage({
 
   return (
     <>
-      <Header withMenuComponent renderNavigationLinks menuOptions={menuOptions} />
+      <Header
+        withMenuComponent
+        renderNavigationLinks
+        menuOptions={menuOptions}
+        userInfo={userInfo}
+      />
       <GoBackLink />
       { mainContent }
       { vendibleOperationsComponent }

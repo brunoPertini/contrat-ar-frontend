@@ -2,12 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Avatar from '@mui/material/Avatar';
+import isEmpty from 'lodash/isEmpty';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
+import { UserAccountOptions } from '../Shared/Components';
+import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 
 function HeaderMenu({ options }) {
   return (
@@ -20,15 +23,10 @@ function HeaderMenu({ options }) {
         sx={{ mr: 2 }}
       />
       {
-      options.map((option) => (
-        <Button
-          color="inherit"
-          onClick={option.onClick}
-          key={`menu-${option.label}`}
-        >
-          {option.label}
-        </Button>
-      ))
+      options.map((option, index) => {
+        const { component: Component, props } = option;
+        return <Component key={`header-menu-${index}`} {...props} />;
+      })
     }
     </Toolbar>
   );
@@ -42,13 +40,22 @@ HeaderMenu.propTypes = {
 };
 
 export default function Header({
-  withMenu,
-  menuOptions, withMenuComponent, renderNavigationLinks,
+  userInfo, menuOptions, withMenuComponent, renderNavigationLinks,
 }) {
+  const mainMenuOption = <Avatar sx={{ width: 80, height: 80 }}>{sharedLabels.menu}</Avatar>;
+
+  const showUserInfo = !isEmpty(userInfo);
+
   const menusMarkup = (
-    <Grid item>
-      { withMenu && <HeaderMenu options={menuOptions} />}
-      { withMenuComponent && <Menu options={menuOptions} />}
+    <Grid item display="flex">
+      { showUserInfo && (
+      <HeaderMenu options={[{
+        component: UserAccountOptions,
+        props: { userInfo },
+      }]}
+      />
+      )}
+      { withMenuComponent && <Menu options={menuOptions} buttonLabel={mainMenuOption} />}
     </Grid>
   );
 
@@ -78,14 +85,14 @@ export default function Header({
 }
 
 Header.defaultProps = {
-  withMenu: false,
+  userInfo: {},
   withMenuComponent: false,
   renderNavigationLinks: false,
   menuOptions: [],
 };
 
 Header.propTypes = {
-  withMenu: PropTypes.bool,
+  userInfo: PropTypes.shape(getUserInfoResponseShape),
   withMenuComponent: PropTypes.bool,
   menuOptions: PropTypes.array,
   renderNavigationLinks: PropTypes.bool,

@@ -93,7 +93,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
 }
 
 LinkSection.propTypes = {
-  linkLabel: PropTypes.element.isRequired,
+  linkLabel: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   onClick: PropTypes.func.isRequired,
   vendibleId: PropTypes.number.isRequired,
 };

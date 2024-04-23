@@ -17,7 +17,7 @@ const RootPage = withRouter(({ router }) => {
     },
   }];
 
-  return <Header menuOptions={menuOptions} withMenu />;
+  return <Header menuOptions={menuOptions} />;
 });
 
 export default RootPage;

@@ -48,5 +48,7 @@
     "actions": "Acciones",
     "modify": "Modificar",
     "delete": "Borrar",
-    "currentImage": "Imágen actual"
+    "currentImage": "Imágen actual",
+    "logout": "Cerrar Sesión",
+    "menu": "Menú"
 }

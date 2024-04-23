@@ -81,9 +81,9 @@ export default function withRouter(Component) {
 
     /** This cleans site's info such as localStorage, cookies, etc and performs log out */
     const handleLogout = async () => {
+      navigate(routes.signin);
       removeOnLeavingTabHandlers();
       await store.dispatch(resetUserInfo());
-      navigate(routes.signin);
     };
 
     /**

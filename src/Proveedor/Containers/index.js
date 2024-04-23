@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
-import { UserAccountOptions, withRouter } from '../../Shared/Components';
+import { withRouter } from '../../Shared/Components';
 import ProveedorPage from '../Components';
 import { systemConstants } from '../../Shared/Constants';
 import { proveedorLabels } from '../../StaticData/Proveedor';
@@ -15,6 +15,8 @@ import {
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
+import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
+import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 
 const stateSelector = (state) => state;
 
@@ -41,12 +43,14 @@ function ProveedorContainer({ router, handleLogout }) {
 
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
 
+  const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
+
   const { role, token, id } = userInfo;
 
-  const menuOptions = [{
-    component: UserAccountOptions,
-    props: { userInfo },
-  }];
+  const onCancelExitApp = () => setIsExitAppModalOpen(false);
+
+  const menuOptions = getUserMenuOptions([{ props: userInfo },
+    { onClick: () => setIsExitAppModalOpen(true) }]);
 
   const addVendibleLabel = addNewVendiblesLabels[role]?.label;
   const addVendibleLink = addNewVendiblesLabels[role]?.labelLink;
@@ -126,8 +130,11 @@ function ProveedorContainer({ router, handleLogout }) {
     handleGetVendibles();
   }, []);
 
+  const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
+
   return (
     <NavigationContextProvider>
+      { ExitAppDialog }
       <ProveedorPage
         vendibles={response.vendibles}
         categorias={response.categorias}
