@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -24,15 +23,10 @@ function HeaderMenu({ options }) {
         sx={{ mr: 2 }}
       />
       {
-      options.map((option) => (
-        <Button
-          color="inherit"
-          onClick={option.onClick}
-          key={`menu-${option.label}`}
-        >
-          {option.label}
-        </Button>
-      ))
+      options.map((option, index) => {
+        const { component: Component, props } = option;
+        return <Component key={`header-menu-${index}`} {...props} />;
+      })
     }
     </Toolbar>
   );
@@ -53,7 +47,7 @@ export default function Header({
   const showUserInfo = !isEmpty(userInfo);
 
   const menusMarkup = (
-    <Grid item>
+    <Grid item display="flex">
       { showUserInfo && (
       <HeaderMenu options={[{
         component: UserAccountOptions,
@@ -61,9 +55,6 @@ export default function Header({
       }]}
       />
       )}
-      {
-        !showUserInfo && <HeaderMenu options={menuOptions} />
-      }
       { withMenuComponent && <Menu options={menuOptions} buttonLabel={mainMenuOption} />}
     </Grid>
   );

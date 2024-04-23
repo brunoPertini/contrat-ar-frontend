@@ -57,6 +57,7 @@ function ClienteContainer({ handleLogout }) {
     <NavigationContextProvider>
       { ExitAppDialog }
       <Cliente
+        userInfo={userInfo}
         menuOptions={menuOptions}
         dispatchHandleSearch={dispatchHandleSearch}
         handleLogout={handleLogout}

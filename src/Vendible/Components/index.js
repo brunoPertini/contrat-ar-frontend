@@ -21,7 +21,6 @@ import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { routes, systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
-import UserAccountOptions from '../../Shared/Components/UserAccountOptions';
 import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
@@ -30,6 +29,8 @@ import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
+import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
+import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 
 const vendiblesGridProps = {
   item: true,
@@ -41,7 +42,7 @@ const vendiblesGridProps = {
 };
 
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, getVendibles, router,
+  proveedoresInfo, vendibleType, userInfo, getVendibles, router, handleLogout,
 }) {
   const [contactText, setContactText] = useState();
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
@@ -50,7 +51,16 @@ function VendiblePage({
   const [filtersEnabled, setFiltersEnabled] = useState(false);
   const [firstSearchDone, setFirstSearchDone] = useState(false);
 
+  const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
+
   const { setHandleGoBack, setParams } = useContext(NavigationContext);
+
+  const onCancelExitApp = () => setIsExitAppModalOpen(false);
+
+  const menuOptions = getUserMenuOptions([{ props: userInfo },
+    { onClick: () => setIsExitAppModalOpen(true) }]);
+
+  const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   useEffect(() => {
     if (proveedoresInfo?.vendibles.length >= 2) {
@@ -121,12 +131,6 @@ function VendiblePage({
     }, 1000);
   };
 
-  // TODO: modularizar en el componente Header
-  const menuOptions = [{
-    component: UserAccountOptions,
-    props: { userInfo },
-  }];
-
   const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
     .replace('{contractArLink}', 'www.contractar.com')
     .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
@@ -161,7 +165,13 @@ function VendiblePage({
 
   return (
     <>
-      <Header withMenuComponent menuOptions={menuOptions} renderNavigationLinks />
+      { ExitAppDialog }
+      <Header
+        withMenuComponent
+        menuOptions={menuOptions}
+        userInfo={userInfo}
+        renderNavigationLinks
+      />
       <GoBackLink />
       <Grid
         container
@@ -305,6 +315,7 @@ function VendiblePage({
 
 VendiblePage.propTypes = {
   getVendibles: PropTypes.func.isRequired,
+  handleLogout: PropTypes.func.isRequired,
   proveedoresInfo: PropTypes.shape({
     proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorDTOShape)),
     vendibles: PropTypes.arrayOf(PropTypes.shape(proveedorVendibleShape)),

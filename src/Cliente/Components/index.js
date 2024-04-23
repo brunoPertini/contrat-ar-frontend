@@ -21,9 +21,10 @@ import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
+import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
 
 function Cliente({
-  menuOptions, dispatchHandleSearch, handleLogout,
+  menuOptions, dispatchHandleSearch, handleLogout, userInfo,
 }) {
   const [searchErrorMessage, setErrorMessage] = useState('');
 
@@ -157,7 +158,7 @@ function Cliente({
 
   return (
     <>
-      <Header withMenuComponent menuOptions={menuOptions} />
+      <Header withMenuComponent menuOptions={menuOptions} userInfo={userInfo} />
       <GoBackLink />
       { ExitAppDialog }
       <Grid
@@ -256,6 +257,7 @@ function Cliente({
 }
 
 Cliente.propTypes = {
+  userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   dispatchHandleSearch: PropTypes.func.isRequired,
   handleLogout: PropTypes.func.isRequired,
