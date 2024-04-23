@@ -22,7 +22,7 @@ function NavigationContextProvider({ children }) {
 }
 
 NavigationContextProvider.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  children: PropTypes.any.isRequired,
 };
 
 export { NavigationContext, NavigationContextProvider };
