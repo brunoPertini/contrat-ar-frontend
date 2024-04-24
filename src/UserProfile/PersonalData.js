@@ -7,7 +7,7 @@ import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 function UserPersonalData({ userInfo, styles }) {
-  const [fieldsValues, setFieldsValues] = useState(personalDataFormBuilder.fields);
+  const [fieldsValues, setFieldsValues] = useState(userInfo);
   const formFields = personalDataFormBuilder.build({
     usuarioType: userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : null,
     fieldsValues,

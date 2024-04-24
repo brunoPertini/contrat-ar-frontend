@@ -33,6 +33,14 @@ function UserProfile({ handleLogout }) {
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
   const [tabOption, setTabOption] = useState(0);
+  const [personalData, setPersonalData] = useState({
+    name: userInfo.name,
+    surname: userInfo.surname,
+    email: userInfo.email,
+    birthDate: userInfo.birthDate,
+    location: userInfo.location,
+    phone: userInfo.phone,
+  });
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
@@ -54,7 +62,7 @@ function UserProfile({ handleLogout }) {
   };
 
   const tabsComponents = {
-    0: <UserPersonalData userInfo={userInfo} styles={{ mt: '10%' }} />
+    0: <UserPersonalData userInfo={personalData} styles={{ mt: '10%', ml: '5%' }} />
   };
 
   return (

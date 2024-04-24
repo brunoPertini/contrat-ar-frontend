@@ -105,21 +105,19 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
     const emailAndPasswordRow = (
       <Grid item {...finalStyles}>
-        <TextField
-          id="form-email"
-          value={fieldsValues.email}
-          label={sharedLabels.email}
-          type="email"
-          onChange={(e) => onChangeFields('email', e.target.value)}
-        />
+        {TextFieldWithLabel(showInlineLabels, {
+          id: 'form-email',
+          type: 'email',
+          value: fieldsValues.email,
+          onChange: (e) => onChangeFields('email', e.target.value),
+        }, sharedLabels.email)}
         {' '}
-        <TextField
-          id="form-password"
-          value={fieldsValues.password}
-          label={sharedLabels.password}
-          type="password"
-          onChange={(e) => onChangeFields('password', e.target.value)}
-        />
+        {TextFieldWithLabel(showInlineLabels, {
+          id: 'form-password',
+          type: 'password',
+          value: fieldsValues.password,
+          onChange: (e) => onChangeFields('password', e.target.value),
+        }, sharedLabels.password)}
       </Grid>
     );
 
