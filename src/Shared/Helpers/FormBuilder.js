@@ -3,9 +3,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
 import {
-  Grid, TextField, Typography, IconButton, Tooltip, Button, Link,
+  Grid, TextField, Typography, IconButton, Tooltip, Button, Link, InputLabel,
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import { isEmpty } from 'lodash';
 import { sharedLabels } from '../../StaticData/Shared';
 import { LocationMap } from '../Components';
 import { systemConstants } from '../Constants';
@@ -13,6 +14,24 @@ import { DomUtils } from '../Utils';
 import { cleanNumbersFromInput } from '../Utils/InputUtils';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
+
+function TextFieldWithLabel(showInlineLabels, componentProps, label) {
+  return (
+    <>
+      { showInlineLabels ? (
+        <InputLabel>
+          {' '}
+          { label }
+        </InputLabel>
+      ) : null }
+
+      <TextField
+        {...componentProps}
+        label={!showInlineLabels ? label : undefined}
+      />
+    </>
+  );
+}
 
 class FormBuilder {
   #fields;
@@ -59,31 +78,33 @@ export class PersonalDataFormBuilder extends FormBuilder {
     };
   }
 
-  build({ fieldsValues, onChangeFields, usuarioType }) {
+  build({
+    fieldsValues, onChangeFields, usuarioType, gridStyles = {}, showInlineLabels = false,
+  }) {
     super.build({ usuarioType });
 
+    const finalStyles = isEmpty(gridStyles) ? { xs: 12 } : { ...gridStyles };
+
     const nameAndSurnameRow = (
-      <Grid item xs={12}>
-        <TextField
-          id="form-name"
-          type="text"
-          value={fieldsValues.name}
-          label={sharedLabels.name}
-          onChange={(e) => onChangeFields('name', cleanNumbersFromInput(e.target.value))}
-        />
+      <Grid item {...finalStyles}>
+        {TextFieldWithLabel(showInlineLabels, {
+          id: 'form-name',
+          type: 'text',
+          value: fieldsValues.name,
+          onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
+        }, sharedLabels.name) }
         {' '}
-        <TextField
-          id="form-surname"
-          type="text"
-          value={fieldsValues.surname}
-          label={sharedLabels.surname}
-          onChange={(e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value))}
-        />
+        {TextFieldWithLabel(showInlineLabels, {
+          id: 'form-surname',
+          type: 'text',
+          value: fieldsValues.surname,
+          onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
+        }, sharedLabels.surname) }
       </Grid>
     );
 
     const emailAndPasswordRow = (
-      <Grid item xs={12}>
+      <Grid item {...finalStyles}>
         <TextField
           id="form-email"
           value={fieldsValues.email}

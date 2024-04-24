@@ -20,7 +20,7 @@ class SecurityService {
    */
   #httpClient;
 
-  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor'];
+  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile'];
 
   static LOGIN_PATH = '/signin';
 
@@ -74,6 +74,7 @@ class SecurityService {
         return this.#httpClient.getUserInfo(payload.id).then((response) => ({
           ...payload,
           location: response.location,
+          birthDate: response.birthDate,
         })).catch(() => payload);
       }
 
