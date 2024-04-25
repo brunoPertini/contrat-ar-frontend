@@ -28,18 +28,25 @@ const MY_PLAN_TAB = <Tab label={userProfileLabels.myPlan} />;
 
 const MESSAGES_TAB = <Tab label={userProfileLabels.myMessages} />;
 
+const SECURITY_TAB = <Tab label={userProfileLabels.security} />;
+
 function UserProfile({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
   const [tabOption, setTabOption] = useState(0);
+
   const [personalData, setPersonalData] = useState({
     name: userInfo.name,
     surname: userInfo.surname,
-    email: userInfo.email,
     birthDate: userInfo.birthDate,
     location: userInfo.location,
     phone: userInfo.phone,
+  });
+
+  const [securityData, setSecurityData] = useState({
+    email: userInfo.email,
+    password: userInfo.password
   });
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
@@ -56,9 +63,9 @@ function UserProfile({ handleLogout }) {
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   const rolesTabs = {
-    [CLIENTE]: [PERSONAL_DATA_TAB, MESSAGES_TAB],
-    [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB, MY_PLAN_TAB],
-    [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB, MY_PLAN_TAB],
+    [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB],
+    [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB, SECURITY_TAB, MY_PLAN_TAB],
+    [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB, SECURITY_TAB, MY_PLAN_TAB],
   };
 
   const tabsComponents = {

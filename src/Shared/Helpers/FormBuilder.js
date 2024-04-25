@@ -78,6 +78,26 @@ export class PersonalDataFormBuilder extends FormBuilder {
     };
   }
 
+  /**
+   * @typedef UserFormModel
+     @property {String}name,
+     @property {String}surname,
+     @property {String}email,
+     @property {String} birthDate,
+     @property {{Number[]}} location,
+     @property {String} phone,
+     @property {String} password
+  }
+   */
+
+  /**
+   * @param {Object} params
+   * @param {UserFormModel} params.fieldsValues Holder object that controls fields values
+   * @param {Function} onChangeFields function that runs after some field changes
+   * @param {String} usuarioType CLIENTE or SERVICIOS or PRODUCTOS
+   * @param {Object} gridStyles styles applied to each field container
+   * @returns JSX rendered elements for the fields in fieldsValues
+   */
   build({
     fieldsValues, onChangeFields, usuarioType, gridStyles = {}, showInlineLabels = false,
   }) {
@@ -85,7 +105,9 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
     const finalStyles = isEmpty(gridStyles) ? { xs: 12 } : { ...gridStyles };
 
-    const nameAndSurnameRow = (
+    const renderNameRow = 'name' in fieldsValues && 'surname' in fieldsValues;
+
+    const nameAndSurnameRow = renderNameRow ? (
       <Grid item {...finalStyles}>
         {TextFieldWithLabel(showInlineLabels, {
           id: 'form-name',
@@ -101,9 +123,11 @@ export class PersonalDataFormBuilder extends FormBuilder {
           onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
         }, sharedLabels.surname) }
       </Grid>
-    );
+    ) : null;
 
-    const emailAndPasswordRow = (
+    const rendeEmailRow = 'email' in fieldsValues && 'password' in fieldsValues;
+
+    const emailAndPasswordRow = rendeEmailRow ? (
       <Grid item {...finalStyles}>
         {TextFieldWithLabel(showInlineLabels, {
           id: 'form-email',
@@ -119,9 +143,9 @@ export class PersonalDataFormBuilder extends FormBuilder {
           onChange: (e) => onChangeFields('password', e.target.value),
         }, sharedLabels.password)}
       </Grid>
-    );
+    ) : null;
 
-    const dniRow = this.shouldShowDni ? (
+    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.dni }
@@ -136,7 +160,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Grid>
     ) : null;
 
-    const birthDateRow = (
+    const birthDateRow = 'birthDate' in fieldsValues ? (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.birthDate }
@@ -149,7 +173,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           onChange={(e) => onChangeFields('birthDate', e.target.value)}
         />
       </Grid>
-    );
+    ) : null;
 
     const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, dniRow, birthDateRow];
 

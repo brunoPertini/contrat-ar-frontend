@@ -75,6 +75,7 @@ class SecurityService {
           ...payload,
           location: response.location,
           birthDate: response.birthDate,
+          password: response.password,
         })).catch(() => payload);
       }
 
