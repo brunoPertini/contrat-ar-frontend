@@ -50,5 +50,6 @@
     "delete": "Borrar",
     "currentImage": "Imágen actual",
     "logout": "Cerrar Sesión",
-    "menu": "Menú"
+    "menu": "Menú",
+    "yourLocation": "Tu dirección aproximada"
 }

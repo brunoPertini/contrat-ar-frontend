@@ -36,6 +36,8 @@ function TextFieldWithLabel(showInlineLabels, componentProps, label) {
 class FormBuilder {
   #fields;
 
+  #fieldsLabels;
+
   constructor() {
     this.fields = {};
   }
@@ -64,6 +66,14 @@ class FormBuilder {
   get fields() {
     return this.#fields;
   }
+
+  set fieldsLabels(value) {
+    this.#fieldsLabels = value;
+  }
+
+  get fieldsLabels() {
+    return this.#fieldsLabels;
+  }
 }
 
 export class PersonalDataFormBuilder extends FormBuilder {
@@ -75,6 +85,15 @@ export class PersonalDataFormBuilder extends FormBuilder {
       email: '',
       password: '',
       birthDate: '',
+    };
+
+    this.fieldsLabels = {
+      name: sharedLabels.name,
+      surname: sharedLabels.surname,
+      email: sharedLabels.email,
+      password: sharedLabels.password,
+      birthDate: sharedLabels.birthDate,
+      location: sharedLabels.yourLocation,
     };
   }
 
@@ -95,11 +114,13 @@ export class PersonalDataFormBuilder extends FormBuilder {
    * @param {UserFormModel} params.fieldsValues Holder object that controls fields values
    * @param {Function} onChangeFields function that runs after some field changes
    * @param {String} usuarioType CLIENTE or SERVICIOS or PRODUCTOS
+   * @param {Object} inputProps props to pass to inputs, as readOnly, etc.
    * @param {Object} gridStyles styles applied to each field container
    * @returns JSX rendered elements for the fields in fieldsValues
    */
   build({
-    fieldsValues, onChangeFields, usuarioType, gridStyles = {}, showInlineLabels = false,
+    fieldsValues, onChangeFields, usuarioType, gridStyles = {},
+    inputProps, showInlineLabels = false,
   }) {
     super.build({ usuarioType });
 
@@ -113,6 +134,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-name',
           type: 'text',
           value: fieldsValues.name,
+          inputProps,
           onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
         }, sharedLabels.name) }
         {' '}
@@ -120,6 +142,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-surname',
           type: 'text',
           value: fieldsValues.surname,
+          inputProps,
           onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
         }, sharedLabels.surname) }
       </Grid>
@@ -171,6 +194,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           type="date"
           sx={{ width: '100%' }}
           onChange={(e) => onChangeFields('birthDate', e.target.value)}
+          {...inputProps}
         />
       </Grid>
     ) : null;
