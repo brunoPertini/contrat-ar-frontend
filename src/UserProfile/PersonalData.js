@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -9,7 +10,8 @@ import { LocationMap } from '../Shared/Components';
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 function UserPersonalData({
-  userInfo, styles, usuarioType, inputProps, isEditModeEnabled, userToken,
+  userInfo, styles, usuarioType, inputProps,
+  isEditModeEnabled, userToken, changeUserInfo,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
@@ -35,6 +37,17 @@ function UserPersonalData({
     showInlineLabels: true,
   })), [isEditModeEnabled]);
 
+  /**
+   *
+   * @param {Object} newValue
+   * @param {Object} newValue.coords
+   * @param {number} newValue.coords.latitude
+   * @param {number} newValue.coords.longitude
+   */
+  const handleLocationChange = (newValue) => {
+    changeUserInfo('location', { coordinates: [newValue.coords.latitude, newValue.coords.longitude] });
+  };
+
   return (
     <Box display="flex" flexDirection="column" sx={{ ...styles }}>
       <Box display="flex" flexDirection="column">
@@ -52,15 +65,16 @@ function UserPersonalData({
             containerStyles={{
               height: '200px',
               width: '100%',
-              'margin-top': '5%',
+              marginTop: '5%',
             }}
-            enableDragEvents={false}
+            enableDragEvents={isEditModeEnabled}
             location={{
               coords: {
                 latitude: fieldsValues.location.coordinates[0],
                 longitude: fieldsValues.location.coordinates[1],
               },
             }}
+            setLocation={handleLocationChange}
           />
         </Box>
       </Box>

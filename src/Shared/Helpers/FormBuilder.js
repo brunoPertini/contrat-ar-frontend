@@ -14,6 +14,7 @@ import { DomUtils } from '../Utils';
 import { cleanNumbersFromInput } from '../Utils/InputUtils';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
 
 function TextFieldWithLabel(showInlineLabels, componentProps, label) {
   return (
@@ -184,6 +185,16 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Grid>
     ) : null;
 
+    const shouldDateBeFormatted = fieldsValues.birthDate.includes('/');
+
+    const birthDateFinalValue = shouldDateBeFormatted
+      ? switchDateFormat({
+        date: fieldsValues.birthDate,
+        inputFormat: FORMAT_DMY,
+        outputFormat: FORMAT_YMD,
+      })
+      : fieldsValues.birthDate;
+
     const birthDateRow = 'birthDate' in fieldsValues ? (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
@@ -191,7 +202,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
         </Typography>
         <TextField
           id="form-birthDate"
-          value={fieldsValues.birthDate}
+          value={birthDateFinalValue}
           type="date"
           sx={{ width: '100%' }}
           onChange={(e) => onChangeFields('birthDate', e.target.value)}

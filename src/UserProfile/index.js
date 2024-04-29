@@ -3,12 +3,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useSelector } from 'react-redux';
-import Grid from '@mui/material/Grid';
 import { createSelector } from 'reselect';
 import { useState } from 'react';
-import {
-  FormControlLabel, Switch, Tab, Tabs
-} from '@mui/material';
+import Grid from '@mui/material/Grid';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+
 import Header from '../Header';
 import { withRouter } from '../Shared/Components';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
@@ -60,8 +62,23 @@ function UserProfile({ handleLogout }) {
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
+  const handleEditModeChange = (event) => {
+    setIsEditModeEnabled(event.target.checked);
+  };
+
   const handleTabOptionChange = (_, newValue) => {
     setTabOption(newValue);
+  };
+
+  const handlePersonalDataChanged = (key, value) => {
+    console.log(key);
+    console.log(value);
+    return setPersonalData(
+      (previous) => ({
+        ...previous,
+        [key]: value
+      })
+    );
   };
 
   const menuOptions = getUserMenuOptions([{ props: userInfo },
@@ -81,6 +98,7 @@ function UserProfile({ handleLogout }) {
     0: <UserPersonalData
       userToken={userInfo.token}
       userInfo={personalData}
+      changeUserInfo={handlePersonalDataChanged}
       usuarioType={usuarioType}
       styles={{ mt: '10%', ml: '5%' }}
       isEditModeEnabled={isEditModeEnabled}
@@ -104,7 +122,11 @@ function UserProfile({ handleLogout }) {
         { tabsComponents[tabOption] }
       </Grid>
       <Grid item sx={{ height: '30%', ml: '5%' }}>
-        <FormControlLabel control={<Switch />} label={userProfileLabels.modifyData} />
+        <FormControlLabel
+          control={<Switch />}
+          label={userProfileLabels.modifyData}
+          onChange={handleEditModeChange}
+        />
       </Grid>
     </Grid>
 

@@ -20,7 +20,8 @@ import { locationShape } from '../PropTypes/Shared';
 const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
       && prevProps.location.coords.longitude === nextProps.location.coords.longitude
-      && prevProps.token === nextProps.token);
+      && prevProps.token === nextProps.token
+      && prevProps.enableDragEvents === nextProps.enableDragEvents);
 
 /**
  * Map that requests current user location, shows it in a marker and translates it
@@ -154,7 +155,7 @@ const LocationMap = memo(function LocationMap({
 
       </Marker>
     );
-  }, [location.coords.latitude, location.coords.longitude, readableAddress]);
+  }, [location.coords.latitude, location.coords.longitude, readableAddress, enableDragEvents]);
 
   return (
     <>
