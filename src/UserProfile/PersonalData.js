@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { useMemo, useState } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import pickBy from 'lodash/pickBy';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { LocationMap } from '../Shared/Components';
 
@@ -11,42 +13,18 @@ function UserPersonalData({
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
-  const formFields = !isEditModeEnabled ? Object.keys(fieldsValues).map((dataKey) => {
-    if (dataKey !== 'location') {
-      return (
-        <Typography variant="h6" fontWeight="bold">
-          {personalDataFormBuilder.fieldsLabels[dataKey]}
-          :
-          {' '}
-          { fieldsValues[dataKey] }
-        </Typography>
-      );
-    }
+  const textFields = pickBy(fieldsValues, (value, key) => key !== 'location');
 
-    return (
-      <Box>
-        <Typography variant="h6" fontWeight="bold">
-          {personalDataFormBuilder.fieldsLabels.location}
-          {' '}
-          :
-        </Typography>
-        <LocationMap
-          token={userToken}
-          containerStyles={{
-            height: '200px',
-            width: '100%',
-          }}
-          enableDragEvents={false}
-          location={{
-            coords: {
-              latitude: fieldsValues.location.coordinates[0],
-              longitude: fieldsValues.location.coordinates[1],
-            },
-          }}
-        />
-      </Box>
-    );
-  }) : personalDataFormBuilder.build({
+  const formFields = useMemo(() => (!isEditModeEnabled ? (
+    Object.keys(textFields).map((dataKey) => (
+      <Typography variant="h6" fontWeight="bold" sx={{ mt: '5%' }}>
+        {personalDataFormBuilder.fieldsLabels[dataKey]}
+        :
+        {' '}
+        { fieldsValues[dataKey] }
+      </Typography>
+    ))
+  ) : personalDataFormBuilder.build({
     usuarioType,
     fieldsValues,
     inputProps,
@@ -55,14 +33,37 @@ function UserPersonalData({
     },
     gridStyles: { display: 'flex', flexDirection: 'column' },
     showInlineLabels: true,
-  });
+  })), [isEditModeEnabled]);
 
   return (
     <Box display="flex" flexDirection="column" sx={{ ...styles }}>
-      {
+      <Box display="flex" flexDirection="column">
+        {
         formFields.map((field) => field)
-
-      }
+        }
+        <Box sx={{ mt: '5%' }}>
+          <Typography variant="h6" fontWeight="bold">
+            {personalDataFormBuilder.fieldsLabels.location}
+            {' '}
+            :
+          </Typography>
+          <LocationMap
+            token={userToken}
+            containerStyles={{
+              height: '200px',
+              width: '100%',
+              'margin-top': '5%',
+            }}
+            enableDragEvents={false}
+            location={{
+              coords: {
+                latitude: fieldsValues.location.coordinates[0],
+                longitude: fieldsValues.location.coordinates[1],
+              },
+            }}
+          />
+        </Box>
+      </Box>
     </Box>
   );
 }

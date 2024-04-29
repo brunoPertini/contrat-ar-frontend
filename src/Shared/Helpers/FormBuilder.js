@@ -93,6 +93,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       email: sharedLabels.email,
       password: sharedLabels.password,
       birthDate: sharedLabels.birthDate,
+      phone: sharedLabels.phone,
       location: sharedLabels.yourLocation,
     };
   }

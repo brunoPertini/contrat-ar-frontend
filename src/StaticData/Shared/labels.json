@@ -1,6 +1,7 @@
 {
     "name": "Nombre",
     "surname": "Apellido",
+    "phone": "Teléfono",
     "email": "Email",
     "password": "Contraseña",
     "birthDate": "Fecha de nacimiento",
