@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
@@ -31,11 +31,15 @@ function UserPersonalData({
     fieldsValues,
     inputProps,
     onChangeFields: (fieldId, fieldValue) => {
-      setFieldsValues({ ...fieldsValues, [fieldId]: fieldValue });
+      changeUserInfo(fieldId, fieldValue);
     },
     gridStyles: { display: 'flex', flexDirection: 'column' },
     showInlineLabels: true,
-  })), [isEditModeEnabled]);
+  })), [isEditModeEnabled, fieldsValues]);
+
+  useEffect(() => {
+    setFieldsValues(userInfo);
+  }, [userInfo]);
 
   /**
    *

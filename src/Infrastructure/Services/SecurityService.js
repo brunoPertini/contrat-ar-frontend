@@ -75,7 +75,7 @@ class SecurityService {
           ...payload,
           location: response.location,
           birthDate: response.birthDate,
-          password: response.password,
+          password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input
         })).catch(() => payload);
       }
 

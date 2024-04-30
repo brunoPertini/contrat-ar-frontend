@@ -158,6 +158,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-email',
           type: 'email',
           value: fieldsValues.email,
+          inputProps,
           onChange: (e) => onChangeFields('email', e.target.value),
         }, sharedLabels.email)}
         {' '}
@@ -165,6 +166,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-password',
           type: 'password',
           value: fieldsValues.password,
+          inputProps,
           onChange: (e) => onChangeFields('password', e.target.value),
         }, sharedLabels.password)}
       </Grid>
@@ -185,33 +187,55 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Grid>
     ) : null;
 
-    const shouldDateBeFormatted = fieldsValues.birthDate.includes('/');
+    let birthDateRow = null;
 
-    const birthDateFinalValue = shouldDateBeFormatted
-      ? switchDateFormat({
-        date: fieldsValues.birthDate,
-        inputFormat: FORMAT_DMY,
-        outputFormat: FORMAT_YMD,
-      })
-      : fieldsValues.birthDate;
+    if ('birthDate' in fieldsValues) {
+      const shouldDateBeFormatted = fieldsValues.birthDate.includes('/');
 
-    const birthDateRow = 'birthDate' in fieldsValues ? (
+      const birthDateFinalValue = shouldDateBeFormatted
+        ? switchDateFormat({
+          date: fieldsValues.birthDate,
+          inputFormat: FORMAT_DMY,
+          outputFormat: FORMAT_YMD,
+        })
+        : fieldsValues.birthDate;
+
+      birthDateRow = (
+        <Grid item xs={12} sx={{ width: '31rem' }}>
+          <Typography variant="subtitle1" align="left">
+            { sharedLabels.birthDate }
+          </Typography>
+          <TextField
+            id="form-birthDate"
+            value={birthDateFinalValue}
+            type="date"
+            sx={{ width: '100%' }}
+            onChange={(e) => onChangeFields('birthDate', e.target.value)}
+            {...inputProps}
+          />
+        </Grid>
+      );
+    }
+
+    const phoneRow = 'phone' in fieldsValues ? (
       <Grid item xs={12} sx={{ width: '31rem' }}>
         <Typography variant="subtitle1" align="left">
-          { sharedLabels.birthDate }
+          { sharedLabels.phone }
         </Typography>
         <TextField
-          id="form-birthDate"
-          value={birthDateFinalValue}
-          type="date"
+          id="form-phone"
+          value={fieldsValues.phone}
+          type="number"
           sx={{ width: '100%' }}
-          onChange={(e) => onChangeFields('birthDate', e.target.value)}
-          {...inputProps}
+          onChange={(e) => onChangeFields('phone', e.target.value)}
         />
       </Grid>
     ) : null;
 
-    const personalDataFields = [nameAndSurnameRow, emailAndPasswordRow, dniRow, birthDateRow];
+    const personalDataFields = [nameAndSurnameRow,
+      emailAndPasswordRow,
+      dniRow, birthDateRow,
+      phoneRow];
 
     return personalDataFields;
   }

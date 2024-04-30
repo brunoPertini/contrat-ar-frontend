@@ -11,6 +11,7 @@ import Switch from '@mui/material/Switch';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
+import Button from '@mui/material/Button';
 import Header from '../Header';
 import { withRouter } from '../Shared/Components';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
@@ -22,6 +23,7 @@ import {
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
+import { sharedLabels } from '../StaticData/Shared';
 
 const stateSelector = (state) => state;
 
@@ -70,16 +72,12 @@ function UserProfile({ handleLogout }) {
     setTabOption(newValue);
   };
 
-  const handlePersonalDataChanged = (key, value) => {
-    console.log(key);
-    console.log(value);
-    return setPersonalData(
-      (previous) => ({
-        ...previous,
-        [key]: value
-      })
-    );
-  };
+  const handlePersonalDataChanged = (key, value) => setPersonalData(
+    (previous) => ({
+      ...previous,
+      [key]: value
+    })
+  );
 
   const menuOptions = getUserMenuOptions([{ props: userInfo },
     { onClick: () => showExitAppModal() }]);
@@ -121,13 +119,25 @@ function UserProfile({ handleLogout }) {
         </Tabs>
         { tabsComponents[tabOption] }
       </Grid>
-      <Grid item sx={{ height: '30%', ml: '5%' }}>
-        <FormControlLabel
-          control={<Switch />}
-          label={userProfileLabels.modifyData}
-          onChange={handleEditModeChange}
-        />
-      </Grid>
+      {
+        tabOption === 0 && (
+          <Grid
+            item
+            display="flex"
+            flexDirection="column"
+            sx={{ height: '30%', ml: '5%' }}
+          >
+            <FormControlLabel
+              control={<Switch />}
+              label={userProfileLabels.modifyData}
+              onChange={handleEditModeChange}
+            />
+            <Button variant="contained" sx={{ mt: '5%' }}>
+              { sharedLabels.finish }
+            </Button>
+          </Grid>
+        )
+      }
     </Grid>
 
   );
