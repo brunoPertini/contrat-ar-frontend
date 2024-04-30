@@ -3,6 +3,7 @@
     "security": "Seguridad y contraseñas",
     "myPlan": "Datos sobre mi plan",
     "myMessages": "Consultas hechas",
+    "myMessagesProvider": "Consultas recibidas",
     "modifyData": "Modificar datos",
     "security.warning": "Dado que estos datos son muy importantes para proteger tu cuenta, en caso de que necesites cambiarlos podés contactarnos <a href=\"#\">acá</a>"
 }

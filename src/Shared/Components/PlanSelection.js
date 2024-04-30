@@ -29,7 +29,7 @@ export default function PlanSelection({ selectedPlan, setSelectedPlan, paidPlanV
     <>
       <Grid item xs={6}>
         <Card>
-          <CardHeader title="Plan Gratuito" />
+          <CardHeader title={sharedLabels.plansNames.FREE} />
           <CardHeader title="$0" />
           <CardContent>
             <Typography variant="subtitle-1">
@@ -51,7 +51,7 @@ export default function PlanSelection({ selectedPlan, setSelectedPlan, paidPlanV
       </Grid>
       <Grid item xs={6}>
         <Card>
-          <CardHeader title="Plan Pago" />
+          <CardHeader title={sharedLabels.plansNames.PAID} />
           <CardHeader title={`$${paidPlanValue}`} />
           <CardContent>
             { signUpLabels['planSelection.paid.description'] }

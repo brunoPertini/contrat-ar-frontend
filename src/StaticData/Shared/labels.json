@@ -52,5 +52,9 @@
     "currentImage": "Imágen actual",
     "logout": "Cerrar Sesión",
     "menu": "Menú",
-    "yourLocation": "Tu dirección aproximada"
+    "yourLocation": "Tu dirección aproximada",
+    "plansNames": {
+        "FREE": "Plan Gratuito",
+        "PAID": "Plan Pago"
+    }
 }

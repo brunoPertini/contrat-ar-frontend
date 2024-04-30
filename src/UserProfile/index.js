@@ -32,19 +32,44 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-const PERSONAL_DATA_TAB = <Tab label={userProfileLabels.personalData} />;
+const TABS_NAMES = {
+  PERSONAL_DATA: 'PERSONAL_DATA',
+  SECURITY: 'SECURITY',
+  PLAN: 'PLAN',
+  MESSAGES_CLIENT: 'MESSAGES_CLIENT',
+  MESSAGES_PROVIDER: 'MESSAGES_PROVIDER',
+};
 
-const MY_PLAN_TAB = <Tab label={userProfileLabels.myPlan} />;
+const PERSONAL_DATA_TAB = (
+  <Tab
+    label={userProfileLabels.personalData}
+    value={TABS_NAMES.PERSONAL_DATA}
+  />
+);
 
-const MESSAGES_TAB = <Tab label={userProfileLabels.myMessages} />;
+const MY_PLAN_TAB = <Tab label={userProfileLabels.myPlan} value={TABS_NAMES.PLAN} />;
 
-const SECURITY_TAB = <Tab label={userProfileLabels.security} />;
+const MESSAGES_TAB_CLIENT = (
+  <Tab
+    label={userProfileLabels.myMessages}
+    value={TABS_NAMES.MESSAGES_CLIENT}
+  />
+);
+
+const MESSAGES_TAB_PROVIDER = (
+  <Tab
+    label={userProfileLabels.myMessagesProvider}
+    value={TABS_NAMES.MESSAGES_PROVIDER}
+  />
+);
+
+const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.SECURITY} />;
 
 function UserProfile({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
-  const [tabOption, setTabOption] = useState(0);
+  const [tabOption, setTabOption] = useState(TABS_NAMES.PERSONAL_DATA);
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
   const [personalData, setPersonalData] = useState({
@@ -85,15 +110,17 @@ function UserProfile({ handleLogout }) {
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   const rolesTabs = {
-    [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB],
-    [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB, SECURITY_TAB, MY_PLAN_TAB],
-    [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB, SECURITY_TAB, MY_PLAN_TAB],
+    [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
+    [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
+      SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
+    [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
+      SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
   };
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : null;
 
   const tabsComponents = {
-    0: <UserPersonalData
+    [TABS_NAMES.PERSONAL_DATA]: <UserPersonalData
       userToken={userInfo.token}
       userInfo={personalData}
       changeUserInfo={handlePersonalDataChanged}
@@ -102,7 +129,7 @@ function UserProfile({ handleLogout }) {
       isEditModeEnabled={isEditModeEnabled}
       inputProps={{ readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled }}
     />,
-    1: <SecurityData
+    [TABS_NAMES.SECURITY]: <SecurityData
       data={securityData}
       isEditModeEnabled={isEditModeEnabled}
       inputProps={{ readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled }}
@@ -120,7 +147,7 @@ function UserProfile({ handleLogout }) {
         { tabsComponents[tabOption] }
       </Grid>
       {
-        tabOption === 0 && (
+        tabOption === TABS_NAMES.PERSONAL_DATA && (
           <Grid
             item
             display="flex"
