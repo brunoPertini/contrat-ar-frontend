@@ -96,6 +96,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       birthDate: sharedLabels.birthDate,
       phone: sharedLabels.phone,
       location: sharedLabels.yourLocation,
+      dni: sharedLabels.dni,
     };
   }
 
@@ -114,15 +115,17 @@ export class PersonalDataFormBuilder extends FormBuilder {
   /**
    * @param {Object} params
    * @param {UserFormModel} params.fieldsValues Holder object that controls fields values
-   * @param {Function} onChangeFields function that runs after some field changes
-   * @param {String} usuarioType CLIENTE or SERVICIOS or PRODUCTOS
-   * @param {Object} inputProps props to pass to inputs, as readOnly, etc.
-   * @param {Object} gridStyles styles applied to each field container
+   * @param {Function} params.onChangeFields function that runs after some field changes
+   * @param {String} params.usuarioType CLIENTE or SERVICIOS or PRODUCTOS
+   * @param {Object} params.inputProps props to pass to inputs, as readOnly, etc.
+   * @param {Object} params.gridStyles styles applied to each field container
+   * @param {Object} params.fieldsOwnConfig same purpose as inputProps but differentiating
+   *  per field key
    * @returns JSX rendered elements for the fields in fieldsValues
    */
   build({
     fieldsValues, onChangeFields, usuarioType, gridStyles = {},
-    inputProps, showInlineLabels = false,
+    inputProps, showInlineLabels = false, fieldsOwnConfig,
   }) {
     super.build({ usuarioType });
 
@@ -183,6 +186,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           type="number"
           sx={{ width: '100%' }}
           onChange={(e) => onChangeFields('dni', e.target.value)}
+          {...('dni' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.dni } } : {})}
         />
       </Grid>
     ) : null;

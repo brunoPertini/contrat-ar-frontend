@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { LocationMap } from '../Shared/Components';
+import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -33,8 +34,14 @@ function UserPersonalData({
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
     },
-    gridStyles: { display: 'flex', flexDirection: 'column' },
+    gridStyles: { display: 'flex', flexDirection: 'column', width: '31rem' },
     showInlineLabels: true,
+    fieldsOwnConfig: {
+      dni: {
+        readOnly: true,
+        disabled: true,
+      },
+    },
   })), [isEditModeEnabled, fieldsValues]);
 
   useEffect(() => {
@@ -72,12 +79,7 @@ function UserPersonalData({
               marginTop: '5%',
             }}
             enableDragEvents={isEditModeEnabled}
-            location={{
-              coords: {
-                latitude: fieldsValues.location.coordinates[0],
-                longitude: fieldsValues.location.coordinates[1],
-              },
-            }}
+            location={parseLocationForMap(fieldsValues.location)}
             setLocation={handleLocationChange}
           />
         </Box>

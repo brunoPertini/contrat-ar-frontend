@@ -55,3 +55,15 @@ export const getUserMenuOptions = (elementsConfiguration) => [{
   ),
   onClick: elementsConfiguration[1].onClick,
 }];
+
+/**
+ *
+ * @param {{ coordinates: Array<Number>}} sourceLocation
+ * @returns
+ */
+export const parseLocationForMap = (sourceLocation) => ({
+  coords: {
+    latitude: sourceLocation.coordinates[0],
+    longitude: sourceLocation.coordinates[1],
+  },
+});

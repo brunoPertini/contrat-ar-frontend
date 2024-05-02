@@ -4,7 +4,7 @@
 /* eslint-disable react/prop-types */
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
@@ -18,12 +18,14 @@ import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import {
-  CLIENTE, ROLE_PROVEEDOR_PRODUCTOS,
+  CLIENTE, PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS,
   ROLE_PROVEEDOR_SERVICIOS, USER_TYPE_CLIENTE
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
 import { sharedLabels } from '../StaticData/Shared';
+import { systemConstants } from '../Shared/Constants';
+import PlanData from './PlanData';
 
 const stateSelector = (state) => state;
 
@@ -85,6 +87,21 @@ function UserProfile({ handleLogout }) {
     password: userInfo.password
   });
 
+  const [planData, setPlanData] = useState(userInfo.plan);
+
+  // If user is proveedor, additional fields should be rendered
+  useEffect(() => {
+    if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
+      const { dni } = userInfo;
+      setPersonalData(
+        (previous) => ({
+          ...previous,
+          dni,
+        })
+      );
+    }
+  }, []);
+
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
@@ -104,6 +121,8 @@ function UserProfile({ handleLogout }) {
     })
   );
 
+  const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
+
   const menuOptions = getUserMenuOptions([{ props: userInfo },
     { onClick: () => showExitAppModal() }]);
 
@@ -117,7 +136,7 @@ function UserProfile({ handleLogout }) {
       SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
   };
 
-  const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : null;
+  const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
   const tabsComponents = {
     [TABS_NAMES.PERSONAL_DATA]: <UserPersonalData
@@ -133,6 +152,12 @@ function UserProfile({ handleLogout }) {
       data={securityData}
       isEditModeEnabled={isEditModeEnabled}
       inputProps={{ readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled }}
+    />,
+    [TABS_NAMES.PLAN]: <PlanData
+      plan={planData}
+      actualPlan={userInfo.plan}
+      userLocation={personalData.location}
+      changeUserInfo={handlePlanDataChanged}
     />
   };
 

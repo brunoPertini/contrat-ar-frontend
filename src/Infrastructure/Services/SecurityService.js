@@ -73,8 +73,11 @@ class SecurityService {
         this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
         return this.#httpClient.getUserInfo(payload.id).then((response) => ({
           ...payload,
+          // Attaching user info not present in JWT
           location: response.location,
           birthDate: response.birthDate,
+          plan: response.plan,
+          dni: response.dni,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input
         })).catch(() => payload);
       }
