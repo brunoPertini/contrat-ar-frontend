@@ -1,19 +1,12 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable comma-dangle */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
-import Button from '@mui/material/Button';
 import Header from '../Header';
-import { withRouter } from '../Shared/Components';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
 import { userProfileLabels } from '../StaticData/UserProfile';
@@ -23,16 +16,10 @@ import {
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
-import { sharedLabels } from '../StaticData/Shared';
 import { systemConstants } from '../Shared/Constants';
 import PlanData from './PlanData';
-
-const stateSelector = (state) => state;
-
-const userInfoSelector = createSelector(
-  stateSelector,
-  (state) => state.usuario,
-);
+import { NavigationContext } from '../State/Contexts/NavigationContext';
+import GoBackLink from '../Shared/Components/GoBackLink';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -67,8 +54,8 @@ const MESSAGES_TAB_PROVIDER = (
 
 const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.SECURITY} />;
 
-function UserProfile({ handleLogout }) {
-  const userInfo = useSelector(userInfoSelector);
+function UserProfile({ handleLogout, userInfo }) {
+  const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
   const [tabOption, setTabOption] = useState(TABS_NAMES.PERSONAL_DATA);
@@ -81,6 +68,7 @@ function UserProfile({ handleLogout }) {
     phone: userInfo.phone,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [securityData, setSecurityData] = useState({
     email: userInfo.email,
     password: userInfo.password
@@ -88,8 +76,12 @@ function UserProfile({ handleLogout }) {
 
   const [planData, setPlanData] = useState(userInfo.plan);
 
-  // If user is proveedor, additional fields should be rendered
+  const goToIndex = () => {
+    window.location.href = userInfo.indexPage;
+  };
+
   useEffect(() => {
+    // If user is proveedor, additional fields should be rendered
     if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
       const { dni } = userInfo;
       setPersonalData(
@@ -99,6 +91,8 @@ function UserProfile({ handleLogout }) {
         })
       );
     }
+
+    setHandleGoBack(() => goToIndex);
   }, []);
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
@@ -155,8 +149,14 @@ function UserProfile({ handleLogout }) {
   return (
     <Grid container display="flex">
       { ExitAppDialog }
-      <Header userInfo={userInfo} withMenuComponent menuOptions={menuOptions} />
+      <Header
+        userInfo={userInfo}
+        renderNavigationLinks
+        withMenuComponent
+        menuOptions={menuOptions}
+      />
       <Grid item>
+        <GoBackLink />
         <Tabs value={tabOption} onChange={handleTabOptionChange}>
           { rolesTabs[userInfo.role].map((tab) => tab) }
         </Tabs>
@@ -167,4 +167,4 @@ function UserProfile({ handleLogout }) {
   );
 }
 
-export default withRouter(UserProfile);
+export default UserProfile;

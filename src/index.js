@@ -14,7 +14,7 @@ import { SignIn } from './SignIn';
 import { Cliente } from './Cliente';
 import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
-import UserProfile from './UserProfile';
+import UserProfile from './UserProfile/Containers';
 
 function ErrorComponent() {
   // TODO: crear páginas de errores

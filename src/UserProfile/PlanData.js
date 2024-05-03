@@ -2,14 +2,16 @@
 /* eslint-disable react/prop-types */
 import { Box, Button, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
-import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
+import { ARGENTINA_LOCALE, PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import { LocationMap } from '../Shared/Components';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import InformativeAlert from '../Shared/Components/Alert';
+import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
 
 function getPlanDescription(plan) {
   const PLAN_DESCRIPTIONS = {
@@ -23,24 +25,38 @@ function getPlanDescription(plan) {
         Cualquier persona en el radio de alcance que muestra el mapa te va a poder encontrar.
       </Typography>),
     [PLAN_TYPE_PAID]: (
-      <Typography paragraph variant="body" sx={{ mt: '5%' }}>
-        Tu plan incluye:
-        {' '}
-        <br />
-        <CheckIcon />
-        {' '}
-        Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar.
-        <br />
-        <CheckIcon />
-        {' '}
-        Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y
-        recibir la opinión sobre ellos de tus clientes.
-        <br />
-        <CheckIcon />
-        {' '}
-        La posibilidad de tener un multiperfil, y que así no solo puedas vender productos
-        o servicios, sino hacer ambas cosas.
-      </Typography>),
+      <>
+        <Typography paragraph variant="body" sx={{ mt: '5%' }}>
+          Tu plan incluye:
+          {' '}
+          <br />
+          <CheckIcon />
+          {' '}
+          Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar.
+          <br />
+          <CheckIcon />
+          {' '}
+          Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y
+          recibir la opinión sobre ellos de tus clientes.
+          <br />
+          <CheckIcon />
+          {' '}
+          La posibilidad de tener un multiperfil, y que así no solo puedas vender productos
+          o servicios, sino hacer ambas cosas.
+        </Typography>
+        <Typography variant="h5" sx={{ mt: '5%' }}>
+          Precio final mensual:
+          {' '}
+          { getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
+          500
+          <br />
+          <br />
+          <InfoIcon />
+          {' '}
+          Nos vamos a comunicar al mail o celular que nos diste para
+          acordar la forma de pago y completar el proceso.
+        </Typography>
+      </>),
   };
 
   return PLAN_DESCRIPTIONS[plan];
