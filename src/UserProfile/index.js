@@ -72,7 +72,6 @@ function UserProfile({ handleLogout }) {
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
   const [tabOption, setTabOption] = useState(TABS_NAMES.PERSONAL_DATA);
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
   const [personalData, setPersonalData] = useState({
     name: userInfo.name,
@@ -105,10 +104,6 @@ function UserProfile({ handleLogout }) {
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
-
-  const handleEditModeChange = (event) => {
-    setIsEditModeEnabled(event.target.checked);
-  };
 
   const handleTabOptionChange = (_, newValue) => {
     setTabOption(newValue);
@@ -145,13 +140,9 @@ function UserProfile({ handleLogout }) {
       changeUserInfo={handlePersonalDataChanged}
       usuarioType={usuarioType}
       styles={{ mt: '10%', ml: '5%' }}
-      isEditModeEnabled={isEditModeEnabled}
-      inputProps={{ readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled }}
     />,
     [TABS_NAMES.SECURITY]: <SecurityData
       data={securityData}
-      isEditModeEnabled={isEditModeEnabled}
-      inputProps={{ readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled }}
     />,
     [TABS_NAMES.PLAN]: <PlanData
       plan={planData}
@@ -171,25 +162,6 @@ function UserProfile({ handleLogout }) {
         </Tabs>
         { tabsComponents[tabOption] }
       </Grid>
-      {
-        tabOption === TABS_NAMES.PERSONAL_DATA && (
-          <Grid
-            item
-            display="flex"
-            flexDirection="column"
-            sx={{ height: '30%', ml: '5%' }}
-          >
-            <FormControlLabel
-              control={<Switch />}
-              label={userProfileLabels.modifyData}
-              onChange={handleEditModeChange}
-            />
-            <Button variant="contained" sx={{ mt: '5%' }}>
-              { sharedLabels.finish }
-            </Button>
-          </Grid>
-        )
-      }
     </Grid>
 
   );

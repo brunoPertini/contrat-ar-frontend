@@ -4,17 +4,25 @@ import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
-import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
-import { LocationMap } from '../Shared/Components';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Switch from '@mui/material/Switch';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
+import LocationMap from '../Shared/Components/LocationMap';
+import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
+import { userProfileLabels } from '../StaticData/UserProfile';
+import { sharedLabels } from '../StaticData/Shared';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 function UserPersonalData({
-  userInfo, styles, usuarioType, inputProps,
-  isEditModeEnabled, userToken, changeUserInfo,
+  userInfo, styles, usuarioType,
+  userToken, changeUserInfo,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
+
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
   const textFields = pickBy(fieldsValues, (value, key) => key !== 'location');
 
@@ -30,7 +38,7 @@ function UserPersonalData({
   ) : personalDataFormBuilder.build({
     usuarioType,
     fieldsValues,
-    inputProps,
+    inputProps: { readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled },
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
     },
@@ -59,13 +67,21 @@ function UserPersonalData({
     changeUserInfo('location', { coordinates: [newValue.coords.latitude, newValue.coords.longitude] });
   };
 
+  const handleEditModeChange = (event) => {
+    setIsEditModeEnabled(event.target.checked);
+  };
+
+  const handleConfirmEdition = () => {
+    setIsEditModeEnabled(false);
+  };
+
   return (
-    <Box display="flex" flexDirection="column" sx={{ ...styles }}>
+    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
       <Box display="flex" flexDirection="column">
         {
         formFields.map((field) => field)
         }
-        <Box sx={{ mt: '5%' }}>
+        <Box display="flex" flexDirection="column" sx={{ mt: '5%' }}>
           <Typography variant="h6" fontWeight="bold">
             {personalDataFormBuilder.fieldsLabels.location}
             {' '}
@@ -74,8 +90,8 @@ function UserPersonalData({
           <LocationMap
             token={userToken}
             containerStyles={{
-              height: '200px',
-              width: '100%',
+              height: '500px',
+              width: '500px',
               marginTop: '5%',
             }}
             enableDragEvents={isEditModeEnabled}
@@ -83,6 +99,25 @@ function UserPersonalData({
             setLocation={handleLocationChange}
           />
         </Box>
+      </Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        sx={{ height: '30%', ml: '5%' }}
+      >
+        <FormControlLabel
+          control={<Switch checked={isEditModeEnabled} />}
+          label={userProfileLabels.modifyData}
+          onChange={handleEditModeChange}
+        />
+        <Button
+          variant="contained"
+          sx={{ mt: '5%' }}
+          disabled={!isEditModeEnabled}
+          onClick={handleConfirmEdition}
+        >
+          { sharedLabels.saveChanges }
+        </Button>
       </Box>
     </Box>
   );

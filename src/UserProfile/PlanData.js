@@ -1,12 +1,15 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import { useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import { LocationMap } from '../Shared/Components';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
+import InformativeAlert from '../Shared/Components/Alert';
 
 function getPlanDescription(plan) {
   const PLAN_DESCRIPTIONS = {
@@ -44,30 +47,58 @@ function getPlanDescription(plan) {
 }
 
 function PlanData({
-  plan, styles, userLocation, changeUserInfo,
+  plan, styles, userLocation, changeUserInfo, actualPlan,
 }) {
   const { plansNames } = sharedLabels;
 
   const onPlanChange = (newPlan) => changeUserInfo(Object.keys(plansNames)
     .find((key) => plansNames[key] === newPlan));
 
+  const [hasPendingRequest, setHasPendingRequest] = useState(false);
+
   return (
-    <Box display="flex" flexDirection="column" sx={{ ...styles }}>
-      <SelectComponent
-        values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-        containerStyles={{ width: '31rem', mt: '5%' }}
-        handleOnChange={onPlanChange}
-        label={userProfileLabels['plan.label']}
-      />
-      { getPlanDescription(plan) }
-      <LocationMap
-        circleRadius={1500}
-        location={parseLocationForMap(userLocation)}
-        containerStyles={{
-          height: '500px',
-          width: '100%',
-          marginTop: '5%',
-        }}
+    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
+      <Box display="flex" flexDirection="column">
+        <SelectComponent
+          values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
+          containerStyles={{ width: '31rem', mt: '5%' }}
+          handleOnChange={onPlanChange}
+          label={userProfileLabels['plan.label']}
+          renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
+        />
+        { getPlanDescription(plan) }
+        {
+        plan === 'FREE' && (
+          <LocationMap
+            circleRadius={1500}
+            location={parseLocationForMap(userLocation)}
+            containerStyles={{
+              height: '500px',
+              width: '100%',
+              marginTop: '5%',
+            }}
+          />
+        )
+      }
+      </Box>
+      {
+        !hasPendingRequest && (
+          <Box display="flex" flexDirection="column">
+            <Button
+              variant="contained"
+              sx={{ mt: '5%' }}
+              disabled={actualPlan === plan}
+              onClick={() => setHasPendingRequest(true)}
+            >
+              { sharedLabels.saveChanges }
+            </Button>
+          </Box>
+        )
+      }
+      <InformativeAlert
+        open={hasPendingRequest}
+        label="Recibimos tu solicitud de cambio de plan! Te contactaremos a la brevedad"
+        severity="info"
       />
     </Box>
   );

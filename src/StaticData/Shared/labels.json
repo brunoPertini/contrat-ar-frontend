@@ -56,5 +56,6 @@
     "plansNames": {
         "FREE": "Plan Gratuito",
         "PAID": "Plan Pago"
-    }
+    },
+    "saveChanges": "Guardar Cambios"
 }

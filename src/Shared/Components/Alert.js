@@ -11,6 +11,7 @@ function InformativeAlert({
       open={open}
       autoHideDuration={autoHideDuration}
       onClose={onClose}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
     >
       <Alert
         severity={severity}

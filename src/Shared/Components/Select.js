@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -8,7 +9,7 @@ import Select from '@mui/material/Select';
 
 function SelectComponent({
   label, handleOnChange, values, containerStyles,
-  defaultSelected,
+  defaultSelected, renderValue,
 }) {
   const [value, setValue] = useState(defaultSelected);
 
@@ -31,6 +32,7 @@ function SelectComponent({
           value={value}
           label={label}
           onChange={handleChange}
+          renderValue={renderValue}
         >
           {
                 values.map((valueLabel) => (
