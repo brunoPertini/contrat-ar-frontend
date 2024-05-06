@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -53,9 +52,11 @@ function SelectComponent({
 SelectComponent.defaultProps = {
   containerStyles: {},
   defaultSelected: 0,
+  renderValue: undefined,
 };
 
 SelectComponent.propTypes = {
+  renderValue: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.string),
   label: PropTypes.string.isRequired,
   handleOnChange: PropTypes.func.isRequired,

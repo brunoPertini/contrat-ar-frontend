@@ -57,5 +57,6 @@
         "FREE": "Plan Gratuito",
         "PAID": "Plan Pago"
     },
-    "saveChanges": "Guardar Cambios"
+    "saveChanges": "Guardar Cambios",
+    "finalMonthlyPrice": " Precio final mensual: {price}"
 }

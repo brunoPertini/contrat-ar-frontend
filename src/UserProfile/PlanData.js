@@ -1,12 +1,16 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import { Box, Button, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
-import { ARGENTINA_LOCALE, PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
-import { LocationMap } from '../Shared/Components';
+import {
+  ARGENTINA_LOCALE,
+  PAID_PLAN_PRICE, PLAN_TYPE_FREE, PLAN_TYPE_PAID,
+} from '../Shared/Constants/System';
+import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
@@ -14,47 +18,48 @@ import InformativeAlert from '../Shared/Components/Alert';
 import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
 
 function getPlanDescription(plan) {
+  const renderPlanDescription = (toRenderPlan) => userProfileLabels[`plan.${toRenderPlan}.description`]
+    .split('.')
+    .filter((line) => !!(line))
+    .map((line) => (
+      <>
+        <CheckIcon />
+        { line }
+        .
+        <br />
+      </>
+    ));
+
   const PLAN_DESCRIPTIONS = {
     [PLAN_TYPE_FREE]: (
       <Typography paragraph variant="body" sx={{ mt: '5%' }}>
-        Tu plan incluye:
-        {' '}
+        { userProfileLabels['plan.includes'] }
         <br />
-        <CheckIcon />
-        {' '}
-        Cualquier persona en el radio de alcance que muestra el mapa te va a poder encontrar.
+        <br />
+        {
+          renderPlanDescription(plan)
+        }
       </Typography>),
     [PLAN_TYPE_PAID]: (
       <>
         <Typography paragraph variant="body" sx={{ mt: '5%' }}>
-          Tu plan incluye:
-          {' '}
+          { userProfileLabels['plan.includes'] }
           <br />
-          <CheckIcon />
-          {' '}
-          Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar.
           <br />
-          <CheckIcon />
-          {' '}
-          Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y
-          recibir la opinión sobre ellos de tus clientes.
-          <br />
-          <CheckIcon />
-          {' '}
-          La posibilidad de tener un multiperfil, y que así no solo puedas vender productos
-          o servicios, sino hacer ambas cosas.
+          {
+            renderPlanDescription(plan)
+          }
         </Typography>
         <Typography variant="h5" sx={{ mt: '5%' }}>
-          Precio final mensual:
-          {' '}
-          { getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
-          500
+          { sharedLabels.finalMonthlyPrice.replace(
+            '{price}',
+            getLocaleCurrencySymbol(ARGENTINA_LOCALE) + PAID_PLAN_PRICE,
+          )}
           <br />
           <br />
           <InfoIcon />
           {' '}
-          Nos vamos a comunicar al mail o celular que nos diste para
-          acordar la forma de pago y completar el proceso.
+          { userProfileLabels['plan.change.disclaimer'] }
         </Typography>
       </>),
   };
@@ -86,6 +91,7 @@ function PlanData({
         {
         plan === 'FREE' && (
           <LocationMap
+            enableDragEvents={false}
             circleRadius={1500}
             location={parseLocationForMap(userLocation)}
             containerStyles={{
@@ -112,12 +118,27 @@ function PlanData({
         )
       }
       <InformativeAlert
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={hasPendingRequest}
-        label="Recibimos tu solicitud de cambio de plan! Te contactaremos a la brevedad"
+        label={userProfileLabels['plan.change.finalMessage']}
         severity="info"
       />
     </Box>
   );
 }
+
+PlanData.defaultProps = {
+  styles: {},
+};
+
+PlanData.propTypes = {
+  plan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
+  styles: PropTypes.object,
+  userLocation: PropTypes.shape({
+    coordinates: PropTypes.arrayOf(PropTypes.number),
+  }).isRequired,
+  changeUserInfo: PropTypes.func.isRequired,
+  actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
+};
 
 export default PlanData;

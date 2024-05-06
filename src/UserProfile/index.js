@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable comma-dangle */
 /* eslint-disable react/prop-types */
-import { useContext, useEffect, useState } from 'react';
+import {
+  useContext, useEffect, useMemo, useState
+} from 'react';
 import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -53,6 +55,14 @@ const MESSAGES_TAB_PROVIDER = (
 );
 
 const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.SECURITY} />;
+
+const rolesTabs = {
+  [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
+  [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
+    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
+  [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
+    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
+};
 
 function UserProfile({ handleLogout, userInfo }) {
   const { setHandleGoBack } = useContext(NavigationContext);
@@ -117,33 +127,31 @@ function UserProfile({ handleLogout, userInfo }) {
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
-  const rolesTabs = {
-    [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
-    [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
-      SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
-    [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
-      SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
-  };
-
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
   const tabsComponents = {
-    [TABS_NAMES.PERSONAL_DATA]: <UserPersonalData
-      userToken={userInfo.token}
-      userInfo={personalData}
-      changeUserInfo={handlePersonalDataChanged}
-      usuarioType={usuarioType}
-      styles={{ mt: '10%', ml: '5%' }}
-    />,
-    [TABS_NAMES.SECURITY]: <SecurityData
-      data={securityData}
-    />,
-    [TABS_NAMES.PLAN]: <PlanData
-      plan={planData}
-      actualPlan={userInfo.plan}
-      userLocation={personalData.location}
-      changeUserInfo={handlePlanDataChanged}
-    />
+    [TABS_NAMES.PERSONAL_DATA]: useMemo(() => (
+      <UserPersonalData
+        userToken={userInfo.token}
+        userInfo={personalData}
+        changeUserInfo={handlePersonalDataChanged}
+        usuarioType={usuarioType}
+        styles={{ mt: '10%', ml: '5%' }}
+      />
+    ), [personalData, userInfo.token]),
+    [TABS_NAMES.SECURITY]: useMemo(() => (
+      <SecurityData
+        data={securityData}
+      />
+    ), [securityData]),
+    [TABS_NAMES.PLAN]: useMemo(() => (
+      <PlanData
+        plan={planData}
+        actualPlan={userInfo.plan}
+        userLocation={personalData.location}
+        changeUserInfo={handlePlanDataChanged}
+      />
+    ), [planData, userInfo.plan, personalData.location])
   };
 
   return (

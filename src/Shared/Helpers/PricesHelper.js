@@ -9,7 +9,6 @@ export const localesCurrencies = {
 /**
  *
  * @param {String} locale
- *
  * @returns The given locale currency symbol
  */
 export function getLocaleCurrencySymbol(locale) {

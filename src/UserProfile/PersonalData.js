@@ -1,12 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
@@ -122,5 +120,25 @@ function UserPersonalData({
     </Box>
   );
 }
+
+UserPersonalData.defaultProps = {
+  styles: {},
+};
+
+UserPersonalData.propTypes = {
+  userInfo: PropTypes.shape({
+    name: PropTypes.string,
+    surname: PropTypes.string,
+    birthDate: PropTypes.string,
+    location: PropTypes.shape({
+      coordinates: PropTypes.arrayOf(PropTypes.number),
+    }),
+    phone: PropTypes.string,
+  }).isRequired,
+  styles: PropTypes.object,
+  usuarioType: PropTypes.oneOf(['CLIENTE', 'PROVEEDOR']).isRequired,
+  userToken: PropTypes.string.isRequired,
+  changeUserInfo: PropTypes.func.isRequired,
+};
 
 export default UserPersonalData;

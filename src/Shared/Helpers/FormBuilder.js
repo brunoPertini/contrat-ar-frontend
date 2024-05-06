@@ -2,13 +2,18 @@
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
-import {
-  Grid, TextField, Typography, IconButton, Tooltip, Button, Link, InputLabel,
-} from '@mui/material';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { sharedLabels } from '../../StaticData/Shared';
-import { LocationMap } from '../Components';
+import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
 import { cleanNumbersFromInput } from '../Utils/InputUtils';

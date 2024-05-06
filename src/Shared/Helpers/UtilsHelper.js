@@ -59,7 +59,6 @@ export const getUserMenuOptions = (elementsConfiguration) => [{
 /**
  *
  * @param {{ coordinates: Array<Number>}} sourceLocation
- * @returns
  */
 export const parseLocationForMap = (sourceLocation) => ({
   coords: {

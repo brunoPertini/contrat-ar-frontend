@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import UserProfile from '..';
@@ -21,5 +21,9 @@ function UserProfileContainer({ handleLogout }) {
     </NavigationContextProvider>
   );
 }
+
+UserProfileContainer.propTypes = {
+  handleLogout: PropTypes.func.isRequired,
+};
 
 export default withRouter(UserProfileContainer);
