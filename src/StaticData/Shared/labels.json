@@ -1,6 +1,7 @@
 {
     "name": "Nombre",
     "surname": "Apellido",
+    "phone": "Teléfono",
     "email": "Email",
     "password": "Contraseña",
     "birthDate": "Fecha de nacimiento",
@@ -50,5 +51,12 @@
     "delete": "Borrar",
     "currentImage": "Imágen actual",
     "logout": "Cerrar Sesión",
-    "menu": "Menú"
+    "menu": "Menú",
+    "yourLocation": "Tu dirección aproximada",
+    "plansNames": {
+        "FREE": "Plan Gratuito",
+        "PAID": "Plan Pago"
+    },
+    "saveChanges": "Guardar Cambios",
+    "finalMonthlyPrice": " Precio final mensual: {price}"
 }

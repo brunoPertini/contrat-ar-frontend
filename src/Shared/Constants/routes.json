@@ -6,5 +6,6 @@
     "ROLE_PROVEEDOR_SERVICIOS": "/proveedor",
     "ROLE_PROVEEDOR_PRODUCTOS": "/proveedor",
     "productoIndex": "/producto",
-    "servicioIndex": "/servicio"
+    "servicioIndex": "/servicio",
+    "userProfile": "/profile"
 }

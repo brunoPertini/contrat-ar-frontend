@@ -4,13 +4,14 @@ import Alert from '@mui/material/Alert';
 import { EMPTY_FUNCTION } from '../Constants/System';
 
 function InformativeAlert({
-  open, autoHideDuration, onClose, severity, label,
+  open, autoHideDuration, onClose, severity, label, anchorOrigin,
 }) {
   return (
     <Snackbar
       open={open}
       autoHideDuration={autoHideDuration}
       onClose={onClose}
+      anchorOrigin={anchorOrigin}
     >
       <Alert
         severity={severity}
@@ -31,11 +32,13 @@ function InformativeAlert({
 InformativeAlert.defaultProps = {
   autoHideDuration: 5000,
   onClose: EMPTY_FUNCTION,
+  anchorOrigin: undefined,
   severity: 'info',
   label: '',
 };
 
 InformativeAlert.propTypes = {
+  anchorOrigin: PropTypes.shape({ vertical: PropTypes.string, horizontal: PropTypes.string }),
   open: PropTypes.bool.isRequired,
   autoHideDuration: PropTypes.number,
   onClose: PropTypes.func,

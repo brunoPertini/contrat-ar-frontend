@@ -1,4 +1,10 @@
+import { ARGENTINA_LOCALE } from '../Constants/System';
+
 export const ARGENTINA_CURRENCY_CODE = 'ARS';
+
+export const localesCurrencies = {
+  [ARGENTINA_LOCALE]: ARGENTINA_CURRENCY_CODE,
+};
 
 /**
  *
@@ -6,10 +12,9 @@ export const ARGENTINA_CURRENCY_CODE = 'ARS';
  * @returns The given locale currency symbol
  */
 export function getLocaleCurrencySymbol(locale) {
-// TODO: deharcodear la currency de aca
   const formatObject = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: ARGENTINA_CURRENCY_CODE,
+    currency: localesCurrencies[locale],
   });
 
   return formatObject.format().at(0);

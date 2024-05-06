@@ -8,7 +8,7 @@ import Select from '@mui/material/Select';
 
 function SelectComponent({
   label, handleOnChange, values, containerStyles,
-  defaultSelected,
+  defaultSelected, renderValue,
 }) {
   const [value, setValue] = useState(defaultSelected);
 
@@ -31,6 +31,7 @@ function SelectComponent({
           value={value}
           label={label}
           onChange={handleChange}
+          renderValue={renderValue}
         >
           {
                 values.map((valueLabel) => (
@@ -51,9 +52,11 @@ function SelectComponent({
 SelectComponent.defaultProps = {
   containerStyles: {},
   defaultSelected: 0,
+  renderValue: undefined,
 };
 
 SelectComponent.propTypes = {
+  renderValue: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.string),
   label: PropTypes.string.isRequired,
   handleOnChange: PropTypes.func.isRequired,

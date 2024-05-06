@@ -11,7 +11,7 @@ function StaticAlert({
       variant={variant}
       sx={{ ...styles }}
     >
-      { label }
+      <span dangerouslySetInnerHTML={{ __html: label }} />
     </Alert>
   );
 }

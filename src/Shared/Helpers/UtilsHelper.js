@@ -5,6 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { PRODUCT, PRODUCTS, SERVICE } from '../Constants/System';
 import CookiesService from '../../Infrastructure/Services/CookiesService';
 import { sharedLabels } from '../../StaticData/Shared';
+import { routes } from '../Constants';
 
 export const parseVendibleUnit = (vendibleType) => (vendibleType === PRODUCTS
   ? PRODUCT : SERVICE).toLowerCase();
@@ -39,6 +40,9 @@ export const getUserMenuOptions = (elementsConfiguration) => [{
     </>
   ),
   props: elementsConfiguration[0].props,
+  onClick: () => {
+    window.location.href = routes.userProfile;
+  },
 },
 {
   component: () => (
@@ -51,3 +55,14 @@ export const getUserMenuOptions = (elementsConfiguration) => [{
   ),
   onClick: elementsConfiguration[1].onClick,
 }];
+
+/**
+ *
+ * @param {{ coordinates: Array<Number>}} sourceLocation
+ */
+export const parseLocationForMap = (sourceLocation) => ({
+  coords: {
+    latitude: sourceLocation.coordinates[0],
+    longitude: sourceLocation.coordinates[1],
+  },
+});

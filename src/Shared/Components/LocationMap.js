@@ -5,7 +5,7 @@ import {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  MapContainer, TileLayer, Marker, Popup, ZoomControl,
+  MapContainer, TileLayer, Marker, Popup, ZoomControl, Circle,
 } from 'react-leaflet';
 import Link from '@mui/material/Link';
 import { routes } from '../Constants';
@@ -20,7 +20,8 @@ import { locationShape } from '../PropTypes/Shared';
 const arePropsEqual = (prevProps, nextProps) => (
   prevProps.location.coords.latitude === nextProps.location.coords.latitude
       && prevProps.location.coords.longitude === nextProps.location.coords.longitude
-      && prevProps.token === nextProps.token);
+      && prevProps.token === nextProps.token
+      && prevProps.enableDragEvents === nextProps.enableDragEvents);
 
 /**
  * Map that requests current user location, shows it in a marker and translates it
@@ -33,6 +34,7 @@ const LocationMap = memo(function LocationMap({
   token,
   enableDragEvents,
   handleError,
+  circleRadius,
 }) {
   const previousLocation = usePreviousPropValue(location);
 
@@ -154,7 +156,17 @@ const LocationMap = memo(function LocationMap({
 
       </Marker>
     );
-  }, [location.coords.latitude, location.coords.longitude, readableAddress]);
+  }, [location.coords.latitude, location.coords.longitude, readableAddress, enableDragEvents]);
+
+  const CircleMarker = useCallback(() => (!circleRadius ? null : (
+    <Circle
+      center={{
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      }}
+      radius={circleRadius}
+    />
+  )), [circleRadius]);
 
   return (
     <>
@@ -180,6 +192,7 @@ const LocationMap = memo(function LocationMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <LocationMarker />
+        <CircleMarker />
       </MapContainer>
       <Link>
         { labels.openMapInModal }
@@ -193,6 +206,7 @@ LocationMap.defaultProps = {
   token: '',
   setLocation: EMPTY_FUNCTION,
   enableDragEvents: true,
+  circleRadius: 0,
 };
 
 LocationMap.propTypes = {
@@ -202,6 +216,7 @@ LocationMap.propTypes = {
   containerStyles: PropTypes.objectOf(PropTypes.any),
   token: PropTypes.string,
   enableDragEvents: PropTypes.bool,
+  circleRadius: PropTypes.number,
 };
 
 export default withErrorHandler(LocationMap);
