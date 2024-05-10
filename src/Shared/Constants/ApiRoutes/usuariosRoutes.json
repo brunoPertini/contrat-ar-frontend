@@ -4,5 +4,7 @@
     "login": "/oauth/login",
     "getPublicKey": "/oauth/public_key",
     "getUserInfo": "/usuarios/{userId}/info",
-    "getProveedoresOfVendible": "/vendible/{vendibleId}/proveedores"
+    "getProveedoresOfVendible": "/vendible/{vendibleId}/proveedores",
+    "usuariosBaseUrl": "/usuarios/{usuarioId}",
+    "clientesBaseUrl": "/cliente/{usuarioId}"
 }

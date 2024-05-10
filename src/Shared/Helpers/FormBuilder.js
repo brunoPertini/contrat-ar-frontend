@@ -144,16 +144,17 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-name',
           type: 'text',
           value: fieldsValues.name,
-          inputProps,
+          // inputProps,
           onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
+          InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
         }, sharedLabels.name) }
         {' '}
         {TextFieldWithLabel(showInlineLabels, {
           id: 'form-surname',
           type: 'text',
           value: fieldsValues.surname,
-          inputProps,
           onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
+          InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
         }, sharedLabels.surname) }
       </Grid>
     ) : null;
@@ -220,6 +221,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
             type="date"
             sx={{ width: '100%' }}
             onChange={(e) => onChangeFields('birthDate', e.target.value)}
+            {...('birthDate' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.birthDate } } : {})}
             {...inputProps}
           />
         </Grid>

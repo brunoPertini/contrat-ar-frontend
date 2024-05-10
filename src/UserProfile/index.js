@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable comma-dangle */
-/* eslint-disable react/prop-types */
 import {
   useContext, useEffect, useMemo, useState
 } from 'react';
@@ -64,7 +64,7 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
-function UserProfile({ handleLogout, userInfo }) {
+function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -135,6 +135,7 @@ function UserProfile({ handleLogout, userInfo }) {
         userToken={userInfo.token}
         userInfo={personalData}
         changeUserInfo={handlePersonalDataChanged}
+        editCommonInfo={editCommonInfo}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
       />

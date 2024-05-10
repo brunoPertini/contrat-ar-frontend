@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -14,9 +15,15 @@ import { sharedLabels } from '../StaticData/Shared';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
+const hideInputConfig = {
+  readOnly: true,
+  disabled: true,
+};
+
 function UserPersonalData({
   userInfo, styles, usuarioType,
   userToken, changeUserInfo,
+  editCommonInfo,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
@@ -43,9 +50,17 @@ function UserPersonalData({
     gridStyles: { display: 'flex', flexDirection: 'column', width: '31rem' },
     showInlineLabels: true,
     fieldsOwnConfig: {
+      name: {
+        ...hideInputConfig,
+      },
+      surname: {
+        ...hideInputConfig,
+      },
       dni: {
-        readOnly: true,
-        disabled: true,
+        ...hideInputConfig,
+      },
+      birthDate: {
+        ...hideInputConfig,
       },
     },
   })), [isEditModeEnabled, fieldsValues]);
@@ -71,6 +86,9 @@ function UserPersonalData({
 
   const handleConfirmEdition = () => {
     setIsEditModeEnabled(false);
+    editCommonInfo({
+      info: { phone: userInfo.phone, location: userInfo.location },
+    });
   };
 
   return (
@@ -139,6 +157,7 @@ UserPersonalData.propTypes = {
   usuarioType: PropTypes.oneOf(['CLIENTE', 'PROVEEDOR']).isRequired,
   userToken: PropTypes.string.isRequired,
   changeUserInfo: PropTypes.func.isRequired,
+  editCommonInfo: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;
