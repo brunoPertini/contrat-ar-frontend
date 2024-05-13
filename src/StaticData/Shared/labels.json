@@ -58,5 +58,7 @@
         "PAID": "Plan Pago"
     },
     "saveChanges": "Guardar Cambios",
-    "finalMonthlyPrice": " Precio final mensual: {price}"
+    "finalMonthlyPrice": " Precio final mensual: {price}",
+    "infoModifiedSuccess": "¡La información fue modificada!",
+    "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde"
 }

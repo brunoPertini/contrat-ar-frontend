@@ -48,4 +48,24 @@ export class UserHttpClient extends HttpClient {
   getPublicKey() {
     return this.get(usersRoutes.getPublicKey);
   }
+
+  /**
+   *
+   * @param {String | Number} userId
+   * @param {{ phone: String, location: { coordinates: Array<Number>}}} info
+   * @param {String} role
+   * @returns {Promise<void> | Promise<Error>}
+   */
+  updateUserCommonInfo(userId, info, role) {
+    const parsedLocation = !('location' in info) ? undefined : {
+      type: 'Point',
+      coordinates: [...info.location.coordinates],
+    };
+
+    const url = role === systemConstants.CLIENTE
+      ? usersRoutes.clientesBaseUrl.replace('{usuarioId}', userId)
+      : usersRoutes.usuariosBaseUrl.replace('{usuarioId}', userId);
+
+    return this.put(url, null, { ...info, location: parsedLocation });
+  }
 }

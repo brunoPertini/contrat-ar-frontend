@@ -2,11 +2,12 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
 
 /**
  * @typedef UsuarioModel
+ * @property {Number} id
  * @property {String} name
  * @property {String} surname
  * @property {String} email
  * @property {String} birthDate
- * @property {Number[]} location
+ * @property {{ coordinates: Number[]}} location
  * @property {String} role
  * @property {String} token
  * @property {String} indexPage,
@@ -25,7 +26,7 @@ export const userState = {
   surname: '',
   email: '',
   birthDate: '',
-  location: [],
+  location: {},
   role: '',
   token: '',
   indexPage: '',

@@ -1,8 +1,6 @@
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable comma-dangle */
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import {
-  useContext, useEffect, useMemo, useState
+  useContext, useEffect, useMemo, useState,
 } from 'react';
 import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
@@ -14,7 +12,7 @@ import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import {
   CLIENTE, PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS,
-  ROLE_PROVEEDOR_SERVICIOS, USER_TYPE_CLIENTE
+  ROLE_PROVEEDOR_SERVICIOS, USER_TYPE_CLIENTE,
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
@@ -22,6 +20,7 @@ import { systemConstants } from '../Shared/Constants';
 import PlanData from './PlanData';
 import { NavigationContext } from '../State/Contexts/NavigationContext';
 import GoBackLink from '../Shared/Components/GoBackLink';
+import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -64,7 +63,7 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
-function UserProfile({ handleLogout, userInfo }) {
+function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -81,7 +80,7 @@ function UserProfile({ handleLogout, userInfo }) {
   // eslint-disable-next-line no-unused-vars
   const [securityData, setSecurityData] = useState({
     email: userInfo.email,
-    password: userInfo.password
+    password: userInfo.password,
   });
 
   const [planData, setPlanData] = useState(userInfo.plan);
@@ -98,7 +97,7 @@ function UserProfile({ handleLogout, userInfo }) {
         (previous) => ({
           ...previous,
           dni,
-        })
+        }),
       );
     }
 
@@ -116,8 +115,8 @@ function UserProfile({ handleLogout, userInfo }) {
   const handlePersonalDataChanged = (key, value) => setPersonalData(
     (previous) => ({
       ...previous,
-      [key]: value
-    })
+      [key]: value,
+    }),
   );
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
@@ -135,6 +134,7 @@ function UserProfile({ handleLogout, userInfo }) {
         userToken={userInfo.token}
         userInfo={personalData}
         changeUserInfo={handlePersonalDataChanged}
+        editCommonInfo={editCommonInfo}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
       />
@@ -144,14 +144,14 @@ function UserProfile({ handleLogout, userInfo }) {
         data={securityData}
       />
     ), [securityData]),
-    [TABS_NAMES.PLAN]: useMemo(() => (
+    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan ? (
       <PlanData
         plan={planData}
         actualPlan={userInfo.plan}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
       />
-    ), [planData, userInfo.plan, personalData.location])
+    ) : null), [planData, userInfo.plan, personalData.location]),
   };
 
   return (
@@ -174,5 +174,11 @@ function UserProfile({ handleLogout, userInfo }) {
 
   );
 }
+
+UserProfile.propTypes = {
+  handleLogout: PropTypes.func.isRequired,
+  userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
+  editCommonInfo: PropTypes.func.isRequired,
+};
 
 export default UserProfile;

@@ -11,16 +11,29 @@ import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { sharedLabels } from '../StaticData/Shared';
+import InformativeAlert from '../Shared/Components/Alert';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
+
+const hideInputConfig = {
+  readOnly: true,
+  disabled: true,
+};
 
 function UserPersonalData({
   userInfo, styles, usuarioType,
   userToken, changeUserInfo,
+  editCommonInfo,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+
+  const [alertConfig, setAlertConfig] = useState({
+    openSnackbar: false,
+    alertSeverity: null,
+    alertLabel: null,
+  });
 
   const textFields = pickBy(fieldsValues, (value, key) => key !== 'location');
 
@@ -43,9 +56,17 @@ function UserPersonalData({
     gridStyles: { display: 'flex', flexDirection: 'column', width: '31rem' },
     showInlineLabels: true,
     fieldsOwnConfig: {
+      name: {
+        ...hideInputConfig,
+      },
+      surname: {
+        ...hideInputConfig,
+      },
       dni: {
-        readOnly: true,
-        disabled: true,
+        ...hideInputConfig,
+      },
+      birthDate: {
+        ...hideInputConfig,
       },
     },
   })), [isEditModeEnabled, fieldsValues]);
@@ -69,12 +90,42 @@ function UserPersonalData({
     setIsEditModeEnabled(event.target.checked);
   };
 
+  const resetAlertData = () => {
+    setAlertConfig({
+      openSnackbar: false,
+      alertSeverity: '',
+      alertLabel: '',
+    });
+  };
+
   const handleConfirmEdition = () => {
     setIsEditModeEnabled(false);
+    editCommonInfo({
+      info: { phone: userInfo.phone, location: userInfo.location },
+    }).then(() => {
+      setAlertConfig({
+        openSnackbar: true,
+        alertSeverity: 'success',
+        alertLabel: sharedLabels.infoModifiedSuccess,
+      });
+    }).catch(() => {
+      setAlertConfig({
+        openSnackbar: true,
+        alertSeverity: 'error',
+        alertLabel: sharedLabels.infoModifiedError,
+      });
+    });
   };
 
   return (
     <Box display="flex" flexDirection="row" sx={{ ...styles }}>
+      <InformativeAlert
+        open={alertConfig.openSnackbar}
+        onClose={() => resetAlertData()}
+        label={alertConfig.alertLabel}
+        severity={alertConfig.alertSeverity}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      />
       <Box display="flex" flexDirection="column">
         {
         formFields.map((field) => field)
@@ -139,6 +190,7 @@ UserPersonalData.propTypes = {
   usuarioType: PropTypes.oneOf(['CLIENTE', 'PROVEEDOR']).isRequired,
   userToken: PropTypes.string.isRequired,
   changeUserInfo: PropTypes.func.isRequired,
+  editCommonInfo: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;
