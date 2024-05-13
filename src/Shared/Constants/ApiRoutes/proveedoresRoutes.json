@@ -1,5 +1,6 @@
 {
     "getVendibles": "/proveedor/{proveedorId}/vendible",
+    "changeProfilePhoto": "/image/proveedor/{proveedorId}/upload",
     "servicioBaseUrl": "/service",
     "productoBaseUrl": "/product",
     "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}"

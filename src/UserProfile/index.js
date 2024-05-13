@@ -63,7 +63,10 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
-function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
+function UserProfile({
+  handleLogout, userInfo,
+  editCommonInfo, uploadProfilePhoto,
+}) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -75,6 +78,7 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
     birthDate: userInfo.birthDate,
     location: userInfo.location,
     phone: userInfo.phone,
+    fotoPerfilUrl: userInfo.fotoPerfilUrl,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -135,6 +139,7 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
         userInfo={personalData}
         changeUserInfo={handlePersonalDataChanged}
         editCommonInfo={editCommonInfo}
+        uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
       />
@@ -179,6 +184,7 @@ UserProfile.propTypes = {
   handleLogout: PropTypes.func.isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   editCommonInfo: PropTypes.func.isRequired,
+  uploadProfilePhoto: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

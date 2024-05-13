@@ -22,12 +22,19 @@ function UserProfileContainer({ handleLogout }) {
     return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
   };
 
+  const handleUploadProfilePhoto = (file) => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+
+    return client.uploadProfilePhoto(userInfo.id, file);
+  };
+
   return (
     <NavigationContextProvider>
       <UserProfile
         handleLogout={handleLogout}
         userInfo={userInfo}
         editCommonInfo={callEditCommonInfo}
+        uploadProfilePhoto={handleUploadProfilePhoto}
       />
     </NavigationContextProvider>
   );

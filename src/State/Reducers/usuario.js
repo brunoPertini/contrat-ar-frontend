@@ -15,6 +15,7 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @property {String} password
  * @property {String} plan
  * @property {String} dni
+ * @property {String} fotoPerfilUrl
  */
 
 /**
@@ -34,6 +35,7 @@ export const userState = {
   password: '',
   plan: '',
   dni: '',
+  fotoPerfilUrl: '',
 };
 
 function usuarioReducer(state = userState, action) {

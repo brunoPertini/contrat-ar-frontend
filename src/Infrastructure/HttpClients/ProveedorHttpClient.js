@@ -7,6 +7,26 @@ export class ProveedorHttpClient extends HttpClient {
     super({ headersValues: config.headersValues });
   }
 
+  /**
+   *
+   * @param {File} file
+   * @param {String} proveedorId
+   * @returns {Promise<String>} The uploaded file url
+   */
+  uploadProfilePhoto(proveedorId, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    const url = proveedoresRoutes.changeProfilePhoto.replace('{proveedorId}', proveedorId);
+
+    return this.post(url, null, formData, config);
+  }
+
   getVendibles(proveedorId) {
     const url = proveedoresRoutes.getVendibles.replace('{proveedorId}', proveedorId);
     return this.get(url);

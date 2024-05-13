@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
@@ -23,7 +25,7 @@ const hideInputConfig = {
 function UserPersonalData({
   userInfo, styles, usuarioType,
   userToken, changeUserInfo,
-  editCommonInfo,
+  editCommonInfo, uploadProfilePhoto,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
@@ -35,7 +37,7 @@ function UserPersonalData({
     alertLabel: null,
   });
 
-  const textFields = pickBy(fieldsValues, (value, key) => key !== 'location');
+  const textFields = pickBy(fieldsValues, (value, key) => key !== 'location' && key !== 'fotoPerfilUrl');
 
   const formFields = useMemo(() => (!isEditModeEnabled ? (
     Object.keys(textFields).map((dataKey) => (
@@ -98,6 +100,21 @@ function UserPersonalData({
     });
   };
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadProfilePhoto(file).then((response) => {
+        setFieldsValues((previous) => ({ ...previous, fotoPerfilUrl: response }));
+      }).catch((error) => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'error',
+          alertLabel: error,
+        });
+      });
+    }
+  };
+
   const handleConfirmEdition = () => {
     setIsEditModeEnabled(false);
     editCommonInfo({
@@ -127,9 +144,28 @@ function UserPersonalData({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
       <Box display="flex" flexDirection="column">
-        {
-        formFields.map((field) => field)
-        }
+        <Box display="flex" flexDirection="row">
+          <Box display="flex" flexDirection="column">
+            {
+                formFields.map((field) => field)
+            }
+          </Box>
+          <Box display="flex" flexDirection="column" sx={{ ml: '5%' }}>
+            <FormControlLabel
+              control={<Switch checked={isEditModeEnabled} />}
+              label={userProfileLabels.modifyData}
+              onChange={handleEditModeChange}
+            />
+            <Button
+              variant="contained"
+              sx={{ mt: '5%' }}
+              disabled={!isEditModeEnabled}
+              onClick={handleConfirmEdition}
+            >
+              { sharedLabels.saveChanges }
+            </Button>
+          </Box>
+        </Box>
         <Box display="flex" flexDirection="column" sx={{ mt: '5%' }}>
           <Typography variant="h6" fontWeight="bold">
             {personalDataFormBuilder.fieldsLabels.location}
@@ -149,25 +185,48 @@ function UserPersonalData({
           />
         </Box>
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{ height: '30%', ml: '5%' }}
-      >
-        <FormControlLabel
-          control={<Switch checked={isEditModeEnabled} />}
-          label={userProfileLabels.modifyData}
-          onChange={handleEditModeChange}
-        />
-        <Button
-          variant="contained"
-          sx={{ mt: '5%' }}
-          disabled={!isEditModeEnabled}
-          onClick={handleConfirmEdition}
-        >
-          { sharedLabels.saveChanges }
-        </Button>
-      </Box>
+      {
+        !!(fieldsValues.fotoPerfilUrl) && (
+          <Box
+            display="flex"
+            flexDirection="column"
+            sx={{ height: '30%', ml: '5%' }}
+          >
+            {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
+            <Avatar
+              alt={userInfo.name}
+              src={fieldsValues.fotoPerfilUrl}
+              sx={{
+                height: 100,
+                width: 100,
+              }}
+            />
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              sx={{ mt: '5%' }}
+            >
+              { sharedLabels.changeImage }
+              <input
+                type="file"
+                onChange={handleFileChange}
+                style={{
+                  clip: 'rect(0 0 0 0)',
+                  clipPath: 'inset(50%)',
+                  height: 1,
+                  overflow: 'hidden',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  whiteSpace: 'nowrap',
+                  width: 1,
+                }}
+              />
+            </Button>
+          </Box>
+        )
+      }
     </Box>
   );
 }
@@ -191,6 +250,7 @@ UserPersonalData.propTypes = {
   userToken: PropTypes.string.isRequired,
   changeUserInfo: PropTypes.func.isRequired,
   editCommonInfo: PropTypes.func.isRequired,
+  uploadProfilePhoto: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;
