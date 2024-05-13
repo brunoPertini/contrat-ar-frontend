@@ -144,7 +144,6 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id: 'form-name',
           type: 'text',
           value: fieldsValues.name,
-          // inputProps,
           onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
           InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
         }, sharedLabels.name) }
