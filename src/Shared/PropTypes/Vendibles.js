@@ -37,13 +37,21 @@ export const vendibleCategoryShape = PropTypes.shape({
 });
 
 export const getUserInfoResponseShape = {
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   name: PropTypes.string,
   surname: PropTypes.string,
   email: PropTypes.string,
   birthDate: PropTypes.string,
+  location: PropTypes.shape({
+    coordinates: PropTypes.arrayOf(PropTypes.number),
+  }),
   role: PropTypes.oneOf(['PROVEEDOR_SERVICIOS', 'PROVEEDOR_PRODUCTOS', 'CLIENTE']),
   token: PropTypes.string,
   indexPage: PropTypes.string,
+  phone: PropTypes.string,
+  password: PropTypes.string,
+  plan: PropTypes.oneOf(['FREE', 'PAID', '']),
+  dni: PropTypes.string,
 };
 
 export const getVendiblesResponseShape = {
