@@ -108,6 +108,11 @@ function UserProfile({
     setHandleGoBack(() => goToIndex);
   }, []);
 
+  useEffect(() => {
+    // For some reason, fotoPerfilUrl is not updated automatically when userInfo changes
+    setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+  }, [userInfo.fotoPerfilUrl]);
+
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);

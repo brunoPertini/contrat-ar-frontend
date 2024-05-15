@@ -100,25 +100,12 @@ function UserPersonalData({
     });
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      uploadProfilePhoto(file).then((response) => {
-        setFieldsValues((previous) => ({ ...previous, fotoPerfilUrl: response }));
-      }).catch((error) => {
-        setAlertConfig({
-          openSnackbar: true,
-          alertSeverity: 'error',
-          alertLabel: error,
-        });
-      });
-    }
-  };
-
-  const handleConfirmEdition = () => {
+  const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsEditModeEnabled(false);
     editCommonInfo({
-      info: { phone: userInfo.phone, location: userInfo.location },
+      phone: userInfo.phone,
+      location: userInfo.location,
+      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
     }).then(() => {
       setAlertConfig({
         openSnackbar: true,
@@ -132,6 +119,21 @@ function UserPersonalData({
         alertLabel: sharedLabels.infoModifiedError,
       });
     });
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadProfilePhoto(file).then((response) => {
+        handleConfirmEdition({ newFotoPerfilUrl: response });
+      }).catch((error) => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'error',
+          alertLabel: error,
+        });
+      });
+    }
   };
 
   return (
@@ -244,6 +246,7 @@ UserPersonalData.propTypes = {
       coordinates: PropTypes.arrayOf(PropTypes.number),
     }),
     phone: PropTypes.string,
+    fotoPerfilUrl: PropTypes.string,
   }).isRequired,
   styles: PropTypes.object,
   usuarioType: PropTypes.oneOf(['CLIENTE', 'PROVEEDOR']).isRequired,

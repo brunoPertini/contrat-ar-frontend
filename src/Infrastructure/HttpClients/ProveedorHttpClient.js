@@ -1,5 +1,6 @@
 import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
-import { ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { HttpClientFactory } from '../HttpClientFactory';
 import { HttpClient } from './HttpClient';
 
 export class ProveedorHttpClient extends HttpClient {
@@ -52,5 +53,18 @@ export class ProveedorHttpClient extends HttpClient {
       .replace('{proveedorId}', proveedorId);
 
     return this.delete(url);
+  }
+
+  /**
+   *
+   * @param {String | Number} userId
+   * @param {{ phone: String, location: { coordinates: Array<Number>}, fotoPerfilUrl: String}} info
+   * @param {{ token: String}} config
+   * @returns {Promise<void> | Promise<Error>}
+   */
+  updateCommonInfo(userId, info, config) {
+    const userHttpClient = HttpClientFactory.createUserHttpClient(null, config);
+
+    return userHttpClient.updateUserCommonInfo(userId, info, PROVEEDOR);
   }
 }
