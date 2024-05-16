@@ -67,4 +67,22 @@ export class ProveedorHttpClient extends HttpClient {
 
     return userHttpClient.updateUserCommonInfo(userId, info, PROVEEDOR);
   }
+
+  /**
+   *
+   * @param {String | Number} proveedorId
+   * @param {String} newPlan
+   * * @returns {Promise<void> | Promise<Error>}
+   */
+  updatePlan(proveedorId, newPlan) {
+    const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    return this.put(url, null, newPlan, config);
+  }
 }

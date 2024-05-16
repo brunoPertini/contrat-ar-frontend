@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
-import UserProfile from '..';
+import UserProfile from '../index';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
@@ -25,6 +25,12 @@ function UserProfileContainer({ handleLogout }) {
     return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
   };
 
+  const confirmPlanChange = (newPlan) => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+
+    return client.updatePlan(userInfo.id, newPlan);
+  };
+
   const editProveedorInfo = (info) => {
     const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
 
@@ -44,6 +50,12 @@ function UserProfileContainer({ handleLogout }) {
     return client.uploadProfilePhoto(userInfo.id, file);
   };
 
+  const planRequestChangeExists = (plan) => {
+    const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
+
+    return client.requestChangeExists(userInfo.id, { key: 'plan', value: plan });
+  };
+
   return (
     <NavigationContextProvider>
       <UserProfile
@@ -51,6 +63,8 @@ function UserProfileContainer({ handleLogout }) {
         userInfo={userInfo}
         editCommonInfo={callEditCommonInfo}
         uploadProfilePhoto={handleUploadProfilePhoto}
+        confirmPlanChange={confirmPlanChange}
+        planRequestChangeExists={planRequestChangeExists}
       />
     </NavigationContextProvider>
   );

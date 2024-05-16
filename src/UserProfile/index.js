@@ -64,8 +64,8 @@ const rolesTabs = {
 };
 
 function UserProfile({
-  handleLogout, userInfo,
-  editCommonInfo, uploadProfilePhoto,
+  handleLogout, userInfo, confirmPlanChange,
+  editCommonInfo, uploadProfilePhoto, planRequestChangeExists,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -89,6 +89,10 @@ function UserProfile({
 
   const [planData, setPlanData] = useState(userInfo.plan);
 
+  const [changeRequestsMade, setChangeRequestsMade] = useState({
+    plan: false,
+  });
+
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
   };
@@ -103,6 +107,9 @@ function UserProfile({
           dni,
         }),
       );
+
+      planRequestChangeExists(planData).then(() => setChangeRequestsMade({ plan: true }))
+        .catch(() => setChangeRequestsMade({ plan: false }));
     }
 
     setHandleGoBack(() => goToIndex);
@@ -160,6 +167,8 @@ function UserProfile({
         actualPlan={userInfo.plan}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
+        confirmPlanChange={confirmPlanChange}
+        planRequestChangeExists={changeRequestsMade.plan}
       />
     ) : null), [planData, userInfo.plan, personalData.location]),
   };
@@ -190,6 +199,8 @@ UserProfile.propTypes = {
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   editCommonInfo: PropTypes.func.isRequired,
   uploadProfilePhoto: PropTypes.func.isRequired,
+  confirmPlanChange: PropTypes.func.isRequired,
+  planRequestChangeExists: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

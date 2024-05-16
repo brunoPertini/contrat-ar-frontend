@@ -3,5 +3,6 @@
     "changeProfilePhoto": "/image/proveedor/{proveedorId}/upload",
     "servicioBaseUrl": "/service",
     "productoBaseUrl": "/product",
-    "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}"
+    "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}",
+    "changePlan": "/admin/usuarios/proveedor/{id}"
 }
