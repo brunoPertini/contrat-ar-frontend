@@ -63,9 +63,11 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
+const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
+
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange,
-  editCommonInfo, uploadProfilePhoto, planRequestChangeExists,
+  editCommonInfo, uploadProfilePhoto, requestChangeExists,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -91,6 +93,8 @@ function UserProfile({
 
   const [changeRequestsMade, setChangeRequestsMade] = useState({
     plan: false,
+    email: false,
+    password: false,
   });
 
   const goToIndex = () => {
@@ -108,8 +112,14 @@ function UserProfile({
         }),
       );
 
-      planRequestChangeExists(planData).then(() => setChangeRequestsMade({ plan: true }))
-        .catch(() => setChangeRequestsMade({ plan: false }));
+      NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
+        requestChangeExists([attribute]).then(
+          () => setChangeRequestsMade((previous) => ({
+            ...previous, [attribute]: true,
+          })),
+        )
+          .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+      });
     }
 
     setHandleGoBack(() => goToIndex);
@@ -156,11 +166,13 @@ function UserProfile({
         styles={{ mt: '10%', ml: '5%' }}
       />
     ), [personalData, userInfo.token]),
-    [TABS_NAMES.SECURITY]: useMemo(() => (
+    [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
+        usuarioType={usuarioType}
+        requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
-    ), [securityData]),
+    ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
     [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan ? (
       <PlanData
         plan={planData}
@@ -170,7 +182,7 @@ function UserProfile({
         confirmPlanChange={confirmPlanChange}
         planRequestChangeExists={changeRequestsMade.plan}
       />
-    ) : null), [planData, userInfo.plan, personalData.location]),
+    ) : null), [planData, userInfo.plan, personalData.location, changeRequestsMade.plan]),
   };
 
   return (
@@ -200,7 +212,7 @@ UserProfile.propTypes = {
   editCommonInfo: PropTypes.func.isRequired,
   uploadProfilePhoto: PropTypes.func.isRequired,
   confirmPlanChange: PropTypes.func.isRequired,
-  planRequestChangeExists: PropTypes.func.isRequired,
+  requestChangeExists: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

@@ -28,6 +28,16 @@ export class HttpClientFactory {
 
   static adminHttpClientInstance;
 
+  static cleanInstances() {
+    HttpClientFactory.httpClientInstance = null;
+    HttpClientFactory.externalInstance = null;
+    HttpClientFactory.userHttpClientInstance = null;
+    HttpClientFactory.vendibleHttpClientInstance = null;
+    HttpClientFactory.proveedorHttpClientInstance = null;
+    HttpClientFactory.clienteHttpClientInstance = null;
+    HttpClientFactory.adminHttpClientInstance = null;
+  }
+
   /**
    *
    * @param {string} baseUrl

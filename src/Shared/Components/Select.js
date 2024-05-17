@@ -8,7 +8,7 @@ import Select from '@mui/material/Select';
 
 function SelectComponent({
   label, handleOnChange, values, containerStyles,
-  defaultSelected, renderValue,
+  defaultSelected, renderValue, disabled,
 }) {
   const [value, setValue] = useState(defaultSelected);
 
@@ -25,7 +25,7 @@ function SelectComponent({
 
   return (
     <Box sx={{ ...containerStyles }}>
-      <FormControl fullWidth>
+      <FormControl fullWidth disabled={disabled}>
         <InputLabel>{label}</InputLabel>
         <Select
           value={value}
@@ -53,9 +53,11 @@ SelectComponent.defaultProps = {
   containerStyles: {},
   defaultSelected: 0,
   renderValue: undefined,
+  disabled: false,
 };
 
 SelectComponent.propTypes = {
+  disabled: PropTypes.bool,
   renderValue: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.string),
   label: PropTypes.string.isRequired,

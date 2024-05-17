@@ -62,8 +62,8 @@ export class UserHttpClient extends HttpClient {
       coordinates: [...info.location.coordinates],
     };
 
-    const url = role === systemConstants.CLIENTE ? (usersRoutes.clientesBaseUrl)
-      : (usersRoutes.proveedoresBaseUrl).replace('{usuarioId}', userId);
+    const url = (role === systemConstants.CLIENTE ? (usersRoutes.clientesBaseUrl)
+      : (usersRoutes.proveedoresBaseUrl)).replace('{usuarioId}', userId);
 
     return this.put(url, null, { ...info, location: parsedLocation });
   }

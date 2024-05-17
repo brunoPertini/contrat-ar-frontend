@@ -7,6 +7,7 @@
     "modifyData": "Modificar datos",
     "plan.label": "Si querés cambiar tu plan actual, podés elegir otro acá",
     "security.warning": "Dado que estos datos son muy importantes para proteger tu cuenta, en caso de que necesites cambiarlos podés contactarnos <a href=\"#\">acá</a>",
+    "security.requestExists": "Tenemos registrada una solicitud para cambiar alguno de estos datos. Si querés cancelarla, o tenés alguna duda, podés escribirnos <a href=\"#\">acá</a>",
     "plan.includes": "Tu plan incluye:",
     "plan.FREE.description": "Cualquier persona en el radio de alcance que muestra el mapa te va a poder encontrar.",
     "plan.PAID.description": "Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar. Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y recibir la opinión sobre ellos de tus clientes. La posibilidad de tener un multiperfil, y que así no solo puedas vender productos o servicios, sino hacer ambas cosas.",

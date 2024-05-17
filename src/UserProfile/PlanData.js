@@ -86,15 +86,17 @@ function PlanData({
     <Box display="flex" flexDirection="row" sx={{ ...styles }}>
       <Box display="flex" flexDirection="column">
         <SelectComponent
+          defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
           values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
           containerStyles={{ width: '31rem', mt: '5%' }}
           handleOnChange={onPlanChange}
           label={userProfileLabels['plan.label']}
           renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
+          disabled={planRequestChangeExists || hasPendingRequest}
         />
         { getPlanDescription(plan) }
         {
-        plan === 'FREE' && (
+        plan === PLAN_TYPE_FREE && (
           <LocationMap
             enableDragEvents={false}
             circleRadius={1500}

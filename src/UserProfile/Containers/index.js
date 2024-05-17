@@ -50,10 +50,10 @@ function UserProfileContainer({ handleLogout }) {
     return client.uploadProfilePhoto(userInfo.id, file);
   };
 
-  const planRequestChangeExists = (plan) => {
+  const requestChangeExists = (attributes) => {
     const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
 
-    return client.requestChangeExists(userInfo.id, { key: 'plan', value: plan });
+    return client.requestChangeExists(userInfo.id, attributes);
   };
 
   return (
@@ -64,7 +64,7 @@ function UserProfileContainer({ handleLogout }) {
         editCommonInfo={callEditCommonInfo}
         uploadProfilePhoto={handleUploadProfilePhoto}
         confirmPlanChange={confirmPlanChange}
-        planRequestChangeExists={planRequestChangeExists}
+        requestChangeExists={requestChangeExists}
       />
     </NavigationContextProvider>
   );

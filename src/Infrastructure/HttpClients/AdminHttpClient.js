@@ -6,10 +6,16 @@ export default class AdminHttpClient extends HttpClient {
     super({ headersValues: config.headersValues });
   }
 
-  requestChangeExists(sourceTableId, toFilterAttribute) {
+  /**
+   *
+   * @param {String | Number} sourceTableId
+   * @param {String[]} attributes
+   * @returns {Promise<any | Error>}
+   */
+  requestChangeExists(sourceTableId, attributes) {
     return this.get(
       adminRoutes.changeRequestExists,
-      { sourceTableId, [toFilterAttribute.key]: toFilterAttribute.value },
+      { sourceTableId, searchAttributes: attributes },
     );
   }
 }
