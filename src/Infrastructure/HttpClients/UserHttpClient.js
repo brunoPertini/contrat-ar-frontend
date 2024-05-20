@@ -52,7 +52,7 @@ export class UserHttpClient extends HttpClient {
   /**
    *
    * @param {String | Number} userId
-   * @param {{ phone: String, location: { coordinates: Array<Number>}}} info
+   * @param {{ phone: String, location: { coordinates: Array<Number>}, fotoPerfilUrl: String}} info
    * @param {String} role
    * @returns {Promise<void> | Promise<Error>}
    */
@@ -62,9 +62,8 @@ export class UserHttpClient extends HttpClient {
       coordinates: [...info.location.coordinates],
     };
 
-    const url = role === systemConstants.CLIENTE
-      ? usersRoutes.clientesBaseUrl.replace('{usuarioId}', userId)
-      : usersRoutes.usuariosBaseUrl.replace('{usuarioId}', userId);
+    const url = (role === systemConstants.CLIENTE ? (usersRoutes.clientesBaseUrl)
+      : (usersRoutes.proveedoresBaseUrl)).replace('{usuarioId}', userId);
 
     return this.put(url, null, { ...info, location: parsedLocation });
   }

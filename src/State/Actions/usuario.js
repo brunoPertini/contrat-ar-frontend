@@ -17,6 +17,13 @@ export function setUserInfo(userInfo) {
   };
 }
 
+export const replaceUserInfo = (newUserInfo) => (dispatch) => {
+  dispatch({
+    type: actionTypes.SET_USER_INFO,
+    payload: newUserInfo,
+  });
+};
+
 export const resetUserInfo = () => (dispatch, getState) => {
   const { role } = getState().usuario;
   const cookiesService = new CookiesService();

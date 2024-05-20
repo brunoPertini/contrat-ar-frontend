@@ -63,7 +63,12 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
-function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
+const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
+
+function UserProfile({
+  handleLogout, userInfo, confirmPlanChange,
+  editCommonInfo, uploadProfilePhoto, requestChangeExists,
+}) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -75,6 +80,7 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
     birthDate: userInfo.birthDate,
     location: userInfo.location,
     phone: userInfo.phone,
+    fotoPerfilUrl: userInfo.fotoPerfilUrl,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -84,6 +90,12 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
   });
 
   const [planData, setPlanData] = useState(userInfo.plan);
+
+  const [changeRequestsMade, setChangeRequestsMade] = useState({
+    plan: false,
+    email: false,
+    password: false,
+  });
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
@@ -99,10 +111,24 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
           dni,
         }),
       );
+
+      NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
+        requestChangeExists([attribute]).then(
+          () => setChangeRequestsMade((previous) => ({
+            ...previous, [attribute]: true,
+          })),
+        )
+          .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+      });
     }
 
     setHandleGoBack(() => goToIndex);
   }, []);
+
+  useEffect(() => {
+    // For some reason, fotoPerfilUrl is not updated automatically when userInfo changes
+    setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+  }, [userInfo.fotoPerfilUrl]);
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
@@ -135,23 +161,28 @@ function UserProfile({ handleLogout, userInfo, editCommonInfo }) {
         userInfo={personalData}
         changeUserInfo={handlePersonalDataChanged}
         editCommonInfo={editCommonInfo}
+        uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
       />
     ), [personalData, userInfo.token]),
-    [TABS_NAMES.SECURITY]: useMemo(() => (
+    [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
+        usuarioType={usuarioType}
+        requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
-    ), [securityData]),
+    ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
     [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan ? (
       <PlanData
         plan={planData}
         actualPlan={userInfo.plan}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
+        confirmPlanChange={confirmPlanChange}
+        planRequestChangeExists={changeRequestsMade.plan}
       />
-    ) : null), [planData, userInfo.plan, personalData.location]),
+    ) : null), [planData, userInfo.plan, personalData.location, changeRequestsMade.plan]),
   };
 
   return (
@@ -179,6 +210,9 @@ UserProfile.propTypes = {
   handleLogout: PropTypes.func.isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   editCommonInfo: PropTypes.func.isRequired,
+  uploadProfilePhoto: PropTypes.func.isRequired,
+  confirmPlanChange: PropTypes.func.isRequired,
+  requestChangeExists: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

@@ -6,5 +6,6 @@
     "getUserInfo": "/usuarios/{userId}/info",
     "getProveedoresOfVendible": "/vendible/{vendibleId}/proveedores",
     "usuariosBaseUrl": "/usuarios/{usuarioId}",
-    "clientesBaseUrl": "/cliente/{usuarioId}"
+    "clientesBaseUrl": "/cliente/{usuarioId}",
+    "proveedoresBaseUrl": "/proveedor/{usuarioId}"
 }

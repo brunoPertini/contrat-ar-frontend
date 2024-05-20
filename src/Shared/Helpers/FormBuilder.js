@@ -20,6 +20,7 @@ import { cleanNumbersFromInput } from '../Utils/InputUtils';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
+import { proveedorLabels } from '../../StaticData/Proveedor';
 
 function TextFieldWithLabel(showInlineLabels, componentProps, label) {
   return (
@@ -102,6 +103,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       phone: sharedLabels.phone,
       location: sharedLabels.yourLocation,
       dni: sharedLabels.dni,
+      fotoPerfilUrl: proveedorLabels.yourProfilePhoto,
     };
   }
 

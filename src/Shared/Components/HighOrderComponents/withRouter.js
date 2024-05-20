@@ -15,6 +15,7 @@ import { routes } from '../../Constants';
 import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
+import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 
 const store = createStore();
 const securityService = new SecurityService();
@@ -81,6 +82,7 @@ export default function withRouter(Component) {
 
     /** This cleans site's info such as localStorage, cookies, etc and performs log out */
     const handleLogout = async () => {
+      HttpClientFactory.cleanInstances();
       navigate(routes.signin);
       removeOnLeavingTabHandlers();
       await store.dispatch(resetUserInfo());

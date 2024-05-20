@@ -1,10 +1,31 @@
 import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
-import { ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { HttpClientFactory } from '../HttpClientFactory';
 import { HttpClient } from './HttpClient';
 
 export class ProveedorHttpClient extends HttpClient {
   constructor(config) {
     super({ headersValues: config.headersValues });
+  }
+
+  /**
+   *
+   * @param {File} file
+   * @param {String} proveedorId
+   * @returns {Promise<String>} The uploaded file url
+   */
+  uploadProfilePhoto(proveedorId, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    const url = proveedoresRoutes.changeProfilePhoto.replace('{proveedorId}', proveedorId);
+
+    return this.post(url, null, formData, config);
   }
 
   getVendibles(proveedorId) {
@@ -32,5 +53,36 @@ export class ProveedorHttpClient extends HttpClient {
       .replace('{proveedorId}', proveedorId);
 
     return this.delete(url);
+  }
+
+  /**
+   *
+   * @param {String | Number} userId
+   * @param {{ phone: String, location: { coordinates: Array<Number>}, fotoPerfilUrl: String}} info
+   * @param {{ token: String}} config
+   * @returns {Promise<void> | Promise<Error>}
+   */
+  updateCommonInfo(userId, info, config) {
+    const userHttpClient = HttpClientFactory.createUserHttpClient(null, config);
+
+    return userHttpClient.updateUserCommonInfo(userId, info, PROVEEDOR);
+  }
+
+  /**
+   *
+   * @param {String | Number} proveedorId
+   * @param {String} newPlan
+   * * @returns {Promise<void> | Promise<Error>}
+   */
+  updatePlan(proveedorId, newPlan) {
+    const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    return this.put(url, null, newPlan, config);
   }
 }

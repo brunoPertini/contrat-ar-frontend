@@ -36,6 +36,7 @@
     "accept": "Aceptar",
     "cancel": "Cancelar",
     "uploadImage": "Subir Imagen",
+    "changeImage": "Cambiar Imagen",
     "categories": "Categorias",
     "locationType": {
         "producto" : "¿Dónde vendés el producto?",

@@ -68,28 +68,35 @@ function getPlanDescription(plan) {
 }
 
 function PlanData({
-  plan, styles, userLocation, changeUserInfo, actualPlan,
+  plan, styles, userLocation, changeUserInfo,
+  actualPlan, confirmPlanChange, planRequestChangeExists,
 }) {
   const { plansNames } = sharedLabels;
 
   const onPlanChange = (newPlan) => changeUserInfo(Object.keys(plansNames)
     .find((key) => plansNames[key] === newPlan));
 
-  const [hasPendingRequest, setHasPendingRequest] = useState(false);
+  const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
+
+  const handleConfirmPlan = () => {
+    confirmPlanChange(plan).then(() => setHasPendingRequest(true));
+  };
 
   return (
     <Box display="flex" flexDirection="row" sx={{ ...styles }}>
       <Box display="flex" flexDirection="column">
         <SelectComponent
+          defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
           values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
           containerStyles={{ width: '31rem', mt: '5%' }}
           handleOnChange={onPlanChange}
           label={userProfileLabels['plan.label']}
           renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
+          disabled={planRequestChangeExists || hasPendingRequest}
         />
         { getPlanDescription(plan) }
         {
-        plan === 'FREE' && (
+        plan === PLAN_TYPE_FREE && (
           <LocationMap
             enableDragEvents={false}
             circleRadius={1500}
@@ -110,7 +117,7 @@ function PlanData({
               variant="contained"
               sx={{ mt: '5%' }}
               disabled={actualPlan === plan}
-              onClick={() => setHasPendingRequest(true)}
+              onClick={() => handleConfirmPlan()}
             >
               { sharedLabels.saveChanges }
             </Button>
@@ -119,7 +126,7 @@ function PlanData({
       }
       <InformativeAlert
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={hasPendingRequest}
+        open={hasPendingRequest || planRequestChangeExists}
         label={userProfileLabels['plan.change.finalMessage']}
         severity="info"
       />
@@ -138,6 +145,8 @@ PlanData.propTypes = {
     coordinates: PropTypes.arrayOf(PropTypes.number),
   }).isRequired,
   changeUserInfo: PropTypes.func.isRequired,
+  confirmPlanChange: PropTypes.func.isRequired,
+  planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
 };
 

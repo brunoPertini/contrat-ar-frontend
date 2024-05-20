@@ -1,3 +1,4 @@
+import AdminHttpClient from './HttpClients/AdminHttpClient';
 import ClienteHttpClient from './HttpClients/ClienteHttpClient';
 import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 // eslint-disable-next-line import/named
@@ -24,6 +25,18 @@ export class HttpClientFactory {
   static proveedorHttpClientInstance;
 
   static clienteHttpClientInstance;
+
+  static adminHttpClientInstance;
+
+  static cleanInstances() {
+    HttpClientFactory.httpClientInstance = null;
+    HttpClientFactory.externalInstance = null;
+    HttpClientFactory.userHttpClientInstance = null;
+    HttpClientFactory.vendibleHttpClientInstance = null;
+    HttpClientFactory.proveedorHttpClientInstance = null;
+    HttpClientFactory.clienteHttpClientInstance = null;
+    HttpClientFactory.adminHttpClientInstance = null;
+  }
 
   /**
    *
@@ -110,5 +123,19 @@ export class HttpClientFactory {
       });
     }
     return HttpClientFactory.clienteHttpClientInstance;
+  }
+
+  /**
+   *
+   * @param {HttpClientInstanceFactoryConfiguration} config
+   * @returns {AdminHttpClient}
+   */
+  static createAdminHttpClient(config) {
+    if (!HttpClientFactory.adminHttpClientInstance) {
+      HttpClientFactory.adminHttpClientInstance = new AdminHttpClient({
+        headersValues: { Authorization: config.token },
+      });
+    }
+    return HttpClientFactory.adminHttpClientInstance;
   }
 }
