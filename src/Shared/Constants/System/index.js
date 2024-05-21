@@ -64,5 +64,3 @@ export const dialogModalTexts = {
     text: 'Esta acción es irreversible',
   },
 };
-
-export const PAID_PLAN_PRICE = 500;

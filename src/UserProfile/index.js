@@ -66,7 +66,7 @@ const rolesTabs = {
 const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
 
 function UserProfile({
-  handleLogout, userInfo, confirmPlanChange,
+  handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
@@ -91,6 +91,8 @@ function UserProfile({
 
   const [planData, setPlanData] = useState(userInfo.plan);
 
+  const [planesInfo, setPlanesInfo] = useState();
+
   const [changeRequestsMade, setChangeRequestsMade] = useState({
     plan: false,
     email: false,
@@ -99,6 +101,11 @@ function UserProfile({
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
+  };
+
+  const handleSetPlanesInfo = async () => {
+    const fetchedPlanesInfo = await getAllPlanes();
+    setPlanesInfo(fetchedPlanesInfo);
   };
 
   useEffect(() => {
@@ -120,6 +127,8 @@ function UserProfile({
         )
           .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
       });
+
+      handleSetPlanesInfo();
     }
 
     setHandleGoBack(() => goToIndex);
@@ -181,8 +190,10 @@ function UserProfile({
         changeUserInfo={handlePlanDataChanged}
         confirmPlanChange={confirmPlanChange}
         planRequestChangeExists={changeRequestsMade.plan}
+        planesInfo={planesInfo}
       />
-    ) : null), [planData, userInfo.plan, personalData.location, changeRequestsMade.plan]),
+    ) : null), [planData, userInfo.plan, personalData.location,
+      changeRequestsMade.plan, planesInfo]),
   };
 
   return (
@@ -213,6 +224,7 @@ UserProfile.propTypes = {
   uploadProfilePhoto: PropTypes.func.isRequired,
   confirmPlanChange: PropTypes.func.isRequired,
   requestChangeExists: PropTypes.func.isRequired,
+  getAllPlanes: PropTypes.func.isRequired,
 };
 
 export default UserProfile;

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import {
   ARGENTINA_LOCALE,
-  PAID_PLAN_PRICE, PLAN_TYPE_FREE, PLAN_TYPE_PAID,
+  PLAN_TYPE_FREE, PLAN_TYPE_PAID,
 } from '../Shared/Constants/System';
 import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
@@ -16,10 +16,12 @@ import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import InformativeAlert from '../Shared/Components/Alert';
 import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
+import { planShape } from '../Shared/PropTypes/Proveedor';
 
-function getPlanDescription(plan) {
-  const renderPlanDescription = (toRenderPlan) => userProfileLabels[`plan.${toRenderPlan}.description`]
-    .split('.')
+function getPlanDescription(plan, planesDescriptions) {
+  const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
+
+  const renderPlanDescription = () => currentPlanInfo.descripcion.split('.')
     .filter((line) => !!(line))
     .map((line) => (
       <>
@@ -37,7 +39,7 @@ function getPlanDescription(plan) {
         <br />
         <br />
         {
-          renderPlanDescription(plan)
+          renderPlanDescription()
         }
       </Typography>),
     [PLAN_TYPE_PAID]: (
@@ -47,28 +49,32 @@ function getPlanDescription(plan) {
           <br />
           <br />
           {
-            renderPlanDescription(plan)
+            renderPlanDescription()
           }
         </Typography>
         <Typography variant="h5" sx={{ mt: '5%' }}>
           { sharedLabels.finalMonthlyPrice.replace(
             '{price}',
-            getLocaleCurrencySymbol(ARGENTINA_LOCALE) + PAID_PLAN_PRICE,
+            getLocaleCurrencySymbol(ARGENTINA_LOCALE) + currentPlanInfo.price,
           )}
           <br />
           <br />
-          <InfoIcon />
-          {' '}
-          { userProfileLabels['plan.change.disclaimer'] }
         </Typography>
       </>),
   };
 
-  return PLAN_DESCRIPTIONS[plan];
+  return (
+    <Typography paragraph variant="body">
+      {PLAN_DESCRIPTIONS[plan]}
+      <InfoIcon />
+      {' '}
+      { userProfileLabels['plan.change.disclaimer'] }
+    </Typography>
+  );
 }
 
 function PlanData({
-  plan, styles, userLocation, changeUserInfo,
+  plan, styles, userLocation, changeUserInfo, planesInfo,
   actualPlan, confirmPlanChange, planRequestChangeExists,
 }) {
   const { plansNames } = sharedLabels;
@@ -94,7 +100,7 @@ function PlanData({
           renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
           disabled={planRequestChangeExists || hasPendingRequest}
         />
-        { getPlanDescription(plan) }
+        { getPlanDescription(plan, planesInfo) }
         {
         plan === PLAN_TYPE_FREE && (
           <LocationMap
@@ -146,6 +152,7 @@ PlanData.propTypes = {
   }).isRequired,
   changeUserInfo: PropTypes.func.isRequired,
   confirmPlanChange: PropTypes.func.isRequired,
+  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
 };
