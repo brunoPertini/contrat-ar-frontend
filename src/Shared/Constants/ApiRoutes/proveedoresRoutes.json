@@ -4,5 +4,6 @@
     "servicioBaseUrl": "/service",
     "productoBaseUrl": "/product",
     "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}",
-    "changePlan": "/admin/usuarios/proveedor/{id}"
+    "changePlan": "/change-requests/usuarios/proveedor/{id}",
+    "planBaseUrl": "/plan"
 }

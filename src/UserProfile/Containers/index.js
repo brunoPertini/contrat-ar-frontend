@@ -56,6 +56,11 @@ function UserProfileContainer({ handleLogout }) {
     return client.requestChangeExists(userInfo.id, attributes);
   };
 
+  const getAllPlanes = () => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    return client.getAllPlanes();
+  };
+
   return (
     <NavigationContextProvider>
       <UserProfile
@@ -65,6 +70,7 @@ function UserProfileContainer({ handleLogout }) {
         uploadProfilePhoto={handleUploadProfilePhoto}
         confirmPlanChange={confirmPlanChange}
         requestChangeExists={requestChangeExists}
+        getAllPlanes={getAllPlanes}
       />
     </NavigationContextProvider>
   );

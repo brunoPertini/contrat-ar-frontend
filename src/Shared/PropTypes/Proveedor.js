@@ -21,3 +21,10 @@ export const vendibleInfoShape = {
   imagenUrl: PropTypes.string,
   descripcion: PropTypes.string,
 };
+
+export const planShape = {
+  id: PropTypes.number,
+  descripcion: PropTypes.string,
+  type: PropTypes.string,
+  price: PropTypes.number,
+};

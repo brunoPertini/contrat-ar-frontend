@@ -85,4 +85,8 @@ export class ProveedorHttpClient extends HttpClient {
 
     return this.put(url, null, newPlan, config);
   }
+
+  getAllPlanes(config) {
+    return this.get(proveedoresRoutes.planBaseUrl, {}, config);
+  }
 }
