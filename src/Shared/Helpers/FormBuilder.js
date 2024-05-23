@@ -132,7 +132,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
    */
   build({
     fieldsValues, onChangeFields, usuarioType, gridStyles = {},
-    inputProps, showInlineLabels = false, fieldsOwnConfig,
+    inputProps, showInlineLabels = false, fieldsOwnConfig = {},
   }) {
     super.build({ usuarioType });
 

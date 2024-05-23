@@ -36,11 +36,8 @@ function SignUpContainer({ router }) {
     <>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero comprar productos y contratar servicios" />
+          <CardHeader title={signUpLabels['signup.want.to.client']} />
           <CardContent>
-            <Typography variant="subtitle-1">
-              Descripcion
-            </Typography>
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}
@@ -57,9 +54,8 @@ function SignUpContainer({ router }) {
       </Grid>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero ofrecer mis servicios como contratista" />
+          <CardHeader title={signUpLabels['signup.want.to.offer.services']} />
           <CardContent>
-            Descripcion
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}
@@ -76,9 +72,8 @@ function SignUpContainer({ router }) {
       </Grid>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero ofrecer mis productos en el sitio" />
+          <CardHeader title={signUpLabels['signup.want.to.offer.products']} />
           <CardContent>
-            Descripcion
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}

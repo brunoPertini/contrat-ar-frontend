@@ -18,7 +18,7 @@ import withErrorHandler from './HighOrderComponents/withErrorHandler';
 import { locationShape } from '../PropTypes/Shared';
 
 const arePropsEqual = (prevProps, nextProps) => (
-  prevProps.location.coords.latitude === nextProps.location.coords.latitude
+  prevProps.location?.coords.latitude === nextProps.location?.coords.latitude
       && prevProps.location.coords.longitude === nextProps.location.coords.longitude
       && prevProps.token === nextProps.token
       && prevProps.enableDragEvents === nextProps.enableDragEvents);
@@ -36,6 +36,8 @@ const LocationMap = memo(function LocationMap({
   handleError,
   circleRadius,
 }) {
+  console.log(location);
+
   const previousLocation = usePreviousPropValue(location);
 
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
@@ -56,7 +58,12 @@ const LocationMap = memo(function LocationMap({
   };
 
   const handleGranted = async (position) => {
-    await setLocation(position);
+    await setLocation({
+      coords: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      },
+    });
     setOpenPermissionDialog(false);
   };
 
@@ -122,10 +129,11 @@ const LocationMap = memo(function LocationMap({
     const locationHasChanged = location?.coords && previousLocation?.coords
      && (location.coords.latitude !== previousLocation.coords.latitude
       && location.coords.longitude !== previousLocation.coords.longitude);
+
     if (!(previousLocation) || locationHasChanged) {
       translateAddress(location);
     }
-  }, [location.coords.latitude, location.coords.longitude, previousLocation]);
+  }, [location, previousLocation]);
 
   const LocationMarker = useCallback(() => {
     const eventHandlers = useMemo(() => ({
@@ -156,7 +164,7 @@ const LocationMap = memo(function LocationMap({
 
       </Marker>
     );
-  }, [location.coords.latitude, location.coords.longitude, readableAddress, enableDragEvents]);
+  }, [location, location, readableAddress, enableDragEvents]);
 
   const CircleMarker = useCallback(() => (!circleRadius ? null : (
     <Circle
@@ -168,7 +176,17 @@ const LocationMap = memo(function LocationMap({
     />
   )), [circleRadius]);
 
-  return (
+  return !location?.coords ? (
+    <DialogModal
+      title={dialogLabels.title}
+      contextText={dialogLabels.contextText}
+      cancelText={dialogLabels.cancelText}
+      acceptText={dialogLabels.acceptText}
+      open={openPermissionDialog}
+      handleAccept={getCurentLocation}
+      handleDeny={() => handleDialogDenied()}
+    />
+  ) : (
     <>
       <MapContainer
         center={[location.coords.latitude, location.coords.longitude]}
@@ -178,15 +196,6 @@ const LocationMap = memo(function LocationMap({
         style={{ ...containerStyles }}
       >
         <ZoomControl position="bottomright" />
-        <DialogModal
-          title={dialogLabels.title}
-          contextText={dialogLabels.contextText}
-          cancelText={dialogLabels.cancelText}
-          acceptText={dialogLabels.acceptText}
-          open={openPermissionDialog}
-          handleAccept={getCurentLocation}
-          handleDeny={() => handleDialogDenied()}
-        />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

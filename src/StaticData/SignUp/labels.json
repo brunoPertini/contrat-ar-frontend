@@ -15,5 +15,9 @@
     "confirmation.cancel": "Tengo que modificar algún dato",
     "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
     "signup.error.title": "Error en el registro",
-    "signup.error.context": "Ocurrió un error inesperado, por favor intentalo más tarde!"
+    "signup.error.context": "Ocurrió un error inesperado, por favor intentalo más tarde!",
+    "signup.CLIENTE.descripcion": "¿Buscás un producto",
+    "signup.want.to.offer.services": "Quiero ofrecer mis servicios",
+    "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
+    "signup.want.to.client": "Quiero comprar productos y contratar servicios"
 }
