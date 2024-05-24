@@ -1,14 +1,22 @@
-import { useMemo, useState } from 'react';
+import {
+  useCallback, useEffect,
+  useMemo, useState,
+} from 'react';
 import PropTypes from 'prop-types';
+import InfoIcon from '@mui/icons-material/Info';
+import {
+  Box, IconButton,
+  Tooltip, Typography,
+} from '@mui/material';
 import { signUpLabels } from '../StaticData/SignUp';
+import { labels as locationMapLabels } from '../StaticData/LocationMap';
+
 import {
   DialogModal,
-  Form, PlanSelection, Stepper,
+  Form, LocationMap, PlanSelection, Stepper,
 } from '../Shared/Components';
-import { LocationFormBuilder, PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
+import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
-
-const locationFormBuilder = new LocationFormBuilder();
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -22,7 +30,6 @@ export default function UserSignUp({
   const { title } = signUpLabels;
 
   const [activeStep, setActiveStep] = useState(0);
-  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   // Steps data
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
@@ -33,21 +40,79 @@ export default function UserSignUp({
 
   const [selectedPlan, setSelectedPlan] = useState(systemConstants.PLAN_TYPE_FREE);
 
+  const [dialogLabels, setDialogLabels] = useState({
+    title: locationMapLabels['dialog.permission.request.title'],
+    contextText: locationMapLabels['dialog.permission.request.textContext'],
+    cancelText: locationMapLabels['dialog.permission.request.cancelText'],
+    acceptText: locationMapLabels['dialog.permission.request.acceptText'],
+  });
+
+  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+
+  // User location has to be taken to complete signup
+  const geoSettings = {
+    enableHighAccuracy: true,
+    maximumAge: 30000,
+    timeout: 20000,
+  };
+
+  const handleGranted = (position) => {
+    setLocation({
+      coords: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      },
+    });
+    setOpenPermissionDialog(false);
+  };
+
+  const handleDialogDenied = () => {
+    window.location.href = routes.index;
+  };
+
+  const getCurentLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      handleGranted,
+      handleDialogDenied,
+      geoSettings,
+    );
+  };
+
+  const handlePermission = useCallback(() => {
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      if (result.state === 'granted') {
+        getCurentLocation();
+      }
+      if (result.state === 'prompt') {
+        setDialogLabels({
+
+          title: locationMapLabels['dialog.permission.request.title'],
+          contextText: locationMapLabels['dialog.permission.request.textContext'],
+          cancelText: locationMapLabels['dialog.permission.request.cancelText'],
+          acceptText: locationMapLabels['dialog.permission.request.acceptText'],
+
+        });
+        setOpenPermissionDialog(true);
+      }
+
+      if (result.state === 'denied') {
+        setDialogLabels({
+          title: locationMapLabels['dialog.permission.revoke.title'],
+          contextText: <span dangerouslySetInnerHTML={{ __html: locationMapLabels['dialog.permission.revoke.textContext'] }} />,
+          acceptText: locationMapLabels['dialog.permission.revoke.finish'],
+        });
+        setOpenPermissionDialog(true);
+      }
+    });
+  }, [handleGranted]);
+
   const personalDataFields = personalDataFormBuilder.build({
     usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
     onChangeFields: (fieldId, fieldValue) => {
       setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
     },
-  });
-
-  const locationFields = locationFormBuilder.build({
-    usuarioType: signupType,
-    showTranslatedAddress: true,
-    location,
-    setLocation,
-    readableAddress,
-    setReadableAddress,
   });
 
   const steps = [{
@@ -65,10 +130,36 @@ export default function UserSignUp({
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component:
-  <Form
-    fields={locationFields}
-    title={locationFormBuilder.getTitle()}
-  />,
+  <Box display="flex" flexDirection="column">
+    <Box display="flex" flexDirection="row" alignItems="flex-start">
+      <IconButton>
+        <InfoIcon />
+      </IconButton>
+      {signupType
+         && signupType !== systemConstants.USER_TYPE_CLIENTE
+        ? signUpLabels['location.proveedor.title'] : signUpLabels['location.cliente.title']}
+      <Tooltip
+        title={(
+          <Typography variant="h6">
+            {signUpLabels['title.disclaimer']}
+          </Typography>
+            )}
+        placement="right-start"
+      />
+    </Box>
+    <LocationMap
+      containerStyles={{
+        height: '500px',
+        width: '500px',
+        marginTop: '5%',
+      }}
+      showTranslatedAddress
+      location={location}
+      setLocation={setLocation}
+      readableAddress={readableAddress}
+      setReadableAddress={setReadableAddress}
+    />
+  </Box>,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
   }];
@@ -91,7 +182,7 @@ export default function UserSignUp({
     const commonSteps = {
       0: () => personalDataFormBuilder.prepareForRender(),
 
-      1: () => locationFormBuilder.prepareForRender(),
+      1: () => {},
 
     };
 
@@ -129,8 +220,12 @@ export default function UserSignUp({
 
   const isStepValid = activeStep < steps.length;
 
+  useEffect(() => {
+    handlePermission();
+  }, []);
+
   return (
-    <>
+    <Box display="flex" flexDirection="column">
       { isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
@@ -148,6 +243,15 @@ export default function UserSignUp({
         open={hasError}
         handleAccept={() => router.navigate(routes.index)}
       />
+      <DialogModal
+        title={dialogLabels.title}
+        contextText={dialogLabels.contextText}
+        cancelText={dialogLabels.cancelText}
+        acceptText={dialogLabels.acceptText}
+        open={openPermissionDialog}
+        handleAccept={getCurentLocation}
+        handleDeny={() => handleDialogDenied()}
+      />
       {isStepValid && (
       <Stepper
         steps={steps}
@@ -157,7 +261,7 @@ export default function UserSignUp({
         nextButtonEnabled={steps[activeStep].nextButtonEnabled}
       />
       )}
-    </>
+    </Box>
   );
 }
 

@@ -126,9 +126,7 @@ function SignUpContainer({ router }) {
           alignItems: 'center',
         }}
       >
-        <Grid item sx={{ width: '100%' }}>
-          {innerComponent}
-        </Grid>
+        {innerComponent}
       </Grid>
 
     </>
