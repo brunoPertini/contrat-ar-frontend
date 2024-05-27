@@ -92,6 +92,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       email: '',
       password: '',
       birthDate: '',
+      phone: '',
     };
 
     this.fieldsLabels = {

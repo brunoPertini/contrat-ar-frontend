@@ -131,27 +131,27 @@ export default function UserSignUp({
     isOptional: false,
     component:
   <Box display="flex" flexDirection="column">
-    <Box display="flex" flexDirection="row" alignItems="flex-start">
-      <IconButton>
-        <InfoIcon />
-      </IconButton>
-      {signupType
-         && signupType !== systemConstants.USER_TYPE_CLIENTE
-        ? signUpLabels['location.proveedor.title'] : signUpLabels['location.cliente.title']}
+    <Box display="flex" flexDirection="row" alignItems="center">
       <Tooltip
         title={(
           <Typography variant="h6">
             {signUpLabels['title.disclaimer']}
           </Typography>
             )}
-        placement="right-start"
-      />
+        placement="top-end"
+      >
+        <IconButton>
+          <InfoIcon />
+        </IconButton>
+      </Tooltip>
+      {signupType
+         && signupType !== systemConstants.USER_TYPE_CLIENTE
+        ? signUpLabels['location.proveedor.title'] : signUpLabels['location.cliente.title']}
     </Box>
     <LocationMap
       containerStyles={{
-        height: '500px',
-        width: '500px',
-        marginTop: '5%',
+        height: '25rem',
+        width: '100%',
       }}
       showTranslatedAddress
       location={location}

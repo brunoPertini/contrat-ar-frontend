@@ -5,11 +5,14 @@ import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
   crearUsuario(signupType, queryParams, body) {
-    body.plan = body.selectedPlan;
     body.location = {
       x: new String(body.location.coords.latitude),
       y: new String(body.location.coords.longitude),
     };
+
+    if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
+      body.plan = body.selectedPlan;
+    }
 
     delete body.selectedPlan;
 
