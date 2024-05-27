@@ -14,22 +14,27 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
 import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+
+const localStorageService = new LocalStorageService();
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
  */
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
-  const [hasError, setHasError] = useState();
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
-      router.navigate(routes.signin);
+      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
     })
       .catch(() => {
-        setHasError(true);
-      });
+        localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+        localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
+      })
+      .finally(() => router.navigate(routes.index));
   };
 
   const signupTypeColumns = (
@@ -110,7 +115,6 @@ function SignUpContainer({ router }) {
       <UserSignUp
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
-        hasError={hasError}
         router={router}
       />
     );

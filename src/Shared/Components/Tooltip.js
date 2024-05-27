@@ -1,4 +1,4 @@
-import { Tooltip, tooltipClasses } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/system';
 
 const NoMaxWidthTooltip = styled(({ className, ...props }) => (

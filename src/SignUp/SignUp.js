@@ -21,11 +21,15 @@ import { routes, systemConstants } from '../Shared/Constants';
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 /**
+ * TODO: sacar el modal de error de acá,
+ * y chequear que el mail que pongan sea un string de mail válido
+
+/**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, router,
+  signupType, dispatchSignUp, hasError,
 }) {
   const { title } = signUpLabels;
 
@@ -237,13 +241,6 @@ export default function UserSignUp({
         handleDeny={() => handleOnStepChange(steps.length - 1)}
       />
       <DialogModal
-        title={signUpLabels['signup.error.title']}
-        contextText={signUpLabels['signup.error.context']}
-        acceptText={signUpLabels['confirmation.ok']}
-        open={hasError}
-        handleAccept={() => router.navigate(routes.index)}
-      />
-      <DialogModal
         title={dialogLabels.title}
         contextText={dialogLabels.contextText}
         cancelText={dialogLabels.cancelText}
@@ -272,6 +269,5 @@ UserSignUp.defaultProps = {
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
-  router: PropTypes.any.isRequired,
   hasError: PropTypes.bool,
 };

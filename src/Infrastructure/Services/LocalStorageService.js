@@ -3,6 +3,10 @@ export class LocalStorageService {
    * It should be the only source of truth when working with local storage.
   */
   static PAGES_KEYS = {
+    ROOT: {
+      COMES_FROM_SIGNUP: 'comesFromSignup',
+      SUCCESS: 'success',
+    },
     PROVEEDOR: {
       PAGE_SCREEN: 'proveedor.page.screen',
     },
