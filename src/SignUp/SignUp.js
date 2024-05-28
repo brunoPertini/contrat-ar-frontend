@@ -20,6 +20,12 @@ import { routes, systemConstants } from '../Shared/Constants';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
+const geoSettings = {
+  enableHighAccuracy: true,
+  maximumAge: 30000,
+  timeout: 20000,
+};
+
 /**
  * TODO: sacar el modal de error de acá,
  * y chequear que el mail que pongan sea un string de mail válido
@@ -39,6 +45,11 @@ export default function UserSignUp({
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
   );
+
+  const [errorFields, setErrorFields] = useState({
+    email: false,
+  });
+
   const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
 
@@ -53,13 +64,6 @@ export default function UserSignUp({
 
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
-
-  // User location has to be taken to complete signup
-  const geoSettings = {
-    enableHighAccuracy: true,
-    maximumAge: 30000,
-    timeout: 20000,
-  };
 
   const handleGranted = (position) => {
     setLocation({
@@ -114,7 +118,9 @@ export default function UserSignUp({
   const personalDataFields = personalDataFormBuilder.build({
     usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
-    onChangeFields: (fieldId, fieldValue) => {
+    errorFields,
+    onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
+      setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
       setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
     },
   });
@@ -127,8 +133,14 @@ export default function UserSignUp({
       title={title}
     />,
     backButtonEnabled: false,
-    nextButtonEnabled: useMemo(() => Object.values(personalDataFieldsValues)
-      .every((value) => value), [[personalDataFields]]),
+    nextButtonEnabled: useMemo(() => {
+      const allFieldsHaveValue = Object.values(personalDataFieldsValues)
+        .every((value) => value && !(errorFields[value]));
+
+      const someFieldWithError = Object.values(errorFields).some((key) => key);
+
+      return someFieldWithError === false && allFieldsHaveValue;
+    }, [personalDataFieldsValues, errorFields]),
   },
   {
     label: signUpLabels['steps.your.location'],
