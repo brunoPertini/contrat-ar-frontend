@@ -37,6 +37,11 @@ function SignUpContainer({ router }) {
       .finally(() => router.navigate(routes.index));
   };
 
+  const getAllPlanes = () => {
+    const client = HttpClientFactory.createProveedorHttpClient();
+    return client.getAllPlanes();
+  };
+
   const signupTypeColumns = (
     <>
       <Grid item xs={4}>
@@ -115,6 +120,7 @@ function SignUpContainer({ router }) {
       <UserSignUp
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
+        getAllPlanes={getAllPlanes}
         router={router}
       />
     );

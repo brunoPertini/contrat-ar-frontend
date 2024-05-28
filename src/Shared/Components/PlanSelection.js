@@ -11,6 +11,11 @@ import ExpandableCard from './ExpandableCard';
 import { systemConstants } from '../Constants';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { sharedLabels } from '../../StaticData/Shared';
+import { planShape } from '../PropTypes/Proveedor';
+import { getPlanDescription } from '../Helpers/PlanesHelper';
+import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/System';
+import LocationMap from './LocationMap';
+import { locationShape } from '../PropTypes/Shared';
 
 const gridStyles = {
   marginTop: '5%',
@@ -24,17 +29,31 @@ const collapsableAreaStyles = {
   justifyContent: 'center',
 };
 
-export default function PlanSelection({ selectedPlan, setSelectedPlan, paidPlanValue }) {
+export default function PlanSelection({
+  selectedPlan, setSelectedPlan, planesInfo, userLocation,
+}) {
   const plansColumns = (
     <>
       <Grid item xs={6}>
         <Card>
           <CardHeader title={sharedLabels.plansNames.FREE} />
-          <CardHeader title="$0" />
           <CardContent>
             <Typography variant="subtitle-1">
-              { signUpLabels['planSelection.free.description']}
+              { getPlanDescription(PLAN_TYPE_FREE, planesInfo)}
             </Typography>
+            {
+                selectedPlan === PLAN_TYPE_FREE && (
+                  <LocationMap
+                    enableDragEvents={false}
+                    circleRadius={1500}
+                    location={userLocation}
+                    containerStyles={{
+                      height: '25rem',
+                      width: '100%',
+                    }}
+                  />
+                )
+            }
             <RadioGroup
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
@@ -52,9 +71,8 @@ export default function PlanSelection({ selectedPlan, setSelectedPlan, paidPlanV
       <Grid item xs={6}>
         <Card>
           <CardHeader title={sharedLabels.plansNames.PAID} />
-          <CardHeader title={`$${paidPlanValue}`} />
           <CardContent>
-            { signUpLabels['planSelection.paid.description'] }
+            { getPlanDescription(PLAN_TYPE_PAID, planesInfo)}
             <RadioGroup
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
@@ -86,5 +104,6 @@ PlanSelection.propTypes = {
   selectedPlan: PropTypes.oneOf([systemConstants.PLAN_TYPE_FREE,
     systemConstants.PLAN_TYPE_PAID]).isRequired,
   setSelectedPlan: PropTypes.func.isRequired,
-  paidPlanValue: PropTypes.number.isRequired,
+  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
+  userLocation: PropTypes.shape(locationShape).isRequired,
 };

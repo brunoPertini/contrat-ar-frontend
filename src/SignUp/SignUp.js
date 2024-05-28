@@ -17,6 +17,7 @@ import {
 } from '../Shared/Components';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
+import { USER_TYPE_CLIENTE } from '../Shared/Constants/System';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -35,16 +36,17 @@ const geoSettings = {
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError,
+  signupType, dispatchSignUp, hasError, getAllPlanes,
 }) {
   const { title } = signUpLabels;
 
   const [activeStep, setActiveStep] = useState(0);
 
-  // Steps data
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
   );
+
+  const [planesInfo, setPlanesInfo] = useState([]);
 
   const [errorFields, setErrorFields] = useState({
     email: false,
@@ -85,6 +87,11 @@ export default function UserSignUp({
       handleDialogDenied,
       geoSettings,
     );
+  };
+
+  const fetchPlanesInfo = async () => {
+    const fetchedInfo = await getAllPlanes();
+    setPlanesInfo(fetchedInfo);
   };
 
   const handlePermission = useCallback(() => {
@@ -185,6 +192,8 @@ export default function UserSignUp({
       label: signUpLabels['steps.planType'],
       isOptional: false,
       component: <PlanSelection
+        userLocation={location}
+        planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
         paidPlanValue={200}
@@ -238,6 +247,10 @@ export default function UserSignUp({
 
   useEffect(() => {
     handlePermission();
+
+    if (signupType !== USER_TYPE_CLIENTE) {
+      fetchPlanesInfo();
+    }
   }, []);
 
   return (
@@ -281,5 +294,6 @@ UserSignUp.defaultProps = {
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
+  getAllPlanes: PropTypes.func.isRequired,
   hasError: PropTypes.bool,
 };

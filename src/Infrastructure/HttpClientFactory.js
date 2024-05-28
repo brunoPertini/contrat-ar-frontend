@@ -102,7 +102,7 @@ export class HttpClientFactory {
    * @param {HttpClientInstanceFactoryConfiguration} config
    * @returns {ProveedorHttpClient}
    */
-  static createProveedorHttpClient(config) {
+  static createProveedorHttpClient(config = {}) {
     if (!HttpClientFactory.proveedorHttpClientInstance) {
       HttpClientFactory.proveedorHttpClientInstance = new ProveedorHttpClient({
         headersValues: { Authorization: config.token },
