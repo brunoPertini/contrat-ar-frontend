@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
@@ -12,7 +11,7 @@ import { systemConstants } from '../Constants';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { sharedLabels } from '../../StaticData/Shared';
 import { planShape } from '../PropTypes/Proveedor';
-import { getPlanDescription } from '../Helpers/PlanesHelper';
+import { getPlanDescription, getPlanId, getPlanType } from '../Helpers/PlanesHelper';
 import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/System';
 import LocationMap from './LocationMap';
 import { locationShape } from '../PropTypes/Shared';
@@ -36,27 +35,13 @@ export default function PlanSelection({
     <>
       <Grid item xs={6}>
         <Card>
-          <CardHeader title={sharedLabels.plansNames.FREE} />
           <CardContent>
-            <Typography variant="subtitle-1">
-              { getPlanDescription(PLAN_TYPE_FREE, planesInfo)}
+            <Typography variant="h5">
+              {sharedLabels.plansNames.FREE}
             </Typography>
-            {
-                selectedPlan === PLAN_TYPE_FREE && (
-                  <LocationMap
-                    enableDragEvents={false}
-                    circleRadius={1500}
-                    location={userLocation}
-                    containerStyles={{
-                      height: '25rem',
-                      width: '100%',
-                    }}
-                  />
-                )
-            }
             <RadioGroup
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
+              value={getPlanType(planesInfo, selectedPlan)}
+              onChange={(e) => setSelectedPlan(getPlanId(planesInfo, e.target.value))}
               sx={{ marginTop: '2%' }}
             >
               <FormControlLabel
@@ -66,16 +51,32 @@ export default function PlanSelection({
               />
             </RadioGroup>
           </CardContent>
+
+          <CardContent>
+            <Typography variant="subtitle-1">
+              { getPlanDescription(PLAN_TYPE_FREE, planesInfo)}
+            </Typography>
+            <LocationMap
+              enableDragEvents={false}
+              circleRadius={1500}
+              location={userLocation}
+              containerStyles={{
+                height: '25rem',
+                width: '100%',
+              }}
+            />
+          </CardContent>
         </Card>
       </Grid>
       <Grid item xs={6}>
-        <Card>
-          <CardHeader title={sharedLabels.plansNames.PAID} />
+        <Card sx={{ boxShadow: 'none' }}>
           <CardContent>
-            { getPlanDescription(PLAN_TYPE_PAID, planesInfo)}
+            <Typography variant="h5">
+              {sharedLabels.plansNames.PAID}
+            </Typography>
             <RadioGroup
-              value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
+              value={getPlanType(planesInfo, selectedPlan)}
+              onChange={(e) => setSelectedPlan(getPlanId(planesInfo, e.target.value))}
               sx={{ marginTop: '2%' }}
             >
               <FormControlLabel
@@ -84,6 +85,9 @@ export default function PlanSelection({
                 label={sharedLabels.iWantIt}
               />
             </RadioGroup>
+          </CardContent>
+          <CardContent>
+            { getPlanDescription(PLAN_TYPE_PAID, planesInfo)}
           </CardContent>
         </Card>
       </Grid>

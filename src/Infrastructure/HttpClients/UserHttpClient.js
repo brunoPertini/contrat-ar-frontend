@@ -10,11 +10,9 @@ export class UserHttpClient extends HttpClient {
       y: new String(body.location.coords.longitude),
     };
 
-    if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
-      body.plan = body.selectedPlan;
+    if (signupType === systemConstants.USER_TYPE_CLIENTE) {
+      delete body.plan;
     }
-
-    delete body.selectedPlan;
 
     const url = (signupType === systemConstants.USER_TYPE_CLIENTE)
       ? usersRoutes.createClient : usersRoutes.createProveedor;

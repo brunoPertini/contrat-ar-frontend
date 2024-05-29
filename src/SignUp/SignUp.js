@@ -4,10 +4,13 @@ import {
 } from 'react';
 import PropTypes from 'prop-types';
 import InfoIcon from '@mui/icons-material/Info';
-import {
-  Box, IconButton,
-  Tooltip, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import { signUpLabels } from '../StaticData/SignUp';
 import { labels as locationMapLabels } from '../StaticData/LocationMap';
 
@@ -17,7 +20,9 @@ import {
 } from '../Shared/Components';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
-import { USER_TYPE_CLIENTE } from '../Shared/Constants/System';
+import { getPlanId } from '../Shared/Helpers/PlanesHelper';
+import { planShape } from '../Shared/PropTypes/Proveedor';
+import { sharedLabels } from '../StaticData/Shared';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -36,7 +41,7 @@ const geoSettings = {
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, getAllPlanes,
+  signupType, dispatchSignUp, hasError, planesInfo,
 }) {
   const { title } = signUpLabels;
 
@@ -46,8 +51,6 @@ export default function UserSignUp({
     personalDataFormBuilder.fields,
   );
 
-  const [planesInfo, setPlanesInfo] = useState([]);
-
   const [errorFields, setErrorFields] = useState({
     email: false,
   });
@@ -55,7 +58,11 @@ export default function UserSignUp({
   const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
 
-  const [selectedPlan, setSelectedPlan] = useState(systemConstants.PLAN_TYPE_FREE);
+  const [selectedPlan, setSelectedPlan] = useState(
+    getPlanId(planesInfo, systemConstants.PLAN_TYPE_FREE),
+  );
+
+  const [profilePhoto, setProfilePhoto] = useState();
 
   const [dialogLabels, setDialogLabels] = useState({
     title: locationMapLabels['dialog.permission.request.title'],
@@ -87,11 +94,6 @@ export default function UserSignUp({
       handleDialogDenied,
       geoSettings,
     );
-  };
-
-  const fetchPlanesInfo = async () => {
-    const fetchedInfo = await getAllPlanes();
-    setPlanesInfo(fetchedInfo);
   };
 
   const handlePermission = useCallback(() => {
@@ -132,6 +134,53 @@ export default function UserSignUp({
     },
   });
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadProfilePhoto(file).then((response) => {
+        setProfilePhoto(response);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  };
+
+  const userProfilePhotoMarkup = (
+    <>
+      <Avatar
+        alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
+        src={profilePhoto}
+        sx={{
+          height: 100,
+          width: 100,
+        }}
+      />
+      <Button
+        component="label"
+        variant="contained"
+        startIcon={<CloudUploadIcon />}
+        sx={{ mt: '5%' }}
+      >
+        {sharedLabels.changeImage}
+        <input
+          type="file"
+          onChange={handleFileChange}
+          style={{
+            clip: 'rect(0 0 0 0)',
+            clipPath: 'inset(50%)',
+            height: 1,
+            overflow: 'hidden',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            whiteSpace: 'nowrap',
+            width: 1,
+          }}
+        />
+      </Button>
+    </>
+  );
+
   const steps = [{
     label: signUpLabels['steps.your.data'],
     isOptional: false,
@@ -148,6 +197,13 @@ export default function UserSignUp({
 
       return someFieldWithError === false && allFieldsHaveValue;
     }, [personalDataFieldsValues, errorFields]),
+  },
+  {
+    label: signUpLabels['steps.profilePhoto'],
+    isOptional: false,
+    component: <Form
+      fields={[userProfilePhotoMarkup]}
+    />,
   },
   {
     label: signUpLabels['steps.your.location'],
@@ -247,10 +303,6 @@ export default function UserSignUp({
 
   useEffect(() => {
     handlePermission();
-
-    if (signupType !== USER_TYPE_CLIENTE) {
-      fetchPlanesInfo();
-    }
   }, []);
 
   return (
@@ -262,7 +314,11 @@ export default function UserSignUp({
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
         open={openConfirmationModal && !hasError}
-        handleAccept={() => dispatchSignUp({ ...personalDataFieldsValues, selectedPlan, location })}
+        handleAccept={() => dispatchSignUp({
+          ...personalDataFieldsValues,
+          plan: selectedPlan,
+          location,
+        })}
         handleDeny={() => handleOnStepChange(steps.length - 1)}
       />
       <DialogModal
@@ -294,6 +350,6 @@ UserSignUp.defaultProps = {
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
-  getAllPlanes: PropTypes.func.isRequired,
+  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
 };

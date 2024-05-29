@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { PropTypes } from 'prop-types';
-import { Button, Grid } from '@mui/material';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';

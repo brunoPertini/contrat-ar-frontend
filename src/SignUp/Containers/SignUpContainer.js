@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -15,6 +15,7 @@ import UserSignUp from '../SignUp';
 import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
 
 const localStorageService = new LocalStorageService();
 
@@ -23,10 +24,14 @@ const localStorageService = new LocalStorageService();
  */
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
+  const [planesInfo, setPlanesInfo] = useState([]);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
-    return httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
+    return httpClient.crearUsuario(signupType, {}, {
+      ...body,
+      proveedorType: signupType,
+    }).then(() => {
       localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
       localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
     })
@@ -40,6 +45,17 @@ function SignUpContainer({ router }) {
   const getAllPlanes = () => {
     const client = HttpClientFactory.createProveedorHttpClient();
     return client.getAllPlanes();
+  };
+
+  const fetchPlanesInfo = async () => {
+    const fetchedInfo = await getAllPlanes();
+    setPlanesInfo(fetchedInfo);
+  };
+
+  const handleUploadProfilePhoto = (file) => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+
+    return client.uploadProfilePhoto(userInfo.id, file);
   };
 
   const signupTypeColumns = (
@@ -118,12 +134,19 @@ function SignUpContainer({ router }) {
       />
     ) : (
       <UserSignUp
+        planesInfo={planesInfo}
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
         getAllPlanes={getAllPlanes}
         router={router}
       />
     );
+
+  useEffect(() => {
+    if (signupType !== USER_TYPE_CLIENTE) {
+      fetchPlanesInfo();
+    }
+  }, []);
 
   return (
     <>
