@@ -100,6 +100,7 @@ export default function PlanSelection({
       gridStyles={gridStyles}
       collapsableContent={plansColumns}
       collapsableAreaStyles={collapsableAreaStyles}
+      keepCollapsableAreaOpen
     />
   );
 }

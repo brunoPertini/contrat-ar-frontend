@@ -1,6 +1,7 @@
 {
     "getVendibles": "/proveedor/{proveedorId}/vendible",
     "changeProfilePhoto": "/image/proveedor/{proveedorId}/upload",
+    "uploadTemporalProfilePhoto": "/image/proveedor/{dni}/temporalUpload",
     "servicioBaseUrl": "/service",
     "productoBaseUrl": "/product",
     "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}",

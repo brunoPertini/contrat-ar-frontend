@@ -8,6 +8,12 @@ import Logger from '../Logging/Logger';
  * @property {{token: String}} headersValues
  */
 
+/**
+ * @typedef RequestCustomConfig
+ * Axios per request config, not shared by the instance
+ * @property {{ headers: Object<String, String>}} headers
+ */
+
 const defaultHeadersValues = {
   Authorization: undefined,
 };
@@ -16,6 +22,9 @@ export class HttpClient {
   #baseUrl;
 
   #instance;
+
+  /** @type {RequestCustomConfig} */
+  #requestConfig;
 
   constructor({ baseUrl, headersValues = defaultHeadersValues, useClientCredentials = true }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
@@ -46,6 +55,23 @@ export class HttpClient {
       baseURL: this.#baseUrl,
       headers,
     });
+
+    this.#requestConfig = null;
+  }
+
+  setFileUploadHeaders() {
+    if (this.#requestConfig === null) {
+      this.#requestConfig = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+    } else {
+      this.#requestConfig.headers = {
+        ...this.#requestConfig.headers,
+        'Content-Type': 'multipart/form-data',
+      };
+    }
   }
 
   get baseUrl() {
@@ -58,6 +84,14 @@ export class HttpClient {
 
   get instance() {
     return this.#instance;
+  }
+
+  set requestConfig(config) {
+    this.requestConfig = config;
+  }
+
+  get requestConfig() {
+    return this.#requestConfig;
   }
 
   #handleError(error) {

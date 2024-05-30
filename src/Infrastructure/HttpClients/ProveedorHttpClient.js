@@ -6,6 +6,22 @@ import { HttpClient } from './HttpClient';
 export class ProveedorHttpClient extends HttpClient {
   constructor(config) {
     super({ headersValues: config.headersValues });
+    super.setFileUploadHeaders();
+  }
+
+  /**
+   *
+   * @param {File} file
+   * @param {String} dni
+   * @returns {Promise<String>} The uploaded file url
+   */
+  uploadTemporalProfilePhoto(dni, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = proveedoresRoutes.uploadTemporalProfilePhoto.replace('{dni}', dni);
+
+    return this.post(url, null, formData, this.requestConfig);
   }
 
   /**
@@ -17,15 +33,10 @@ export class ProveedorHttpClient extends HttpClient {
   uploadProfilePhoto(proveedorId, file) {
     const formData = new FormData();
     formData.append('file', file);
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
 
     const url = proveedoresRoutes.changeProfilePhoto.replace('{proveedorId}', proveedorId);
 
-    return this.post(url, null, formData, config);
+    return this.post(url, null, formData, this.requestConfig);
   }
 
   getVendibles(proveedorId) {
@@ -77,16 +88,10 @@ export class ProveedorHttpClient extends HttpClient {
   updatePlan(proveedorId, newPlan) {
     const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    return this.put(url, null, newPlan, config);
+    return this.put(url, null, newPlan, this.requestConfig);
   }
 
-  getAllPlanes(config) {
-    return this.get(proveedoresRoutes.planBaseUrl, {}, config);
+  getAllPlanes() {
+    return this.get(proveedoresRoutes.planBaseUrl, {});
   }
 }

@@ -41,7 +41,7 @@ const geoSettings = {
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, planesInfo,
+  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
 }) {
   const { title } = signUpLabels;
 
@@ -137,7 +137,7 @@ export default function UserSignUp({
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      uploadProfilePhoto(file).then((response) => {
+      handleUploadProfilePhoto(personalDataFieldsValues.dni, file).then((response) => {
         setProfilePhoto(response);
       }).catch((error) => {
         console.log(error);
@@ -199,13 +199,6 @@ export default function UserSignUp({
     }, [personalDataFieldsValues, errorFields]),
   },
   {
-    label: signUpLabels['steps.profilePhoto'],
-    isOptional: false,
-    component: <Form
-      fields={[userProfilePhotoMarkup]}
-    />,
-  },
-  {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component:
@@ -244,6 +237,19 @@ export default function UserSignUp({
   }];
 
   if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
+    const profilePhotoStep = {
+      label: signUpLabels['steps.profilePhoto'],
+      isOptional: false,
+      component: <Form
+        title={signUpLabels['profilePhoto.title']}
+        fields={[userProfilePhotoMarkup]}
+      />,
+      backButtonEnabled: true,
+      nextButtonEnabled: !!(profilePhoto),
+    };
+
+    steps.splice(1, 0, profilePhotoStep);
+
     steps.push({
       label: signUpLabels['steps.planType'],
       isOptional: false,
@@ -263,14 +269,12 @@ export default function UserSignUp({
     const commonSteps = {
       0: () => personalDataFormBuilder.prepareForRender(),
 
-      1: () => {},
-
     };
 
     const nonClientFunctions = {
       ...commonSteps,
 
-      3: () => setOpenConfirmationModal(true),
+      4: () => setOpenConfirmationModal(true),
     };
 
     const clientFunctions = {
@@ -317,6 +321,7 @@ export default function UserSignUp({
         handleAccept={() => dispatchSignUp({
           ...personalDataFieldsValues,
           plan: selectedPlan,
+          fotoPerfilUrl: profilePhoto,
           location,
         })}
         handleDeny={() => handleOnStepChange(steps.length - 1)}
@@ -345,11 +350,13 @@ export default function UserSignUp({
 
 UserSignUp.defaultProps = {
   hasError: false,
+  handleUploadProfilePhoto: undefined,
 };
 
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
+  handleUploadProfilePhoto: PropTypes.func,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
 };

@@ -52,10 +52,10 @@ function SignUpContainer({ router }) {
     setPlanesInfo(fetchedInfo);
   };
 
-  const handleUploadProfilePhoto = (file) => {
-    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+  const handleUploadProfilePhoto = (dni, file) => {
+    const client = HttpClientFactory.createProveedorHttpClient();
 
-    return client.uploadProfilePhoto(userInfo.id, file);
+    return client.uploadTemporalProfilePhoto(dni, file);
   };
 
   const signupTypeColumns = (
@@ -139,6 +139,7 @@ function SignUpContainer({ router }) {
         dispatchSignUp={dispatchSignUp}
         getAllPlanes={getAllPlanes}
         router={router}
+        handleUploadProfilePhoto={handleUploadProfilePhoto}
       />
     );
 
