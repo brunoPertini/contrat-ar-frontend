@@ -48,7 +48,7 @@ const RootPage = withRouter(({ router }) => {
 
     localStorageService.removeAllKeysOfPage('ROOT');
 
-    if (comesFromSignup === true && success === true) {
+    if (comesFromSignup && success) {
       return setAlertData({
         isAlertOpen: true,
         alertLabel: signUpLabels['signup.success'],
@@ -56,7 +56,7 @@ const RootPage = withRouter(({ router }) => {
       });
     }
 
-    if (comesFromSignup === true && success === false) {
+    if (comesFromSignup && !success) {
       return setAlertData({
         isAlertOpen: true,
         alertLabel: signUpLabels['signup.error'],

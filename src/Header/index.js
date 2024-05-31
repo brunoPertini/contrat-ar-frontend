@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import isEmpty from 'lodash/isEmpty';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
 import { UserAccountOptions } from '../Shared/Components';

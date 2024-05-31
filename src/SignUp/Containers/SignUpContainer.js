@@ -137,7 +137,6 @@ function SignUpContainer({ router }) {
         planesInfo={planesInfo}
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
-        getAllPlanes={getAllPlanes}
         router={router}
         handleUploadProfilePhoto={handleUploadProfilePhoto}
       />

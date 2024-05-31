@@ -106,8 +106,7 @@ export default function PlanSelection({
 }
 
 PlanSelection.propTypes = {
-  selectedPlan: PropTypes.oneOf([systemConstants.PLAN_TYPE_FREE,
-    systemConstants.PLAN_TYPE_PAID]).isRequired,
+  selectedPlan: PropTypes.number.isRequired,
   setSelectedPlan: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   userLocation: PropTypes.shape(locationShape).isRequired,

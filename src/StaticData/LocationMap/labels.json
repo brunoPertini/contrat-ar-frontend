@@ -1,6 +1,6 @@
 {
     "dialog.permission.request.title": "Contract.AR necesita saber su ubicación",
-    "dialog.permission.request.textContext": "Para ser encontrado por tus clientes, necesitamos que aceptes los permisos de ubicación en tu navegador",
+    "dialog.permission.request.textContext": "Para realizar tu registro en el sistema, necesitamos que aceptes los permisos de ubicación en tu navegador",
     "dialog.permission.request.acceptText": "Gestionar permisos de ubicación",
     "dialog.permission.request.cancelText": "Cancelar Registro",
     "dialog.permission.revoke.title": "Permisos de ubicación",

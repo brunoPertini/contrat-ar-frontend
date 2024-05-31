@@ -10,7 +10,7 @@ import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import InformativeAlert from '../Shared/Components/Alert';
 import { planShape } from '../Shared/PropTypes/Proveedor';
-import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
+import { getPlanDescription, getPlanId } from '../Shared/Helpers/PlanesHelper';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -24,7 +24,7 @@ function PlanData({
   const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
   const handleConfirmPlan = () => {
-    confirmPlanChange(plan).then(() => setHasPendingRequest(true));
+    confirmPlanChange(getPlanId(planesInfo, plan)).then(() => setHasPendingRequest(true));
   };
 
   return (

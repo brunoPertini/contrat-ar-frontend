@@ -196,8 +196,8 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
             return onChangeFields('email', e.target.value, false);
           },
-          error: !!(errorFields.email),
-          helperText: (errorFields.email) ? 'Mail inválido' : undefined,
+          error: !!(errorFields?.email),
+          helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
         }, sharedLabels.email)}
         {' '}
         {TextFieldWithLabel(showInlineLabels, {

@@ -195,7 +195,7 @@ export default function UserSignUp({
 
       const someFieldWithError = Object.values(errorFields).some((key) => key);
 
-      return someFieldWithError === false && allFieldsHaveValue;
+      return !someFieldWithError && allFieldsHaveValue;
     }, [personalDataFieldsValues, errorFields]),
   },
   {

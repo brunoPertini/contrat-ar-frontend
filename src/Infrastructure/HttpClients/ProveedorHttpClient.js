@@ -1,12 +1,12 @@
 import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
 import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { HEADERS_NAMES, HEADERS_VALUES } from '../Constants';
 import { HttpClientFactory } from '../HttpClientFactory';
 import { HttpClient } from './HttpClient';
 
 export class ProveedorHttpClient extends HttpClient {
   constructor(config) {
     super({ headersValues: config.headersValues });
-    super.setFileUploadHeaders();
   }
 
   /**
@@ -16,6 +16,11 @@ export class ProveedorHttpClient extends HttpClient {
    * @returns {Promise<String>} The uploaded file url
    */
   uploadTemporalProfilePhoto(dni, file) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.MULTIPART_FORM_DATA,
+    });
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -31,6 +36,11 @@ export class ProveedorHttpClient extends HttpClient {
    * @returns {Promise<String>} The uploaded file url
    */
   uploadProfilePhoto(proveedorId, file) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.MULTIPART_FORM_DATA,
+    });
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -82,10 +92,15 @@ export class ProveedorHttpClient extends HttpClient {
   /**
    *
    * @param {String | Number} proveedorId
-   * @param {String} newPlan
+   * @param {Number} newPlan
    * * @returns {Promise<void> | Promise<Error>}
    */
   updatePlan(proveedorId, newPlan) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.APPLICATION_JSON,
+    });
+
     const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
 
     return this.put(url, null, newPlan, this.requestConfig);

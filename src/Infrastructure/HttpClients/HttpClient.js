@@ -59,17 +59,17 @@ export class HttpClient {
     this.#requestConfig = null;
   }
 
-  setFileUploadHeaders() {
+  setHeaders({ name, value }) {
     if (this.#requestConfig === null) {
       this.#requestConfig = {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          [name]: value,
         },
       };
     } else {
       this.#requestConfig.headers = {
         ...this.#requestConfig.headers,
-        'Content-Type': 'multipart/form-data',
+        [name]: value,
       };
     }
   }
