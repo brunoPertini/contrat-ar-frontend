@@ -5,13 +5,14 @@ import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
   crearUsuario(signupType, queryParams, body) {
-    body.plan = body.selectedPlan;
     body.location = {
       x: new String(body.location.coords.latitude),
       y: new String(body.location.coords.longitude),
     };
 
-    delete body.selectedPlan;
+    if (signupType === systemConstants.USER_TYPE_CLIENTE) {
+      delete body.plan;
+    }
 
     const url = (signupType === systemConstants.USER_TYPE_CLIENTE)
       ? usersRoutes.createClient : usersRoutes.createProveedor;

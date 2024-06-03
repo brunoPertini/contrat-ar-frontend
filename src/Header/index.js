@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import isEmpty from 'lodash/isEmpty';
+import Link from '@mui/material/Link';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
 import { UserAccountOptions } from '../Shared/Components';
@@ -88,9 +88,14 @@ export default function Header({
     >
       <Grid container sx={{ justifyContent: 'space-between' }}>
         <Grid item>
-          <Typography variant="h3" sx={{ width: '30%' }}>
+          <Link
+            variant="h3"
+            sx={{ width: '30%', color: 'white', cursor: 'pointer' }}
+            href="/"
+          >
+
             { sharedLabels.siteName }
-          </Typography>
+          </Link>
         </Grid>
         { renderNavigationLinks
         && (

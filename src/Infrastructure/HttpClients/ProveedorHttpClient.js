@@ -1,5 +1,6 @@
 import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
 import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
+import { HEADERS_NAMES, HEADERS_VALUES } from '../Constants';
 import { HttpClientFactory } from '../HttpClientFactory';
 import { HttpClient } from './HttpClient';
 
@@ -11,21 +12,41 @@ export class ProveedorHttpClient extends HttpClient {
   /**
    *
    * @param {File} file
+   * @param {String} dni
+   * @returns {Promise<String>} The uploaded file url
+   */
+  uploadTemporalProfilePhoto(dni, file) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.MULTIPART_FORM_DATA,
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = proveedoresRoutes.uploadTemporalProfilePhoto.replace('{dni}', dni);
+
+    return this.post(url, null, formData, this.requestConfig);
+  }
+
+  /**
+   *
+   * @param {File} file
    * @param {String} proveedorId
    * @returns {Promise<String>} The uploaded file url
    */
   uploadProfilePhoto(proveedorId, file) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.MULTIPART_FORM_DATA,
+    });
+
     const formData = new FormData();
     formData.append('file', file);
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
 
     const url = proveedoresRoutes.changeProfilePhoto.replace('{proveedorId}', proveedorId);
 
-    return this.post(url, null, formData, config);
+    return this.post(url, null, formData, this.requestConfig);
   }
 
   getVendibles(proveedorId) {
@@ -71,22 +92,21 @@ export class ProveedorHttpClient extends HttpClient {
   /**
    *
    * @param {String | Number} proveedorId
-   * @param {String} newPlan
+   * @param {Number} newPlan
    * * @returns {Promise<void> | Promise<Error>}
    */
   updatePlan(proveedorId, newPlan) {
+    this.setHeaders({
+      name: HEADERS_NAMES.CONTENT_TYPE,
+      value: HEADERS_VALUES.CONTENT_TYPE.APPLICATION_JSON,
+    });
+
     const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    return this.put(url, null, newPlan, config);
+    return this.put(url, null, newPlan, this.requestConfig);
   }
 
-  getAllPlanes(config) {
-    return this.get(proveedoresRoutes.planBaseUrl, {}, config);
+  getAllPlanes() {
+    return this.get(proveedoresRoutes.planBaseUrl, {});
   }
 }

@@ -1,3 +1,5 @@
+import isEmail from 'validator/lib/isEmail';
+
 const ONLY_NUMBERS_REGEX = /^[0-9.]+$/;
 
 export const DOT_AND_COMMA_REGEX = /[.,]/gi;
@@ -40,4 +42,13 @@ export function deleteNonNumericCharacters(event) {
 
 export function escapeRegExpChars(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ *
+ * @param {String} value
+ * @returns
+ */
+export function stringIsEmail(value) {
+  return isEmail(value);
 }

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -14,33 +14,56 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
 import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
+
+const localStorageService = new LocalStorageService();
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
  */
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
-  const [hasError, setHasError] = useState();
+  const [planesInfo, setPlanesInfo] = useState([]);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
-    return httpClient.crearUsuario(signupType, { proveedorType: signupType }, body).then(() => {
-      router.navigate(routes.signin);
+    return httpClient.crearUsuario(signupType, {}, {
+      ...body,
+      proveedorType: signupType,
+    }).then(() => {
+      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
     })
       .catch(() => {
-        setHasError(true);
-      });
+        localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+        localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
+      })
+      .finally(() => router.navigate(routes.index));
+  };
+
+  const getAllPlanes = () => {
+    const client = HttpClientFactory.createProveedorHttpClient();
+    return client.getAllPlanes();
+  };
+
+  const fetchPlanesInfo = async () => {
+    const fetchedInfo = await getAllPlanes();
+    setPlanesInfo(fetchedInfo);
+  };
+
+  const handleUploadProfilePhoto = (dni, file) => {
+    const client = HttpClientFactory.createProveedorHttpClient();
+
+    return client.uploadTemporalProfilePhoto(dni, file);
   };
 
   const signupTypeColumns = (
     <>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero comprar productos y contratar servicios" />
+          <CardHeader title={signUpLabels['signup.want.to.client']} />
           <CardContent>
-            <Typography variant="subtitle-1">
-              Descripcion
-            </Typography>
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}
@@ -57,9 +80,8 @@ function SignUpContainer({ router }) {
       </Grid>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero ofrecer mis servicios como contratista" />
+          <CardHeader title={signUpLabels['signup.want.to.offer.services']} />
           <CardContent>
-            Descripcion
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}
@@ -76,9 +98,8 @@ function SignUpContainer({ router }) {
       </Grid>
       <Grid item xs={4}>
         <Card>
-          <CardHeader title="Quiero ofrecer mis productos en el sitio" />
+          <CardHeader title={signUpLabels['signup.want.to.offer.products']} />
           <CardContent>
-            Descripcion
             <RadioGroup
               value={signupType}
               onChange={(e) => setSignupType(e.target.value)}
@@ -113,12 +134,19 @@ function SignUpContainer({ router }) {
       />
     ) : (
       <UserSignUp
+        planesInfo={planesInfo}
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
-        hasError={hasError}
         router={router}
+        handleUploadProfilePhoto={handleUploadProfilePhoto}
       />
     );
+
+  useEffect(() => {
+    if (signupType !== USER_TYPE_CLIENTE) {
+      fetchPlanesInfo();
+    }
+  }, []);
 
   return (
     <>
@@ -131,9 +159,7 @@ function SignUpContainer({ router }) {
           alignItems: 'center',
         }}
       >
-        <Grid item sx={{ width: '100%' }}>
-          {innerComponent}
-        </Grid>
+        {innerComponent}
       </Grid>
 
     </>

@@ -4,9 +4,11 @@
     "location.proveedor.title": "Para que seas visible a tus clientes, necesitamos saber tu ubicación",
     "location.cliente.title": "Para brindarte las mejores opciones en tus búsquedas, necesitamos saber tu ubicación",
     "steps.your.data": "Tus datos",
+    "steps.profilePhoto": "Tu foto de perfil",
+    "profilePhoto.title": "¡Necesitamos una foto tuya! Se va a mostrar a los usuarios que te encuentren en sus búsquedas",
     "steps.your.location": "Confirmanos tu ubicación",
     "steps.planType": "Elegí tu plan",
-    "planSelection.title": "Texto donde se persuada de alguna manera para que elijan el plan pago",
+    "planSelection.title": "¡Tenemos estos planes para vos! Elegí el que mejor se adapte a tus necesidades.",
     "planSelection.free.description": "Con este plan podrás ser encontrado por tus clientes en un radio de X km",
     "planSelection.paid.description": "Con este plan podrás ser encontrado por tus clientes en toda la ciudad y alrededores",
     "confirmation.title": "Confirmación de Registro",
@@ -14,6 +16,11 @@
     "confirmation.ok": "Terminar",
     "confirmation.cancel": "Tengo que modificar algún dato",
     "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
-    "signup.error.title": "Error en el registro",
-    "signup.error.context": "Ocurrió un error inesperado, por favor intentalo más tarde!"
+    "signup.CLIENTE.descripcion": "¿Buscás un producto",
+    "signup.want.to.offer.services": "Quiero ofrecer mis servicios",
+    "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
+    "signup.want.to.client": "Quiero comprar productos y contratar servicios",
+    "signup.success": "¡Recibimos tu registro! Un administrador lo revisará a la brevedad.",
+    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo."
+
 }

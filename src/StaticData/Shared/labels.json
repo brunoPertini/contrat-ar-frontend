@@ -37,6 +37,7 @@
     "cancel": "Cancelar",
     "uploadImage": "Subir Imagen",
     "changeImage": "Cambiar Imagen",
+    "image.upload.error": "La imagen no pudo ser subida. Por favor, intentalo en unos minutos",
     "categories": "Categorias",
     "locationType": {
         "producto" : "¿Dónde vendés el producto?",
@@ -61,5 +62,6 @@
     "saveChanges": "Guardar Cambios",
     "finalMonthlyPrice": " Precio final mensual: {price}",
     "infoModifiedSuccess": "¡La información fue modificada!",
-    "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde"
+    "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde",
+    "invalidEmail": "Mail inválido"
 }

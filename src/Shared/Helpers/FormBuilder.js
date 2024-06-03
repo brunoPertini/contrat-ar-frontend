@@ -16,7 +16,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
-import { cleanNumbersFromInput } from '../Utils/InputUtils';
+import { cleanNumbersFromInput, stringIsEmail } from '../Utils/InputUtils';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
@@ -45,8 +45,12 @@ class FormBuilder {
 
   #fieldsLabels;
 
+  #validators;
+
   constructor() {
     this.fields = {};
+    this.fieldsLabels = {};
+    this.#validators = {};
   }
 
   prepareForRender() {
@@ -81,6 +85,14 @@ class FormBuilder {
   get fieldsLabels() {
     return this.#fieldsLabels;
   }
+
+  set validators(value) {
+    this.#validators = value;
+  }
+
+  get validators() {
+    return this.#validators;
+  }
 }
 
 export class PersonalDataFormBuilder extends FormBuilder {
@@ -92,6 +104,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       email: '',
       password: '',
       birthDate: '',
+      phone: '',
     };
 
     this.fieldsLabels = {
@@ -104,6 +117,10 @@ export class PersonalDataFormBuilder extends FormBuilder {
       location: sharedLabels.yourLocation,
       dni: sharedLabels.dni,
       fotoPerfilUrl: proveedorLabels.yourProfilePhoto,
+    };
+
+    this.validators = {
+      email: (value) => stringIsEmail(value),
     };
   }
 
@@ -127,12 +144,14 @@ export class PersonalDataFormBuilder extends FormBuilder {
    * @param {Object} params.inputProps props to pass to inputs, as readOnly, etc.
    * @param {Object} params.gridStyles styles applied to each field container
    * @param {Object} params.fieldsOwnConfig same purpose as inputProps but differentiating
+   * @param {Object<String, Boolean>} params.errorFields fields with error, that should show
+   * helper message
    *  per field key
    * @returns JSX rendered elements for the fields in fieldsValues
    */
   build({
-    fieldsValues, onChangeFields, usuarioType, gridStyles = {},
-    inputProps, showInlineLabels = false, fieldsOwnConfig,
+    fieldsValues, errorFields, onChangeFields, usuarioType, gridStyles = {},
+    inputProps, showInlineLabels = false, fieldsOwnConfig = {},
   }) {
     super.build({ usuarioType });
 
@@ -169,7 +188,16 @@ export class PersonalDataFormBuilder extends FormBuilder {
           type: 'email',
           value: fieldsValues.email,
           inputProps,
-          onChange: (e) => onChangeFields('email', e.target.value),
+          onChange: (e) => {
+            if (this.shouldValidateField('email')) {
+              const isEmailValid = this.validators.email(fieldsValues.email);
+              return onChangeFields('email', e.target.value, !isEmailValid);
+            }
+
+            return onChangeFields('email', e.target.value, false);
+          },
+          error: !!(errorFields?.email),
+          helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
         }, sharedLabels.email)}
         {' '}
         {TextFieldWithLabel(showInlineLabels, {
@@ -250,6 +278,10 @@ export class PersonalDataFormBuilder extends FormBuilder {
       phoneRow];
 
     return personalDataFields;
+  }
+
+  shouldValidateField(fieldKey) {
+    return fieldKey in this.validators;
   }
 }
 
