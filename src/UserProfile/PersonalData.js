@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
@@ -14,6 +12,7 @@ import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { sharedLabels } from '../StaticData/Shared';
 import InformativeAlert from '../Shared/Components/Alert';
+import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -121,20 +120,9 @@ function UserPersonalData({
     });
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      uploadProfilePhoto(file).then((response) => {
-        handleConfirmEdition({ newFotoPerfilUrl: response });
-      }).catch((error) => {
-        setAlertConfig({
-          openSnackbar: true,
-          alertSeverity: 'error',
-          alertLabel: error,
-        });
-      });
-    }
-  };
+  const callHandleUploadPhoto = (file) => uploadProfilePhoto(file);
+
+  const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
   return (
     <Box display="flex" flexDirection="row" sx={{ ...styles }}>
@@ -195,37 +183,12 @@ function UserPersonalData({
             sx={{ height: '30%', ml: '5%' }}
           >
             {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
-            <Avatar
-              alt={userInfo.name}
+            <ProfilePhoto
               src={fieldsValues.fotoPerfilUrl}
-              sx={{
-                height: 100,
-                width: 100,
-              }}
+              alt={userInfo.name}
+              onUpload={callHandleUploadPhoto}
+              onSuccess={onSuccessUploadPhoto}
             />
-            <Button
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-              sx={{ mt: '5%' }}
-            >
-              { sharedLabels.changeImage }
-              <input
-                type="file"
-                onChange={handleFileChange}
-                style={{
-                  clip: 'rect(0 0 0 0)',
-                  clipPath: 'inset(50%)',
-                  height: 1,
-                  overflow: 'hidden',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  whiteSpace: 'nowrap',
-                  width: 1,
-                }}
-              />
-            </Button>
           </Box>
         )
       }

@@ -28,11 +28,11 @@ export default function ProfilePhoto({
     if (file) {
       onUpload(file).then((response) => {
         onSuccess(response);
-      }).catch((error) => {
+      }).catch(() => {
         setAlertErrorConfig({
           openSnackbar: true,
           alertSeverity: 'error',
-          alertLabel: error,
+          alertLabel: sharedLabels['image.upload.error'],
         });
       });
     }
