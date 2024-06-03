@@ -8,9 +8,6 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import { signUpLabels } from '../StaticData/SignUp';
 import { labels as locationMapLabels } from '../StaticData/LocationMap';
 
@@ -22,7 +19,7 @@ import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
-import { sharedLabels } from '../StaticData/Shared';
+import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -31,10 +28,6 @@ const geoSettings = {
   maximumAge: 30000,
   timeout: 20000,
 };
-
-/**
- * TODO: sacar el modal de error de acá,
- * y chequear que el mail que pongan sea un string de mail válido
 
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
@@ -134,52 +127,9 @@ export default function UserSignUp({
     },
   });
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      handleUploadProfilePhoto(personalDataFieldsValues.dni, file).then((response) => {
-        setProfilePhoto(response);
-      }).catch((error) => {
-        console.log(error);
-      });
-    }
-  };
-
-  const userProfilePhotoMarkup = (
-    <>
-      <Avatar
-        alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
-        src={profilePhoto}
-        sx={{
-          height: 100,
-          width: 100,
-        }}
-      />
-      <Button
-        component="label"
-        variant="contained"
-        startIcon={<CloudUploadIcon />}
-        sx={{ mt: '5%' }}
-      >
-        {sharedLabels.changeImage}
-        <input
-          type="file"
-          onChange={handleFileChange}
-          style={{
-            clip: 'rect(0 0 0 0)',
-            clipPath: 'inset(50%)',
-            height: 1,
-            overflow: 'hidden',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            whiteSpace: 'nowrap',
-            width: 1,
-          }}
-        />
-      </Button>
-    </>
-  );
+  const callUploadProfilePhoto = (
+    file,
+  ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
@@ -242,7 +192,12 @@ export default function UserSignUp({
       isOptional: false,
       component: <Form
         title={signUpLabels['profilePhoto.title']}
-        fields={[userProfilePhotoMarkup]}
+        fields={[<ProfilePhoto
+          src={profilePhoto}
+          alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
+          onUpload={callUploadProfilePhoto}
+          onSuccess={setProfilePhoto}
+        />]}
       />,
       backButtonEnabled: true,
       nextButtonEnabled: !!(profilePhoto),
