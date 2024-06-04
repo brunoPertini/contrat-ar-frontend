@@ -44,7 +44,6 @@ const vendiblesGridProps = {
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router, handleLogout,
 }) {
-  const [contactText, setContactText] = useState();
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
 
@@ -52,6 +51,8 @@ function VendiblePage({
   const [firstSearchDone, setFirstSearchDone] = useState(false);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
+
+  const [buttonsEnabled, setButtonsEnabled] = useState({});
 
   const { setHandleGoBack, setParams } = useContext(NavigationContext);
 
@@ -108,16 +109,26 @@ function VendiblePage({
     return `${sharedLabels.minimalPrice}${price}`;
   }, [vendibleType]);
 
-  const handleSetContactText = useCallback(
-    (event) => setContactText(event.target.value),
-    [setContactText],
+  const handleEnableButton = useCallback(
+    (event) => {
+      setButtonsEnabled((previous) => ({ ...previous, [event.target.id]: !!(event.target.value) }));
+    },
+    [setButtonsEnabled],
   );
 
-  const handleSendMessageClick = () => {
-    setTimeout(() => {
-      setContactText('');
-    }, 1000);
-  };
+  const handleSendMessageClick = useCallback((textAreaId, phone, proveedorName) => {
+    const message = document.querySelector(`#${textAreaId}`).value;
+    const messageTemplate = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
+      .replace('{contractArLink}', 'www.contractar.com')
+      .replace('{additionalText}', message); // TODO: reemplazar por dominio via deploy
+
+    const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}
+        &text=${messageTemplate.replace('{proveedor}', proveedorName)}`;
+
+    document.querySelector(`#${textAreaId}`).value = '';
+    setButtonsEnabled((previous) => ({ ...previous, [textAreaId]: false }));
+    window.open(contactLink, '_blank');
+  }, [setButtonsEnabled]);
 
   const handleOnFiltersApplied = (filters) => {
     setFirstSearchDone(true);
@@ -130,10 +141,6 @@ function VendiblePage({
         .finally(() => setIsLoadingVendibles(false));
     }, 1000);
   };
-
-  const messageText = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
-    .replace('{contractArLink}', 'www.contractar.com')
-    .replace('{additionalText}', contactText || ''); // TODO: reemplazar por dominio via deploy
 
   const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
 
@@ -197,7 +204,9 @@ function VendiblePage({
 
                   const fullName = `${name} ${surname}`;
 
-                  const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}&text=${messageText.replace('{proveedor}', name)}`;
+                  const textAreaId = `contact_proveedor_${proveedorId}`;
+
+                  const isSendMessageButtonEnabled = buttonsEnabled[textAreaId];
 
                   return (
                     <Fragment key={`${vendibleNombre}_${fullName}`}>
@@ -270,17 +279,17 @@ function VendiblePage({
                             {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
                           </Typography>
                           <TextareaAutosize
+                            id={textAreaId}
                             minRows={15}
                             style={{ width: '100%' }}
-                            value={contactText}
-                            onChange={handleSetContactText}
+                            onChange={handleEnableButton}
                           />
                           <Button
-                            onClick={handleSendMessageClick}
-                            href={contactLink}
+                            onClick={() => handleSendMessageClick(textAreaId, phone, name)}
                             target="_blank"
                             variant="contained"
                             sx={{ mt: '5px', alignSelf: 'flex-start' }}
+                            disabled={!isSendMessageButtonEnabled}
                           >
                             { sharedLabels.sendMessage }
                           </Button>
