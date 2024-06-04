@@ -5,6 +5,7 @@
     "ROLE_CLIENTE": "/cliente",
     "ROLE_PROVEEDOR_SERVICIOS": "/proveedor",
     "ROLE_PROVEEDOR_PRODUCTOS": "/proveedor",
+    "ADMIN": "/admin",
     "productoIndex": "/producto",
     "servicioIndex": "/servicio",
     "userProfile": "/profile"

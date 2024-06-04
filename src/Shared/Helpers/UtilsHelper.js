@@ -5,7 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { PRODUCT, PRODUCTS, SERVICE } from '../Constants/System';
 import CookiesService from '../../Infrastructure/Services/CookiesService';
 import { sharedLabels } from '../../StaticData/Shared';
-import { routes } from '../Constants';
+import { routes, systemConstants } from '../Constants';
 
 export const parseVendibleUnit = (vendibleType) => (vendibleType === PRODUCTS
   ? PRODUCT : SERVICE).toLowerCase();
@@ -30,31 +30,37 @@ export const waitAndCleanUserTokenCookie = () => {
  * @param {Array<UserMenuConfiguration>} elementsConfiguration
  * @returns
  */
-export const getUserMenuOptions = (elementsConfiguration) => [{
-  component: () => (
-    <>
-      <ListItemIcon>
-        <AccountCircleRoundedIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>{sharedLabels.myProfile}</ListItemText>
-    </>
-  ),
-  props: elementsConfiguration[0].props,
-  onClick: () => {
-    window.location.href = routes.userProfile;
-  },
-},
-{
-  component: () => (
-    <>
-      <ListItemIcon>
-        <LogoutIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>{sharedLabels.logout}</ListItemText>
-    </>
-  ),
-  onClick: elementsConfiguration[1].onClick,
-}];
+export const getUserMenuOptions = (elementsConfiguration, userRole) => {
+  const options = [
+    {
+      component: () => (
+        <>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{sharedLabels.logout}</ListItemText>
+        </>
+      ),
+      onClick: elementsConfiguration[1].onClick,
+    }];
+
+  if (userRole !== systemConstants.ROLE_ADMIN) {
+    options.splice(0, 0, {
+      component: () => (
+        <>
+          <ListItemIcon>
+            <AccountCircleRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>{sharedLabels.myProfile}</ListItemText>
+        </>
+      ),
+      props: elementsConfiguration[0].props,
+      onClick: () => {
+        window.location.href = routes.userProfile;
+      },
+    });
+  }
+};
 
 /**
  *

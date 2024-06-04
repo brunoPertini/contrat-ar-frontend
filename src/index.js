@@ -15,6 +15,7 @@ import { Cliente } from './Cliente';
 import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
 import UserProfile from './UserProfile/Containers';
+import AdminPage from './Admin/AdminContainer';
 
 function ErrorComponent() {
   // TODO: crear páginas de errores
@@ -85,6 +86,12 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <UserProfile />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/admin',
+    element: <AdminPage />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },

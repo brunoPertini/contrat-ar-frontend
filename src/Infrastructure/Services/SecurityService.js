@@ -20,7 +20,7 @@ class SecurityService {
    */
   #httpClient;
 
-  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile'];
+  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile', '/admin'];
 
   static LOGIN_PATH = '/signin';
 
