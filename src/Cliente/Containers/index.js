@@ -27,8 +27,16 @@ function ClienteContainer({ handleLogout }) {
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
-  const menuOptions = getUserMenuOptions([{ props: userInfo },
-    { onClick: () => setIsExitAppModalOpen(true) }]);
+  const menuOptionsConfig = {
+    myProfile: {
+      props: userInfo,
+    },
+    logout: {
+      onClick: () => setIsExitAppModalOpen(true),
+    },
+  };
+
+  const menuOptions = getUserMenuOptions(menuOptionsConfig);
 
   const dispatchHandleSearch = ({ searchType, searchInput, filters }) => {
     const httpClient = HttpClientFactory.createVendibleHttpClient(

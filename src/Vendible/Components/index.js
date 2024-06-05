@@ -58,8 +58,16 @@ function VendiblePage({
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
-  const menuOptions = getUserMenuOptions([{ props: userInfo },
-    { onClick: () => setIsExitAppModalOpen(true) }]);
+  const menuOptionsConfig = {
+    myProfile: {
+      props: userInfo,
+    },
+    logout: {
+      onClick: () => setIsExitAppModalOpen(true),
+    },
+  };
+
+  const menuOptions = getUserMenuOptions(menuOptionsConfig);
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 

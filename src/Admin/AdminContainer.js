@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import AdminPage from '.';
@@ -11,12 +12,22 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function AdminContainer() {
+function AdminContainer({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
 
-  const menuOptions = getUserMenuOptions([{ onClick: () => {} }], userInfo.role);
+  const menuOptionsConfig = {
+    logout: {
+      onClick: () => handleLogout(),
+    },
+  };
+
+  const menuOptions = getUserMenuOptions(menuOptionsConfig);
 
   return <AdminPage userInfo={userInfo} menuOptions={menuOptions} />;
 }
 
 export default withRouter(AdminContainer);
+
+AdminContainer.propTypes = {
+  handleLogout: PropTypes.func.isRequired,
+};
