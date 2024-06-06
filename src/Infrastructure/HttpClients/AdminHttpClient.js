@@ -3,7 +3,7 @@ import { HttpClient } from './HttpClient';
 
 export default class AdminHttpClient extends HttpClient {
   constructor(config) {
-    super({ headersValues: config.headersValues });
+    super({ ...config });
   }
 
   /**
@@ -17,5 +17,9 @@ export default class AdminHttpClient extends HttpClient {
       adminRoutes.changeRequestExists,
       { sourceTableId, searchAttributes: attributes },
     );
+  }
+
+  getUsuariosInfo() {
+    return this.get(adminRoutes.getUsuariosInfo);
   }
 }

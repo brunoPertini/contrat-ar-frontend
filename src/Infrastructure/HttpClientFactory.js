@@ -133,6 +133,7 @@ export class HttpClientFactory {
   static createAdminHttpClient(config) {
     if (!HttpClientFactory.adminHttpClientInstance) {
       HttpClientFactory.adminHttpClientInstance = new AdminHttpClient({
+        baseUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
         headersValues: { Authorization: config.token },
       });
     }
