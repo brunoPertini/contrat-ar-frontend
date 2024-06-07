@@ -16,6 +16,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import { labels } from '../StaticData/LocationMap';
 import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
+import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -42,10 +43,12 @@ const ATTRIBUTES_LABELS = {
   birthDate: sharedLabels.birthDate,
   phone: sharedLabels.phone,
   location: sharedLabels.location,
+};
+
+const PROVEEDORES_ATTRIBUTES_LABELS = {
   dni: sharedLabels.dni,
   plan: sharedLabels.plan,
   fotoPerfilUrl: sharedLabels.profilePhoto,
-  active: sharedLabels.active,
 };
 
 const ATTRIBUTES_RENDERERS = {
@@ -117,9 +120,7 @@ function MapModal({
   ) : null;
 }
 
-export default function UsuariosTable(props) {
-  console.log(props);
-  const { usuarios } = props;
+export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -132,6 +133,10 @@ export default function UsuariosTable(props) {
     title: '',
   });
 
+  const toLoopAttributes = usuarioTypeFilter === USUARIO_TYPE_CLIENTES
+    ? { ...ATTRIBUTES_LABELS, active: sharedLabels.active }
+    : { ...ATTRIBUTES_LABELS, ...PROVEEDORES_ATTRIBUTES_LABELS, active: sharedLabels.active };
+
   return (
     <TableContainer component={Paper}>
       <MapModal {...mapModalProps} />
@@ -139,7 +144,7 @@ export default function UsuariosTable(props) {
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
             {
-              Object.values(ATTRIBUTES_LABELS).map((label) => (
+              Object.values(toLoopAttributes).map((label) => (
                 <TableCell
                   sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
                 >
@@ -150,27 +155,27 @@ export default function UsuariosTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {usuarios.map((proveedor) => (
+          {usuarios.map((usuario) => (
             <TableRow
-              key={proveedor.id}
+              key={usuario.id}
             >
               {
-                Object.keys(proveedor).map((attribute) => {
+                Object.keys(usuario).map((attribute) => {
                   const rendererType = ATTRIBUTES_CONFIG[attribute]
                   ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
 
                   const renderMapModal = () => setMapModalProps((previous) => ({
                     ...previous,
                     open: true,
-                    location: proveedor[attribute],
-                    title: `Ubicación de ${proveedor.name} ${proveedor.surname}`,
+                    location: usuario[attribute],
+                    title: `Ubicación de ${usuario.name} ${usuario.surname}`,
                   }));
 
                   return (
                     <TableCell scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
 
-                      { rendererType !== 'enum' && rendererType !== 'map' && ATTRIBUTES_RENDERERS[rendererType](proveedor[attribute])}
-                      { rendererType === 'enum' && ATTRIBUTES_RENDERERS[rendererType](attribute, proveedor[attribute]) }
+                      { rendererType !== 'enum' && rendererType !== 'map' && ATTRIBUTES_RENDERERS[rendererType](usuario[attribute])}
+                      { rendererType === 'enum' && ATTRIBUTES_RENDERERS[rendererType](attribute, usuario[attribute]) }
                       { rendererType === 'map' && ATTRIBUTES_RENDERERS[rendererType](renderMapModal) }
 
                     </TableCell>

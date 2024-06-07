@@ -22,8 +22,6 @@ function AdminPage({ userInfo, usuariosInfo, menuOptions }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
-  console.log(usuariosInfo);
-
   return (
     <>
       <Header
@@ -59,6 +57,7 @@ function AdminPage({ userInfo, usuariosInfo, menuOptions }) {
           {TABS_COMPONENTS[tabOption]({
             usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
               ? usuariosInfo.usuarios.proveedores : usuariosInfo.usuarios.clientes,
+            usuarioTypeFilter,
           })}
         </Box>
       </Box>

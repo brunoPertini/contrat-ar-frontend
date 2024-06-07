@@ -8,7 +8,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import SelectComponent from '../Shared/Components/Select';
 import { USUARIOS_TYPES } from '../Shared/Constants/System';
 
-export default function AdminFilters({ usuarioType, setUsuarioTypeFilter }) {
+export default function AdminFilters({ usuarioTypeFilter, setUsuarioTypeFilter }) {
   return (
     <BasicMenu
       styles={{ color: '#1976d2', display: 'flex', flexDirection: 'row' }}
@@ -21,6 +21,7 @@ export default function AdminFilters({ usuarioType, setUsuarioTypeFilter }) {
           title: sharedLabels.userType,
           values: USUARIOS_TYPES,
           handleOnChange: setUsuarioTypeFilter,
+          defaultSelected: USUARIOS_TYPES.indexOf(usuarioTypeFilter),
         },
         onClick: () => {},
       }]}
