@@ -66,3 +66,8 @@ export const dialogModalTexts = {
     text: 'Esta acción es irreversible',
   },
 };
+
+export const USUARIO_TYPE_PROVEEDORES = 'proveedores';
+export const USUARIO_TYPE_CLIENTES = 'clientes';
+
+export const USUARIOS_TYPES = [USUARIO_TYPE_PROVEEDORES, USUARIO_TYPE_CLIENTES];

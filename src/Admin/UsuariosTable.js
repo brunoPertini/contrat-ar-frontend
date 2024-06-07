@@ -50,7 +50,15 @@ const ATTRIBUTES_LABELS = {
 
 const ATTRIBUTES_RENDERERS = {
   text: (attribute) => attribute,
-  image: (attribute) => attribute,
+  image: (attribute) => (
+    <Link
+      sx={{ cursor: 'pointer' }}
+      onClick={() => window.open(attribute, '_blank')}
+    >
+      { attribute }
+      ,
+    </Link>
+  ),
   map: (onLinkClick) => (
     <Link
       sx={{ cursor: 'pointer' }}
@@ -109,7 +117,9 @@ function MapModal({
   ) : null;
 }
 
-export default function UsuariosTable({ usuarios: { proveedores, clientes } }) {
+export default function UsuariosTable(props) {
+  console.log(props);
+  const { usuarios } = props;
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -140,7 +150,7 @@ export default function UsuariosTable({ usuarios: { proveedores, clientes } }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {proveedores.map((proveedor) => (
+          {usuarios.map((proveedor) => (
             <TableRow
               key={proveedor.id}
             >
