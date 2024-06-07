@@ -67,5 +67,6 @@
     "finalMonthlyPrice": " Precio final mensual: {price}",
     "infoModifiedSuccess": "¡La información fue modificada!",
     "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde",
-    "invalidEmail": "Mail inválido"
+    "invalidEmail": "Mail inválido",
+    "userType": "Tipo de usuario"
 }

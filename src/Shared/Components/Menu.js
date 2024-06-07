@@ -4,7 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 
-export default function BasicMenu({ options, buttonLabel }) {
+export default function BasicMenu({ options, buttonLabel, styles }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -17,14 +17,13 @@ export default function BasicMenu({ options, buttonLabel }) {
   };
 
   return (
-    <div>
+    <div style={{ ...styles }}>
       <Button
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        sx={{ color: 'white' }}
       >
         { buttonLabel }
       </Button>
@@ -58,6 +57,10 @@ export default function BasicMenu({ options, buttonLabel }) {
   );
 }
 
+BasicMenu.defaultProps = {
+  styles: {},
+};
+
 BasicMenu.propTypes = {
   options: PropTypes.arrayOf(PropTypes.shape({
     component: PropTypes.any,
@@ -65,4 +68,5 @@ BasicMenu.propTypes = {
     onClick: PropTypes.func,
   })).isRequired,
   buttonLabel: PropTypes.any.isRequired,
+  styles: PropTypes.object,
 };

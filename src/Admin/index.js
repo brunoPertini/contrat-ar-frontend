@@ -29,10 +29,16 @@ function AdminPage({ userInfo, usuariosInfo, menuOptions }) {
       <Box>
         <Tabs value={tabOption} onChange={setTabOption}>
           {
-          TABS_LABELS.map((label, index) => <Tab label={label} value={TAB_VALUES[index]} />)
+          TABS_LABELS.map((label, index) => (
+            <Tab
+              key={`admin_page_tab${index}`}
+              label={label}
+              value={TAB_VALUES[index]}
+            />
+          ))
         }
         </Tabs>
-        <Box display="flex" sx={{ marginTop: '5%' }}>
+        <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
           <AdminFilters />
           {TABS_COMPONENTS[tabOption](usuariosInfo)}
         </Box>
