@@ -18,9 +18,26 @@ const TABS_COMPONENTS = {
   usuarios: (props) => <UsuariosTable {...props} />,
 };
 
-function AdminPage({ userInfo, usuariosInfo, menuOptions }) {
+function AdminPage({
+  userInfo, usuariosInfo, menuOptions, applyFilters,
+}) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
+
+  const [filters, setFilters] = useState({ name: '', surname: '' });
+
+  const handleApplyFilters = () => {
+    applyFilters({ type: usuarioTypeFilter, ...filters });
+  };
+
+  const handleSetFilters = (key, value) => {
+    setFilters({ [key]: value });
+  };
+
+  const handleApplyUsuarioTypeFilter = async (value) => {
+    await applyFilters({ type: value });
+    setUsuarioTypeFilter(value);
+  };
 
   return (
     <>
@@ -52,7 +69,10 @@ function AdminPage({ userInfo, usuariosInfo, menuOptions }) {
         <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
           <AdminFilters
             usuarioTypeFilter={usuarioTypeFilter}
-            setUsuarioTypeFilter={setUsuarioTypeFilter}
+            setUsuarioTypeFilter={handleApplyUsuarioTypeFilter}
+            filters={filters}
+            setFilters={handleSetFilters}
+            applyFilters={handleApplyFilters}
           />
           {TABS_COMPONENTS[tabOption]({
             usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES

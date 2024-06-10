@@ -29,6 +29,14 @@ function AdminContainer({ handleLogout }) {
     setUsuariosInfo({ ...fetchedInfo });
   }, [setUsuariosInfo]);
 
+  const fetchedFilteredUsuariosInfo = useCallback(async (filters) => {
+    const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
+
+    const fetchedInfo = await client.getUsuariosByFilters(filters);
+
+    setUsuariosInfo({ ...fetchedInfo });
+  }, [setUsuariosInfo]);
+
   useEffect(() => {
     fetchUsuariosInfo();
   }, []);
@@ -46,6 +54,7 @@ function AdminContainer({ handleLogout }) {
       userInfo={userInfo}
       usuariosInfo={usuariosInfo}
       menuOptions={menuOptions}
+      applyFilters={fetchedFilteredUsuariosInfo}
     />
   ) : null), [usuariosInfo]);
 

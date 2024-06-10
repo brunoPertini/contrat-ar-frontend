@@ -172,7 +172,7 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
                   }));
 
                   return (
-                    <TableCell scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                    <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
 
                       { rendererType !== 'enum' && rendererType !== 'map' && ATTRIBUTES_RENDERERS[rendererType](usuario[attribute])}
                       { rendererType === 'enum' && ATTRIBUTES_RENDERERS[rendererType](attribute, usuario[attribute]) }

@@ -22,4 +22,11 @@ export default class AdminHttpClient extends HttpClient {
   getUsuariosInfo() {
     return this.get(adminRoutes.getUsuariosInfo);
   }
+
+  /**
+   * @param {{name: String, surname: String, type: String}} filters
+   */
+  getUsuariosByFilters(filters) {
+    return this.get(adminRoutes.getUsuariosInfo, { ...filters });
+  }
 }

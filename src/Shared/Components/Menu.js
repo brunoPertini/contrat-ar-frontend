@@ -41,12 +41,14 @@ export default function BasicMenu({ options, buttonLabel, styles }) {
             const { component: Component, props, onClick } = option;
 
             const onOptionClicked = () => {
-              handleClose();
-              onClick();
+              if (onClick) {
+                handleClose();
+                onClick();
+              }
             };
 
             return (
-              <MenuItem onClick={onOptionClicked} key={`menu_option${index}`}>
+              <MenuItem onClick={onOptionClicked} key={`menu_option${index}`} sx={{ cursor: 'default' }}>
                 <Component {...props} />
               </MenuItem>
             );
