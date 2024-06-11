@@ -41,7 +41,6 @@ export default function AdminFilters({
           searchLabel: sharedLabels.name,
           onSearchClick: applyFilters,
           isSearchDisabled: false,
-          autoFocus: true,
           keyEvents: {
             onKeyUp: onChangeName,
           },
@@ -55,7 +54,6 @@ export default function AdminFilters({
           searchLabel: sharedLabels.surname,
           onSearchClick: applyFilters,
           isSearchDisabled: false,
-          autoFocus: true,
           keyEvents: {
             onKeyUp: onChangeSurname,
           },

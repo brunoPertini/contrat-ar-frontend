@@ -3,8 +3,11 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
+import { EMPTY_FUNCTION } from '../Constants/System';
 
-export default function BasicMenu({ options, buttonLabel, styles }) {
+export default function BasicMenu({
+  options, buttonLabel, styles, onClose,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -14,6 +17,7 @@ export default function BasicMenu({ options, buttonLabel, styles }) {
 
   const handleClose = () => {
     setAnchorEl(null);
+    onClose();
   };
 
   return (
@@ -61,6 +65,7 @@ export default function BasicMenu({ options, buttonLabel, styles }) {
 
 BasicMenu.defaultProps = {
   styles: {},
+  onClose: EMPTY_FUNCTION,
 };
 
 BasicMenu.propTypes = {
@@ -71,4 +76,5 @@ BasicMenu.propTypes = {
   })).isRequired,
   buttonLabel: PropTypes.any.isRequired,
   styles: PropTypes.object,
+  onClose: PropTypes.func,
 };

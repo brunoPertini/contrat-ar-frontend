@@ -31,12 +31,14 @@ function AdminPage({
   };
 
   const handleSetFilters = (key, value) => {
-    setFilters({ [key]: value });
+    setFilters((previous) => ({ ...previous, [key]: value }));
   };
 
   const handleApplyUsuarioTypeFilter = async (value) => {
-    await applyFilters({ type: value });
-    setUsuarioTypeFilter(value);
+    if (usuarioTypeFilter !== value) {
+      await applyFilters({ type: value, ...filters });
+      setUsuarioTypeFilter(value);
+    }
   };
 
   return (
