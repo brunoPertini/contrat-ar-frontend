@@ -24,9 +24,10 @@ export default class AdminHttpClient extends HttpClient {
   }
 
   /**
-   * @param {{name: String, surname: String, type: String}} filters
+   * @param {{ usuarioType: String }} usuarioType
+   * @param {{name: String, surname: String, email: String}} filters
    */
-  getUsuariosByFilters(filters) {
-    return this.get(adminRoutes.getUsuariosInfo, { ...filters });
+  getUsuariosByFilters(usuarioType, filters = {}) {
+    return this.post(adminRoutes.getUsuariosInfo, { type: usuarioType }, filters);
   }
 }

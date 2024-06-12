@@ -24,19 +24,22 @@ function AdminPage({
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
-  const [filters, setFilters] = useState({ name: '', surname: '' });
+  const [filters, setFilters] = useState({ name: '', surname: '', email: '' });
 
   const handleApplyFilters = () => {
-    applyFilters({ type: usuarioTypeFilter, ...filters });
+    applyFilters({ type: usuarioTypeFilter, filters });
   };
 
   const handleSetFilters = (key, value) => {
+    if (filters[key] && !value) {
+      applyFilters({ type: usuarioTypeFilter, filters: { ...filters, [key]: value } });
+    }
     setFilters((previous) => ({ ...previous, [key]: value }));
   };
 
   const handleApplyUsuarioTypeFilter = async (value) => {
     if (usuarioTypeFilter !== value) {
-      await applyFilters({ type: value, ...filters });
+      await applyFilters({ type: value, filters });
       setUsuarioTypeFilter(value);
     }
   };

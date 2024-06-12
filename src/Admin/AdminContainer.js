@@ -8,6 +8,7 @@ import AdminPage from '.';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import { withRouter } from '../Shared/Components';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
+import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
 
 const stateSelector = (state) => state;
 
@@ -21,24 +22,16 @@ function AdminContainer({ handleLogout }) {
 
   const [usuariosInfo, setUsuariosInfo] = useState();
 
-  const fetchUsuariosInfo = useCallback(async () => {
+  const fetchedFilteredUsuariosInfo = useCallback(async ({ type, filters }) => {
     const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
 
-    const fetchedInfo = await client.getUsuariosInfo();
-
-    setUsuariosInfo({ ...fetchedInfo });
-  }, [setUsuariosInfo]);
-
-  const fetchedFilteredUsuariosInfo = useCallback(async (filters) => {
-    const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
-
-    const fetchedInfo = await client.getUsuariosByFilters(filters);
+    const fetchedInfo = await client.getUsuariosByFilters(type, filters);
 
     setUsuariosInfo({ ...fetchedInfo });
   }, [setUsuariosInfo]);
 
   useEffect(() => {
-    fetchUsuariosInfo();
+    fetchedFilteredUsuariosInfo({ type: USUARIO_TYPE_PROVEEDORES });
   }, []);
 
   const menuOptionsConfig = {

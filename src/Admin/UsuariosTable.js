@@ -25,6 +25,7 @@ const ATTRIBUTES_CONFIG = {
   email: 'text',
   birthDate: 'text',
   phone: 'text',
+  createdAt: 'text',
   location: 'map',
   active: 'boolean',
 };
@@ -43,6 +44,7 @@ const ATTRIBUTES_LABELS = {
   birthDate: sharedLabels.birthDate,
   phone: sharedLabels.phone,
   location: sharedLabels.location,
+  createdAt: sharedLabels.createdAt,
 };
 
 const PROVEEDORES_ATTRIBUTES_LABELS = {

@@ -18,6 +18,8 @@ export default function AdminFilters({
 
   const onChangeSurname = (surname) => setFilters('surname', surname);
 
+  const onChangeEmail = (email) => setFilters('email', email);
+
   return (
     <BasicMenu
       styles={{ color: '#1976d2', display: 'flex', flexDirection: 'row' }}
@@ -40,7 +42,7 @@ export default function AdminFilters({
           inputValue: filters.name,
           searchLabel: sharedLabels.name,
           onSearchClick: applyFilters,
-          isSearchDisabled: false,
+          isSearchDisabled: !(filters.name),
           keyEvents: {
             onKeyUp: onChangeName,
           },
@@ -53,9 +55,22 @@ export default function AdminFilters({
           inputValue: filters.surname,
           searchLabel: sharedLabels.surname,
           onSearchClick: applyFilters,
-          isSearchDisabled: false,
+          isSearchDisabled: !(filters.surname),
           keyEvents: {
             onKeyUp: onChangeSurname,
+          },
+        },
+        onClick: undefined,
+      },
+      {
+        component: Searcher,
+        props: {
+          inputValue: filters.email,
+          searchLabel: sharedLabels.email,
+          onSearchClick: applyFilters,
+          isSearchDisabled: !(filters.email),
+          keyEvents: {
+            onKeyUp: onChangeEmail,
           },
         },
         onClick: undefined,
