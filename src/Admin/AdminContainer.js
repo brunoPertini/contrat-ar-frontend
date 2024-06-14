@@ -22,16 +22,23 @@ function AdminContainer({ handleLogout }) {
 
   const [usuariosInfo, setUsuariosInfo] = useState();
 
-  const fetchedFilteredUsuariosInfo = useCallback(async ({ type, filters }) => {
-    const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
+  const fetchFilteredUsuariosInfo = useCallback(async ({ type, filters }) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+    });
 
     const fetchedInfo = await client.getUsuariosByFilters(type, filters);
 
     setUsuariosInfo({ ...fetchedInfo });
   }, [setUsuariosInfo]);
 
+  // First info fetching, with default values
   useEffect(() => {
-    fetchedFilteredUsuariosInfo({ type: USUARIO_TYPE_PROVEEDORES });
+    fetchFilteredUsuariosInfo({
+      type: USUARIO_TYPE_PROVEEDORES,
+      filters: { onlyActives: false },
+    });
   }, []);
 
   const menuOptionsConfig = {
@@ -47,7 +54,7 @@ function AdminContainer({ handleLogout }) {
       userInfo={userInfo}
       usuariosInfo={usuariosInfo}
       menuOptions={menuOptions}
-      applyFilters={fetchedFilteredUsuariosInfo}
+      applyFilters={fetchFilteredUsuariosInfo}
     />
   ) : null), [usuariosInfo]);
 

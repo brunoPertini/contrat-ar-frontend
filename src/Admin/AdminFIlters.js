@@ -3,6 +3,7 @@
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import Checkbox from '@mui/material/Checkbox';
 import { CheckBoxGroup } from '../Shared/Components';
 import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
@@ -19,6 +20,8 @@ export default function AdminFilters({
   const onChangeSurname = (surname) => setFilters('surname', surname);
 
   const onChangeEmail = (email) => setFilters('email', email);
+
+  const onChangeOnlyActives = (value) => setFilters('onlyActives', value);
 
   return (
     <BasicMenu
@@ -74,6 +77,14 @@ export default function AdminFilters({
           },
         },
         onClick: undefined,
+      },
+      {
+        component: Checkbox,
+        props: {
+          checked: filters.onlyActives,
+          onChange: (event) => onChangeOnlyActives(event.target.checked),
+        },
+        label: 'Solo usuarios activos',
       }]}
     />
 

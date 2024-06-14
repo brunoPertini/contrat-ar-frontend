@@ -25,9 +25,15 @@ export default class AdminHttpClient extends HttpClient {
 
   /**
    * @param {{ usuarioType: String }} usuarioType
-   * @param {{name: String, surname: String, email: String}} filters
+   * @param {{name: String, surname: String, email: String, onlyActives: Boolean}} filters
    */
   getUsuariosByFilters(usuarioType, filters = {}) {
-    return this.post(adminRoutes.getUsuariosInfo, { type: usuarioType }, filters);
+    const queryParams = { type: usuarioType };
+
+    if ('onlyActives' in filters) {
+      queryParams.showOnlyActives = filters.onlyActives;
+      delete filters.onlyActives;
+    }
+    return this.post(adminRoutes.getUsuariosInfo, queryParams, filters);
   }
 }

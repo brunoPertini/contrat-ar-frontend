@@ -24,14 +24,16 @@ function AdminPage({
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
-  const [filters, setFilters] = useState({ name: '', surname: '', email: '' });
+  const [filters, setFilters] = useState({
+    name: '', surname: '', email: '', onlyActives: false,
+  });
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
   };
 
   const handleSetFilters = (key, value) => {
-    if (filters[key] && !value) {
+    if ((filters[key] && !value) || key === 'onlyActives') {
       applyFilters({ type: usuarioTypeFilter, filters: { ...filters, [key]: value } });
     }
     setFilters((previous) => ({ ...previous, [key]: value }));

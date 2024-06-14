@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { EMPTY_FUNCTION } from '../Constants/System';
 
 export default function BasicMenu({
@@ -42,7 +43,9 @@ export default function BasicMenu({
       >
         {
           options.map((option, index) => {
-            const { component: Component, props, onClick } = option;
+            const {
+              component: Component, props, onClick, label,
+            } = option;
 
             const onOptionClicked = () => {
               if (onClick) {
@@ -53,7 +56,13 @@ export default function BasicMenu({
 
             return (
               <MenuItem onClick={onOptionClicked} key={`menu_option${index}`} sx={{ cursor: 'default' }}>
-                <Component {...props} />
+                {label ? (
+                  <FormControlLabel
+                    control={<Component {...props} />}
+                    label={label}
+                  />
+                ) : <Component {...props} />}
+
               </MenuItem>
             );
           })
