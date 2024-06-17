@@ -68,7 +68,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
 
 export const getPlanId = (planesInfo, planType) => planesInfo.find(
   (planInfo) => planInfo.type === planType,
-).id;
+)?.id ?? '';
 
 export const getPlanType = (planesInfo, planId) => planesInfo.find(
   (planInfo) => planInfo.id === planId,

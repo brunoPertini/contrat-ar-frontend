@@ -19,13 +19,13 @@ const TABS_COMPONENTS = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, menuOptions, applyFilters,
+  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
   const [filters, setFilters] = useState({
-    name: '', surname: '', email: '', onlyActives: false,
+    name: '', surname: '', email: '', onlyActives: false, plan: '',
   });
 
   const handleApplyFilters = () => {
@@ -80,6 +80,7 @@ function AdminPage({
             filters={filters}
             setFilters={handleSetFilters}
             applyFilters={handleApplyFilters}
+            planesInfo={planesInfo}
           />
           {TABS_COMPONENTS[tabOption]({
             usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES

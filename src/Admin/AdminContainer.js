@@ -22,6 +22,8 @@ function AdminContainer({ handleLogout }) {
 
   const [usuariosInfo, setUsuariosInfo] = useState();
 
+  const [planesInfo, setPlanesInfo] = useState();
+
   const fetchFilteredUsuariosInfo = useCallback(async ({ type, filters }) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
@@ -33,12 +35,19 @@ function AdminContainer({ handleLogout }) {
     setUsuariosInfo({ ...fetchedInfo });
   }, [setUsuariosInfo]);
 
+  const fetchPlanesInfo = useCallback(async () => {
+    const client = HttpClientFactory.createProveedorHttpClient();
+    const info = await client.getAllPlanes();
+    setPlanesInfo([...info]);
+  }, [setPlanesInfo]);
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
       type: USUARIO_TYPE_PROVEEDORES,
       filters: { onlyActives: false },
     });
+    fetchPlanesInfo();
   }, []);
 
   const menuOptionsConfig = {
@@ -53,6 +62,7 @@ function AdminContainer({ handleLogout }) {
     <AdminPage
       userInfo={userInfo}
       usuariosInfo={usuariosInfo}
+      planesInfo={planesInfo}
       menuOptions={menuOptions}
       applyFilters={fetchFilteredUsuariosInfo}
     />
