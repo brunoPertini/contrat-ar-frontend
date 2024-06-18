@@ -30,10 +30,10 @@ export default function AdminFilters({
   const onChangeOnlyActives = (value) => setFilters('onlyActives', value);
 
   const onChangePlan = (value) => {
-    if (value) {
+    if (filters.plan !== value) {
       const planType = Object.keys(plansNames)
         .find((key) => plansNames[key] === value);
-      setFilters('plan', getPlanId(planesInfo, planType));
+      setFilters('plan', planType !== plansNames.ALL ? getPlanId(planesInfo, planType) : planType);
     }
   };
 
@@ -99,7 +99,7 @@ export default function AdminFilters({
     }];
 
     if (usuarioTypeFilter === 'proveedores') {
-      const planSelectValues = ['', plansNames.FREE, plansNames.PAID];
+      const planSelectValues = [plansNames.ALL, plansNames.FREE, plansNames.PAID];
 
       const selectedType = planesInfo.find((plan) => plan.id === filters.plan)?.type ?? '';
 

@@ -25,7 +25,8 @@ export default class AdminHttpClient extends HttpClient {
 
   /**
    * @param {{ usuarioType: String }} usuarioType
-   * @param {{name: String, surname: String, email: String, onlyActives: Boolean}} filters
+   * @param {{name: String, surname: String, email: String,
+   *  onlyActives: Boolean, plan: Number}} filters
    */
   getUsuariosByFilters(usuarioType, filters = {}) {
     const queryParams = { type: usuarioType };
@@ -34,6 +35,14 @@ export default class AdminHttpClient extends HttpClient {
       queryParams.showOnlyActives = filters.onlyActives;
       delete filters.onlyActives;
     }
+
+    if ('plan' in filters) {
+      if (filters.plan) {
+        queryParams.planId = filters.plan;
+      }
+      delete filters.plan;
+    }
+
     return this.post(adminRoutes.getUsuariosInfo, queryParams, filters);
   }
 }

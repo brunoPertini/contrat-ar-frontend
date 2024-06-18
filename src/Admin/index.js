@@ -33,10 +33,21 @@ function AdminPage({
   };
 
   const handleSetFilters = (key, value) => {
+    if (key === 'plan' && filters[key] !== value) {
+      if (value === sharedLabels.plansNames.ALL) {
+        applyFilters({ type: usuarioTypeFilter, filters: { ...filters, plan: '' } });
+        return setFilters((previous) => ({ ...previous, plan: '' }));
+      }
+
+      applyFilters({ type: usuarioTypeFilter, filters: { ...filters, plan: value } });
+      return setFilters((previous) => ({ ...previous, plan: value }));
+    }
+
     if ((filters[key] && !value) || key === 'onlyActives') {
       applyFilters({ type: usuarioTypeFilter, filters: { ...filters, [key]: value } });
     }
-    setFilters((previous) => ({ ...previous, [key]: value }));
+
+    return setFilters((previous) => ({ ...previous, [key]: value }));
   };
 
   const handleApplyUsuarioTypeFilter = async (value) => {

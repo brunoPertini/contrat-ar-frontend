@@ -62,7 +62,8 @@
     "yourLocation": "Tu dirección aproximada",
     "plansNames": {
         "FREE": "Plan Gratuito",
-        "PAID": "Plan Pago"
+        "PAID": "Plan Pago",
+        "ALL": "Todos los planes"
     },
     "saveChanges": "Guardar Cambios",
     "finalMonthlyPrice": " Precio final mensual: {price}",
