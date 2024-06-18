@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
-import AdminFilters from './AdminFIlters';
+import AdminFilters from './AdminFilters';
 import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
 import { sharedLabels } from '../StaticData/Shared';
 
@@ -25,7 +25,7 @@ function AdminPage({
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
   const [filters, setFilters] = useState({
-    name: '', surname: '', email: '', onlyActives: false, plan: '',
+    name: '', surname: '', email: '', onlyActives: false, plan: null,
   });
 
   const handleApplyFilters = () => {

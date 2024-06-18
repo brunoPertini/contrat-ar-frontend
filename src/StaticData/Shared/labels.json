@@ -71,5 +71,6 @@
     "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde",
     "invalidEmail": "Mail inválido",
     "userType": "Tipo de usuario",
-    "showing": "Mostrando:"
+    "showing": "Mostrando:",
+    "onlyActiveUsers": "Solo usuarios activos"
 }

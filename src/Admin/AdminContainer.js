@@ -66,7 +66,7 @@ function AdminContainer({ handleLogout }) {
       menuOptions={menuOptions}
       applyFilters={fetchFilteredUsuariosInfo}
     />
-  ) : null), [usuariosInfo]);
+  ) : null), [usuariosInfo, planesInfo]);
 
   return MemoizedAdminPage;
 }

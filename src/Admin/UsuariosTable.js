@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,14 +9,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import Checkbox from '@mui/material/Checkbox';
-import Modal from '@mui/material/Modal';
-import { useState } from 'react';
-import { Box, Typography } from '@mui/material';
 import { sharedLabels } from '../StaticData/Shared';
 import { labels } from '../StaticData/LocationMap';
-import LocationMap from '../Shared/Components/LocationMap';
-import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
+import MapModal from '../Shared/Components/MapModal';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -88,40 +84,6 @@ const ATTRIBUTES_RENDERERS = {
   },
 };
 
-function MapModal({
-  location, handleClose, open, title,
-}) {
-  return open ? (
-    <Modal
-      open={open}
-      onClose={handleClose}
-    >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'white',
-        }}
-      >
-        <Typography variant="h3" sx={{ mb: '2%' }}>
-          { title }
-        </Typography>
-
-        <LocationMap
-          enableDragEvents={false}
-          location={parseLocationForMap(location)}
-          containerStyles={{
-            height: '40rem',
-            width: '40rem',
-          }}
-        />
-      </Box>
-    </Modal>
-  ) : null;
-}
-
 export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
@@ -191,3 +153,8 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
     </TableContainer>
   );
 }
+
+UsuariosTable.propTypes = {
+  usuarios: PropTypes.any.isRequired,
+  usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
+};
