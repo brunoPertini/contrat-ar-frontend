@@ -41,8 +41,11 @@ function AdminPage({
 
   const handleApplyUsuarioTypeFilter = async (value) => {
     if (usuarioTypeFilter !== value) {
-      await applyFilters({ type: value, filters });
+      await applyFilters({ type: value, filters: { onlyActives: false } });
       setUsuarioTypeFilter(value);
+      setFilters({
+        name: '', surname: '', email: '', onlyActives: false, plan: '',
+      });
     }
   };
 

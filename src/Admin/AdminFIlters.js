@@ -37,8 +37,8 @@ export default function AdminFilters({
     }
   };
 
-  const menuOptions = useMemo(() => {
-    const options = [{
+  const memoizedMenuOptions = useMemo(() => {
+    const menuOptions = [{
       component: SelectComponent,
       props: {
         label: sharedLabels.userType,
@@ -101,30 +101,32 @@ export default function AdminFilters({
     if (usuarioTypeFilter === 'proveedores') {
       const planSelectValues = ['', plansNames.FREE, plansNames.PAID];
 
-      const defaultSelectedType = planesInfo.find((plan) => plan.id === filters.plan)?.type ?? '';
+      const selectedType = planesInfo.find((plan) => plan.id === filters.plan)?.type ?? '';
 
-      options.splice(1, 0, {
+      const defaultSelected = selectedType ? planSelectValues.indexOf(plansNames[selectedType]) : 0;
+
+      menuOptions.splice(1, 0, {
         component: SelectComponent,
         props: {
           label: sharedLabels.plan,
           containerStyles: { width: '20rem' },
           title: sharedLabels.plan,
           values: planSelectValues,
-          defaultSelected: planSelectValues.indexOf(defaultSelectedType),
           handleOnChange: onChangePlan,
+          defaultSelected,
         },
         onClick: undefined,
       });
     }
 
-    return options;
-  }, [usuarioTypeFilter, filters.plan]);
+    return menuOptions;
+  }, [usuarioTypeFilter, filters]);
 
   return (
     <BasicMenu
       styles={{ color: '#1976d2', display: 'flex', flexDirection: 'row' }}
       buttonLabel={sharedLabels.filters}
-      options={menuOptions}
+      options={memoizedMenuOptions}
     />
 
   );
