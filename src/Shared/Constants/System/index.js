@@ -22,6 +22,8 @@ export const ROLE_PROVEEDOR_PRODUCTOS = 'PROVEEDOR_PRODUCTOS';
 
 export const ROLE_PROVEEDOR_SERVICIOS = 'PROVEEDOR_SERVICIOS';
 
+export const ROLE_ADMIN = 'ADMIN';
+
 export const CLIENTE = 'CLIENTE';
 
 export const EMPTY_FUNCTION = () => {};
@@ -64,3 +66,8 @@ export const dialogModalTexts = {
     text: 'Esta acción es irreversible',
   },
 };
+
+export const USUARIO_TYPE_PROVEEDORES = 'proveedores';
+export const USUARIO_TYPE_CLIENTES = 'clientes';
+
+export const USUARIOS_TYPES = [USUARIO_TYPE_PROVEEDORES, USUARIO_TYPE_CLIENTES];

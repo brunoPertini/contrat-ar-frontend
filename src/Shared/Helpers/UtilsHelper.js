@@ -25,36 +25,47 @@ export const waitAndCleanUserTokenCookie = () => {
  */
 
 /**
- * Returns all the necessary components, for the app menu. They can be overwritten,
- * and their props or click handlers too.
- * @param {Array<UserMenuConfiguration>} elementsConfiguration
+ * Returns all the necessary components, for the app menu. The caller has to pass the ids
+ * of the elements it need, as well as the props and click handlers
+ * @param {{Object<String, UserMenuConfiguration>}} elementsConfiguration
  * @returns
  */
-export const getUserMenuOptions = (elementsConfiguration) => [{
-  component: () => (
-    <>
-      <ListItemIcon>
-        <AccountCircleRoundedIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>{sharedLabels.myProfile}</ListItemText>
-    </>
-  ),
-  props: elementsConfiguration[0].props,
-  onClick: () => {
-    window.location.href = routes.userProfile;
-  },
-},
-{
-  component: () => (
-    <>
-      <ListItemIcon>
-        <LogoutIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText>{sharedLabels.logout}</ListItemText>
-    </>
-  ),
-  onClick: elementsConfiguration[1].onClick,
-}];
+export const getUserMenuOptions = (elementsConfiguration) => {
+  const myProfileOption = 'myProfile' in elementsConfiguration ? {
+    id: 'myProfile',
+    component: () => (
+      <>
+        <ListItemIcon>
+          <AccountCircleRoundedIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>{sharedLabels.myProfile}</ListItemText>
+      </>
+    ),
+    props: elementsConfiguration.myProfile.props,
+    onClick: () => {
+      window.location.href = routes.userProfile;
+    },
+  } : undefined;
+
+  const logoutOption = 'logout' in elementsConfiguration ? {
+    id: 'logout',
+    component: () => (
+      <>
+        <ListItemIcon>
+          <LogoutIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>{sharedLabels.logout}</ListItemText>
+      </>
+    ),
+    onClick: elementsConfiguration.logout.onClick,
+  } : undefined;
+
+  const elements = [
+    myProfileOption, logoutOption,
+  ];
+
+  return elements.filter((e) => e);
+};
 
 /**
  *

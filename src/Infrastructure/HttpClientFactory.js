@@ -11,6 +11,7 @@ import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
  * @typedef HttpClientInstanceFactoryConfiguration
  * Params needed to be passed to instances for several purposes
  * @property {String} token
+ * @property {String} alternativeUrl
  */
 
 export class HttpClientFactory {
@@ -133,6 +134,7 @@ export class HttpClientFactory {
   static createAdminHttpClient(config) {
     if (!HttpClientFactory.adminHttpClientInstance) {
       HttpClientFactory.adminHttpClientInstance = new AdminHttpClient({
+        baseUrl: config.alternativeUrl,
         headersValues: { Authorization: config.token },
       });
     }

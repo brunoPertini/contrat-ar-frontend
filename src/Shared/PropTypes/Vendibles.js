@@ -45,7 +45,7 @@ export const getUserInfoResponseShape = {
   location: PropTypes.shape({
     coordinates: PropTypes.arrayOf(PropTypes.number),
   }),
-  role: PropTypes.oneOf(['PROVEEDOR_SERVICIOS', 'PROVEEDOR_PRODUCTOS', 'CLIENTE']),
+  role: PropTypes.oneOf(['PROVEEDOR_SERVICIOS', 'PROVEEDOR_PRODUCTOS', 'CLIENTE', 'ADMIN']),
   token: PropTypes.string,
   indexPage: PropTypes.string,
   phone: PropTypes.string,

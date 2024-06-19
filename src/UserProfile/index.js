@@ -156,8 +156,16 @@ function UserProfile({
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
 
-  const menuOptions = getUserMenuOptions([{ props: userInfo },
-    { onClick: () => showExitAppModal() }]);
+  const menuOptionsConfig = {
+    myProfile: {
+      props: userInfo,
+    },
+    logout: {
+      onClick: () => showExitAppModal(),
+    },
+  };
+
+  const menuOptions = getUserMenuOptions(menuOptionsConfig);
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 

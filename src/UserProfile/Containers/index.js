@@ -51,7 +51,9 @@ function UserProfileContainer({ handleLogout }) {
   };
 
   const requestChangeExists = (attributes) => {
-    const client = HttpClientFactory.createAdminHttpClient({ token: userInfo.token });
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+    });
 
     return client.requestChangeExists(userInfo.id, attributes);
   };

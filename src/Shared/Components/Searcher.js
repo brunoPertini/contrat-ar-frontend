@@ -36,7 +36,9 @@ function Searcher({
     }
   };
 
-  const handleOnChange = (event) => onKeyUp(event.target.value);
+  const handleOnChange = (event) => {
+    onKeyUp(event.target.value);
+  };
 
   const handleOnClick = () => onSearchClick();
 
@@ -69,6 +71,8 @@ function Searcher({
           InputLabelProps={{ shrink: true }}
           label={searchLabel}
           onKeyUp={handleKeyEvents}
+          // Fixes the case when putting TextField inside Menu
+          onKeyDown={(e) => e.stopPropagation()}
           onChange={handleOnChange}
           error={hasError}
           helperText={errorMessage}

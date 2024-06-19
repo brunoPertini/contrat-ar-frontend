@@ -1,4 +1,5 @@
 {
+    "id": "ID de usuario",
     "name": "Nombre",
     "surname": "Apellido",
     "phone": "Teléfono",
@@ -6,6 +7,10 @@
     "password": "Contraseña",
     "birthDate": "Fecha de nacimiento",
     "dni": "DNI",
+    "plan": "Plan",
+    "profilePhoto": "Foto de perfil",
+    "active": "Activo",
+    "createdAt": "Fecha de alta",
     "siteName": "Contract.ar" ,
     "optional": "Opcional",
     "back": "Atrás",
@@ -31,7 +36,6 @@
     "finish": "Terminar",
     "edit": "Editar",
     "deleteLast": "Borrar Última",
-    "price": "Precio",
     "stock": "Stock",
     "accept": "Aceptar",
     "cancel": "Cancelar",
@@ -54,14 +58,20 @@
     "currentImage": "Imágen actual",
     "logout": "Cerrar Sesión",
     "menu": "Menú",
+    "location": "Dirección aproximada",
     "yourLocation": "Tu dirección aproximada",
     "plansNames": {
         "FREE": "Plan Gratuito",
-        "PAID": "Plan Pago"
+        "PAID": "Plan Pago",
+        "ALL": "Todos los planes"
     },
     "saveChanges": "Guardar Cambios",
     "finalMonthlyPrice": " Precio final mensual: {price}",
     "infoModifiedSuccess": "¡La información fue modificada!",
     "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde",
-    "invalidEmail": "Mail inválido"
+    "invalidEmail": "Mail inválido",
+    "userType": "Tipo de usuario",
+    "showing": "Mostrando:",
+    "onlyActiveUsers": "Solo usuarios activos",
+    "locationOf": "Ubicación de {name} {surname}"
 }
