@@ -35,12 +35,17 @@ export default function AdminFilters({
 
   const onChangeEmail = (email) => setFilters('email', email);
 
-  const onChangeOnlyActives = (value) => setFilters('onlyActives', value);
+  const onChangeOnlyActives = (value) => setFilters('showOnlyActives', value);
 
   const onChangePlan = (value) => {
     const planType = Object.keys(plansNames)
       .find((key) => plansNames[key] === value);
-    setFilters('plan', planType !== plansNames.ALL ? getPlanId(planesInfo, planType) : planType);
+
+    const planId = getPlanId(planesInfo, planType);
+
+    if (filters.plan !== planId) {
+      setFilters('plan', planType !== plansNames.ALL ? planId : '');
+    }
   };
 
   const memoizedMenuOptions = useMemo(() => {
@@ -99,7 +104,7 @@ export default function AdminFilters({
       getMenuOption({
         component: Checkbox,
         props: {
-          checked: filters.onlyActives,
+          checked: filters.showOnlyActives,
           onChange: (event) => onChangeOnlyActives(event.target.checked),
         },
         label: sharedLabels.onlyActiveUsers,
@@ -149,7 +154,7 @@ AdminFilters.propTypes = {
     name: PropTypes.string,
     surname: PropTypes.string,
     email: PropTypes.string,
-    onlyActives: PropTypes.bool,
+    showOnlyActives: PropTypes.bool,
     plan: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   }).isRequired,
   setFilters: PropTypes.func.isRequired,

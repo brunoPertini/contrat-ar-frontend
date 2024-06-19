@@ -25,9 +25,9 @@ export const clienteAdminShape = {
   ...usuarioCommonShape,
 };
 
-export const getUsuariosAdminResponse = {
-  usuarios: {
+export const getUsuariosAdminResponseShape = {
+  usuarios: PropTypes.shape({
     clientes: PropTypes.arrayOf(PropTypes.shape(clienteAdminShape)),
     proveedores: PropTypes.arrayOf(PropTypes.shape(proveedorAdminShape)),
-  },
+  }),
 };

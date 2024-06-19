@@ -72,5 +72,6 @@
     "invalidEmail": "Mail inválido",
     "userType": "Tipo de usuario",
     "showing": "Mostrando:",
-    "onlyActiveUsers": "Solo usuarios activos"
+    "onlyActiveUsers": "Solo usuarios activos",
+    "locationOf": "Ubicación de {name} {surname}"
 }

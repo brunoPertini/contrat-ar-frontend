@@ -13,6 +13,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import { labels } from '../StaticData/LocationMap';
 import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
+import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -69,10 +70,9 @@ const ATTRIBUTES_RENDERERS = {
       ,
     </Link>
   ),
-  boolean: (attribute, onChange) => (
+  boolean: (attribute) => (
     <Checkbox
       checked={attribute}
-      onChange={(event) => onChange(event.target.checked)}
     />
   ),
   enum: (attribute, attributeValue) => {
@@ -101,10 +101,29 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
     ? { ...ATTRIBUTES_LABELS, active: sharedLabels.active }
     : { ...ATTRIBUTES_LABELS, ...PROVEEDORES_ATTRIBUTES_LABELS, active: sharedLabels.active };
 
+  const renderMapModal = (usuario) => setMapModalProps((previous) => ({
+    ...previous,
+    open: true,
+    location: usuario.location,
+    title: sharedLabels.locationOf.replace('{name}', usuario.name).replace('{surname}', usuario.surname),
+  }));
+
+  const paramsToRender = ({ rendererType, usuario, attribute }) => {
+    const renderers = {
+      enum: [attribute, usuario[attribute]],
+      map: [() => renderMapModal(usuario)],
+      text: [usuario[attribute]],
+      boolean: [usuario[attribute]],
+      image: [usuario[attribute]],
+    };
+
+    return renderers[rendererType];
+  };
+
   return (
     <TableContainer component={Paper}>
       <MapModal {...mapModalProps} />
-      <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }} aria-label="Proveedores-table">
+      <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
             {
@@ -119,34 +138,31 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {usuarios.map((usuario) => (
+          {usuarios.map((usuario) => ((
             <TableRow
               key={usuario.id}
             >
               {
-                Object.keys(usuario).map((attribute) => {
-                  const rendererType = ATTRIBUTES_CONFIG[attribute]
-                  ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
+                  Object.keys(usuario).map((attribute) => {
+                    const rendererType = ATTRIBUTES_CONFIG[attribute]
+                    ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
 
-                  const renderMapModal = () => setMapModalProps((previous) => ({
-                    ...previous,
-                    open: true,
-                    location: usuario[attribute],
-                    title: `Ubicación de ${usuario.name} ${usuario.surname}`,
-                  }));
+                    return (
+                      <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                        {
+                          ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
+                            rendererType,
+                            usuario,
+                            attribute,
+                          }))
+                        }
 
-                  return (
-                    <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
-
-                      { rendererType !== 'enum' && rendererType !== 'map' && ATTRIBUTES_RENDERERS[rendererType](usuario[attribute])}
-                      { rendererType === 'enum' && ATTRIBUTES_RENDERERS[rendererType](attribute, usuario[attribute]) }
-                      { rendererType === 'map' && ATTRIBUTES_RENDERERS[rendererType](renderMapModal) }
-
-                    </TableCell>
-                  );
-                })
-              }
+                      </TableCell>
+                    );
+                  })
+                }
             </TableRow>
+          )
           ))}
         </TableBody>
       </Table>
@@ -155,6 +171,8 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
 }
 
 UsuariosTable.propTypes = {
-  usuarios: PropTypes.any.isRequired,
+  usuarios: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.shape(proveedorAdminShape),
+    PropTypes.shape(clienteAdminShape)])).isRequired,
   usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
 };

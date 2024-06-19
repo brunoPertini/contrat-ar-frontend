@@ -31,17 +31,14 @@ export default class AdminHttpClient extends HttpClient {
   getUsuariosByFilters(usuarioType, filters = {}) {
     const queryParams = { type: usuarioType };
 
-    if ('onlyActives' in filters) {
-      queryParams.showOnlyActives = filters.onlyActives;
-      delete filters.onlyActives;
-    }
+    const queryParamsFilters = ['showOnlyActives', 'plan'];
 
-    if ('plan' in filters) {
-      if (filters.plan) {
-        queryParams.planId = filters.plan;
-      }
-      delete filters.plan;
-    }
+    queryParamsFilters
+      .filter((f) => f in filters && filters[f] !== null)
+      .forEach((filterKey) => {
+        queryParams[filterKey] = filters[filterKey];
+        delete filters[filterKey];
+      });
 
     return this.post(adminRoutes.getUsuariosInfo, queryParams, filters);
   }
