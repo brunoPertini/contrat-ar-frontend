@@ -36,6 +36,8 @@ export const userState = {
   plan: '',
   dni: '',
   fotoPerfilUrl: '',
+  admin: {
+  },
 };
 
 function usuarioReducer(state = userState, action) {

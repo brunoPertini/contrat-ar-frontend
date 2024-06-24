@@ -42,4 +42,13 @@ export default class AdminHttpClient extends HttpClient {
 
     return this.post(adminRoutes.getUsuariosInfo, queryParams, filters);
   }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @returns {import('../../State/Reducers/usuario').UsuarioModel} user info
+   */
+  getUserInfoForLogin(userId) {
+    return this.get(adminRoutes.getUserInfo.replace('{userId}', userId));
+  }
 }

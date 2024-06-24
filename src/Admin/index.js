@@ -27,7 +27,7 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters,
+  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters, loginAsUser,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
@@ -94,6 +94,7 @@ function AdminPage({
             usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
               ? usuariosInfo.usuarios.proveedores : usuariosInfo.usuarios.clientes,
             usuarioTypeFilter,
+            loginAsUser,
           })}
         </Box>
       </Box>
@@ -117,6 +118,7 @@ AdminPage.propTypes = {
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   applyFilters: PropTypes.func.isRequired,
+  loginAsUser: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

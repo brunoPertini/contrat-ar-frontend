@@ -9,6 +9,8 @@ import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import { withRouter } from '../Shared/Components';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
 import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
+import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
+import { routes } from '../Shared/Constants';
 
 const stateSelector = (state) => state;
 
@@ -16,6 +18,8 @@ const userInfoSelector = createSelector(
   stateSelector,
   (state) => state.usuario,
 );
+
+const localStorageService = new LocalStorageService();
 
 function AdminContainer({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
@@ -41,6 +45,17 @@ function AdminContainer({ handleLogout }) {
     setPlanesInfo([...info]);
   }, [setPlanesInfo]);
 
+  const loginAsUser = useCallback(async (userId) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+    });
+
+    const newUserInfo = await client.getUserInfoForLogin(userId);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, newUserInfo);
+    window.location.href = routes[`ROLE_${newUserInfo.role.nombre}`];
+  }, []);
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -65,6 +80,7 @@ function AdminContainer({ handleLogout }) {
       planesInfo={planesInfo}
       menuOptions={menuOptions}
       applyFilters={fetchFilteredUsuariosInfo}
+      loginAsUser={loginAsUser}
     />
   ) : null), [usuariosInfo, planesInfo]);
 
