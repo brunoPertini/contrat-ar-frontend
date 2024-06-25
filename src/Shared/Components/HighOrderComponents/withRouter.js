@@ -45,7 +45,6 @@ export default function withRouter(Component) {
 
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
-    const [shouldByPassRoute, setShouldByPassRoute] = useState(false);
 
     const verifyToken = useCallback(async () => {
       try {
@@ -57,7 +56,6 @@ export default function withRouter(Component) {
           navigate(routes.signin);
         } else {
           if (userInfo.role.nombre === ROLE_ADMIN) {
-            setShouldByPassRoute(true);
             userInfo = {
               ...userInfo,
               ...JSON.parse(localStorageService.getItem(
@@ -132,7 +130,6 @@ export default function withRouter(Component) {
         <Provider store={store}>
           <Component
             {...props}
-            shouldByPassRoute={shouldByPassRoute}
             router={{ location, navigate, params }}
             securityService={securityService}
             cookiesService={cookiesService}

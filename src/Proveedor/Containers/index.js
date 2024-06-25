@@ -38,7 +38,7 @@ const addNewVendiblesLabels = {
 
 const localStorageService = new LocalStorageService();
 
-function ProveedorContainer({ router, handleLogout, shouldByPassRoute }) {
+function ProveedorContainer({ router, handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
@@ -67,8 +67,8 @@ function ProveedorContainer({ router, handleLogout, shouldByPassRoute }) {
     ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
-    if (!shouldByPassRoute && (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
-      && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS)) {
+    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
+      && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
       throw new Response('', { status: 404 });
     }
 
@@ -165,7 +165,6 @@ function ProveedorContainer({ router, handleLogout, shouldByPassRoute }) {
 ProveedorContainer.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
   handleLogout: PropTypes.func.isRequired,
-  shouldByPassRoute: PropTypes.bool.isRequired,
 };
 
 export default withRouter(ProveedorContainer);
