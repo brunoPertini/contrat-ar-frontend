@@ -35,6 +35,15 @@ class SecurityService {
     throw new Error(errorMessages[error.constructor.name]);
   }
 
+  async readJwtPayload(jwt) {
+    if (!this.#publicKey) {
+      await this.#loadPublicKey();
+    }
+    return jose.jwtVerify(jwt, this.#publicKey)
+      .then((jwtResultValue) => jwtResultValue.payload)
+      .catch((error) => this.#handleError(error));
+  }
+
   /**
    * Loads the public key from backend so it is used to verify each user token
    *
@@ -64,11 +73,7 @@ class SecurityService {
    * @param {string} jwt
   */
   async validateJwt(jwt) {
-    if (!this.#publicKey) {
-      await this.#loadPublicKey();
-    }
-    return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
-      const { payload } = jwtResultValue;
+    return this.readJwtPayload(jwt).then((payload) => {
       if (!isEmpty(payload)) {
         this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
         return this.#httpClient.getUserInfo(payload.id).then((response) => ({
@@ -79,7 +84,7 @@ class SecurityService {
       }
 
       return {};
-    }).catch((error) => this.#handleError(error));
+    });
   }
 }
 

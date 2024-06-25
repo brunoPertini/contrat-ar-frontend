@@ -12,6 +12,7 @@ export function setUserInfo(userInfo) {
       const keysToPick = Object.keys(userModel);
       const sanitizedUserInfo = pick(userInfo, keysToPick);
       sanitizedUserInfo.email = userInfo.sub;
+      sanitizedUserInfo.role = userInfo.role.nombre;
       dispatch({ type: actionTypes.SET_USER_INFO, payload: sanitizedUserInfo });
     }
   };

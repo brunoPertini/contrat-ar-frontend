@@ -60,9 +60,13 @@ export default function OptionsMenu({
   );
 }
 
+OptionsMenu.defaultProps = {
+  vendibleName: null,
+};
+
 OptionsMenu.propTypes = {
   title: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
   onOptionClicked: PropTypes.func.isRequired,
-  vendibleName: PropTypes.string.isRequired,
+  vendibleName: PropTypes.string,
 };

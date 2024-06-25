@@ -1,18 +1,53 @@
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import { useCallback, useEffect, useState } from 'react';
 import { sharedLabels } from '../../StaticData/Shared';
+import SecurityService from '../../Infrastructure/Services/SecurityService';
+import { ROLE_ADMIN } from '../Constants/System';
+import { getUserInfoResponseShape } from '../PropTypes/Vendibles';
+
+const securityService = new SecurityService();
 
 export default function LoggedUserInfo({ userInfo }) {
+  const [labels, setLabels] = useState({
+    name: '',
+    surname: '',
+    adminDisclaimer: '',
+  });
+
+  const handleSetLabels = useCallback(async () => {
+    const tokenUserInfo = await securityService.readJwtPayload(userInfo.token);
+
+    if (tokenUserInfo.role === ROLE_ADMIN && userInfo.role !== ROLE_ADMIN) {
+      return setLabels({
+        name: tokenUserInfo.name,
+        surname: tokenUserInfo.surname,
+        adminDisclaimer: `(Admin logueado como ${userInfo.name} ${userInfo.surname})`,
+      });
+    }
+
+    return setLabels({
+      name: userInfo.name,
+      surname: userInfo.surname,
+    });
+  }, [securityService]);
+
+  useEffect(() => {
+    handleSetLabels();
+  }, []);
+
   return (
     <Grid container>
       <Grid item>
         <Typography variant="h6">
           { sharedLabels.hello }
           {' '}
-          { userInfo.name }
+          { labels.name }
           {' '}
-          { userInfo.surname }
+          { labels.surname }
+          {' '}
+          { labels.adminDisclaimer }
         </Typography>
       </Grid>
     </Grid>
@@ -20,5 +55,5 @@ export default function LoggedUserInfo({ userInfo }) {
 }
 
 LoggedUserInfo.propTypes = {
-  userInfo: PropTypes.shape({ name: PropTypes.string, surname: PropTypes.string }).isRequired,
+  userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
 };

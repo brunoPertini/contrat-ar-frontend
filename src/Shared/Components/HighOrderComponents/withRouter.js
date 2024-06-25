@@ -16,10 +16,13 @@ import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
+import { ROLE_ADMIN } from '../../Constants/System';
+import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
 
 const store = createStore();
 const securityService = new SecurityService();
 const cookiesService = new CookiesService();
+const localStorageService = new LocalStorageService();
 
 /**
  *
@@ -42,16 +45,26 @@ export default function withRouter(Component) {
 
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
+    const [shouldByPassRoute, setShouldByPassRoute] = useState(false);
 
     const verifyToken = useCallback(async () => {
       try {
         const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
-        const userInfo = await securityService.validateJwt(userToken);
+        let userInfo = await securityService.validateJwt(userToken);
         if (isEmpty(userInfo)) {
           setTokenVerified(false);
           await store.dispatch(resetUserInfo());
           navigate(routes.signin);
         } else {
+          if (userInfo.role.nombre === ROLE_ADMIN) {
+            setShouldByPassRoute(true);
+            userInfo = {
+              ...userInfo,
+              ...JSON.parse(localStorageService.getItem(
+                LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
+              )),
+            };
+          }
           cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
           setTokenVerified(true);
           await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
@@ -85,6 +98,9 @@ export default function withRouter(Component) {
       HttpClientFactory.cleanInstances();
       navigate(routes.signin);
       removeOnLeavingTabHandlers();
+      Object.keys(LocalStorageService.PAGES_KEYS).forEach(
+        (page) => localStorageService.removeAllKeysOfPage(page),
+      );
       await store.dispatch(resetUserInfo());
     };
 
@@ -116,6 +132,7 @@ export default function withRouter(Component) {
         <Provider store={store}>
           <Component
             {...props}
+            shouldByPassRoute={shouldByPassRoute}
             router={{ location, navigate, params }}
             securityService={securityService}
             cookiesService={cookiesService}
