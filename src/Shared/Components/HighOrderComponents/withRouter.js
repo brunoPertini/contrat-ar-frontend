@@ -16,7 +16,6 @@ import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
-import { ROLE_ADMIN } from '../../Constants/System';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
 
 const store = createStore();
@@ -45,22 +44,27 @@ export default function withRouter(Component) {
 
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const verifyToken = useCallback(async () => {
       try {
         const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
-        let userInfo = await securityService.validateJwt(userToken);
+        const savedUserInfo = JSON.parse(localStorageService.getItem(
+          LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
+        ));
+
+        let userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
+
         if (isEmpty(userInfo)) {
           setTokenVerified(false);
           await store.dispatch(resetUserInfo());
           navigate(routes.signin);
         } else {
-          if (userInfo.role.nombre === ROLE_ADMIN) {
+          if (savedUserInfo) {
+            setIsAdmin(true);
             userInfo = {
               ...userInfo,
-              ...JSON.parse(localStorageService.getItem(
-                LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
-              )),
+              ...savedUserInfo,
             };
           }
           cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
@@ -134,6 +138,7 @@ export default function withRouter(Component) {
             securityService={securityService}
             cookiesService={cookiesService}
             handleLogout={handleLogout}
+            isAdmin={isAdmin}
           />
         </Provider>
       );

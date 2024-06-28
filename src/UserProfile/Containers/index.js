@@ -7,6 +7,7 @@ import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
 import { replaceUserInfo } from '../../State/Actions/usuario';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
 
@@ -15,7 +16,9 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function UserProfileContainer({ handleLogout }) {
+const localStorageService = new LocalStorageService();
+
+function UserProfileContainer({ handleLogout, isAdmin }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
@@ -37,11 +40,31 @@ function UserProfileContainer({ handleLogout }) {
     return client.updateCommonInfo(userInfo.id, info, { token: userInfo.token });
   };
 
-  const callEditCommonInfo = async (info) => {
-    const changedInfo = (userInfo.role === CLIENTE
-      ? await editClienteInfo(info) : await editProveedorInfo(info));
+  const editPersonalInfoForAdmin = (info) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      token: userInfo.token,
+    });
 
-    dispatch(replaceUserInfo(changedInfo));
+    return (userInfo.role === CLIENTE ? client.updateClientePersonalData(userInfo.id, info)
+      : client.updateProveedorPersonalData(userInfo.id, info)).then(() => {
+      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, info);
+    });
+  };
+
+  const callEditCommonInfo = async (info) => {
+    const noAminHandlers = {
+      CLIENTE: () => editClienteInfo(info),
+      ROLE_PROVEEDOR_PRODUCTOS: () => editProveedorInfo(info),
+      ROLE_PROVEEDOR_SERVICIOS: () => editProveedorInfo(info),
+    };
+
+    const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role] : editPersonalInfoForAdmin;
+
+    return toRunFunction(info).then(() => {
+      dispatch(replaceUserInfo(info));
+      return Promise.resolve();
+    }).catch(() => Promise.reject());
   };
 
   const handleUploadProfilePhoto = (file) => {
@@ -73,6 +96,7 @@ function UserProfileContainer({ handleLogout }) {
         confirmPlanChange={confirmPlanChange}
         requestChangeExists={requestChangeExists}
         getAllPlanes={getAllPlanes}
+        isAdmin={isAdmin}
       />
     </NavigationContextProvider>
   );
@@ -80,6 +104,7 @@ function UserProfileContainer({ handleLogout }) {
 
 UserProfileContainer.propTypes = {
   handleLogout: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default withRouter(UserProfileContainer);

@@ -13,17 +13,21 @@ import { userProfileLabels } from '../StaticData/UserProfile';
 import { sharedLabels } from '../StaticData/Shared';
 import InformativeAlert from '../Shared/Components/Alert';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
-const hideInputConfig = {
+const getInputConfig = (isAdmin) => (!isAdmin ? {
   readOnly: true,
   disabled: true,
-};
+} : {
+  readOnly: false,
+  disabled: false,
+});
 
 function UserPersonalData({
   userInfo, styles, usuarioType,
-  userToken, changeUserInfo,
+  userToken, changeUserInfo, isAdmin,
   editCommonInfo, uploadProfilePhoto,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
@@ -58,16 +62,16 @@ function UserPersonalData({
     showInlineLabels: true,
     fieldsOwnConfig: {
       name: {
-        ...hideInputConfig,
+        ...getInputConfig(isAdmin),
       },
       surname: {
-        ...hideInputConfig,
+        ...getInputConfig(isAdmin),
       },
       dni: {
-        ...hideInputConfig,
+        ...getInputConfig(isAdmin),
       },
       birthDate: {
-        ...hideInputConfig,
+        ...getInputConfig(isAdmin),
       },
     },
   })), [isEditModeEnabled, fieldsValues]);
@@ -101,11 +105,22 @@ function UserPersonalData({
 
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsEditModeEnabled(false);
-    editCommonInfo({
+
+    const params = !isAdmin ? {
       phone: userInfo.phone,
       location: userInfo.location,
       fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
-    }).then(() => {
+    } : {
+      ...userInfo,
+      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
+      birthDate: switchDateFormat({
+        date: userInfo.birthDate,
+        inputFormat: FORMAT_DMY,
+        outputFormat: FORMAT_YMD,
+      }),
+    };
+
+    editCommonInfo(params).then(() => {
       setAlertConfig({
         openSnackbar: true,
         alertSeverity: 'success',
@@ -211,6 +226,7 @@ UserPersonalData.propTypes = {
     phone: PropTypes.string,
     fotoPerfilUrl: PropTypes.string,
   }).isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   styles: PropTypes.object,
   usuarioType: PropTypes.oneOf(['CLIENTE', 'PROVEEDOR']).isRequired,
   userToken: PropTypes.string.isRequired,

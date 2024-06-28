@@ -71,12 +71,14 @@ class SecurityService {
    *  authorities: Array<String>
    *  }} If the jwt is valid, returns its decoded payload, empty object otherwise
    * @param {string} jwt
+   * @param {String | Number} alternativeId if the token belongs to an admin,
+   * an alternativeId from another user should be send
   */
-  async validateJwt(jwt) {
+  async validateJwt(jwt, alternativeId) {
     return this.readJwtPayload(jwt).then((payload) => {
       if (!isEmpty(payload)) {
         this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
-        return this.#httpClient.getUserInfo(payload.id).then((response) => ({
+        return this.#httpClient.getUserInfo(alternativeId || payload.id).then((response) => ({
           ...payload,
           ...response,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input

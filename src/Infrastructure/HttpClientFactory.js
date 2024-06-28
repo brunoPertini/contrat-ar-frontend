@@ -132,7 +132,8 @@ export class HttpClientFactory {
    * @returns {AdminHttpClient}
    */
   static createAdminHttpClient(config) {
-    if (!HttpClientFactory.adminHttpClientInstance) {
+    if (!HttpClientFactory.adminHttpClientInstance
+       || config.alternativeUrl !== HttpClientFactory.adminHttpClientInstance.baseUrl) {
       HttpClientFactory.adminHttpClientInstance = new AdminHttpClient({
         baseUrl: config.alternativeUrl,
         headersValues: { Authorization: config.token },

@@ -1,5 +1,7 @@
 {
     "changeRequestExists": "/change-requests",
     "getUsuariosInfo": "/admin/usuarios",
-    "getUserInfo": "/usuarios/{userId}/info"
+    "getUserInfo": "/usuarios/{userId}/info",
+    "usuariosById": "/admin/usuarios/{userId}",
+    "proveedoresById": "/admin/proveedores/{userId}"
 }

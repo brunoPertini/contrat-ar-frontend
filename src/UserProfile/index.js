@@ -68,6 +68,7 @@ const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
+  isAdmin,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -181,6 +182,7 @@ function UserProfile({
         uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
+        isAdmin={isAdmin}
       />
     ), [personalData, userInfo.token]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
@@ -233,6 +235,7 @@ UserProfile.propTypes = {
   confirmPlanChange: PropTypes.func.isRequired,
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default UserProfile;

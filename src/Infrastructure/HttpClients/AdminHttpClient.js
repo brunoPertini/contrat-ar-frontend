@@ -51,4 +51,22 @@ export default class AdminHttpClient extends HttpClient {
   getUserInfoForLogin(userId) {
     return this.get(adminRoutes.getUserInfo.replace('{userId}', userId));
   }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @param {*} body
+   */
+  updateProveedorPersonalData(userId, body) {
+    return this.patch(adminRoutes.proveedoresById.replace('{userId}', userId), null, body);
+  }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @param {*} body
+   */
+  updateClientePersonalData(userId, body) {
+    return this.patch(adminRoutes.usuariosById.replace('{userId}', userId), null, body);
+  }
 }
