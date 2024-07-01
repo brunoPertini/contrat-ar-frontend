@@ -48,7 +48,10 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
 
     return (userInfo.role === CLIENTE ? client.updateClientePersonalData(userInfo.id, info)
       : client.updateProveedorPersonalData(userInfo.id, info)).then(() => {
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, info);
+      localStorageService.setItem(
+        LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
+        { ...info, id: userInfo.id },
+      );
     });
   };
 
@@ -62,7 +65,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role] : editPersonalInfoForAdmin;
 
     return toRunFunction(info).then(() => {
-      dispatch(replaceUserInfo(info));
+      dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
       return Promise.resolve();
     }).catch(() => Promise.reject());
   };
