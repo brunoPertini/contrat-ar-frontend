@@ -52,7 +52,7 @@ function AdminContainer({ handleLogout }) {
     });
 
     const newUserInfo = await client.getUserInfoForLogin(userId);
-    localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, newUserInfo);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, { id: userId });
     window.location.href = routes[`ROLE_${newUserInfo.role.nombre}`];
   }, []);
 
@@ -60,7 +60,7 @@ function AdminContainer({ handleLogout }) {
   useEffect(() => {
     fetchFilteredUsuariosInfo({
       type: USUARIO_TYPE_PROVEEDORES,
-      filters: { onlyActives: false },
+      filters: { showOnlyActives: false },
     });
     fetchPlanesInfo();
   }, []);

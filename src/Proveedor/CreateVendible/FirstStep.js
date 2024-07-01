@@ -15,7 +15,7 @@ import { inputHelperLabels, sharedLabels } from '../../StaticData/Shared';
 import {
   ARGENTINA_LOCALE,
   PRICE_TYPES,
-  PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+  PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
   PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
   SERVICES,
   SERVICE_LOCATION_AT_HOME,
@@ -25,7 +25,7 @@ import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
-const pricesTypeMock = [PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT];
+const pricesTypeMock = [PRICE_TYPES.FIXED, PRICE_TYPES.VARIABLE, PRICE_TYPES.VARIABLE_WITH_AMOUNT];
 
 const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
@@ -41,7 +41,7 @@ function FirstStep({
   const showPriceInput = useMemo(() => {
     const { type } = priceInfo;
     return ((type && (type === PRICE_TYPE_FIXED || type === PRICE_TYPE_VARIABLE_WITH_AMOUNT)));
-  }, [priceInfo, isEditionEnabled]);
+  }, [priceInfo.type, priceInfo.amount, isEditionEnabled]);
 
   const defaultPriceTypeSelected = useMemo(() => {
     if (priceInfo.type) {
@@ -77,7 +77,7 @@ function FirstStep({
     if (priceType !== undefined) {
       setPriceInfo((currentPriceInfo) => ({
         ...currentPriceInfo,
-        type: priceType,
+        type: Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceType),
       }));
     }
   };
