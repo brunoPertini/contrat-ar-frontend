@@ -53,7 +53,7 @@ function AdminContainer({ handleLogout }) {
 
     const newUserInfo = await client.getUserInfoForLogin(userId);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, { id: userId });
-    window.location.href = routes[`ROLE_${newUserInfo.role.nombre}`];
+    window.open(routes[`ROLE_${newUserInfo.role.nombre}`], '_blank');
   }, []);
 
   // First info fetching, with default values

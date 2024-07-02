@@ -7,7 +7,7 @@ import LocationMap from './LocationMap';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
-  ARGENTINA_LOCALE, PRICE_TYPES, PRICE_TYPE_VARIABLE, PRODUCT,
+  ARGENTINA_LOCALE, PRICE_TYPE_VARIABLE, PRODUCT,
   PRODUCTS,
   PRODUCT_LOCATION_FIXED,
   SERVICE,
@@ -93,7 +93,7 @@ export default function VendibleInfo({
           :
         </Typography>
         <Typography variant="h6" fontWeight="bold">
-          { PRICE_TYPES[priceInfoType] }
+          { priceInfoType }
         </Typography>
       </CardContent>
       {
@@ -101,7 +101,6 @@ export default function VendibleInfo({
             <CardContent sx={{ ...cardRowStyles }}>
               <Typography>
                 { sharedLabels.price }
-                :
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 { getLocaleCurrencySymbol(ARGENTINA_LOCALE) }

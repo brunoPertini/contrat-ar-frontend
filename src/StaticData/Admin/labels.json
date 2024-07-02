@@ -1,0 +1,9 @@
+{
+    "enableAccount": "Habilitar cuenta",
+    "disableAccount": "Inhabilitar cuenta",
+    "accountEnabled": "Cuenta activada",
+    "accountDisabled": "Cuenta desactivada",
+    "unexpectedError": "Error inesperado, consulte los registros",
+    "enableAccountQuestion": "¿Habilitar la cuenta del usuario?",
+    "disableAccountQuestion": "¿Inhabilitar la cuenta del usuario?"
+}

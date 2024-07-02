@@ -73,5 +73,6 @@
     "userType": "Tipo de usuario",
     "showing": "Mostrando:",
     "onlyActiveUsers": "Solo usuarios activos",
-    "locationOf": "Ubicación de {name} {surname}"
+    "locationOf": "Ubicación de {name} {surname}",
+    "pleaseConfirmAction": "Por favor confirme la acción"
 }
