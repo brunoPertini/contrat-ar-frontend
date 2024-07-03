@@ -16,10 +16,12 @@ import { resetUserInfo, setUserInfo } from '../../../State/Actions/usuario';
 import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
+import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
 
 const store = createStore();
 const securityService = new SecurityService();
 const cookiesService = new CookiesService();
+const localStorageService = new LocalStorageService();
 
 /**
  *
@@ -42,11 +44,23 @@ export default function withRouter(Component) {
 
     // null = not verified; false = verification failed; true= verification passed
     const [tokenVerified, setTokenVerified] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const verifyToken = useCallback(async () => {
       try {
         const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
-        const userInfo = await securityService.validateJwt(userToken);
+        const savedUserInfo = JSON.parse(localStorageService.getItem(
+          LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
+        ));
+
+        if (savedUserInfo?.id) {
+          setIsAdmin(true);
+        }
+
+        const userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
+
+        userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
+
         if (isEmpty(userInfo)) {
           setTokenVerified(false);
           await store.dispatch(resetUserInfo());
@@ -85,6 +99,9 @@ export default function withRouter(Component) {
       HttpClientFactory.cleanInstances();
       navigate(routes.signin);
       removeOnLeavingTabHandlers();
+      Object.keys(LocalStorageService.PAGES_KEYS).forEach(
+        (page) => localStorageService.removeAllKeysOfPage(page),
+      );
       await store.dispatch(resetUserInfo());
     };
 
@@ -120,6 +137,7 @@ export default function withRouter(Component) {
             securityService={securityService}
             cookiesService={cookiesService}
             handleLogout={handleLogout}
+            isAdmin={isAdmin}
           />
         </Provider>
       );

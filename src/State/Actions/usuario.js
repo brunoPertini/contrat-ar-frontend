@@ -4,6 +4,7 @@ import { userState as userModel } from '../Reducers/usuario';
 import CookiesService from '../../Infrastructure/Services/CookiesService';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { systemConstants } from '../../Shared/Constants';
+import { ROLE_ADMIN } from '../../Shared/Constants/System';
 
 export function setUserInfo(userInfo) {
   return (dispatch, getState) => {
@@ -11,7 +12,10 @@ export function setUserInfo(userInfo) {
     if (!usuario.id) {
       const keysToPick = Object.keys(userModel);
       const sanitizedUserInfo = pick(userInfo, keysToPick);
-      sanitizedUserInfo.email = userInfo.sub;
+      if (userInfo.authorities[0] !== ROLE_ADMIN) {
+        sanitizedUserInfo.email = userInfo.sub;
+      }
+      sanitizedUserInfo.role = userInfo.role.nombre;
       dispatch({ type: actionTypes.SET_USER_INFO, payload: sanitizedUserInfo });
     }
   };

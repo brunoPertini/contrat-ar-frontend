@@ -19,6 +19,9 @@ export class LocalStorageService {
     SERVICE: {
       INDEX: 'servicio',
     },
+    ADMIN: {
+      USER_INFO: 'userInfo',
+    },
   };
 
   setItem(key, value) {

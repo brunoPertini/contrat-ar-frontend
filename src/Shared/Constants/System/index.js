@@ -30,16 +30,16 @@ export const EMPTY_FUNCTION = () => {};
 
 export const MAX_CLIENT_VENDIBLES_GALLERY_IMAGES = 3;
 
-export const PRICE_TYPE_FIXED = 'Fijo';
+export const PRICE_TYPE_FIXED = 'FIXED';
 
-export const PRICE_TYPE_VARIABLE = 'Variable';
+export const PRICE_TYPE_VARIABLE = 'VARIABLE';
 
-export const PRICE_TYPE_VARIABLE_WITH_AMOUNT = 'Variable con monto minimo';
+export const PRICE_TYPE_VARIABLE_WITH_AMOUNT = 'VARIABLE_WITH_AMOUNT';
 
 export const PRICE_TYPES = {
-  FIXED: PRICE_TYPE_FIXED,
-  VARIABLE: PRICE_TYPE_VARIABLE,
-  VARIABLE_WITH_AMOUNT: PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+  [PRICE_TYPE_FIXED]: 'Fijo',
+  [PRICE_TYPE_VARIABLE]: 'Variable',
+  [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: 'Variable con monto mínimo',
 };
 
 export const PRODUCT_LOCATION_FIXED = 'Para retirar en un domicilio particular';

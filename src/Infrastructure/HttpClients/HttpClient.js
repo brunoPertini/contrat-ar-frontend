@@ -151,6 +151,18 @@ export class HttpClient {
   /**
    * @param {string} url
    * @param {Object} params The query params
+   * @param {Object} body Request payload
+   * @param {Object} config object containing meaningful data for request (headers for instance)
+   */
+  patch(url, params, body, config = {}) {
+    return this.instance.patch(url, body, { params, headers: config.headers })
+      .then((response) => response.data)
+      .catch((error) => this.#handleError(error));
+  }
+
+  /**
+   * @param {string} url
+   * @param {Object} params The query params
    * @param {Object} config object containing meaningful data for request (headers for instance)
    */
   delete(url, params, config = {}) {

@@ -1,11 +1,16 @@
+/* eslint-disable no-nested-ternary */
 import PropTypes from 'prop-types';
 import {
+  useCallback,
   useContext, useEffect, useMemo, useState,
 } from 'react';
 import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import isEmpty from 'lodash/isEmpty';
 import Header from '../Header';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
@@ -21,6 +26,10 @@ import PlanData from './PlanData';
 import { NavigationContext } from '../State/Contexts/NavigationContext';
 import GoBackLink from '../Shared/Components/GoBackLink';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
+import { DialogModal, StaticAlert } from '../Shared/Components';
+import { sharedLabels } from '../StaticData/Shared';
+import { adminLabels } from '../StaticData/Admin';
+import InformativeAlert from '../Shared/Components/Alert';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -65,9 +74,17 @@ const rolesTabs = {
 
 const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
 
+const accountActiveModalDefaultValues = {
+  title: '',
+  text: '',
+  handleAccept: () => {},
+  checked: undefined,
+};
+
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
+  isAdmin,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -98,6 +115,12 @@ function UserProfile({
     email: false,
     password: false,
   });
+
+  const [accountActiveModalContent, setAccountActiveModalContent] = useState(
+    accountActiveModalDefaultValues,
+  );
+
+  const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
@@ -154,7 +177,34 @@ function UserProfile({
     }),
   );
 
+  const resetAlertData = () => {
+    setAlertConfig({ open: false, label: '', severity: '' });
+  };
+
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
+
+  const handleAcceptChangeIsUserActive = (active) => editCommonInfo({
+    active,
+  }).then(() => {
+    setAlertConfig({
+      open: true,
+      label: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
+      severity: 'info',
+    });
+  }).catch(() => setAlertConfig({
+    open: true,
+    label: adminLabels.unexpectedError,
+    severity: 'error',
+  })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues));
+
+  const openUserActiveModal = (event) => {
+    setAccountActiveModalContent({
+      text: event.target.checked
+        ? adminLabels.enableAccountQuestion : adminLabels.disableAccountQuestion,
+      handleAccept: handleAcceptChangeIsUserActive,
+      checked: event.target.checked,
+    });
+  };
 
   const menuOptionsConfig = {
     myProfile: {
@@ -181,6 +231,7 @@ function UserProfile({
         uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
         styles={{ mt: '10%', ml: '5%' }}
+        isAdmin={isAdmin}
       />
     ), [personalData, userInfo.token]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
@@ -190,7 +241,7 @@ function UserProfile({
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
-    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan && !isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
         actualPlan={userInfo.plan}
@@ -204,8 +255,46 @@ function UserProfile({
       changeRequestsMade.plan, planesInfo]),
   };
 
+  const activeAlert = useMemo(() => (!isAdmin ? null : !userInfo.active ? (
+    <StaticAlert
+      severity="warning"
+      variant="outlined"
+      label={sharedLabels.inactiveAccount}
+      styles={{ mt: '5%' }}
+    />
+  ) : (
+    <StaticAlert
+      severity="info"
+      variant="outlined"
+      label={sharedLabels.activeAccount}
+      styles={{ mt: '5%' }}
+    />
+  )), [isAdmin, userInfo.active]);
+
+  const UserActiveModal = useCallback(() => (
+    <DialogModal
+      title={sharedLabels.pleaseConfirmAction}
+      contextText={accountActiveModalContent.text}
+      cancelText={sharedLabels.cancel}
+      acceptText={sharedLabels.accept}
+      open={!!(accountActiveModalContent.text)}
+      handleAccept={
+          () => accountActiveModalContent.handleAccept(accountActiveModalContent.checked)
+        }
+      handleDeny={() => setAccountActiveModalContent(accountActiveModalDefaultValues)}
+    />
+  ), [accountActiveModalContent.text]);
+
   return (
     <Grid container display="flex">
+      <UserActiveModal />
+      <InformativeAlert
+        open={alertConfig.open}
+        onClose={() => resetAlertData()}
+        label={alertConfig.label}
+        severity={alertConfig.severity}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      />
       { ExitAppDialog }
       <Header
         userInfo={userInfo}
@@ -220,6 +309,18 @@ function UserProfile({
         </Tabs>
         { tabsComponents[tabOption] }
       </Grid>
+      <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
+        { activeAlert }
+        <FormControlLabel
+          control={(
+            <Switch
+              checked={userInfo.active}
+              onChange={openUserActiveModal}
+            />
+)}
+          label={userInfo.active ? adminLabels.disableAccount : adminLabels.enableAccount}
+        />
+      </Box>
     </Grid>
 
   );
@@ -233,6 +334,7 @@ UserProfile.propTypes = {
   confirmPlanChange: PropTypes.func.isRequired,
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default UserProfile;

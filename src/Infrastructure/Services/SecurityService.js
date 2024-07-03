@@ -35,6 +35,15 @@ class SecurityService {
     throw new Error(errorMessages[error.constructor.name]);
   }
 
+  async readJwtPayload(jwt) {
+    if (!this.#publicKey) {
+      await this.#loadPublicKey();
+    }
+    return jose.jwtVerify(jwt, this.#publicKey)
+      .then((jwtResultValue) => jwtResultValue.payload)
+      .catch((error) => this.#handleError(error));
+  }
+
   /**
    * Loads the public key from backend so it is used to verify each user token
    *
@@ -62,16 +71,14 @@ class SecurityService {
    *  authorities: Array<String>
    *  }} If the jwt is valid, returns its decoded payload, empty object otherwise
    * @param {string} jwt
+   * @param {String | Number} alternativeId if the token belongs to an admin,
+   * an alternativeId from another user should be send
   */
-  async validateJwt(jwt) {
-    if (!this.#publicKey) {
-      await this.#loadPublicKey();
-    }
-    return jose.jwtVerify(jwt, this.#publicKey).then((jwtResultValue) => {
-      const { payload } = jwtResultValue;
+  async validateJwt(jwt, alternativeId) {
+    return this.readJwtPayload(jwt).then((payload) => {
       if (!isEmpty(payload)) {
         this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
-        return this.#httpClient.getUserInfo(payload.id).then((response) => ({
+        return this.#httpClient.getUserInfo(alternativeId || payload.id).then((response) => ({
           ...payload,
           ...response,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input
@@ -79,7 +86,7 @@ class SecurityService {
       }
 
       return {};
-    }).catch((error) => this.#handleError(error));
+    });
   }
 }
 

@@ -101,7 +101,6 @@ export default function VendibleInfo({
             <CardContent sx={{ ...cardRowStyles }}>
               <Typography>
                 { sharedLabels.price }
-                :
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 { getLocaleCurrencySymbol(ARGENTINA_LOCALE) }

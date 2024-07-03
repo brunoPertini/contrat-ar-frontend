@@ -14,6 +14,8 @@ import { labels } from '../StaticData/LocationMap';
 import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
 import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
+import OptionsMenu from '../Shared/Components/OptionsMenu';
+import { rootPageLabels } from '../StaticData/RootPage';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -50,6 +52,10 @@ const PROVEEDORES_ATTRIBUTES_LABELS = {
   fotoPerfilUrl: sharedLabels.profilePhoto,
 };
 
+const FINAL_ATTRIBUTES_LABELS = {
+  actions: sharedLabels.actions,
+};
+
 const ATTRIBUTES_RENDERERS = {
   text: (attribute) => attribute,
   image: (attribute) => (
@@ -84,7 +90,9 @@ const ATTRIBUTES_RENDERERS = {
   },
 };
 
-export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
+const ACTIONS_OPTIONS = [sharedLabels.delete, rootPageLabels.signin];
+
+export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser }) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -98,8 +106,13 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
   });
 
   const toLoopAttributes = usuarioTypeFilter === USUARIO_TYPE_CLIENTES
-    ? { ...ATTRIBUTES_LABELS, active: sharedLabels.active }
-    : { ...ATTRIBUTES_LABELS, ...PROVEEDORES_ATTRIBUTES_LABELS, active: sharedLabels.active };
+    ? { ...ATTRIBUTES_LABELS, active: sharedLabels.active, ...FINAL_ATTRIBUTES_LABELS }
+    : {
+      ...ATTRIBUTES_LABELS,
+      ...PROVEEDORES_ATTRIBUTES_LABELS,
+      active: sharedLabels.active,
+      ...FINAL_ATTRIBUTES_LABELS,
+    };
 
   const renderMapModal = (usuario) => setMapModalProps((previous) => ({
     ...previous,
@@ -118,6 +131,11 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
     };
 
     return renderers[rendererType];
+  };
+
+  const optionsHandlers = {
+    [sharedLabels.delete]: () => {},
+    [rootPageLabels.signin]: (userId) => loginAsUser(userId),
   };
 
   return (
@@ -161,6 +179,13 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter }) {
                     );
                   })
                 }
+              <TableCell key={`cell-${usuario.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                <OptionsMenu
+                  title={sharedLabels.actions}
+                  options={ACTIONS_OPTIONS}
+                  onOptionClicked={(option) => optionsHandlers[option](usuario.id)}
+                />
+              </TableCell>
             </TableRow>
           )
           ))}
@@ -175,4 +200,5 @@ UsuariosTable.propTypes = {
     PropTypes.shape(proveedorAdminShape),
     PropTypes.shape(clienteAdminShape)])).isRequired,
   usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
+  loginAsUser: PropTypes.func.isRequired,
 };

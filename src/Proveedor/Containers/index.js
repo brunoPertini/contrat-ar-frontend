@@ -67,7 +67,8 @@ function ProveedorContainer({ router, handleLogout }) {
     ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
-    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
+    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
+      && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
       throw new Response('', { status: 404 });
     }
 

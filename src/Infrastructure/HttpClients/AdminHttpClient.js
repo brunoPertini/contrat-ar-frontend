@@ -26,7 +26,7 @@ export default class AdminHttpClient extends HttpClient {
   /**
    * @param {{ usuarioType: String }} usuarioType
    * @param {{name: String, surname: String, email: String,
-   *  onlyActives: Boolean, plan: Number}} filters
+   *  showOnlyActives: Boolean, plan: Number}} filters
    */
   getUsuariosByFilters(usuarioType, filters = {}) {
     const queryParams = { type: usuarioType };
@@ -40,6 +40,35 @@ export default class AdminHttpClient extends HttpClient {
         delete filters[filterKey];
       });
 
+    delete filters.showOnlyActives;
+
     return this.post(adminRoutes.getUsuariosInfo, queryParams, filters);
+  }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @returns {import('../../State/Reducers/usuario').UsuarioModel} user info
+   */
+  getUserInfoForLogin(userId) {
+    return this.get(adminRoutes.getUserInfo.replace('{userId}', userId));
+  }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @param {*} body
+   */
+  updateProveedorPersonalData(userId, body) {
+    return this.patch(adminRoutes.proveedoresById.replace('{userId}', userId), null, body);
+  }
+
+  /**
+   *
+   * @param {Number | String} userId
+   * @param {*} body
+   */
+  updateClientePersonalData(userId, body) {
+    return this.patch(adminRoutes.usuariosById.replace('{userId}', userId), null, body);
   }
 }
