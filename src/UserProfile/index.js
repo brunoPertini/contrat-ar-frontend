@@ -309,18 +309,22 @@ function UserProfile({
         </Tabs>
         { tabsComponents[tabOption] }
       </Grid>
-      <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
-        { activeAlert }
-        <FormControlLabel
-          control={(
-            <Switch
-              checked={userInfo.active}
-              onChange={openUserActiveModal}
-            />
+      {
+        isAdmin && (
+          <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
+            { activeAlert }
+            <FormControlLabel
+              control={(
+                <Switch
+                  checked={userInfo.active}
+                  onChange={openUserActiveModal}
+                />
 )}
-          label={userInfo.active ? adminLabels.disableAccount : adminLabels.enableAccount}
-        />
-      </Box>
+              label={userInfo.active ? adminLabels.disableAccount : adminLabels.enableAccount}
+            />
+          </Box>
+        )
+      }
     </Grid>
 
   );
