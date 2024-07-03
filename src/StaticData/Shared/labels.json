@@ -74,5 +74,8 @@
     "showing": "Mostrando:",
     "onlyActiveUsers": "Solo usuarios activos",
     "locationOf": "Ubicación de {name} {surname}",
-    "pleaseConfirmAction": "Por favor confirme la acción"
+    "pleaseConfirmAction": "Por favor confirme la acción",
+    "inactiveAccount": "Cuenta inactiva",
+    "activeAccount": "Cuenta activa"
+
 }

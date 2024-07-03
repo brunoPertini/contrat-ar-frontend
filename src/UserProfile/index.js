@@ -10,6 +10,7 @@ import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import isEmpty from 'lodash/isEmpty';
 import Header from '../Header';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
@@ -182,7 +183,7 @@ function UserProfile({
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
 
-  const handleAccept = (active) => editCommonInfo({
+  const handleAcceptChangeIsUserActive = (active) => editCommonInfo({
     active,
   }).then(() => {
     setAlertConfig({
@@ -200,7 +201,7 @@ function UserProfile({
     setAccountActiveModalContent({
       text: event.target.checked
         ? adminLabels.enableAccountQuestion : adminLabels.disableAccountQuestion,
-      handleAccept,
+      handleAccept: handleAcceptChangeIsUserActive,
       checked: event.target.checked,
     });
   };
@@ -240,7 +241,7 @@ function UserProfile({
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
-    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan && !isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
         actualPlan={userInfo.plan}
@@ -258,14 +259,14 @@ function UserProfile({
     <StaticAlert
       severity="warning"
       variant="outlined"
-      label="Cuenta inactiva"
+      label={sharedLabels.inactiveAccount}
       styles={{ mt: '5%' }}
     />
   ) : (
     <StaticAlert
       severity="info"
       variant="outlined"
-      label="Cuenta activa"
+      label={sharedLabels.activeAccount}
       styles={{ mt: '5%' }}
     />
   )), [isAdmin, userInfo.active]);

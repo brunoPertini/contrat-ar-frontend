@@ -54,7 +54,7 @@ function AdminContainer({ handleLogout }) {
     const newUserInfo = await client.getUserInfoForLogin(userId);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, { id: userId });
     window.open(routes[`ROLE_${newUserInfo.role.nombre}`], '_blank');
-  }, []);
+  }, [localStorageService]);
 
   // First info fetching, with default values
   useEffect(() => {

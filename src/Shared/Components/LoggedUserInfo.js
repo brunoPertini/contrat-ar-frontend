@@ -6,6 +6,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import SecurityService from '../../Infrastructure/Services/SecurityService';
 import { ROLE_ADMIN } from '../Constants/System';
 import { getUserInfoResponseShape } from '../PropTypes/Vendibles';
+import { adminLabels } from '../../StaticData/Admin';
 
 const securityService = new SecurityService();
 
@@ -23,7 +24,8 @@ export default function LoggedUserInfo({ userInfo }) {
       return setLabels({
         name: tokenUserInfo.name,
         surname: tokenUserInfo.surname,
-        adminDisclaimer: `(Admin logueado como ${userInfo.name} ${userInfo.surname})`,
+        adminDisclaimer: adminLabels.loguedUserDisclaimer.replace('{name}', userInfo.name)
+          .replace('{surname}', userInfo.surname),
       });
     }
 

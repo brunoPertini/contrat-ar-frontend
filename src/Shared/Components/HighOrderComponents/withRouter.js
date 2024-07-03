@@ -53,6 +53,10 @@ export default function withRouter(Component) {
           LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
         ));
 
+        if (savedUserInfo?.id) {
+          setIsAdmin(true);
+        }
+
         const userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
 
         userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
@@ -62,7 +66,6 @@ export default function withRouter(Component) {
           await store.dispatch(resetUserInfo());
           navigate(routes.signin);
         } else {
-          setIsAdmin(true);
           cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
           setTokenVerified(true);
           await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));

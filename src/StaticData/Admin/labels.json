@@ -5,5 +5,6 @@
     "accountDisabled": "Cuenta desactivada",
     "unexpectedError": "Error inesperado, consulte los registros",
     "enableAccountQuestion": "¿Habilitar la cuenta del usuario?",
-    "disableAccountQuestion": "¿Inhabilitar la cuenta del usuario?"
+    "disableAccountQuestion": "¿Inhabilitar la cuenta del usuario?",
+    "loguedUserDisclaimer": "(Admin logueado como {name} {surname})"
 }
