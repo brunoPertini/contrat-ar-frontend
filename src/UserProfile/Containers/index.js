@@ -58,8 +58,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   const callEditCommonInfo = async (info) => {
     const noAminHandlers = {
       CLIENTE: () => editClienteInfo(info),
-      ROLE_PROVEEDOR_PRODUCTOS: () => editProveedorInfo(info),
-      ROLE_PROVEEDOR_SERVICIOS: () => editProveedorInfo(info),
+      PROVEEDOR_PRODUCTOS: () => editProveedorInfo(info),
+      PROVEEDOR_SERVICIOS: () => editProveedorInfo(info),
     };
 
     const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role] : editPersonalInfoForAdmin;

@@ -16,7 +16,7 @@ import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandle
 import SecondStep from './SecondStep';
 import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
-import { buildCategoryObject, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
+import { buildCategoryObject } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
 
 function VendibleCreateForm({
@@ -59,7 +59,7 @@ function VendibleCreateForm({
           category,
           descripcion,
           precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
-          tipoPrecio: buildPriceType(priceInfo.type),
+          tipoPrecio: priceInfo.type,
           imagenUrl,
           location: vendibleLocation,
           stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),

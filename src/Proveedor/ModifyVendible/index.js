@@ -18,7 +18,7 @@ import {
 } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
-import { buildLocationTypesArray, buildPriceType } from '../../Shared/Helpers/ProveedorHelper';
+import { buildLocationTypesArray } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
 import ConfirmationPage from '../CreateVendible/ConfirmationPage';
 import SecondStep from '../CreateVendible/SecondStep';
@@ -71,7 +71,7 @@ function ModifyVendibleForm({
       const body = {
         descripcion,
         precio: new Number(priceInfo.amount.toString().replace(DOT_AND_COMMA_REGEX, '')),
-        tipoPrecio: buildPriceType(priceInfo.type),
+        tipoPrecio: priceInfo.type,
         imagenUrl,
         location: vendibleLocation,
         stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),

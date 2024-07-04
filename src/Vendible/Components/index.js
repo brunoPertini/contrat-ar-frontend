@@ -114,7 +114,7 @@ function VendiblePage({
       return `${sharedLabels.price}: ${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
     }
 
-    return `${sharedLabels.minimalPrice}${price}`;
+    return `${sharedLabels.minimalPrice}${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
   }, [vendibleType]);
 
   const handleEnableButton = useCallback(

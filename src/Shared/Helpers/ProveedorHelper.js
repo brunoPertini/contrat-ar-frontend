@@ -64,11 +64,11 @@ export function buildCategoryObject(categories) {
 
 /**
  *
- * @param {"Fijo" | "Variable" | "Variable con monto minimo"} priceTypeValue
- * @returns {String} the price type key that matches with priceTypeValue
+ * @param {"FIXED" | "VARIABLE" | "VARIABLE_WITH_AMOUNT"} priceTypeValue
+ * @returns {String} Price type in a readable way
  */
 export function buildPriceType(priceTypeValue) {
-  return Object.keys(PRICE_TYPES).find((key) => PRICE_TYPES[key] === priceTypeValue);
+  return PRICE_TYPES[priceTypeValue];
 }
 
 export function buildLocationTypesArray(vendibleInfo, vendibleType) {
@@ -114,7 +114,7 @@ export function buildVendibleInfo(vendibleInfo, vendibleType) {
 
   return {
     priceInfo: {
-      type: PRICE_TYPES[vendibleInfo.tipoPrecio],
+      type: vendibleInfo.tipoPrecio,
       amount: vendibleInfo.precio,
     },
     vendibleLocation: vendibleInfo.location,
