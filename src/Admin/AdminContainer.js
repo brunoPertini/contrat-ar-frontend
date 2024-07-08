@@ -56,6 +56,18 @@ function AdminContainer({ handleLogout }) {
     window.open(routes[`ROLE_${newUserInfo.role.nombre}`], '_blank');
   }, [localStorageService]);
 
+  const deleteUser = (userId) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+    });
+
+    return client.deleteUser(userId).then(() => fetchFilteredUsuariosInfo({
+      type: USUARIO_TYPE_PROVEEDORES,
+      filters: { showOnlyActives: false },
+    }));
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -81,6 +93,7 @@ function AdminContainer({ handleLogout }) {
       menuOptions={menuOptions}
       applyFilters={fetchFilteredUsuariosInfo}
       loginAsUser={loginAsUser}
+      deleteUser={deleteUser}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

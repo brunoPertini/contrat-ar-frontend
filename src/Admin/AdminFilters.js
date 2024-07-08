@@ -145,10 +145,14 @@ export default function AdminFilters({
   );
 }
 
+AdminFilters.defaultProps = {
+  planesInfo: [],
+};
+
 AdminFilters.propTypes = {
   usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
   applyFilters: PropTypes.func.isRequired,
-  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
+  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)),
   setUsuarioTypeFilter: PropTypes.func.isRequired,
   filters: PropTypes.shape({
     name: PropTypes.string,
