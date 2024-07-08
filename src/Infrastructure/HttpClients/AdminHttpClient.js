@@ -71,4 +71,12 @@ export default class AdminHttpClient extends HttpClient {
   updateClientePersonalData(userId, body) {
     return this.patch(adminRoutes.usuariosById.replace('{userId}', userId), null, body);
   }
+
+  /**
+   *
+   * @param {Long | String} userId
+   */
+  deleteUser(userId) {
+    return this.delete(adminRoutes.usuariosById.replace('{userId}', userId));
+  }
 }

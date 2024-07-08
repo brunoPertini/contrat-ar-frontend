@@ -6,5 +6,8 @@
     "unexpectedError": "Error inesperado, consulte los registros",
     "enableAccountQuestion": "¿Habilitar la cuenta del usuario?",
     "disableAccountQuestion": "¿Inhabilitar la cuenta del usuario?",
-    "loguedUserDisclaimer": "(Admin logueado como {name} {surname})"
+    "loguedUserDisclaimer": "(Admin logueado como {name} {surname})",
+    "deleteUserText": "¿Eliminar al usuario {nameAndSurname}?",
+    "userDeleted": "¡Usuario borrado!",
+    "userNotDeleted": "¡El usuario no pudo ser borrado!"
 }

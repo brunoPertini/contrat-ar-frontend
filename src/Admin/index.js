@@ -27,7 +27,7 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters, loginAsUser,
+  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters, loginAsUser, deleteUser,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
@@ -95,6 +95,7 @@ function AdminPage({
               ? usuariosInfo.usuarios.proveedores : usuariosInfo.usuarios.clientes,
             usuarioTypeFilter,
             loginAsUser,
+            deleteUser,
           })}
         </Box>
       </Box>
@@ -112,13 +113,18 @@ AdminPage.defaultProps = {
   },
 };
 
+AdminPage.defaultProps = {
+  planesInfo: [],
+};
+
 AdminPage.propTypes = {
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
   usuariosInfo: PropTypes.shape(getUsuariosAdminResponseShape),
-  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
+  planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)),
   menuOptions: PropTypes.arrayOf(PropTypes.shape(menuOptionsShape)).isRequired,
   applyFilters: PropTypes.func.isRequired,
   loginAsUser: PropTypes.func.isRequired,
+  deleteUser: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,6 +16,9 @@ import MapModal from '../Shared/Components/MapModal';
 import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
 import { rootPageLabels } from '../StaticData/RootPage';
+import { adminLabels } from '../StaticData/Admin';
+import { DialogModal } from '../Shared/Components';
+import InformativeAlert from '../Shared/Components/Alert';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -92,7 +95,13 @@ const ATTRIBUTES_RENDERERS = {
 
 const ACTIONS_OPTIONS = [sharedLabels.delete, rootPageLabels.signin];
 
-export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser }) {
+const deleteUserModalContentDefaultValues = { title: '', text: '', handleAccept: () => {} };
+
+const snackbarDefaultValues = { open: false, label: '', severity: '' };
+
+export default function UsuariosTable({
+  usuarios, usuarioTypeFilter, loginAsUser, deleteUser,
+}) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -104,6 +113,28 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser
     location: null,
     title: '',
   });
+
+  const [deleteUserModalContent, setDeleteUserModalContent] = useState(
+    deleteUserModalContentDefaultValues,
+  );
+
+  const [snackbarProps, setSnackbarProps] = useState(snackbarDefaultValues);
+
+  const onCleanDeletingUserModalContent = () => setDeleteUserModalContent(
+    deleteUserModalContentDefaultValues,
+  );
+
+  const showDeleteUserAlertModal = useCallback(({ userId, name, surname }) => {
+    setDeleteUserModalContent({
+      title: sharedLabels.pleaseConfirmAction,
+      text: adminLabels.deleteUserText.replace('{nameAndSurname}', `${name} ${surname}`),
+      handleAccept: () => deleteUser(userId).then(() => setSnackbarProps({
+        open: true, severity: 'success', label: adminLabels.userDeleted,
+      })).catch(() => setSnackbarProps({
+        open: true, severity: 'error', label: adminLabels.userNotDeleted,
+      })).finally(() => onCleanDeletingUserModalContent()),
+    });
+  }, [setDeleteUserModalContent]);
 
   const toLoopAttributes = usuarioTypeFilter === USUARIO_TYPE_CLIENTES
     ? { ...ATTRIBUTES_LABELS, active: sharedLabels.active, ...FINAL_ATTRIBUTES_LABELS }
@@ -134,13 +165,28 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser
   };
 
   const optionsHandlers = {
-    [sharedLabels.delete]: () => {},
+    [sharedLabels.delete]: (userId, name, surname) => showDeleteUserAlertModal(
+      { userId, name, surname },
+    ),
     [rootPageLabels.signin]: (userId) => loginAsUser(userId),
   };
 
   return (
     <TableContainer component={Paper}>
       <MapModal {...mapModalProps} />
+      <DialogModal
+        title={deleteUserModalContent.title}
+        contextText={deleteUserModalContent.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+        open={!!(deleteUserModalContent.text)}
+        handleAccept={deleteUserModalContent.handleAccept}
+        handleDeny={onCleanDeletingUserModalContent}
+      />
+      <InformativeAlert
+        {...snackbarProps}
+        onClose={() => setSnackbarProps(snackbarDefaultValues)}
+      />
       <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
@@ -183,7 +229,11 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser
                 <OptionsMenu
                   title={sharedLabels.actions}
                   options={ACTIONS_OPTIONS}
-                  onOptionClicked={(option) => optionsHandlers[option](usuario.id)}
+                  onOptionClicked={(option) => optionsHandlers[option](
+                    usuario.id,
+                    usuario.name,
+                    usuario.surname,
+                  )}
                 />
               </TableCell>
             </TableRow>
@@ -195,10 +245,15 @@ export default function UsuariosTable({ usuarios, usuarioTypeFilter, loginAsUser
   );
 }
 
+UsuariosTable.defaultProps = {
+  usuarios: [],
+};
+
 UsuariosTable.propTypes = {
   usuarios: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.shape(proveedorAdminShape),
-    PropTypes.shape(clienteAdminShape)])).isRequired,
+    PropTypes.shape(clienteAdminShape)])),
   usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
   loginAsUser: PropTypes.func.isRequired,
+  deleteUser: PropTypes.func.isRequired,
 };
