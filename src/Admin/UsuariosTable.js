@@ -7,10 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
-import Checkbox from '@mui/material/Checkbox';
 import { sharedLabels } from '../StaticData/Shared';
-import { labels } from '../StaticData/LocationMap';
 import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
 import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
@@ -19,6 +16,7 @@ import { rootPageLabels } from '../StaticData/RootPage';
 import { adminLabels } from '../StaticData/Admin';
 import { DialogModal } from '../Shared/Components';
 import InformativeAlert from '../Shared/Components/Alert';
+import { ATTRIBUTES_RENDERERS } from './TablesHelper';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -57,40 +55,6 @@ const PROVEEDORES_ATTRIBUTES_LABELS = {
 
 const FINAL_ATTRIBUTES_LABELS = {
   actions: sharedLabels.actions,
-};
-
-const ATTRIBUTES_RENDERERS = {
-  text: (attribute) => attribute,
-  image: (attribute) => (
-    <Link
-      sx={{ cursor: 'pointer' }}
-      onClick={() => window.open(attribute, '_blank')}
-    >
-      { attribute }
-      ,
-    </Link>
-  ),
-  map: (onLinkClick) => (
-    <Link
-      sx={{ cursor: 'pointer' }}
-      onClick={() => onLinkClick()}
-    >
-      { labels.openMapInModal }
-      ,
-    </Link>
-  ),
-  boolean: (attribute) => (
-    <Checkbox
-      checked={attribute}
-    />
-  ),
-  enum: (attribute, attributeValue) => {
-    const enumAttributes = {
-      plan: () => sharedLabels.plansNames[attributeValue],
-    };
-
-    return enumAttributes[attribute]();
-  },
 };
 
 const ACTIONS_OPTIONS = [sharedLabels.delete, rootPageLabels.signin];

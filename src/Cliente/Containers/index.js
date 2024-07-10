@@ -44,7 +44,7 @@ function ClienteContainer({ handleLogout }) {
       { token: userInfo.token },
     );
 
-    return httpClient.getVendibleByName(searchInput, filters)
+    return httpClient.getVendibleByFilters({ ...filters, nombre: searchInput })
       .catch((error) => {
         if (error.status && error.status === 401) {
           dispatch(resetUserInfo());

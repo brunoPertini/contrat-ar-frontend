@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -13,6 +13,7 @@ import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import { getUsuariosAdminResponseShape } from '../Shared/PropTypes/Admin';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import { menuOptionsShape } from '../Shared/PropTypes/Header';
+import VendblesTable from './VendiblesTable';
 
 const TAB_VALUES = ['usuarios', 'productos', 'servicios'];
 
@@ -20,6 +21,8 @@ const TABS_LABELS = ['Usuarios', 'Productos', 'Servicios'];
 
 const TABS_COMPONENTS = {
   usuarios: (props) => <UsuariosTable {...props} />,
+  productos: (props) => <VendblesTable {...props} />,
+  servicios: (props) => <VendblesTable {...props} />,
 };
 
 const filtersDefaultValues = {
@@ -27,7 +30,8 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, menuOptions, applyFilters, loginAsUser, deleteUser,
+  userInfo, usuariosInfo, planesInfo,
+  menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
@@ -54,6 +58,32 @@ function AdminPage({
     }
   };
 
+  const handleTabOptionChange = (_, newValue) => {
+    setTabOption(newValue);
+  };
+
+  const propsForCurrentTabOption = useMemo(() => {
+    const paramsDictionary = {
+      usuarios: {
+        usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
+          ? usuariosInfo.usuarios.proveedores : usuariosInfo.usuarios.clientes,
+        usuarioTypeFilter,
+        loginAsUser,
+        deleteUser,
+      },
+      productos: {
+        fetchProductos,
+        vendibleType: TAB_VALUES[1],
+      },
+      servicios: {
+        fetchServicios,
+        vendibleType: TAB_VALUES[2],
+      },
+    };
+
+    return paramsDictionary[tabOption];
+  }, [tabOption, usuariosInfo]);
+
   return (
     <>
       <Header
@@ -64,7 +94,7 @@ function AdminPage({
       />
       <Box>
         <Box display="flex" flexDirection="row" justifyContent="space-between">
-          <Tabs value={tabOption} onChange={setTabOption}>
+          <Tabs value={tabOption} onChange={handleTabOptionChange}>
             {
           TABS_LABELS.map((label, index) => (
             <Tab
@@ -75,28 +105,29 @@ function AdminPage({
           ))
         }
           </Tabs>
-          <Typography variant="h5">
-            { sharedLabels.showing }
-            {' '}
-            { usuarioTypeFilter }
-          </Typography>
+          {
+            tabOption === 'usuarios' && (
+              <Typography variant="h5">
+                { sharedLabels.showing }
+                {' '}
+                { usuarioTypeFilter }
+              </Typography>
+            )
+          }
         </Box>
         <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
           <AdminFilters
-            usuarioTypeFilter={usuarioTypeFilter}
-            setUsuarioTypeFilter={handleApplyUsuarioTypeFilter}
-            filters={filters}
-            setFilters={handleSetFilters}
-            applyFilters={handleApplyFilters}
-            planesInfo={planesInfo}
+            filtersType={tabOption}
+            usuariosFiltersProps={{
+              usuarioTypeFilter,
+              setUsuarioTypeFilter: handleApplyUsuarioTypeFilter,
+              filters,
+              setFilters: handleSetFilters,
+              applyFilters: handleApplyFilters,
+              planesInfo,
+            }}
           />
-          {TABS_COMPONENTS[tabOption]({
-            usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
-              ? usuariosInfo.usuarios.proveedores : usuariosInfo.usuarios.clientes,
-            usuarioTypeFilter,
-            loginAsUser,
-            deleteUser,
-          })}
+          {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}
         </Box>
       </Box>
     </>
@@ -125,6 +156,8 @@ AdminPage.propTypes = {
   applyFilters: PropTypes.func.isRequired,
   loginAsUser: PropTypes.func.isRequired,
   deleteUser: PropTypes.func.isRequired,
+  fetchProductos: PropTypes.func.isRequired,
+  fetchServicios: PropTypes.func.isRequired,
 };
 
 export default AdminPage;
