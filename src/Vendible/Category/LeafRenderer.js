@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Link from '@mui/material/Link';
 import CategoryRenderer from './CategoryRenderer';
@@ -9,26 +11,41 @@ class LeafRenderer extends CategoryRenderer {
     onChange,
     isExpanded,
     handleCategorySelected,
+    renderAsList,
   }) {
     super({
       rootName,
       rootId,
       onChange,
       isExpanded,
+      renderAsList,
     });
-    this.root = (
-      <AccordionDetails>
+    this.root = this.renderAsList ? (
+      <li>
         <Link
-          onClick={() => handleCategorySelected(rootId, rootName)}
           variant="caption"
           sx={{
             cursor: 'pointer',
           }}
+          onClick={() => handleCategorySelected(rootId, rootName)}
         >
           { rootName }
         </Link>
-      </AccordionDetails>
-    );
+      </li>
+    )
+      : (
+        <AccordionDetails>
+          <Link
+            onClick={() => handleCategorySelected(rootId, rootName)}
+            variant="caption"
+            sx={{
+              cursor: 'pointer',
+            }}
+          >
+            { rootName }
+          </Link>
+        </AccordionDetails>
+      );
   }
 }
 

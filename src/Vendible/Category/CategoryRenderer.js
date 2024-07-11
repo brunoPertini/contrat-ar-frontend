@@ -21,11 +21,15 @@ class CategoryRenderer {
   /** @type {Boolean} */
   #isExpanded;
 
+  /** @type {Boolean} */
+  #renderAsList;
+
   constructor({
     rootId,
     rootName,
     onChange,
     isExpanded,
+    renderAsList = false,
   }) {
     const onChangeFunction = onChange ?? (() => {});
     this.#root = null;
@@ -34,6 +38,7 @@ class CategoryRenderer {
     this.key = `accordion_${rootName}`;
     this.#isExpanded = isExpanded;
     this.#rootId = rootId;
+    this.#renderAsList = renderAsList;
   }
 
   set root(value) {
@@ -72,7 +77,24 @@ class CategoryRenderer {
     return this.#rootId;
   }
 
+  get renderAsList() {
+    return this.#renderAsList;
+  }
+
   render() {
+    if (this.renderAsList) {
+      return (
+        <ul>
+          {
+                this.root
+        }
+          {
+                this.children.map((c) => c.render())
+        }
+        </ul>
+      );
+    }
+
     return (
       <Accordion
         expanded={this.isExpanded}
