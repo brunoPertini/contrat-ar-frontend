@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -37,6 +39,7 @@ function AdminPage({
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
   const [filters, setFilters] = useState(filtersDefaultValues);
+  const [vendibles, setVendibles] = useState({});
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
@@ -62,6 +65,18 @@ function AdminPage({
     setTabOption(newValue);
   };
 
+  const handleFetchVendibles = useCallback(async () => {
+    if (tabOption === 'usuarios') {
+      return;
+    }
+    const fetched = tabOption === 'productos' ? await fetchProductos() : await fetchServicios();
+    setVendibles(fetched);
+  }, [tabOption]);
+
+  useEffect(() => {
+    handleFetchVendibles();
+  }, [tabOption]);
+
   const propsForCurrentTabOption = useMemo(() => {
     const paramsDictionary = {
       usuarios: {
@@ -72,17 +87,15 @@ function AdminPage({
         deleteUser,
       },
       productos: {
-        fetchProductos,
-        vendibleType: TAB_VALUES[1],
+        vendibles,
       },
       servicios: {
-        fetchServicios,
-        vendibleType: TAB_VALUES[2],
+        vendibles,
       },
     };
 
     return paramsDictionary[tabOption];
-  }, [tabOption, usuariosInfo]);
+  }, [tabOption, usuariosInfo, vendibles]);
 
   return (
     <>
@@ -125,6 +138,9 @@ function AdminPage({
               setFilters: handleSetFilters,
               applyFilters: handleApplyFilters,
               planesInfo,
+            }}
+            vendiblesFiltersProps={{
+              categories: vendibles.categorias,
             }}
           />
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}

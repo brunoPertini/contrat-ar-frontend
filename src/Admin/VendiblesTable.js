@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useCallback, useEffect, useState } from 'react';
 import Link from '@mui/material/Link';
 import { sharedLabels } from '../StaticData/Shared';
 
@@ -17,19 +16,10 @@ const ATTIBUTES_LABELS = {
   posts: sharedLabels.posts,
 };
 
-function VendblesTable({ fetchProductos, fetchServicios, vendibleType }) {
-  const [vendibles, setVendibles] = useState({});
-
+function VendblesTable({
+  vendibles,
+}) {
   const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles) : [];
-
-  const handleFetchVendibles = useCallback(async () => {
-    const fetched = vendibleType === 'productos' ? await fetchProductos() : await fetchServicios();
-    setVendibles(fetched);
-  }, [fetchProductos, fetchServicios]);
-
-  useEffect(() => {
-    handleFetchVendibles();
-  }, [vendibleType]);
 
   return !isEmpty(vendibles) ? (
     <TableContainer component={Paper}>

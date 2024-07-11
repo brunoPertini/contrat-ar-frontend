@@ -14,20 +14,9 @@ import { planShape } from '../Shared/PropTypes/Proveedor';
 
 const { plansNames } = sharedLabels;
 
-function getMenuOption({
-  component, props, onClick, label,
-}) {
-  return {
-    component,
-    props,
-    onClick,
-    label,
-  };
-}
-
 function UsuariosAdminFilters({
   usuarioTypeFilter, applyFilters, planesInfo,
-  setUsuarioTypeFilter, filters, setFilters,
+  setUsuarioTypeFilter, filters, setFilters, getMenuOption,
 }) {
   const onChangeName = (name) => setFilters('name', name);
 
@@ -158,6 +147,7 @@ UsuariosAdminFilters.propTypes = {
     plan: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   }).isRequired,
   setFilters: PropTypes.func.isRequired,
+  getMenuOption: PropTypes.func.isRequired,
 };
 
 export default UsuariosAdminFilters;
