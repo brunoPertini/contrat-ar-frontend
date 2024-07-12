@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import RootRenderer from './RootRenderer';
 import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
+import { SearcherInput } from '../../Shared/Components';
 
 function processChild(childRoot) {
   const { root, rootId, children } = childRoot;
@@ -27,8 +28,24 @@ function processChild(childRoot) {
   });
 }
 
+/**
+ *
+ * @param {Array<any>} array
+ * @returns
+ */
+function splitArrayIntoChunks(array, chunkSize) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    const chunk = array.slice(i, i + chunkSize);
+    result.push(chunk);
+  }
+  return result;
+}
+
 function CategoryModal({ open, handleClose, categories }) {
   const [filteredCategories, setFilteredCategories] = useState([]);
+
+  const COLUMN_LIMIT = useMemo(() => (Object.keys(categories).length) / 4, [categories]);
 
   useEffect(() => {
     const firstCategoriesSections = [];
@@ -57,7 +74,7 @@ function CategoryModal({ open, handleClose, categories }) {
       });
     });
 
-    setFilteredCategories(firstCategoriesSections);
+    setFilteredCategories(splitArrayIntoChunks(firstCategoriesSections, COLUMN_LIMIT));
   }, [categories]);
 
   return (
@@ -72,9 +89,30 @@ function CategoryModal({ open, handleClose, categories }) {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           background: 'white',
+          height: '70%',
         }}
       >
-        {filteredCategories.map((category) => category.render())}
+        <Box display="flex" flexDirection="column" sx={{ mb: '5%' }}>
+          <SearcherInput
+            title="Buscar categoria"
+            titleConfig={{ variant: 'h6' }}
+            searcherConfig={{
+              variant: 'outlined',
+              sx: { width: '50%' },
+            }}
+          />
+        </Box>
+        <Box display="flex" flexDirection="row">
+          {
+            filteredCategories.map((column) => (
+              <Box display="flex" flexDirection="column">
+                {
+                    column.map((category) => category.render())
+                }
+              </Box>
+            ))
+          }
+        </Box>
       </Box>
     </Modal>
   );
