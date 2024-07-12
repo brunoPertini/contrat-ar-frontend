@@ -19,9 +19,19 @@ class EmptyTreeRenderer extends CategoryRenderer {
       renderAsList,
     });
     this.root = this.renderAsList ? (
-      <li onClick={() => handleCategorySelected(rootId, rootName)}>
-        { rootName }
-      </li>
+      <ul>
+        <li>
+          <Link
+            variant="caption"
+            sx={{
+              cursor: 'pointer',
+            }}
+            onClick={() => handleCategorySelected(rootId, rootName)}
+          >
+            { rootName }
+          </Link>
+        </li>
+      </ul>
     )
       : (
         <AccordionSummary onClick={() => handleCategorySelected(rootId, rootName)}>

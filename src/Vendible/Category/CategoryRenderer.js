@@ -24,6 +24,9 @@ class CategoryRenderer {
   /** @type {Boolean} */
   #renderAsList;
 
+  /** @type {Boolean} */
+  #renderAsSubRoot;
+
   constructor({
     rootId,
     rootName,
@@ -81,18 +84,40 @@ class CategoryRenderer {
     return this.#renderAsList;
   }
 
+  set renderAsSubRoot(value) {
+    this.#renderAsSubRoot = value;
+    if (value) {
+      this.root = (
+        <li>
+          { this.#rootName }
+          { !!(this.children.length) && (
+          <ul>
+            { this.children.map((c) => {
+              const isSubRoot = !!(c.children?.length);
+              if (isSubRoot) {
+                c.renderAsSubRoot = true;
+                return c.render();
+              }
+              return (
+                <li>
+                  { c.render()}
+                </li>
+              );
+            })}
+          </ul>
+          )}
+        </li>
+      );
+    }
+  }
+
+  get renderAsSubRoot() {
+    return this.#renderAsSubRoot;
+  }
+
   render() {
     if (this.renderAsList) {
-      return (
-        <ul>
-          {
-                this.root
-        }
-          {
-                this.children.map((c) => c.render())
-        }
-        </ul>
-      );
+      return this.root;
     }
 
     return (
