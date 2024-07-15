@@ -45,7 +45,7 @@ function splitArrayIntoChunks(array, chunkSize) {
 function CategoryModal({ open, handleClose, categories }) {
   const [filteredCategories, setFilteredCategories] = useState([]);
 
-  const COLUMN_LIMIT = useMemo(() => (Object.keys(categories).length) / 4, [categories]);
+  const COLUMN_LIMIT = useMemo(() => (Math.ceil(Object.keys(categories).length) / 4), [categories]);
 
   useEffect(() => {
     const firstCategoriesSections = [];
@@ -74,7 +74,11 @@ function CategoryModal({ open, handleClose, categories }) {
       });
     });
 
-    setFilteredCategories(splitArrayIntoChunks(firstCategoriesSections, COLUMN_LIMIT));
+    const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, COLUMN_LIMIT);
+
+    chunkedCategories.sort((a, b) => b.length - a.length);
+
+    setFilteredCategories(chunkedCategories);
   }, [categories]);
 
   return (
