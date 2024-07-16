@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import RootRenderer from './RootRenderer';
 import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
 import { SearcherInput } from '../../Shared/Components';
+import { sharedLabels } from '../../StaticData/Shared';
 
-function processChild(childRoot) {
+function processChild(childRoot, handleCategorySelected) {
   const { root, rootId, children } = childRoot;
 
   const isSuperCategory = !!(children.length);
@@ -23,7 +24,7 @@ function processChild(childRoot) {
   }) : new LeafRenderer({
     rootName: root,
     rootId,
-    handleCategorySelected: () => {},
+    handleCategorySelected,
     renderAsList: true,
   });
 }
@@ -42,10 +43,10 @@ function splitArrayIntoChunks(array, chunkSize) {
   return result;
 }
 
-function CategoryModal({ open, handleClose, categories }) {
+function CategoryModal({
+  open, handleClose, categories, columnLimit, handleCategorySelected,
+}) {
   const [filteredCategories, setFilteredCategories] = useState([]);
-
-  const COLUMN_LIMIT = useMemo(() => (Math.ceil(Object.keys(categories).length) / 4), [categories]);
 
   useEffect(() => {
     const firstCategoriesSections = [];
@@ -58,13 +59,14 @@ function CategoryModal({ open, handleClose, categories }) {
         const childrenJsx = [];
 
         children.forEach((childrenRoot) => {
-          childrenJsx.push(processChild(childrenRoot));
+          childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
         });
 
         const element = isSuperCategory ? new RootRenderer({
           rootName: root, rootId, children: childrenJsx, renderAsList: true,
         })
           : new EmptyTreeRenderer({
+            handleCategorySelected,
             rootName: root,
             rootId,
             renderAsList: true,
@@ -74,7 +76,7 @@ function CategoryModal({ open, handleClose, categories }) {
       });
     });
 
-    const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, COLUMN_LIMIT);
+    const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);
 
     chunkedCategories.sort((a, b) => b.length - a.length);
 
@@ -98,12 +100,13 @@ function CategoryModal({ open, handleClose, categories }) {
       >
         <Box display="flex" flexDirection="column" sx={{ mb: '5%' }}>
           <SearcherInput
-            title="Buscar categoria"
+            title={sharedLabels.searchCategory}
             titleConfig={{ variant: 'h6' }}
             searcherConfig={{
               variant: 'outlined',
               sx: { width: '50%' },
             }}
+            inputStyles={{ border: '2px solid black' }}
           />
         </Box>
         <Box display="flex" flexDirection="row">

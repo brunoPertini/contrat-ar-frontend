@@ -40,6 +40,7 @@ export default function BasicMenu({
         MenuListProps={{
           'aria-labelledby': 'basic-button',
         }}
+        variant="menu"
       >
         {
           options.map((option, index) => {
@@ -55,7 +56,7 @@ export default function BasicMenu({
             };
 
             return (
-              <MenuItem onClick={onOptionClicked} key={`menu_option${index}`} sx={{ cursor: 'default' }}>
+              <MenuItem disableRipple onClick={onOptionClicked} key={`menu_option${index}`} sx={{ cursor: 'default' }}>
                 {label ? (
                   <FormControlLabel
                     control={<Component {...props} />}

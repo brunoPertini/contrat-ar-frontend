@@ -73,6 +73,10 @@ function AdminPage({
     setVendibles(fetched);
   }, [tabOption]);
 
+  // const onSelectedCategory = (categoryId) => {
+
+  // };
+
   useEffect(() => {
     handleFetchVendibles();
   }, [tabOption]);
@@ -141,6 +145,7 @@ function AdminPage({
             }}
             vendiblesFiltersProps={{
               categories: vendibles.categorias,
+              onCategorySelected: () => {},
             }}
           />
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}

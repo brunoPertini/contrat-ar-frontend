@@ -3,14 +3,16 @@ import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import CategoryAccordion from '../Vendible/Category/CategoryAccordion';
 
-function VendiblesAdminFilters({ categories, getMenuOption, vendibleType }) {
+function VendiblesAdminFilters({
+  categories, getMenuOption, vendibleType, onCategorySelected,
+}) {
   const memoizedMenuOptions = [
     getMenuOption({
       component: CategoryAccordion,
       onClick: undefined,
       props: {
         categories,
-        onCategorySelected: () => {},
+        onCategorySelected,
         vendibleType,
       },
     }),

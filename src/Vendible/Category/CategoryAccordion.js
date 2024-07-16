@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
@@ -94,9 +94,16 @@ function CategoryAccordion({
     });
   };
 
+  const FIRST_CATEGORIES_LIMIT = useMemo(() => (Math.ceil(
+    Object.keys(categories).length,
+  ) / 4), [categories]);
+
   useEffect(() => {
     const firstCategoriesSections = [];
-    Object.values(categories).forEach((hierarchiesList) => {
+    const allHierarchies = Object.values(categories);
+    allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
+
+    allHierarchies.forEach((hierarchiesList) => {
       hierarchiesList.forEach((hierarchy) => {
         const { root, rootId, children } = hierarchy;
 
@@ -133,6 +140,8 @@ function CategoryAccordion({
             open={isModalOpen}
             categories={categories}
             handleClose={() => setIsModalOpen(false)}
+            columnLimit={FIRST_CATEGORIES_LIMIT}
+            handleCategorySelected={handleCategorySelected}
           />
         )}
         <div>
