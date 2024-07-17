@@ -16,7 +16,7 @@ function processChild(childRoot, handleCategorySelected) {
   const childrenJsx = [];
 
   children.forEach((childrenRoot) => {
-    childrenJsx.push(processChild(childrenRoot));
+    childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
   });
 
   return isSuperCategory ? new RootRenderer({
@@ -81,7 +81,7 @@ function CategoryModal({
     chunkedCategories.sort((a, b) => b.length - a.length);
 
     setFilteredCategories(chunkedCategories);
-  }, [categories]);
+  }, [categories, handleCategorySelected]);
 
   return (
     <Modal

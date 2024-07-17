@@ -19,7 +19,8 @@ const ATTIBUTES_LABELS = {
 function VendblesTable({
   vendibles,
 }) {
-  const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles) : [];
+  const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles)
+    .filter((key) => vendibles.vendibles[key].length) : [];
 
   return !isEmpty(vendibles) ? (
     <TableContainer component={Paper}>

@@ -10,7 +10,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
  *  by vendibleName prop
  */
 export default function OptionsMenu({
-  options, title, onOptionClicked, vendibleName,
+  options, title,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -20,10 +20,9 @@ export default function OptionsMenu({
     setIsOpen(!isOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = () => {
     setIsOpen(false);
     setAnchorEl(null);
-    onOptionClicked(event.target.textContent, vendibleName);
   };
 
   return (
@@ -60,13 +59,7 @@ export default function OptionsMenu({
   );
 }
 
-OptionsMenu.defaultProps = {
-  vendibleName: null,
-};
-
 OptionsMenu.propTypes = {
   title: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onOptionClicked: PropTypes.func.isRequired,
-  vendibleName: PropTypes.string,
 };

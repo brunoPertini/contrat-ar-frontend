@@ -73,9 +73,21 @@ function AdminPage({
     setVendibles(fetched);
   }, [tabOption]);
 
-  // const onSelectedCategory = (categoryId) => {
+  const onCategorySelected = (categoryId) => {
+    if (!categoryId) {
+      return handleFetchVendibles();
+    }
 
-  // };
+    return setVendibles((current) => {
+      const newVendibles = { ...current.vendibles };
+      const vendiblesNames = Object.keys(current.vendibles);
+      vendiblesNames.forEach((vendibleName) => {
+        newVendibles[vendibleName] = newVendibles[vendibleName]
+          .filter((vendible) => vendible.vendibleCategoryId === categoryId);
+      });
+      return { ...current, vendibles: { ...newVendibles } };
+    });
+  };
 
   useEffect(() => {
     handleFetchVendibles();
@@ -145,7 +157,7 @@ function AdminPage({
             }}
             vendiblesFiltersProps={{
               categories: vendibles.categorias,
-              onCategorySelected: () => {},
+              onCategorySelected,
             }}
           />
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}

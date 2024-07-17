@@ -43,6 +43,7 @@ function CategoryAccordion({
 
   const handleCategorySelected = (categoryId, categoryName) => {
     onCategorySelected(categoryId, categoryName);
+    setIsModalOpen(false);
   };
 
   const handleAccordionClick = ({ rootId, children }) => (
