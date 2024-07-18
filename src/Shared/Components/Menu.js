@@ -7,7 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { EMPTY_FUNCTION } from '../Constants/System';
 
 export default function BasicMenu({
-  options, buttonLabel, styles, onClose,
+  options, buttonLabel, styles, itemsStyles, onClose,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -56,7 +56,12 @@ export default function BasicMenu({
             };
 
             return (
-              <MenuItem disableRipple onClick={onOptionClicked} key={`menu_option${index}`} sx={{ cursor: 'default' }}>
+              <MenuItem
+                disableRipple
+                onClick={onOptionClicked}
+                key={`menu_option${index}`}
+                sx={{ ...itemsStyles }}
+              >
                 {label ? (
                   <FormControlLabel
                     control={<Component {...props} />}
@@ -75,6 +80,7 @@ export default function BasicMenu({
 
 BasicMenu.defaultProps = {
   styles: {},
+  itemsStyles: {},
   onClose: EMPTY_FUNCTION,
 };
 
@@ -86,5 +92,6 @@ BasicMenu.propTypes = {
   })).isRequired,
   buttonLabel: PropTypes.any.isRequired,
   styles: PropTypes.object,
+  itemsStyles: PropTypes.object,
   onClose: PropTypes.func,
 };

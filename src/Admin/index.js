@@ -6,6 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { pickBy } from 'lodash';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';
@@ -72,6 +73,16 @@ function AdminPage({
     const fetched = tabOption === 'productos' ? await fetchProductos() : await fetchServicios();
     setVendibles(fetched);
   }, [tabOption]);
+
+  const filterVendiblesByName = (searchTerm) => (!searchTerm ? handleFetchVendibles()
+    : setVendibles((previous) => {
+      const regEx = new RegExp(searchTerm, 'i');
+      const newVendibles = pickBy(previous.vendibles, (
+        posts,
+        vendibleName,
+      ) => vendibleName.match(regEx));
+      return { ...previous, vendibles: { ...newVendibles } };
+    }));
 
   const onCategorySelected = (categoryId) => {
     if (!categoryId) {
@@ -158,6 +169,7 @@ function AdminPage({
             vendiblesFiltersProps={{
               categories: vendibles.categorias,
               onCategorySelected,
+              onFilterByName: filterVendiblesByName,
             }}
           />
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}

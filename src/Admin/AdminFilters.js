@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import UsuariosAdminFilters from './UsuariosAdminFilters';
 import VendiblesAdminFilters from './VendbilesAdminFilters';
 
-export default function AdminFilters({ filtersType, usuariosFiltersProps, vendiblesFiltersProps }) {
+export default function AdminFilters({
+  filtersType,
+  usuariosFiltersProps, vendiblesFiltersProps,
+}) {
   const getMenuOption = ({
     component, props, onClick, label,
   }) => ({
