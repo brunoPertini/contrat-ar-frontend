@@ -38,7 +38,7 @@ class CategoryRenderer {
     this.#root = null;
     this.#onChange = onChangeFunction;
     this.#rootName = rootName;
-    this.key = `accordion_${rootName}`;
+    this.key = `accordion_${rootId}`;
     this.#isExpanded = isExpanded;
     this.#rootId = rootId;
     this.#renderAsList = renderAsList;

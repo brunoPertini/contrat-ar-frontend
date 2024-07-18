@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { sharedLabels } from '../StaticData/Shared';
-import { USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
+import { EMPTY_FUNCTION, USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
 import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
@@ -193,11 +193,11 @@ export default function UsuariosTable({
                 <OptionsMenu
                   title={sharedLabels.actions}
                   options={ACTIONS_OPTIONS}
-                  onOptionClicked={(option) => optionsHandlers[option](
+                  onOptionClicked={(option) => (option ? optionsHandlers[option](
                     usuario.id,
                     usuario.name,
                     usuario.surname,
-                  )}
+                  ) : EMPTY_FUNCTION)}
                 />
               </TableCell>
             </TableRow>

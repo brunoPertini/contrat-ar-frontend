@@ -43,37 +43,98 @@ function splitArrayIntoChunks(array, chunkSize) {
   return result;
 }
 
+/**
+ * @typedef CategoryHierarchy
+ * @type {Object}
+ * Category hierarchy model
+ * @property {String} root
+ * @property {Number} rootId
+ * @property {Array<CategoryHierarchy>} children
+ */
+
+/**
+ * @typedef CategoryResponse
+ * @type {Object}
+ * @property {String}
+ * @property {Array<CategoryHierarchy>}
+ */
+
+/**
+ *
+ * @param {CategoryResponse}  sourceCategories
+ * @param {String} term
+ * @returns {CategoryResponse} hierarchies containing a category matching the term
+ */
+function searchCategoriesMatchingTerm(sourceCategories, term) {
+  const newCategories = {};
+  const regEx = new RegExp(term, 'i');
+
+  Object.keys(sourceCategories).forEach((vendibleName) => {
+    let found = null;
+    sourceCategories[vendibleName].forEach((hierarchyRoot) => {
+      const queue = [hierarchyRoot];
+
+      while (queue.length && !found) {
+        const current = queue.shift();
+
+        if (current.root.match(regEx)) {
+          found = current;
+        }
+
+        current.children.forEach((child) => queue.unshift(child));
+      }
+
+      if (found) {
+        newCategories[vendibleName] = hierarchyRoot;
+      }
+    });
+  });
+
+  return newCategories;
+}
+
 function CategoryModal({
   open, handleClose, categories, columnLimit, handleCategorySelected,
 }) {
   const [filteredCategories, setFilteredCategories] = useState([]);
 
-  useEffect(() => {
+  const [searchTerm, setSearchTerm] = useState();
+
+  const buildCategoriesToRender = (sourceObject, firstRender) => {
     const firstCategoriesSections = [];
-    Object.values(categories).forEach((hierarchiesList) => {
-      hierarchiesList.forEach((hierarchy) => {
-        const { root, rootId, children } = hierarchy;
 
-        const isSuperCategory = !!(children.length);
+    const processHierarchy = (hierarchy) => {
+      const { root, rootId, children } = hierarchy;
 
-        const childrenJsx = [];
+      const isSuperCategory = !!(children.length);
 
-        children.forEach((childrenRoot) => {
-          childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
+      const childrenJsx = [];
+
+      children.forEach((childrenRoot) => {
+        childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
+      });
+
+      const element = isSuperCategory ? new RootRenderer({
+        rootName: root, rootId, children: childrenJsx, renderAsList: true,
+      })
+        : new EmptyTreeRenderer({
+          handleCategorySelected,
+          rootName: root,
+          rootId,
+          renderAsList: true,
         });
 
-        const element = isSuperCategory ? new RootRenderer({
-          rootName: root, rootId, children: childrenJsx, renderAsList: true,
-        })
-          : new EmptyTreeRenderer({
-            handleCategorySelected,
-            rootName: root,
-            rootId,
-            renderAsList: true,
-          });
+      firstCategoriesSections.push(element);
+    };
 
-        firstCategoriesSections.push(element);
-      });
+    Object.values(sourceObject).forEach((hierarchiesList) => {
+      if (firstRender) {
+        hierarchiesList.forEach((hierarchy) => {
+          processHierarchy(hierarchy);
+        });
+      } else {
+        processHierarchy(hierarchiesList);
+      }
     });
 
     const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);
@@ -81,7 +142,24 @@ function CategoryModal({
     chunkedCategories.sort((a, b) => b.length - a.length);
 
     setFilteredCategories(chunkedCategories);
+  };
+
+  useEffect(() => {
+    buildCategoriesToRender(categories, true);
   }, [categories, handleCategorySelected]);
+
+  const filterCategories = () => {
+    if (!searchTerm) {
+      return buildCategoriesToRender(categories, true);
+    }
+    const newFilteredCategories = searchCategoriesMatchingTerm(categories, searchTerm);
+
+    return buildCategoriesToRender(newFilteredCategories);
+  };
+
+  const handleKeyUp = (newValue) => {
+    setSearchTerm(newValue);
+  };
 
   return (
     <Modal
@@ -100,6 +178,7 @@ function CategoryModal({
       >
         <Box display="flex" flexDirection="column" sx={{ mb: '5%' }}>
           <SearcherInput
+            autoFocus
             title={sharedLabels.searchCategory}
             titleConfig={{ variant: 'h6' }}
             searcherConfig={{
@@ -107,6 +186,12 @@ function CategoryModal({
               sx: { width: '50%' },
             }}
             inputStyles={{ border: '2px solid black' }}
+            onSearchClick={filterCategories}
+            keyEvents={{
+              onKeyUp: handleKeyUp,
+              onEnterPressed: filterCategories,
+            }}
+            inputValue={searchTerm}
           />
         </Box>
         <Box display="flex" flexDirection="row">
