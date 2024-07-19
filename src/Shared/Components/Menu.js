@@ -60,7 +60,12 @@ export default function BasicMenu({
                 disableRipple
                 onClick={onOptionClicked}
                 key={`menu_option${index}`}
-                sx={{ ...itemsStyles }}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'white',
+                  },
+                  ...itemsStyles,
+                }}
               >
                 {label ? (
                   <FormControlLabel

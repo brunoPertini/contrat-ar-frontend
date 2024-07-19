@@ -32,7 +32,7 @@ function Searcher({
     }
 
     if (isDeletePressed(event)) {
-      onDeletePressed();
+      onDeletePressed(event.target.value);
     }
   };
 

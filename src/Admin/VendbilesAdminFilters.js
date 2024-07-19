@@ -43,6 +43,12 @@ function VendiblesAdminFilters({
         keyEvents: {
           onKeyUp: onNameFilterSet,
           onEnterPressed: () => onFilterByName(filtersApplied.name),
+          onDeletePressed: (value) => {
+            onNameFilterSet(value);
+            if (!value) {
+              onFilterByName();
+            }
+          },
         },
         inputValue: filtersApplied.name,
       },
