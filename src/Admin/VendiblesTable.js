@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -16,7 +16,7 @@ const ATTIBUTES_LABELS = {
   posts: sharedLabels.posts,
 };
 
-function VendblesTable({
+function VendiblesTable({
   vendibles,
 }) {
   const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles)
@@ -24,7 +24,6 @@ function VendblesTable({
 
   return !isEmpty(vendibles) ? (
     <TableContainer component={Paper}>
-      {/* <MapModal {...mapModalProps} /> */}
       <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
@@ -81,4 +80,8 @@ function VendblesTable({
   ) : null;
 }
 
-export default VendblesTable;
+VendiblesTable.propTypes = {
+  vendibles: PropTypes.shape({ vendibles: PropTypes.any }).isRequired,
+};
+
+export default VendiblesTable;

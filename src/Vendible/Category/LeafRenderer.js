@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Link from '@mui/material/Link';
 import CategoryRenderer from './CategoryRenderer';

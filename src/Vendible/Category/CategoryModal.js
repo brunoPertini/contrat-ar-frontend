@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
@@ -7,6 +7,8 @@ import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
 import { SearcherInput } from '../../Shared/Components';
 import { sharedLabels } from '../../StaticData/Shared';
+import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
+import { splitArrayIntoChunks } from '../../Shared/Helpers/UtilsHelper';
 
 function processChild(childRoot, handleCategorySelected) {
   const { root, rootId, children } = childRoot;
@@ -27,20 +29,6 @@ function processChild(childRoot, handleCategorySelected) {
     handleCategorySelected,
     renderAsList: true,
   });
-}
-
-/**
- *
- * @param {Array<any>} array
- * @returns
- */
-function splitArrayIntoChunks(array, chunkSize) {
-  const result = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    const chunk = array.slice(i, i + chunkSize);
-    result.push(chunk);
-  }
-  return result;
 }
 
 /**
@@ -85,13 +73,62 @@ function searchCategoriesMatchingTerm(sourceCategories, term) {
       }
 
       if (found) {
-        newCategories[vendibleName] = hierarchyRoot;
+        if (!newCategories[vendibleName]) {
+          newCategories[vendibleName] = [hierarchyRoot];
+        } else {
+          newCategories[vendibleName].push(hierarchyRoot);
+        }
       }
     });
   });
 
   return newCategories;
 }
+
+const buildCategoriesToRender = ({
+  sourceObject,
+  handleCategorySelected,
+  columnLimit,
+  setFilteredCategories,
+}) => {
+  const firstCategoriesSections = [];
+
+  const processHierarchy = (hierarchy) => {
+    const { root, rootId, children } = hierarchy;
+
+    const isSuperCategory = !!(children.length);
+
+    const childrenJsx = [];
+
+    children.forEach((childrenRoot) => {
+      childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
+    });
+
+    const element = isSuperCategory ? new RootRenderer({
+      rootName: root, rootId, children: childrenJsx, renderAsList: true,
+    })
+      : new EmptyTreeRenderer({
+        handleCategorySelected,
+        rootName: root,
+        rootId,
+        renderAsList: true,
+      });
+
+    firstCategoriesSections.push(element);
+  };
+
+  Object.values(sourceObject).forEach((hierarchiesList) => {
+    hierarchiesList.forEach((hierarchy) => {
+      processHierarchy(hierarchy);
+    });
+  });
+
+  const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);
+
+  chunkedCategories.sort((a, b) => b.length - a.length);
+
+  setFilteredCategories(chunkedCategories);
+};
 
 function CategoryModal({
   open, handleClose, categories, columnLimit, handleCategorySelected,
@@ -100,61 +137,32 @@ function CategoryModal({
 
   const [searchTerm, setSearchTerm] = useState();
 
-  const buildCategoriesToRender = (sourceObject, firstRender) => {
-    const firstCategoriesSections = [];
-
-    const processHierarchy = (hierarchy) => {
-      const { root, rootId, children } = hierarchy;
-
-      const isSuperCategory = !!(children.length);
-
-      const childrenJsx = [];
-
-      children.forEach((childrenRoot) => {
-        childrenJsx.push(processChild(childrenRoot, handleCategorySelected));
-      });
-
-      const element = isSuperCategory ? new RootRenderer({
-        rootName: root, rootId, children: childrenJsx, renderAsList: true,
-      })
-        : new EmptyTreeRenderer({
-          handleCategorySelected,
-          rootName: root,
-          rootId,
-          renderAsList: true,
-        });
-
-      firstCategoriesSections.push(element);
-    };
-
-    Object.values(sourceObject).forEach((hierarchiesList) => {
-      if (firstRender) {
-        hierarchiesList.forEach((hierarchy) => {
-          processHierarchy(hierarchy);
-        });
-      } else {
-        processHierarchy(hierarchiesList);
-      }
-    });
-
-    const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);
-
-    chunkedCategories.sort((a, b) => b.length - a.length);
-
-    setFilteredCategories(chunkedCategories);
-  };
-
   useEffect(() => {
-    buildCategoriesToRender(categories, true);
+    buildCategoriesToRender({
+      sourceObject: categories,
+      handleCategorySelected,
+      columnLimit,
+      setFilteredCategories,
+    });
   }, [categories, handleCategorySelected]);
 
   const filterCategories = () => {
     if (!searchTerm) {
-      return buildCategoriesToRender(categories, true);
+      return buildCategoriesToRender({
+        sourceObject: categories,
+        handleCategorySelected,
+        columnLimit,
+        setFilteredCategories,
+      });
     }
     const newFilteredCategories = searchCategoriesMatchingTerm(categories, searchTerm);
 
-    return buildCategoriesToRender(newFilteredCategories);
+    return buildCategoriesToRender({
+      sourceObject: newFilteredCategories,
+      handleCategorySelected,
+      columnLimit,
+      setFilteredCategories,
+    });
   };
 
   const handleKeyUp = (newValue) => {
@@ -209,5 +217,18 @@ function CategoryModal({
     </Modal>
   );
 }
+
+CategoryModal.defaultProps = {
+  handleClose: EMPTY_FUNCTION,
+  handleCategorySelected: EMPTY_FUNCTION,
+};
+
+CategoryModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func,
+  categories: PropTypes.any.isRequired,
+  columnLimit: PropTypes.number.isRequired,
+  handleCategorySelected: PropTypes.func,
+};
 
 export default CategoryModal;

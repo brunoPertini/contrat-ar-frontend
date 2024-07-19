@@ -1,10 +1,10 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import CategoryAccordion from '../Vendible/Category/CategoryAccordion';
 import SelectedFilters from '../Shared/Components/SelectedFilters';
-import { SearcherInput } from '../Shared/Components';
+import SearcherInput from '../Shared/Components/Searcher';
 
 function VendiblesAdminFilters({
   categories, getMenuOption, vendibleType, onCategorySelected, onFilterByName,
@@ -93,5 +93,17 @@ function VendiblesAdminFilters({
     />
   );
 }
+
+VendiblesAdminFilters.defaultProps = {
+  categories: {},
+};
+
+VendiblesAdminFilters.propTypes = {
+  categories: PropTypes.any,
+  getMenuOption: PropTypes.func.isRequired,
+  vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
+  onCategorySelected: PropTypes.func.isRequired,
+  onFilterByName: PropTypes.func.isRequired,
+};
 
 export default VendiblesAdminFilters;

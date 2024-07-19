@@ -6,7 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { pickBy } from 'lodash';
+import pickBy from 'lodash/pickBy';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';

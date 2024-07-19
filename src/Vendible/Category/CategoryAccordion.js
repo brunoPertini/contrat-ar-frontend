@@ -96,8 +96,8 @@ function CategoryAccordion({
   };
 
   const FIRST_CATEGORIES_LIMIT = useMemo(() => (Math.ceil(
-    Object.keys(categories).length,
-  ) / 4), [categories]);
+    Object.keys(categories).length / 4,
+  )), [categories]);
 
   useEffect(() => {
     const firstCategoriesSections = [];
