@@ -13,7 +13,7 @@ import { EMPTY_FUNCTION } from '../Constants/System';
  */
 function Searcher({
   title, titleConfig, searcherConfig, onSearchClick, placeholder, keyEvents,
-  isSearchDisabled, searchLabel, autoFocus, required,
+  isSearchDisabled, searchLabel, autoFocus, required, inputStyles,
   hasError, errorMessage, inputValue, inputProps,
 }) {
   const {
@@ -32,7 +32,7 @@ function Searcher({
     }
 
     if (isDeletePressed(event)) {
-      onDeletePressed();
+      onDeletePressed(event.target.value);
     }
   };
 
@@ -78,6 +78,7 @@ function Searcher({
           helperText={errorMessage}
           value={inputValue}
           placeholder={placeholder}
+          sx={{ ...inputStyles }}
         />
       </FormControl>
 
@@ -96,6 +97,7 @@ Searcher.defaultProps = {
   inputValue: '',
   titleConfig: {},
   searcherConfig: {},
+  inputStyles: {},
   onSearchClick: EMPTY_FUNCTION,
   keyEvents: {
     onKeyUp: EMPTY_FUNCTION,
@@ -124,6 +126,7 @@ Searcher.propTypes = {
     onDeletePressed: PropTypes.func,
   }),
   inputProps: PropTypes.object,
+  inputStyles: PropTypes.object,
   required: PropTypes.bool,
 };
 

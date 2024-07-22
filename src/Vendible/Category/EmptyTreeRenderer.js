@@ -8,23 +8,40 @@ class EmptyTreeRenderer extends CategoryRenderer {
     rootId,
     isExpanded,
     handleCategorySelected,
+    renderAsList,
   }) {
     super({
       rootName,
       rootId,
       isExpanded,
+      renderAsList,
     });
-    this.root = (
-      <AccordionSummary onClick={() => handleCategorySelected(rootId, rootName)}>
-        <Link
-          sx={{
-            cursor: 'pointer',
-          }}
-        >
-          { rootName }
-        </Link>
-      </AccordionSummary>
-    );
+    this.root = this.renderAsList ? (
+      <ul>
+        <li>
+          <Link
+            variant="caption"
+            sx={{
+              cursor: 'pointer',
+            }}
+            onClick={() => handleCategorySelected(rootId, rootName)}
+          >
+            { rootName }
+          </Link>
+        </li>
+      </ul>
+    )
+      : (
+        <AccordionSummary onClick={() => handleCategorySelected(rootId, rootName)}>
+          <Link
+            sx={{
+              cursor: 'pointer',
+            }}
+          >
+            { rootName }
+          </Link>
+        </AccordionSummary>
+      );
   }
 }
 

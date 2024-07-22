@@ -68,6 +68,18 @@ function AdminContainer({ handleLogout }) {
     }));
   };
 
+  const fetchProductos = () => {
+    const client = HttpClientFactory.createVendibleHttpClient('productos', { token: userInfo.token });
+
+    return client.getVendibleByFilters();
+  };
+
+  const fetchServicios = () => {
+    const client = HttpClientFactory.createVendibleHttpClient('servicios', { token: userInfo.token });
+
+    return client.getVendibleByFilters();
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -94,6 +106,8 @@ function AdminContainer({ handleLogout }) {
       applyFilters={fetchFilteredUsuariosInfo}
       loginAsUser={loginAsUser}
       deleteUser={deleteUser}
+      fetchProductos={fetchProductos}
+      fetchServicios={fetchServicios}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

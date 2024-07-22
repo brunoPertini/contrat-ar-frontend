@@ -1,5 +1,6 @@
 {
     "id": "ID de usuario",
+    "ID": "ID",
     "name": "Nombre",
     "surname": "Apellido",
     "phone": "Teléfono",
@@ -76,6 +77,10 @@
     "locationOf": "Ubicación de {name} {surname}",
     "pleaseConfirmAction": "Por favor confirme la acción",
     "inactiveAccount": "Cuenta inactiva",
-    "activeAccount": "Cuenta activa"
-
+    "activeAccount": "Cuenta activa",
+    "posts": "Publicaciones",
+    "seePosts": "Ver publicaciones",
+    "seeMore": "Ver más",
+    "searchCategory": "Buscar categoría",
+    "searchByVendibleName": "Buscar por nombre"
 }

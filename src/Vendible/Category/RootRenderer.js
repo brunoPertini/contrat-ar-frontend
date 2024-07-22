@@ -12,19 +12,47 @@ class RootRenderer extends CategoryRenderer {
     rootId,
     onChange,
     isExpanded,
-    children,
+    children = [],
+    renderAsList,
   }) {
     super({
       rootName,
       rootId,
       onChange,
       isExpanded,
+      children,
+      renderAsList,
     });
-    this.root = (
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>{ rootName }</Typography>
-      </AccordionSummary>
-    );
+    const innerContent = this.renderAsList ? (
+      <li>
+        { rootName }
+        { !!(children.length) && (
+        <ul>
+          { children.map((c) => {
+            const isSubRoot = !!(c.children?.length);
+            if (isSubRoot) {
+              c.renderAsSubRoot = true;
+              return c.render();
+            }
+            return (
+              <li>
+                { c.render()}
+              </li>
+            );
+          })}
+        </ul>
+        )}
+      </li>
+    ) : null;
+
+    const mainContent = this.renderAsSubRoot ? innerContent : <ul>{innerContent}</ul>;
+
+    this.root = this.renderAsList ? mainContent
+      : (
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>{ rootName }</Typography>
+        </AccordionSummary>
+      );
     this.#children = children;
   }
 

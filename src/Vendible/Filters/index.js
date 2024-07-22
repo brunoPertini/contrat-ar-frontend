@@ -2,19 +2,18 @@ import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
 import { useEffect, useMemo, useState } from 'react';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
-import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
+import SelectedFilters from '../../Shared/Components/SelectedFilters';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -142,24 +141,11 @@ function VendiblesFilters({
       )}
       {
       !(isEmpty(filtersLabels)) && (
-        <Grid item>
-          <Typography variant="h4">
-            {showAccordionTitle
-              ? vendiblesLabels.appliedFilters
-              : vendiblesLabels.appliedCategories}
-
-          </Typography>
-          {
-            filtersLabels.map((label) => (
-              <Chip
-                key={`selected_filter_${label}`}
-                label={label}
-                variant="outlined"
-                onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
-              />
-            ))
-          }
-        </Grid>
+        <SelectedFilters
+          labels={filtersLabels}
+          onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
+          showTitle
+        />
       )
     }
     </>

@@ -1,14 +1,18 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
 import RootRenderer from './RootRenderer';
 import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
+import { sharedLabels } from '../../StaticData/Shared';
+import CategoryModal from './CategoryModal';
 
 /**
  * @param {AccordionElement} categoryTree
@@ -35,9 +39,11 @@ function CategoryAccordion({
   categories, vendibleType, onCategorySelected, showTitle,
 }) {
   const [categoriesSubSection, setCategoriesSubSection] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCategorySelected = (categoryId, categoryName) => {
     onCategorySelected(categoryId, categoryName);
+    setIsModalOpen(false);
   };
 
   const handleAccordionClick = ({ rootId, children }) => (
@@ -89,9 +95,16 @@ function CategoryAccordion({
     });
   };
 
+  const FIRST_CATEGORIES_LIMIT = useMemo(() => (Math.ceil(
+    Object.keys(categories).length / 4,
+  )), [categories]);
+
   useEffect(() => {
     const firstCategoriesSections = [];
-    Object.values(categories).forEach((hierarchiesList) => {
+    const allHierarchies = Object.values(categories);
+    allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
+
+    allHierarchies.forEach((hierarchiesList) => {
       hierarchiesList.forEach((hierarchy) => {
         const { root, rootId, children } = hierarchy;
 
@@ -120,17 +133,30 @@ function CategoryAccordion({
 
   if (!isEmpty(categoriesSubSection)) {
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
+
     return (
-      <div>
-        {showTitle && (
-        <Typography variant="h4">
-          { categoriesTitle }
-        </Typography>
+      <Box display="flex" flexDirection="column">
+        {isModalOpen && (
+          <CategoryModal
+            open={isModalOpen}
+            categories={categories}
+            handleClose={() => setIsModalOpen(false)}
+            columnLimit={FIRST_CATEGORIES_LIMIT}
+            handleCategorySelected={handleCategorySelected}
+          />
         )}
-        {
-          categoriesSubSection.map((accordionElement) => accordionElement.render())
-        }
-      </div>
+        <div>
+          {showTitle && (
+          <Typography variant="h4">
+            {categoriesTitle}
+          </Typography>
+          )}
+          {categoriesSubSection.map((accordionElement) => accordionElement.render())}
+        </div>
+        <Link sx={{ mt: '10%' }} onClick={() => setIsModalOpen(true)}>
+          {sharedLabels.seeMore}
+        </Link>
+      </Box>
     );
   }
   return null;

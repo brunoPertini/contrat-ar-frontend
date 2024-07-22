@@ -21,19 +21,27 @@ class CategoryRenderer {
   /** @type {Boolean} */
   #isExpanded;
 
+  /** @type {Boolean} */
+  #renderAsList;
+
+  /** @type {Boolean} */
+  #renderAsSubRoot;
+
   constructor({
     rootId,
     rootName,
     onChange,
     isExpanded,
+    renderAsList = false,
   }) {
     const onChangeFunction = onChange ?? (() => {});
     this.#root = null;
     this.#onChange = onChangeFunction;
     this.#rootName = rootName;
-    this.key = `accordion_${rootName}`;
+    this.key = `accordion_${rootId}`;
     this.#isExpanded = isExpanded;
     this.#rootId = rootId;
+    this.#renderAsList = renderAsList;
   }
 
   set root(value) {
@@ -72,7 +80,46 @@ class CategoryRenderer {
     return this.#rootId;
   }
 
+  get renderAsList() {
+    return this.#renderAsList;
+  }
+
+  set renderAsSubRoot(value) {
+    this.#renderAsSubRoot = value;
+    if (value) {
+      this.root = (
+        <li>
+          { this.#rootName }
+          { !!(this.children.length) && (
+          <ul>
+            { this.children.map((c) => {
+              const isSubRoot = !!(c.children?.length);
+              if (isSubRoot) {
+                c.renderAsSubRoot = true;
+                return c.render();
+              }
+              return (
+                <li>
+                  { c.render()}
+                </li>
+              );
+            })}
+          </ul>
+          )}
+        </li>
+      );
+    }
+  }
+
+  get renderAsSubRoot() {
+    return this.#renderAsSubRoot;
+  }
+
   render() {
+    if (this.renderAsList) {
+      return this.root;
+    }
+
     return (
       <Accordion
         expanded={this.isExpanded}

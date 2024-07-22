@@ -77,3 +77,18 @@ export const parseLocationForMap = (sourceLocation) => ({
     longitude: sourceLocation.coordinates[1],
   },
 });
+
+/**
+ *
+ * @param {Array<any>} array
+ * @param {Number} chunkSize
+ * @returns {Array<Array<any>>} An array of arrays, where each one has a chunkSize maximum length
+ */
+export function splitArrayIntoChunks(array, chunkSize) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    const chunk = array.slice(i, i + chunkSize);
+    result.push(chunk);
+  }
+  return result;
+}
