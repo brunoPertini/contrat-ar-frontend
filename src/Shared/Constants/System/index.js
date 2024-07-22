@@ -63,7 +63,8 @@ export const dialogModalTexts = {
   },
   DELETE_VENDIBLE: {
     title: '¿Desea eliminar el {vendible} {vendibleNombre}?',
-    text: 'Esta acción es irreversible',
+    adminTitle: '¿Desea eliminar el {vendible} {vendibleNombre} y todas sus publicaciones?',
+    text: '¡Tené en cuenta que esta acción es irreversible!',
   },
 };
 

@@ -33,7 +33,7 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo,
+  userInfo, usuariosInfo, planesInfo, deleteVendible,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
@@ -100,6 +100,10 @@ function AdminPage({
     });
   };
 
+  const handleDeleteVendible = (vendibleId) => deleteVendible(vendibleId).then(
+    () => handleFetchVendibles(),
+  );
+
   useEffect(() => {
     handleFetchVendibles();
   }, [tabOption]);
@@ -115,9 +119,13 @@ function AdminPage({
       },
       productos: {
         vendibles,
+        deleteVendible: handleDeleteVendible,
+        vendibleType: tabOption,
       },
       servicios: {
         vendibles,
+        deleteVendible: handleDeleteVendible,
+        vendibleType: tabOption,
       },
     };
 
@@ -203,6 +211,7 @@ AdminPage.propTypes = {
   deleteUser: PropTypes.func.isRequired,
   fetchProductos: PropTypes.func.isRequired,
   fetchServicios: PropTypes.func.isRequired,
+  deleteVendible: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

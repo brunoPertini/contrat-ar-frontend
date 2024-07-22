@@ -1,5 +1,6 @@
 {
     "getService": "/service",
     "getProduct": "/product",
-    "uploadImage": "/image/vendible/iPhone/proveedor/{proveedorId}/upload"
+    "uploadImage": "/image/vendible/iPhone/proveedor/{proveedorId}/upload",
+    "vendibleById": "/vendible/{id}"
 }
