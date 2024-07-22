@@ -8,19 +8,64 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
+import { useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
+import OptionsMenu from '../Shared/Components/OptionsMenu';
+import { DialogModal } from '../Shared/Components';
+import { EMPTY_FUNCTION, dialogModalTexts } from '../Shared/Constants/System';
+import { parseVendibleUnit } from '../Shared/Helpers/UtilsHelper';
+import InformativeAlert from '../Shared/Components/Alert';
+import { proveedorLabels } from '../StaticData/Proveedor';
 
 const ATTIBUTES_LABELS = {
   id: sharedLabels.ID,
   name: sharedLabels.name,
   posts: sharedLabels.posts,
+  actions: sharedLabels.actions,
 };
 
+const ACTIONS_OPTIONS = [sharedLabels.delete];
+
 function VendiblesTable({
-  vendibles,
+  vendibles, vendibleType, deleteVendible,
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
+
+  const [operationResult, setOperationResult] = useState(null);
+
   const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles)
     .filter((key) => vendibles.vendibles[key].length) : [];
+
+  const optionHandlers = (option, id, name) => {
+    if (!option) {
+      return EMPTY_FUNCTION;
+    }
+
+    const handlers = {
+      [sharedLabels.delete]: () => {
+        setVendibleChosen({ id, name });
+        setIsDialogOpen(true);
+      },
+    };
+
+    return handlers[option]();
+  };
+
+  const resetDialogData = () => {
+    setOperationResult(null);
+    setIsDialogOpen(false);
+    setVendibleChosen({ id: null, name: null });
+  };
+
+  const handleAcceptDeleteVendible = () => deleteVendible(vendibleChosen.id).then(() => {
+    setOperationResult(true);
+  })
+    .catch(() => {
+      setOperationResult(false);
+    })
+    .finally(() => setIsDialogOpen(false));
 
   return !isEmpty(vendibles) ? (
     <TableContainer component={Paper}>
@@ -71,17 +116,49 @@ function VendiblesTable({
                   ,
                 </Link>
               </TableCell>
+              <TableCell key={`cell-${vendibleName}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                <OptionsMenu
+                  title={sharedLabels.actions}
+                  options={ACTIONS_OPTIONS}
+                  onOptionClicked={(option) => optionHandlers(
+                    option,
+                    vendibles.vendibles[vendibleName][0].vendibleId,
+                    vendibleName,
+                  )}
+                />
+              </TableCell>
             </TableRow>
           )
           ))}
         </TableBody>
       </Table>
+      <DialogModal
+        open={isDialogOpen}
+        handleAccept={handleAcceptDeleteVendible}
+        handleDeny={resetDialogData}
+        title={dialogModalTexts.DELETE_VENDIBLE.adminTitle
+          .replace('{vendible}', parseVendibleUnit(vendibleType))
+          .replace('{vendibleNombre}', vendibleChosen.name)}
+        contextText={dialogModalTexts.DELETE_VENDIBLE.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+      />
+      <InformativeAlert
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={operationResult !== null}
+        label={(operationResult ? proveedorLabels['deleteVendible.alert.success']
+          : proveedorLabels['deleteVendible.alert.error']).replace('{vendible}', vendibleChosen.name)}
+        severity={operationResult ? 'success' : 'error'}
+        onClose={resetDialogData}
+      />
     </TableContainer>
   ) : null;
 }
 
 VendiblesTable.propTypes = {
   vendibles: PropTypes.shape({ vendibles: PropTypes.any }).isRequired,
+  vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
+  deleteVendible: PropTypes.func.isRequired,
 };
 
 export default VendiblesTable;

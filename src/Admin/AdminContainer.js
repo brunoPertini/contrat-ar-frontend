@@ -80,6 +80,14 @@ function AdminContainer({ handleLogout }) {
     return client.getVendibleByFilters();
   };
 
+  const deleteVendible = (id) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+    });
+
+    return client.deleteVendible(id);
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -108,6 +116,7 @@ function AdminContainer({ handleLogout }) {
       deleteUser={deleteUser}
       fetchProductos={fetchProductos}
       fetchServicios={fetchServicios}
+      deleteVendible={deleteVendible}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

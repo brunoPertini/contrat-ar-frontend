@@ -1,4 +1,4 @@
-import { adminRoutes } from '../../Shared/Constants/ApiRoutes';
+import { adminRoutes, vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export default class AdminHttpClient extends HttpClient {
@@ -78,5 +78,13 @@ export default class AdminHttpClient extends HttpClient {
    */
   deleteUser(userId) {
     return this.delete(adminRoutes.usuariosById.replace('{userId}', userId));
+  }
+
+  /**
+   *
+   * @param {Long | String} vendibleId
+   */
+  deleteVendible(vendibleId) {
+    return this.delete(vendiblesRoutes.vendibleById.replace('{id}', vendibleId));
   }
 }
