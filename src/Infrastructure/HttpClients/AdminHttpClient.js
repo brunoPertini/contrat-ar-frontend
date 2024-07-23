@@ -87,4 +87,18 @@ export default class AdminHttpClient extends HttpClient {
   deleteVendible(vendibleId) {
     return this.delete(vendiblesRoutes.vendibleById.replace('{id}', vendibleId));
   }
+
+  /**
+   *
+   * @param {Long | String} vendibleId
+   * @param {Number} page
+   * @param {Num} pageSize
+   */
+  getVendiblePosts(vendibleId, page, pageSize) {
+    const url = adminRoutes.vendiblePosts.replace('{vendibleId}', vendibleId);
+
+    const queryParams = { page, pageSize };
+
+    return this.get(url, queryParams);
+  }
 }

@@ -82,5 +82,12 @@
     "seePosts": "Ver publicaciones",
     "seeMore": "Ver más",
     "searchCategory": "Buscar categoría",
-    "searchByVendibleName": "Buscar por nombre"
+    "searchByVendibleName": "Buscar por nombre",
+    "provider": "Proveedor",
+    "providerId": "ID de proveedor",
+    "providerName": "Nombre del proveedor",
+    "description": "Descripción",
+    "offersDelivery": "Incluye envio a domicilio",
+    "offersInCustomAddress": "Se ofrece/realiza en una ubicación específica",
+    "category": "Categoría"
 }

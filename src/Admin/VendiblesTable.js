@@ -8,7 +8,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import { useState } from 'react';
+import {
+  Suspense,
+  lazy, startTransition, useState,
+} from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
 import { DialogModal } from '../Shared/Components';
@@ -16,6 +19,9 @@ import { EMPTY_FUNCTION, dialogModalTexts } from '../Shared/Constants/System';
 import { parseVendibleUnit } from '../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../Shared/Components/Alert';
 import { proveedorLabels } from '../StaticData/Proveedor';
+import BackdropLoader from '../Shared/Components/BackdropLoader';
+
+const AdminVendiblePosts = lazy(() => import('./AdminVendiblePosts'));
 
 const ATTIBUTES_LABELS = {
   id: sharedLabels.ID,
@@ -27,13 +33,20 @@ const ATTIBUTES_LABELS = {
 const ACTIONS_OPTIONS = [sharedLabels.delete];
 
 function VendiblesTable({
-  vendibles, vendibleType, deleteVendible,
+  vendibles, vendibleType, deleteVendible, fetchPosts,
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
 
   const [operationResult, setOperationResult] = useState(null);
+
+  const [showPostsTable, setShowPostsTable] = useState(false);
+
+  const handleOpenPostsTable = (vendibleId) => startTransition(() => {
+    setVendibleChosen({ id: vendibleId });
+    setShowPostsTable(true);
+  });
 
   const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles)
     .filter((key) => vendibles.vendibles[key].length) : [];
@@ -66,6 +79,18 @@ function VendiblesTable({
       setOperationResult(false);
     })
     .finally(() => setIsDialogOpen(false));
+
+  if (showPostsTable) {
+    return (
+      <Suspense fallback={<BackdropLoader open />}>
+        <AdminVendiblePosts
+          fetchPosts={fetchPosts}
+          vendibleType={vendibleType}
+          vendibleId={vendibleChosen.id}
+        />
+      </Suspense>
+    );
+  }
 
   return !isEmpty(vendibles) ? (
     <TableContainer component={Paper}>
@@ -110,7 +135,9 @@ function VendiblesTable({
               >
                 <Link
                   sx={{ cursor: 'pointer' }}
-                  onClick={() => {}}
+                  onClick={() => handleOpenPostsTable(
+                    vendibles.vendibles[vendibleName][0].vendibleId,
+                  )}
                 >
                   { sharedLabels.seePosts }
                   ,
@@ -159,6 +186,7 @@ VendiblesTable.propTypes = {
   vendibles: PropTypes.shape({ vendibles: PropTypes.any }).isRequired,
   vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
   deleteVendible: PropTypes.func.isRequired,
+  fetchPosts: PropTypes.func.isRequired,
 };
 
 export default VendiblesTable;

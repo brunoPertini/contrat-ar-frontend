@@ -33,7 +33,7 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, deleteVendible,
+  userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
@@ -109,6 +109,13 @@ function AdminPage({
   }, [tabOption]);
 
   const propsForCurrentTabOption = useMemo(() => {
+    const vendiblesProps = {
+      fetchPosts,
+      vendibles,
+      deleteVendible: handleDeleteVendible,
+      vendibleType: tabOption,
+    };
+
     const paramsDictionary = {
       usuarios: {
         usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
@@ -117,16 +124,8 @@ function AdminPage({
         loginAsUser,
         deleteUser,
       },
-      productos: {
-        vendibles,
-        deleteVendible: handleDeleteVendible,
-        vendibleType: tabOption,
-      },
-      servicios: {
-        vendibles,
-        deleteVendible: handleDeleteVendible,
-        vendibleType: tabOption,
-      },
+      productos: vendiblesProps,
+      servicios: vendiblesProps,
     };
 
     return paramsDictionary[tabOption];
@@ -212,6 +211,7 @@ AdminPage.propTypes = {
   fetchProductos: PropTypes.func.isRequired,
   fetchServicios: PropTypes.func.isRequired,
   deleteVendible: PropTypes.func.isRequired,
+  fetchPosts: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

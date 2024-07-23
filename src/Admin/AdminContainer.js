@@ -80,6 +80,15 @@ function AdminContainer({ handleLogout }) {
     return client.getVendibleByFilters();
   };
 
+  const fetchPosts = ({ vendibleId, page, pageSize }) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+    });
+
+    return client.getVendiblePosts(vendibleId, page, pageSize);
+  };
+
   const deleteVendible = (id) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
@@ -117,6 +126,7 @@ function AdminContainer({ handleLogout }) {
       fetchProductos={fetchProductos}
       fetchServicios={fetchServicios}
       deleteVendible={deleteVendible}
+      fetchPosts={fetchPosts}
     />
   ) : null), [usuariosInfo, planesInfo]);
 
