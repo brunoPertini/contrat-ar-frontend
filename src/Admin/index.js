@@ -7,6 +7,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
+import { Link } from '@mui/material';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';
@@ -41,6 +42,8 @@ function AdminPage({
 
   const [filters, setFilters] = useState(filtersDefaultValues);
   const [vendibles, setVendibles] = useState({});
+
+  const [isShowingVendiblePosts, setIsShowingVendiblePosts] = useState(false);
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
@@ -112,6 +115,8 @@ function AdminPage({
     const vendiblesProps = {
       fetchPosts,
       vendibles,
+      setIsShowingVendiblePosts,
+      isShowingVendiblePosts,
       deleteVendible: handleDeleteVendible,
       vendibleType: tabOption,
     };
@@ -129,7 +134,7 @@ function AdminPage({
     };
 
     return paramsDictionary[tabOption];
-  }, [tabOption, usuariosInfo, vendibles]);
+  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts]);
 
   return (
     <>
@@ -165,6 +170,7 @@ function AdminPage({
         <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
           <AdminFilters
             filtersType={tabOption}
+            isShowingVendiblePosts={isShowingVendiblePosts}
             usuariosFiltersProps={{
               usuarioTypeFilter,
               setUsuarioTypeFilter: handleApplyUsuarioTypeFilter,
@@ -179,6 +185,19 @@ function AdminPage({
               onFilterByName: filterVendiblesByName,
             }}
           />
+          {
+            isShowingVendiblePosts && (
+            <Link
+              id="closeVendiblePostsTable"
+              component="button"
+              variant="h5"
+              onClick={() => setIsShowingVendiblePosts(false)}
+              sx={{ cursor: 'pointer', width: '5%' }}
+            >
+              { sharedLabels.goBack }
+            </Link>
+            )
+          }
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}
         </Box>
       </Box>

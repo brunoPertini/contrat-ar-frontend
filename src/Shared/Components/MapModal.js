@@ -31,7 +31,7 @@ function MapModal({
           location={parseLocationForMap(location)}
           containerStyles={{
             height: '40rem',
-            width: '40rem',
+            width: '100%',
           }}
         />
       </Box>

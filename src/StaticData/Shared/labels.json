@@ -26,7 +26,7 @@
     "provider": "Proveedor",
     "to": "A",
     "kilometersAway": "KM de distancia",
-    "price": "Precio: ",
+    "price": "Precio",
     "minimalPrice": "Presupuesto mínimo: ",
     "priceToBeAgreed": "Precio a  convenir",
     "sendMessage": "Enviar mensaje",
@@ -75,6 +75,7 @@
     "showing": "Mostrando:",
     "onlyActiveUsers": "Solo usuarios activos",
     "locationOf": "Ubicación de {name} {surname}",
+    "locationOfVendible": "Ubicación de {vendible}, ofrecido por {proveedor}",
     "pleaseConfirmAction": "Por favor confirme la acción",
     "inactiveAccount": "Cuenta inactiva",
     "activeAccount": "Cuenta activa",
@@ -83,11 +84,11 @@
     "seeMore": "Ver más",
     "searchCategory": "Buscar categoría",
     "searchByVendibleName": "Buscar por nombre",
-    "provider": "Proveedor",
     "providerId": "ID de proveedor",
     "providerName": "Nombre del proveedor",
     "description": "Descripción",
     "offersDelivery": "Incluye envio a domicilio",
     "offersInCustomAddress": "Se ofrece/realiza en una ubicación específica",
-    "category": "Categoría"
+    "category": "Categoría",
+    "vendibleNombre": "Nombre del producto/servicio"
 }

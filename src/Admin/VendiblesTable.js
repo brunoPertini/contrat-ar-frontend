@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import {
   Suspense,
-  lazy, startTransition, useState,
+  lazy, startTransition, useEffect, useState,
 } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
@@ -33,7 +33,8 @@ const ATTIBUTES_LABELS = {
 const ACTIONS_OPTIONS = [sharedLabels.delete];
 
 function VendiblesTable({
-  vendibles, vendibleType, deleteVendible, fetchPosts,
+  vendibles, vendibleType, deleteVendible, fetchPosts, setIsShowingVendiblePosts,
+  isShowingVendiblePosts,
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -43,9 +44,19 @@ function VendiblesTable({
 
   const [showPostsTable, setShowPostsTable] = useState(false);
 
+  useEffect(() => {
+    setShowPostsTable(false);
+    setIsShowingVendiblePosts(false);
+  }, [vendibleType]);
+
+  useEffect(() => {
+    setShowPostsTable(isShowingVendiblePosts);
+  }, [isShowingVendiblePosts]);
+
   const handleOpenPostsTable = (vendibleId) => startTransition(() => {
     setVendibleChosen({ id: vendibleId });
     setShowPostsTable(true);
+    setIsShowingVendiblePosts(true);
   });
 
   const vendiblesNames = 'vendibles' in vendibles ? Object.keys(vendibles.vendibles)
@@ -140,7 +151,6 @@ function VendiblesTable({
                   )}
                 >
                   { sharedLabels.seePosts }
-                  ,
                 </Link>
               </TableCell>
               <TableCell key={`cell-${vendibleName}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
@@ -187,6 +197,8 @@ VendiblesTable.propTypes = {
   vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
   deleteVendible: PropTypes.func.isRequired,
   fetchPosts: PropTypes.func.isRequired,
+  setIsShowingVendiblePosts: PropTypes.func.isRequired,
+  isShowingVendiblePosts: PropTypes.bool.isRequired,
 };
 
 export default VendiblesTable;

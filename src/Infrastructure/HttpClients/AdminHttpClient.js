@@ -99,6 +99,6 @@ export default class AdminHttpClient extends HttpClient {
 
     const queryParams = { page, pageSize };
 
-    return this.get(url, queryParams);
+    return this.get(url, queryParams).then((data) => data.content);
   }
 }
