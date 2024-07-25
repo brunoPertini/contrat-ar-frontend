@@ -13,6 +13,7 @@ import {
   useMemo, lazy, Suspense, useState, useEffect,
   useCallback,
 } from 'react';
+import Pagination from '@mui/material/Pagination';
 import { sharedLabels } from '../StaticData/Shared';
 import { PRODUCTS } from '../Shared/Constants/System';
 import { adminRoutes } from '../Shared/Constants/ApiRoutes';
@@ -56,8 +57,11 @@ const PRODUCTS_ATTRIBUTES_CONFIG = {
   stock: 'text',
 };
 
+const PAGE_SIZE = 10;
+
 function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
   const [posts, setPosts] = useState();
+  const [paginationInfo, setPaginationInfo] = useState();
 
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
@@ -71,14 +75,24 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
     title: '',
   });
 
-  const fetchPostsCallback = async (toFetchVendibleId) => {
-    const newPosts = await fetchPosts({ vendibleId: toFetchVendibleId, page: 0, pageSize: 3 });
-    setPosts(newPosts);
+  const fetchPostsCallback = async (page = 0) => {
+    const newInfo = await fetchPosts({ vendibleId, page, pageSize: PAGE_SIZE });
+    setPosts(newInfo.content);
+    const { totalPages, last, first } = newInfo;
+    setPaginationInfo({
+      totalPages,
+      first,
+      last,
+    });
+  };
+
+  const onPageChange = (_, newPage) => {
+    fetchPostsCallback(newPage - 1);
   };
 
   useEffect(() => {
     if (vendibleId) {
-      fetchPostsCallback(vendibleId);
+      fetchPostsCallback();
     }
   }, [vendibleId]);
 
@@ -88,6 +102,25 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
 
   const FINAL_ATTRIBUTES_CONFIG = useMemo(() => (vendibleType !== PRODUCTS ? ATTRIBUTES_CONFIG
     : { ...ATTRIBUTES_CONFIG, ...PRODUCTS_ATTRIBUTES_CONFIG }), [vendibleType]);
+
+  const {
+    paginationEnabled, pagesCount, canGoForward, canGoBack,
+  } = useMemo(() => {
+    if (!paginationInfo) {
+      return {
+        paginationEnabled: false,
+        pagesCount: 0,
+        canGoForward: false,
+        canGoBack: false,
+      };
+    }
+    return {
+      paginationEnabled: paginationInfo.totalPages > 1,
+      pagesCount: paginationInfo.totalPages,
+      canGoForward: !paginationInfo.last,
+      canGoBack: !paginationInfo.first,
+    };
+  }, [paginationInfo]);
 
   const renderMapModal = (post) => setMapModalProps((previous) => ({
     ...previous,
@@ -109,11 +142,12 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
   };
 
   return (
-    <TableContainer component={Paper}>
-      <MapModal {...mapModalProps} />
-      <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
-        <TableHead>
-          {
+    <>
+      <TableContainer component={Paper}>
+        <MapModal {...mapModalProps} />
+        <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
+          <TableHead>
+            {
               Object.values(FINAL_LABELS).map((label) => (
                 <TableCell
                   sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
@@ -122,9 +156,9 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
                 </TableCell>
               ))
             }
-        </TableHead>
-        <TableBody>
-          {
+          </TableHead>
+          <TableBody>
+            {
             !posts?.length ? (
               <BackdropLoader open />
             ) : posts.map((post) => (
@@ -156,9 +190,21 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
               </TableRow>
             ))
           }
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {
+      paginationEnabled && (
+        <Pagination
+          count={pagesCount}
+          hideNextButton={!canGoForward}
+          hidePrevButton={!canGoBack}
+          onChange={onPageChange}
+          sx={{ mt: '1%' }}
+        />
+      )
+    }
+    </>
   );
 }
 
