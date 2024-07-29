@@ -93,12 +93,13 @@ export default class AdminHttpClient extends HttpClient {
    * @param {Long | String} vendibleId
    * @param {Number} page
    * @param {Num} pageSize
+   * @param {Object} [filters] filters
    */
-  getVendiblePosts(vendibleId, page, pageSize) {
+  getVendiblePosts(vendibleId, page, pageSize, filters) {
     const url = adminRoutes.vendiblePosts.replace('{vendibleId}', vendibleId);
 
     const queryParams = { page, pageSize };
 
-    return this.get(url, queryParams).then((data) => data);
+    return this.post(url, queryParams, filters).then((data) => data);
   }
 }

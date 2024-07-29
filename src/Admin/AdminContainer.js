@@ -80,13 +80,15 @@ function AdminContainer({ handleLogout }) {
     return client.getVendibleByFilters();
   };
 
-  const fetchPosts = ({ vendibleId, page, pageSize }) => {
+  const fetchPosts = ({
+    vendibleId, page, pageSize, filters,
+  }) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
     });
 
-    return client.getVendiblePosts(vendibleId, page, pageSize);
+    return client.getVendiblePosts(vendibleId, page, pageSize, filters);
   };
 
   const deleteVendible = (id) => {

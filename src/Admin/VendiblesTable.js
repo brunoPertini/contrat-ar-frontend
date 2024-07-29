@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import Table from '@mui/material/Table';
@@ -20,6 +21,7 @@ import { parseVendibleUnit } from '../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../Shared/Components/Alert';
 import { proveedorLabels } from '../StaticData/Proveedor';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
+import { paginationShape } from '../Shared/PropTypes/Shared';
 
 const AdminVendiblePosts = lazy(() => import('./AdminVendiblePosts'));
 
@@ -33,12 +35,10 @@ const ATTIBUTES_LABELS = {
 const ACTIONS_OPTIONS = [sharedLabels.delete];
 
 function VendiblesTable({
-  vendibles, vendibleType, deleteVendible, fetchPosts, setIsShowingVendiblePosts,
-  isShowingVendiblePosts,
+  vendibles, vendibleType, deleteVendible, fetchPosts, setIsShowingVendiblePosts, posts, setPosts,
+  isShowingVendiblePosts, vendibleChosen, setVendibleChosen, paginationInfo, setPaginationInfo,
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
 
   const [operationResult, setOperationResult] = useState(null);
 
@@ -53,8 +53,8 @@ function VendiblesTable({
     setShowPostsTable(isShowingVendiblePosts);
   }, [isShowingVendiblePosts]);
 
-  const handleOpenPostsTable = (vendibleId) => startTransition(() => {
-    setVendibleChosen({ id: vendibleId });
+  const handleOpenPostsTable = (vendibleId, name) => startTransition(() => {
+    setVendibleChosen({ id: vendibleId, name });
     setShowPostsTable(true);
     setIsShowingVendiblePosts(true);
   });
@@ -95,9 +95,13 @@ function VendiblesTable({
     return (
       <Suspense fallback={<BackdropLoader open />}>
         <AdminVendiblePosts
+          posts={posts}
+          setPosts={setPosts}
           fetchPosts={fetchPosts}
           vendibleType={vendibleType}
           vendibleId={vendibleChosen.id}
+          paginationInfo={paginationInfo}
+          setPaginationInfo={setPaginationInfo}
         />
       </Suspense>
     );
@@ -148,6 +152,7 @@ function VendiblesTable({
                   sx={{ cursor: 'pointer' }}
                   onClick={() => handleOpenPostsTable(
                     vendibles.vendibles[vendibleName][0].vendibleId,
+                    vendibleName,
                   )}
                 >
                   { sharedLabels.seePosts }
@@ -192,13 +197,22 @@ function VendiblesTable({
   ) : null;
 }
 
+VendiblesTable.defaultProps = {
+  vendibleChosen: { name: '', id: null },
+  paginationInfo: {},
+};
+
 VendiblesTable.propTypes = {
   vendibles: PropTypes.shape({ vendibles: PropTypes.any }).isRequired,
   vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
   deleteVendible: PropTypes.func.isRequired,
   fetchPosts: PropTypes.func.isRequired,
   setIsShowingVendiblePosts: PropTypes.func.isRequired,
+  setVendibleChosen: PropTypes.func.isRequired,
   isShowingVendiblePosts: PropTypes.bool.isRequired,
+  vendibleChosen: PropTypes.shape({ name: PropTypes.string, id: PropTypes.number }),
+  setPaginationInfo: PropTypes.func.isRequired,
+  paginationInfo: PropTypes.shape(paginationShape),
 };
 
 export default VendiblesTable;

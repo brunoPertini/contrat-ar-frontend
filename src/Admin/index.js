@@ -33,6 +33,8 @@ const filtersDefaultValues = {
   name: '', surname: '', email: '', showOnlyActives: false, plan: null,
 };
 
+const PAGE_SIZE = 10;
+
 function AdminPage({
   userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
@@ -42,8 +44,14 @@ function AdminPage({
 
   const [filters, setFilters] = useState(filtersDefaultValues);
   const [vendibles, setVendibles] = useState({});
+  const [posts, setPosts] = useState();
 
   const [isShowingVendiblePosts, setIsShowingVendiblePosts] = useState(false);
+  const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
+
+  const [paginationInfo, setPaginationInfo] = useState({
+    page: 0,
+  });
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
@@ -81,7 +89,6 @@ function AdminPage({
     : setVendibles((previous) => {
       const regEx = new RegExp(searchTerm, 'i');
       const newVendibles = pickBy(previous.vendibles, (
-        posts,
         vendibleName,
       ) => vendibleName.match(regEx));
       return { ...previous, vendibles: { ...newVendibles } };
@@ -107,18 +114,33 @@ function AdminPage({
     () => handleFetchVendibles(),
   );
 
+  const handleApplyPostFilters = (newFilters) => fetchPosts({
+    vendibleId: vendibleChosen.id,
+    page: paginationInfo.page,
+    pageSize: PAGE_SIZE,
+    filters: newFilters,
+  }).then((newPosts) => {
+    setPosts(newPosts.content);
+  });
+
   useEffect(() => {
     handleFetchVendibles();
   }, [tabOption]);
 
   const propsForCurrentTabOption = useMemo(() => {
     const vendiblesProps = {
-      fetchPosts,
+      fetchPosts: (params) => fetchPosts({ ...params, pageSize: PAGE_SIZE }),
       vendibles,
       setIsShowingVendiblePosts,
       isShowingVendiblePosts,
       deleteVendible: handleDeleteVendible,
       vendibleType: tabOption,
+      vendibleChosen,
+      setVendibleChosen,
+      paginationInfo,
+      setPaginationInfo,
+      posts,
+      setPosts,
     };
 
     const paramsDictionary = {
@@ -134,7 +156,7 @@ function AdminPage({
     };
 
     return paramsDictionary[tabOption];
-  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts]);
+  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts, paginationInfo, posts]);
 
   return (
     <>
@@ -184,6 +206,11 @@ function AdminPage({
               onCategorySelected,
               onFilterByName: filterVendiblesByName,
             }}
+            postsFiltersProps={
+              {
+                onFilterSelected: handleApplyPostFilters,
+              }
+            }
           />
           {
             isShowingVendiblePosts && (

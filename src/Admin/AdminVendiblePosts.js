@@ -14,6 +14,7 @@ import {
   useCallback,
 } from 'react';
 import Pagination from '@mui/material/Pagination';
+import { pickBy } from 'lodash';
 import { sharedLabels } from '../StaticData/Shared';
 import { PRODUCTS } from '../Shared/Constants/System';
 import { adminRoutes } from '../Shared/Constants/ApiRoutes';
@@ -57,12 +58,10 @@ const PRODUCTS_ATTRIBUTES_CONFIG = {
   stock: 'text',
 };
 
-const PAGE_SIZE = 10;
-
-function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
-  const [posts, setPosts] = useState();
-  const [paginationInfo, setPaginationInfo] = useState();
-
+function AdminVendiblePosts({
+  vendibleType, vendibleId, fetchPosts, paginationInfo, setPaginationInfo, posts,
+  setPosts,
+}) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -76,14 +75,10 @@ function AdminVendiblePosts({ vendibleType, vendibleId, fetchPosts }) {
   });
 
   const fetchPostsCallback = async (page = 0) => {
-    const newInfo = await fetchPosts({ vendibleId, page, pageSize: PAGE_SIZE });
+    const newInfo = await fetchPosts({ vendibleId, page });
     setPosts(newInfo.content);
-    const { totalPages, last, first } = newInfo;
-    setPaginationInfo({
-      totalPages,
-      first,
-      last,
-    });
+    const newPaginationInfo = pickBy(newInfo, (_, key) => key !== 'content');
+    setPaginationInfo({ ...newPaginationInfo, page });
   };
 
   const onPageChange = (_, newPage) => {
