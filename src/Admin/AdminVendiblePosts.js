@@ -74,11 +74,15 @@ function AdminVendiblePosts({
     title: '',
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const fetchPostsCallback = async (page = 0) => {
-    const newInfo = await fetchPosts({ vendibleId, page });
-    setPosts(newInfo.content);
-    const newPaginationInfo = pickBy(newInfo, (_, key) => key !== 'content');
+    setIsLoading(true);
+    const { content } = await fetchPosts({ vendibleId, page });
+    setPosts(content.content);
+    const newPaginationInfo = pickBy(content, (_, key) => key !== 'content');
     setPaginationInfo({ ...newPaginationInfo, page });
+    setIsLoading(false);
   };
 
   const onPageChange = (_, newPage) => {
@@ -154,7 +158,7 @@ function AdminVendiblePosts({
           </TableHead>
           <TableBody>
             {
-            !posts?.length ? (
+            isLoading || (!posts) ? (
               <BackdropLoader open />
             ) : posts.map((post) => (
               <TableRow

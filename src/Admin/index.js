@@ -53,6 +53,11 @@ function AdminPage({
     page: 0,
   });
 
+  const [priceSliderProps, setPriceSliderProps] = useState({
+    min: undefined,
+    max: undefined,
+  });
+
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
   };
@@ -119,8 +124,8 @@ function AdminPage({
     page: paginationInfo.page,
     pageSize: PAGE_SIZE,
     filters: newFilters,
-  }).then((newPosts) => {
-    setPosts(newPosts.content);
+  }).then(({ content: { content: innerContent } }) => {
+    setPosts(innerContent);
   });
 
   useEffect(() => {
@@ -129,7 +134,12 @@ function AdminPage({
 
   const propsForCurrentTabOption = useMemo(() => {
     const vendiblesProps = {
-      fetchPosts: (params) => fetchPosts({ ...params, pageSize: PAGE_SIZE }),
+      fetchPosts: (params) => fetchPosts({ ...params, pageSize: PAGE_SIZE })
+        .then((response) => {
+          const { minPrice, maxPrice } = response;
+          setPriceSliderProps({ min: minPrice, max: maxPrice });
+          return response;
+        }),
       vendibles,
       setIsShowingVendiblePosts,
       isShowingVendiblePosts,
@@ -209,6 +219,8 @@ function AdminPage({
             postsFiltersProps={
               {
                 onFilterSelected: handleApplyPostFilters,
+                page: paginationInfo.page,
+                priceSliderProps,
               }
             }
           />

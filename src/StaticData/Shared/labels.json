@@ -86,6 +86,7 @@
     "searchByVendibleName": "Buscar por nombre",
     "providerId": "ID de proveedor",
     "providerName": "Nombre del proveedor",
+    "providerSurname": "Apellido del proveedor",
     "description": "Descripción",
     "offersDelivery": "Incluye envio a domicilio",
     "offersInCustomAddress": "Se ofrece/realiza en una ubicación específica",
