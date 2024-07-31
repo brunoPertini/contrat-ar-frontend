@@ -3,12 +3,14 @@
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import pickBy from 'lodash/pickBy';
+import { Box, Typography } from '@mui/material';
 import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import SearcherInput from '../Shared/Components/Searcher';
 import RangeSlider from '../Shared/Components/RangeSlider';
 import { handleSliderPricesChanged } from '../Shared/Helpers/PricesHelper';
 import { getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../Shared/Helpers/ClienteHelper';
+import { labels } from '../StaticData/Cliente';
 
 const DEFAULT_VALUES = {
   proveedorName: '',
@@ -93,28 +95,40 @@ function PostsFilters({
     },
   });
 
-  const filterByPriceMenuOption = getMenuOption({
-    component: RangeSlider,
-    onClick: undefined,
-    props: {
-      values: filters.prices,
-      handleOnChange: onChangePricesWrapper,
-      getInputTextFunction: getTextForPricesSliderInput,
-      inputTextsHelpers: locationSliderInputHelperTexts,
-      shouldShowBottomInputs: true,
-      bottomInputsProps: {
-        readOnly: false,
-      },
-      step: 10,
-      min: priceSliderProps.mim,
-      max: priceSliderProps.max,
-      showInputsIcon: true,
-    },
-  });
+  const filterByPriceMenuOption = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{ width: '80%', ml: '5%', mt: '5%' }}
+    >
+      <Typography gutterBottom>
+        { labels.filterByPriceTitle }
+      </Typography>
+      <RangeSlider
+        values={filters.prices}
+        handleOnChange={onChangePricesWrapper}
+        getInputTextFunction={getTextForPricesSliderInput}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        shouldShowBottomInputs
+        bottomInputsProps={{
+          readOnly: false,
+        }}
+        step={10}
+        min={priceSliderProps.min}
+        max={priceSliderProps.max}
+        showInputsIcon
+      />
+    </Box>
+  );
 
   const menuOptions = [nameMenuOption, surnameMenuOption, filterByPriceMenuOption];
 
   useEffect(() => setFilters(DEFAULT_VALUES), [page]);
+
+  useEffect(() => setFilters((previous) => ({
+    ...previous,
+    prices: [priceSliderProps.min, priceSliderProps.max],
+  })), [priceSliderProps]);
 
   return (
     <BasicMenu

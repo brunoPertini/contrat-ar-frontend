@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { adminRoutes, vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
@@ -99,6 +100,12 @@ export default class AdminHttpClient extends HttpClient {
     const url = adminRoutes.vendiblePosts.replace('{vendibleId}', vendibleId);
 
     const queryParams = { page, pageSize };
+
+    if (filters?.prices?.length) {
+      filters.minPrice = filters.prices[0];
+      filters.maxPrice = filters.prices[1];
+      delete filters.prices;
+    }
 
     return this.post(url, queryParams, filters).then((data) => data);
   }
