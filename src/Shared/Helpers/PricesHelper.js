@@ -56,7 +56,7 @@ export const handleSliderPricesChanged = (
 
   let newAppliedFilters = {};
   setFiltersApplied((previous) => {
-    newAppliedFilters = ({ ...previous, prices: newValue });
+    newAppliedFilters = ({ ...previous, prices: [...newValue] });
     return newAppliedFilters;
   });
 

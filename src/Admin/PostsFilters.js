@@ -27,7 +27,9 @@ const DEFAULT_VALUES = {
 function PostsFilters({
   getMenuOption, vendibleType, onFilterSelected, page, priceSliderProps,
 }) {
-  const [filters, setFilters] = useState(DEFAULT_VALUES);
+  const [filters, setFilters] = useState(
+    { ...DEFAULT_VALUES, prices: [priceSliderProps.min, priceSliderProps.max] },
+  );
 
   const onFilterSet = (key, newValue, runApplyFiltersCallback = false) => {
     setFilters((previous) => ({ ...previous, [key]: newValue }));

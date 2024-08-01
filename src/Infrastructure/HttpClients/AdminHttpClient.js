@@ -1,4 +1,5 @@
 /* eslint-disable prefer-destructuring */
+import { pickBy } from 'lodash';
 import { adminRoutes, vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
@@ -101,12 +102,12 @@ export default class AdminHttpClient extends HttpClient {
 
     const queryParams = { page, pageSize };
 
-    if (filters?.prices?.length) {
-      filters.minPrice = filters.prices[0];
-      filters.maxPrice = filters.prices[1];
-      delete filters.prices;
-    }
+    const parsedFilters = filters ? pickBy(filters, (value, key) => key !== 'prices') : undefined;
 
-    return this.post(url, queryParams, filters).then((data) => data);
+    return this.post(url, queryParams, parsedFilters ? {
+      ...parsedFilters,
+      minPrice: filters.prices[0],
+      maxPrice: filters.prices[1],
+    } : {}).then((data) => data);
   }
 }
