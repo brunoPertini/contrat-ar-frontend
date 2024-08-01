@@ -48,12 +48,12 @@ export const handleSliderValuesChanged = (
   const shouldParseValuesForSlider = [false, false];
 
   const labelFormatters = {
-    precios: replaceArgentinianCurrencySymbol,
+    prices: replaceArgentinianCurrencySymbol,
     stocks: deleteUnitsLabel,
   };
 
   const labelCheckers = {
-    precios: () => {
+    prices: () => {
       shouldParseValuesForSlider[0] = typeof newValue[0] === 'string' && newValue[0].indexOf(argentinaCurrencySymbol) !== -1;
       shouldParseValuesForSlider[1] = typeof newValue[1] === 'string' && newValue[1].indexOf(argentinaCurrencySymbol) !== -1;
     },
