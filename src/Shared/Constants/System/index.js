@@ -72,3 +72,7 @@ export const USUARIO_TYPE_PROVEEDORES = 'proveedores';
 export const USUARIO_TYPE_CLIENTES = 'clientes';
 
 export const USUARIOS_TYPES = [USUARIO_TYPE_PROVEEDORES, USUARIO_TYPE_CLIENTES];
+
+export const STOCK_SLIDER_MIN = 1;
+
+export const STOCK_SLIDER_MAX = 1000000;

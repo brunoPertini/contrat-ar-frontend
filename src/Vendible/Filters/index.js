@@ -12,7 +12,7 @@ import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 import SelectedFilters from '../../Shared/Components/SelectedFilters';
-import { handleSliderPricesChanged } from '../../Shared/Helpers/PricesHelper';
+import { handleSliderValuesChanged } from '../../Shared/Helpers/PricesHelper';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -80,7 +80,7 @@ function VendiblesFilters({
     newValues,
     comesFromInput,
     iconPressed,
-  ) => handleSliderPricesChanged(
+  ) => handleSliderValuesChanged(
     newValues,
     comesFromInput,
     iconPressed,

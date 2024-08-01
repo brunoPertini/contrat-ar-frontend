@@ -8,17 +8,17 @@ import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import SearcherInput from '../Shared/Components/Searcher';
 import RangeSlider from '../Shared/Components/RangeSlider';
-import { handleSliderPricesChanged } from '../Shared/Helpers/PricesHelper';
+import { handleSliderValuesChanged } from '../Shared/Helpers/PricesHelper';
 import { getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../Shared/Helpers/ClienteHelper';
 import { labels } from '../StaticData/Cliente';
+import { STOCK_SLIDER_MAX, STOCK_SLIDER_MIN } from '../Shared/Constants/System';
 
 const DEFAULT_VALUES = {
   proveedorName: '',
   proveedorSurname: '',
   categoryName: '',
   prices: [],
-  minStock: null,
-  maxStock: null,
+  stocks: [STOCK_SLIDER_MIN, STOCK_SLIDER_MAX],
   offersDelivery: null,
   offersInCustomAddress: null,
   priceType: null,
@@ -43,7 +43,21 @@ function PostsFilters({
     newValues,
     comesFromInput,
     iconPressed,
-  ) => handleSliderPricesChanged(
+  ) => handleSliderValuesChanged(
+    'prices',
+    newValues,
+    comesFromInput,
+    iconPressed,
+    setFilters,
+    onFilterSelected,
+  );
+
+  const onChangeStocksWrapper = (
+    newValues,
+    comesFromInput,
+    iconPressed,
+  ) => handleSliderValuesChanged(
+    'stocks',
     newValues,
     comesFromInput,
     iconPressed,
@@ -115,7 +129,7 @@ function PostsFilters({
         bottomInputsProps={{
           readOnly: false,
         }}
-        step={10}
+        step={1}
         min={priceSliderProps.min}
         max={priceSliderProps.max}
         showInputsIcon
@@ -123,7 +137,36 @@ function PostsFilters({
     </Box>
   );
 
-  const menuOptions = [nameMenuOption, surnameMenuOption, filterByPriceMenuOption];
+  const filterByStockMenuOption = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{ width: '80%', ml: '5%', mt: '5%' }}
+    >
+      <Typography gutterBottom>
+        { labels.filterByStockTitle }
+      </Typography>
+      <RangeSlider
+        values={filters.stocks}
+        handleOnChange={onChangeStocksWrapper}
+        getInputTextFunction={(text) => `${text} ${sharedLabels.units}`}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        shouldShowBottomInputs
+        bottomInputsProps={{
+          readOnly: false,
+        }}
+        step={1}
+        min={STOCK_SLIDER_MIN}
+        max={STOCK_SLIDER_MAX}
+        showInputsIcon
+      />
+    </Box>
+  );
+
+  const menuOptions = useMemo(() => {
+    const baseOptions = [nameMenuOption, surnameMenuOption, filterByPriceMenuOption];
+    return vendibleType !== 'productos' ? baseOptions : [...baseOptions, filterByStockMenuOption];
+  }, [vendibleType, filters]);
 
   useEffect(() => setFilters(DEFAULT_VALUES), [page]);
 

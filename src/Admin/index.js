@@ -220,6 +220,7 @@ function AdminPage({
               {
                 onFilterSelected: handleApplyPostFilters,
                 page: paginationInfo.page,
+                vendibleType: tabOption,
                 priceSliderProps,
               }
             }
