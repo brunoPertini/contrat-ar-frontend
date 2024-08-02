@@ -16,20 +16,16 @@ import {
   ARGENTINA_LOCALE,
   PRICE_TYPES,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
-  PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
+  PRODUCTS, PRODUCT_LOCATION_FIXED,
   SERVICES,
-  SERVICE_LOCATION_AT_HOME,
   SERVICE_LOCATION_FIXED,
+  pricesTypeMock,
+  productLocationsMock,
+  serviceLocationsMock,
 } from '../../Shared/Constants/System';
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
-
-const pricesTypeMock = [PRICE_TYPES.FIXED, PRICE_TYPES.VARIABLE, PRICE_TYPES.VARIABLE_WITH_AMOUNT];
-
-const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
-
-const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,

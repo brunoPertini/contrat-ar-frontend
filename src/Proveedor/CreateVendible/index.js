@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import {
+  PRICE_TYPE_FIXED,
   PRICE_TYPE_VARIABLE,
   PRODUCT_LOCATION_AT_HOME,
   PRODUCT_LOCATION_FIXED,
@@ -29,7 +30,7 @@ function VendibleCreateForm({
   const [vendibleLocation, setVendibleLocation] = useState(location);
 
   const [priceInfo, setPriceInfo] = useState({
-    type: '',
+    type: PRICE_TYPE_FIXED,
     amount: '',
   });
 

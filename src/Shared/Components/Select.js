@@ -15,7 +15,6 @@ function SelectComponent({
   useEffect(() => {
     const newValue = defaultSelected ? values[defaultSelected] : values[0];
     setValue(newValue);
-    handleOnChange(newValue);
   }, [defaultSelected]);
 
   const handleChange = (event) => {

@@ -11,32 +11,51 @@ import RangeSlider from '../Shared/Components/RangeSlider';
 import { handleSliderValuesChanged } from '../Shared/Helpers/PricesHelper';
 import { getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../Shared/Helpers/ClienteHelper';
 import { labels } from '../StaticData/Cliente';
-import { STOCK_SLIDER_MAX, STOCK_SLIDER_MIN } from '../Shared/Constants/System';
+import {
+  PRICE_TYPES, pricesTypeMock, PRODUCTS, STOCK_SLIDER_MAX, STOCK_SLIDER_MIN,
+} from '../Shared/Constants/System';
+import { Select } from '../Shared/Components';
 
-const DEFAULT_VALUES = {
+const DEFAULT_BASE_VALUES = {
   proveedorName: '',
   proveedorSurname: '',
   categoryName: '',
   prices: [],
-  stocks: [STOCK_SLIDER_MIN, STOCK_SLIDER_MAX],
   offersDelivery: null,
   offersInCustomAddress: null,
-  priceType: null,
+  priceType: '',
+};
+
+const PRODUCT_BASE_VALUES = {
+  ...DEFAULT_BASE_VALUES,
+  stocks: [STOCK_SLIDER_MIN, STOCK_SLIDER_MAX],
 };
 
 function PostsFilters({
   getMenuOption, vendibleType, onFilterSelected, page, priceSliderProps,
 }) {
-  const [filters, setFilters] = useState(
-    { ...DEFAULT_VALUES, prices: [priceSliderProps.min, priceSliderProps.max] },
-  );
+  const baseState = useMemo(() => (vendibleType !== PRODUCTS
+    ? DEFAULT_BASE_VALUES : PRODUCT_BASE_VALUES), [vendibleType]);
 
-  const onFilterSet = (key, newValue, runApplyFiltersCallback = false) => {
-    setFilters((previous) => ({ ...previous, [key]: newValue }));
+  const [filters, setFilters] = useState({
+    ...baseState,
+    prices: [priceSliderProps.min, priceSliderProps.max],
+  });
 
-    if (runApplyFiltersCallback) {
-      onFilterSelected(pickBy(filters, (value) => !!value));
+  const [runApplyFiltersCallback, setRunApplyFiltersCallback] = useState(false);
+
+  const onFilterSet = (key, newValue, shouldRunApplyFiltersCallback = false) => {
+    let parsedValue = newValue;
+
+    if (key === 'priceType') {
+      if (newValue === '-') {
+        parsedValue = '';
+      } else {
+        parsedValue = Object.keys(PRICE_TYPES).find((k) => PRICE_TYPES[k] === newValue);
+      }
     }
+    setFilters((previous) => ({ ...previous, [key]: parsedValue }));
+    setRunApplyFiltersCallback(shouldRunApplyFiltersCallback);
   };
 
   const onChangePricesWrapper = (
@@ -163,17 +182,44 @@ function PostsFilters({
     </Box>
   );
 
-  const menuOptions = useMemo(() => {
-    const baseOptions = [nameMenuOption, surnameMenuOption, filterByPriceMenuOption];
-    return vendibleType !== 'productos' ? baseOptions : [...baseOptions, filterByStockMenuOption];
-  }, [vendibleType, filters]);
+  const defaultPriceTypeSelected = useMemo(() => {
+    if (filters.priceType) {
+      const priceLabel = PRICE_TYPES[filters.priceType];
+      return ['-', ...pricesTypeMock].findIndex((priceType) => priceType === priceLabel);
+    }
 
-  useEffect(() => setFilters(DEFAULT_VALUES), [page]);
+    return 0;
+  }, [filters]);
+
+  const filterByPriceTypeMenuOption = (
+    <Select
+      containerStyles={{ mt: '5%' }}
+      defaultSelected={defaultPriceTypeSelected}
+      label={sharedLabels.priceType}
+      values={['-', ...pricesTypeMock]}
+      handleOnChange={(value) => onFilterSet('priceType', value, true)}
+    />
+  );
+
+  const menuOptions = useMemo(() => {
+    const baseOptions = [nameMenuOption, surnameMenuOption,
+      filterByPriceMenuOption, filterByPriceTypeMenuOption];
+    return vendibleType !== 'productos' ? baseOptions : [...baseOptions, filterByStockMenuOption];
+  }, [vendibleType, filters, pricesTypeMock]);
+
+  useEffect(() => setFilters(baseState), [page]);
 
   useEffect(() => setFilters((previous) => ({
     ...previous,
     prices: [priceSliderProps.min, priceSliderProps.max],
   })), [priceSliderProps]);
+
+  useEffect(() => {
+    if (runApplyFiltersCallback) {
+      setRunApplyFiltersCallback(false);
+      onFilterSelected(pickBy(filters, (value) => !!value));
+    }
+  }, [runApplyFiltersCallback]);
 
   return (
     <BasicMenu

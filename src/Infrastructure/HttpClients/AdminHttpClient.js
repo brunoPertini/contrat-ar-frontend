@@ -103,14 +103,16 @@ export default class AdminHttpClient extends HttpClient {
     const queryParams = { page, pageSize };
 
     const parsedFilters = filters ? pickBy(filters, (value, key) => key !== 'prices'
-  && key !== 'stocks') : undefined;
+  && key !== 'stocks' && !!value) : undefined;
+
+    const hasStocks = (filters?.stocks);
 
     return this.post(url, queryParams, parsedFilters ? {
       ...parsedFilters,
       minPrice: filters.prices[0],
       maxPrice: filters.prices[1],
-      minStock: filters.stocks[0],
-      maxStock: filters.stocks[1],
+      minStock: hasStocks && filters.stocks[0],
+      maxStock: hasStocks && filters.stocks[1],
     } : {}).then((data) => data);
   }
 }
