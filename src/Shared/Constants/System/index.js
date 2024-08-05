@@ -83,3 +83,5 @@ export const pricesTypeMock = [PRICE_TYPES.FIXED,
 export const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
 
 export const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
+
+export const INTEGER_MAXIMUM = 2147483647; // Maps to int data type constraint in Java.

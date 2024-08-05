@@ -3,7 +3,9 @@
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import pickBy from 'lodash/pickBy';
-import { Box, Typography } from '@mui/material';
+import {
+  Box, FormControlLabel, Switch, Typography,
+} from '@mui/material';
 import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import SearcherInput from '../Shared/Components/Searcher';
@@ -130,6 +132,29 @@ function PostsFilters({
     },
   });
 
+  const categoryMenuOption = getMenuOption({
+    component: SearcherInput,
+    onClick: undefined,
+    props: {
+      title: sharedLabels.mainCategory,
+      titleConfig: {
+        variant: 'h6',
+      },
+      onSearchClick: () => onFilterSelected(pickBy(filters, (value) => !!value)),
+      keyEvents: {
+        onKeyUp: (value) => onFilterSet('categoryName', value),
+        onEnterPressed: () => onFilterSelected(pickBy(filters, (value) => !!value)),
+        onDeletePressed: (newValue) => {
+          onFilterSet('categoryName', newValue);
+          if (!newValue) {
+            onFilterSelected(pickBy(filters, (value) => !!value));
+          }
+        },
+      },
+      inputValue: filters.categoryName,
+    },
+  });
+
   const filterByPriceMenuOption = (
     <Box
       display="flex"
@@ -168,7 +193,7 @@ function PostsFilters({
       <RangeSlider
         values={filters.stocks}
         handleOnChange={onChangeStocksWrapper}
-        getInputTextFunction={(text) => `${text} ${sharedLabels.units}`}
+        getInputTextFunction={(value) => value}
         inputTextsHelpers={locationSliderInputHelperTexts}
         shouldShowBottomInputs
         bottomInputsProps={{
@@ -201,10 +226,45 @@ function PostsFilters({
     />
   );
 
+  const offersDeliveryMenuOption = (
+    <FormControlLabel
+      sx={{ mt: '5%' }}
+      control={(
+        <Switch
+          checked={filters.offersDelivery}
+          onChange={(event) => onFilterSet('offersDelivery', event.target.checked || null, true)}
+          inputProps={{ 'aria-label': 'controlled' }}
+        />
+)}
+      label={sharedLabels.offersDelivery}
+    />
+
+  );
+
+  const offersCustomAddressMenuOption = (
+    <FormControlLabel
+      sx={{ mt: '5%' }}
+      control={(
+        <Switch
+          checked={filters.offersInCustomAddress}
+          onChange={(event) => onFilterSet('offersInCustomAddress', event.target.checked || null, true)}
+          inputProps={{ 'aria-label': 'controlled' }}
+        />
+)}
+      label={sharedLabels.offersInCustomAddress}
+    />
+
+  );
+
   const menuOptions = useMemo(() => {
-    const baseOptions = [nameMenuOption, surnameMenuOption,
-      filterByPriceMenuOption, filterByPriceTypeMenuOption];
-    return vendibleType !== 'productos' ? baseOptions : [...baseOptions, filterByStockMenuOption];
+    const baseOptions = [nameMenuOption, surnameMenuOption, categoryMenuOption,
+      filterByPriceMenuOption, filterByPriceTypeMenuOption,
+      offersDeliveryMenuOption, offersCustomAddressMenuOption];
+
+    if (vendibleType === 'productos') {
+      baseOptions.splice(3, 0, filterByStockMenuOption);
+    }
+    return baseOptions;
   }, [vendibleType, filters, pricesTypeMock]);
 
   useEffect(() => setFilters(baseState), [page]);

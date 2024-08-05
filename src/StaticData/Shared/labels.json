@@ -44,6 +44,7 @@
     "changeImage": "Cambiar Imagen",
     "image.upload.error": "La imagen no pudo ser subida. Por favor, intentalo en unos minutos",
     "categories": "Categorias",
+    "mainCategory": "Categoría principal",
     "locationType": {
         "producto" : "¿Dónde vendés el producto?",
         "servicio": "¿Dónde prestás el servicio?"

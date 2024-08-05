@@ -166,7 +166,8 @@ function AdminPage({
     };
 
     return paramsDictionary[tabOption];
-  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts, paginationInfo, posts]);
+  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts,
+    paginationInfo, posts, priceSliderProps]);
 
   return (
     <>

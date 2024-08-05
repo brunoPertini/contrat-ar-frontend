@@ -1,5 +1,4 @@
 /* eslint-disable no-new-wrappers */
-import { sharedLabels } from '../../StaticData/Shared';
 import { ARGENTINA_LOCALE } from '../Constants/System';
 
 export const ARGENTINA_CURRENCY_CODE = 'ARS';
@@ -24,9 +23,7 @@ export function getLocaleCurrencySymbol(locale) {
 
 const argentinaCurrencySymbol = getLocaleCurrencySymbol(ARGENTINA_LOCALE);
 
-const replaceArgentinianCurrencySymbol = (toCheckValue) => toCheckValue.replace(argentinaCurrencySymbol, '');
-
-const deleteUnitsLabel = (label) => label.replace(sharedLabels.units, '');
+export const replaceArgentinianCurrencySymbol = (toCheckValue) => toCheckValue.replace(argentinaCurrencySymbol, '');
 
 /**
    * Handles input parsing from RangeSlider component
@@ -45,33 +42,15 @@ export const handleSliderValuesChanged = (
   setFiltersApplied,
   onFiltersApplied,
 ) => {
-  const shouldParseValuesForSlider = [false, false];
-
-  const labelFormatters = {
-    prices: replaceArgentinianCurrencySymbol,
-    stocks: deleteUnitsLabel,
-  };
-
-  const labelCheckers = {
-    prices: () => {
-      shouldParseValuesForSlider[0] = typeof newValue[0] === 'string' && newValue[0].indexOf(argentinaCurrencySymbol) !== -1;
-      shouldParseValuesForSlider[1] = typeof newValue[1] === 'string' && newValue[1].indexOf(argentinaCurrencySymbol) !== -1;
-    },
-    stocks: () => {
-      shouldParseValuesForSlider[0] = typeof newValue[0] === 'string' && newValue[0].indexOf(sharedLabels.units) !== -1;
-      shouldParseValuesForSlider[1] = typeof newValue[1] === 'string' && newValue[1].indexOf(sharedLabels.units) !== -1;
-    },
-  };
-
-  labelCheckers[key]();
+  const shouldParseValuesForSlider = [typeof newValue[0] === 'string', typeof newValue[1] === 'string'];
 
   // Handling the case where it may be changed from input
   if (shouldParseValuesForSlider[0]) {
-    newValue[0] = new Number(labelFormatters[key](newValue[0]));
+    newValue[0] = new Number(newValue[0]);
   }
 
   if (shouldParseValuesForSlider[1]) {
-    newValue[1] = new Number(labelFormatters[key](newValue[1]));
+    newValue[1] = new Number(newValue[1]);
   }
 
   let newAppliedFilters = {};
