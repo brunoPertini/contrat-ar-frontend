@@ -2,6 +2,7 @@ import Link from '@mui/material/Link';
 import Checkbox from '@mui/material/Checkbox';
 import { labels } from '../StaticData/LocationMap';
 import { sharedLabels } from '../StaticData/Shared';
+import { PRICE_TYPES } from '../Shared/Constants/System';
 
 export const ATTRIBUTES_RENDERERS = {
   text: (attribute) => attribute,
@@ -14,15 +15,14 @@ export const ATTRIBUTES_RENDERERS = {
       ,
     </Link>
   ),
-  map: (onLinkClick) => (
+  map: (onLinkClick) => (onLinkClick ? (
     <Link
       sx={{ cursor: 'pointer' }}
       onClick={() => onLinkClick()}
     >
       { labels.openMapInModal }
-      ,
     </Link>
-  ),
+  ) : <span>-</span>),
   link: (label, onClick) => (
     <Link
       sx={{ cursor: 'pointer' }}
@@ -40,6 +40,8 @@ export const ATTRIBUTES_RENDERERS = {
   enum: (attribute, attributeValue) => {
     const enumAttributes = {
       plan: () => sharedLabels.plansNames[attributeValue],
+      tipoPrecio: () => PRICE_TYPES[attributeValue],
+      category: () => <span dangerouslySetInnerHTML={{ __html: `${attributeValue.name}<br>(id: ${attributeValue.id})` }} />,
     };
 
     return enumAttributes[attribute]();

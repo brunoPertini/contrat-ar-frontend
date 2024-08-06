@@ -4,7 +4,10 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { deleteNonNumericCharacters } from '../Utils/InputUtils';
+import { replaceArgentinianCurrencySymbol } from '../Helpers/PricesHelper';
+import { INTEGER_MAXIMUM } from '../Constants/System';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers,
@@ -31,8 +34,18 @@ function RangeSlider({
       return () => {};
     }
 
-    const newValues = inputType === 'min' ? handleOnChange([event.target.value, stateValues[1]], true)
-      : handleOnChange([stateValues[0], event.target.value], true);
+    const { value } = event.target;
+
+    let preFormattedValue = deleteNonNumericCharacters(
+      replaceArgentinianCurrencySymbol(value),
+    );
+
+    if (preFormattedValue > INTEGER_MAXIMUM) {
+      preFormattedValue = INTEGER_MAXIMUM.toString();
+    }
+
+    const newValues = inputType === 'min' ? handleOnChange([preFormattedValue, stateValues[1]], true)
+      : handleOnChange([stateValues[0], preFormattedValue], true);
 
     return setStateValues(newValues);
   };
@@ -56,6 +69,10 @@ function RangeSlider({
     size: 'small',
     sx: { width: '30%' },
   };
+
+  useEffect(() => {
+    setStateValues([min, max]);
+  }, [min, max]);
 
   return (
     <>
@@ -115,6 +132,7 @@ function RangeSlider({
 }
 
 RangeSlider.defaultProps = {
+  values: [],
   inputTextsHelpers: [],
   getInputTextFunction: () => {},
   shouldShowBottomInputs: false,
@@ -128,7 +146,7 @@ RangeSlider.defaultProps = {
 RangeSlider.propTypes = {
   bottomInputsProps: PropTypes.object,
   shouldShowBottomInputs: PropTypes.bool,
-  values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
+  values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
   handleOnChange: PropTypes.func.isRequired,
   getInputTextFunction: PropTypes.func,
   inputTextsHelpers: PropTypes.arrayOf(PropTypes.string),

@@ -7,10 +7,11 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
+import Link from '@mui/material/Link';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';
-import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
+import { PAGE_SIZE, USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
 import { sharedLabels } from '../StaticData/Shared';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import { getUsuariosAdminResponseShape } from '../Shared/PropTypes/Admin';
@@ -33,7 +34,7 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, deleteVendible,
+  userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
@@ -41,6 +42,19 @@ function AdminPage({
 
   const [filters, setFilters] = useState(filtersDefaultValues);
   const [vendibles, setVendibles] = useState({});
+  const [posts, setPosts] = useState();
+
+  const [isShowingVendiblePosts, setIsShowingVendiblePosts] = useState(false);
+  const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
+
+  const [paginationInfo, setPaginationInfo] = useState({
+    page: 0,
+  });
+
+  const [priceSliderProps, setPriceSliderProps] = useState({
+    min: undefined,
+    max: undefined,
+  });
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
@@ -78,7 +92,6 @@ function AdminPage({
     : setVendibles((previous) => {
       const regEx = new RegExp(searchTerm, 'i');
       const newVendibles = pickBy(previous.vendibles, (
-        posts,
         vendibleName,
       ) => vendibleName.match(regEx));
       return { ...previous, vendibles: { ...newVendibles } };
@@ -104,11 +117,40 @@ function AdminPage({
     () => handleFetchVendibles(),
   );
 
+  const handleApplyPostFilters = (newFilters) => fetchPosts({
+    vendibleId: vendibleChosen.id,
+    page: paginationInfo.page,
+    pageSize: PAGE_SIZE,
+    filters: newFilters,
+  }).then(({ content: { content: innerContent } }) => {
+    setPosts(innerContent);
+  });
+
   useEffect(() => {
     handleFetchVendibles();
   }, [tabOption]);
 
   const propsForCurrentTabOption = useMemo(() => {
+    const vendiblesProps = {
+      fetchPosts: (params) => fetchPosts({ ...params, pageSize: PAGE_SIZE })
+        .then((response) => {
+          const { minPrice, maxPrice } = response;
+          setPriceSliderProps({ min: minPrice, max: maxPrice });
+          return response;
+        }),
+      vendibles,
+      setIsShowingVendiblePosts,
+      isShowingVendiblePosts,
+      deleteVendible: handleDeleteVendible,
+      vendibleType: tabOption,
+      vendibleChosen,
+      setVendibleChosen,
+      paginationInfo,
+      setPaginationInfo,
+      posts,
+      setPosts,
+    };
+
     const paramsDictionary = {
       usuarios: {
         usuarios: usuarioTypeFilter === USUARIO_TYPE_PROVEEDORES
@@ -117,20 +159,13 @@ function AdminPage({
         loginAsUser,
         deleteUser,
       },
-      productos: {
-        vendibles,
-        deleteVendible: handleDeleteVendible,
-        vendibleType: tabOption,
-      },
-      servicios: {
-        vendibles,
-        deleteVendible: handleDeleteVendible,
-        vendibleType: tabOption,
-      },
+      productos: vendiblesProps,
+      servicios: vendiblesProps,
     };
 
     return paramsDictionary[tabOption];
-  }, [tabOption, usuariosInfo, vendibles]);
+  }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts,
+    paginationInfo, posts, priceSliderProps]);
 
   return (
     <>
@@ -166,6 +201,7 @@ function AdminPage({
         <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
           <AdminFilters
             filtersType={tabOption}
+            isShowingVendiblePosts={isShowingVendiblePosts}
             usuariosFiltersProps={{
               usuarioTypeFilter,
               setUsuarioTypeFilter: handleApplyUsuarioTypeFilter,
@@ -179,7 +215,28 @@ function AdminPage({
               onCategorySelected,
               onFilterByName: filterVendiblesByName,
             }}
+            postsFiltersProps={
+              {
+                onFilterSelected: handleApplyPostFilters,
+                page: paginationInfo.page,
+                vendibleType: tabOption,
+                priceSliderProps,
+              }
+            }
           />
+          {
+            isShowingVendiblePosts && (
+            <Link
+              id="closeVendiblePostsTable"
+              component="button"
+              variant="h5"
+              onClick={() => setIsShowingVendiblePosts(false)}
+              sx={{ cursor: 'pointer', width: '5%' }}
+            >
+              { sharedLabels.goBack }
+            </Link>
+            )
+          }
           {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}
         </Box>
       </Box>
@@ -212,6 +269,7 @@ AdminPage.propTypes = {
   fetchProductos: PropTypes.func.isRequired,
   fetchServicios: PropTypes.func.isRequired,
   deleteVendible: PropTypes.func.isRequired,
+  fetchPosts: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

@@ -1,3 +1,4 @@
+import pickBy from 'lodash/pickBy';
 import { adminRoutes, vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
@@ -86,5 +87,31 @@ export default class AdminHttpClient extends HttpClient {
    */
   deleteVendible(vendibleId) {
     return this.delete(vendiblesRoutes.vendibleById.replace('{id}', vendibleId));
+  }
+
+  /**
+   *
+   * @param {Number | String} vendibleId
+   * @param {Number} page
+   * @param {Num} pageSize
+   * @param {Object} [filters] filters
+   */
+  getVendiblePosts(vendibleId, page, pageSize, filters) {
+    const url = adminRoutes.vendiblePosts.replace('{vendibleId}', vendibleId);
+
+    const queryParams = { page, pageSize };
+
+    const parsedFilters = filters ? pickBy(filters, (value, key) => key !== 'prices'
+  && key !== 'stocks' && !!value) : undefined;
+
+    const hasStocks = (filters?.stocks);
+
+    return this.post(url, queryParams, parsedFilters ? {
+      ...parsedFilters,
+      minPrice: filters.prices[0],
+      maxPrice: filters.prices[1],
+      minStock: hasStocks && filters.stocks[0],
+      maxStock: hasStocks && filters.stocks[1],
+    } : {}).then((data) => data);
   }
 }

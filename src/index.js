@@ -18,7 +18,7 @@ import UserProfile from './UserProfile/Containers';
 import AdminPage from './Admin/AdminContainer';
 
 function ErrorComponent() {
-  // TODO: crear páginas de errores
+// TODO: crear páginas de errores
   const error = useRouteError();
   const handlers = {
     401: () => (

@@ -48,6 +48,11 @@ export default function BasicMenu({
               component: Component, props, onClick, label,
             } = option;
 
+            // If component is undefined, means that option itself is a rendered one
+            if (!Component) {
+              return option;
+            }
+
             const onOptionClicked = () => {
               if (onClick) {
                 handleClose();

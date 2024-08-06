@@ -72,3 +72,18 @@ export const USUARIO_TYPE_PROVEEDORES = 'proveedores';
 export const USUARIO_TYPE_CLIENTES = 'clientes';
 
 export const USUARIOS_TYPES = [USUARIO_TYPE_PROVEEDORES, USUARIO_TYPE_CLIENTES];
+
+export const STOCK_SLIDER_MIN = 1;
+
+export const STOCK_SLIDER_MAX = 1000000;
+
+export const PAGE_SIZE = 10;
+
+export const pricesTypeMock = [PRICE_TYPES.FIXED,
+  PRICE_TYPES.VARIABLE, PRICE_TYPES.VARIABLE_WITH_AMOUNT];
+
+export const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
+
+export const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
+
+export const INTEGER_MAXIMUM = 2147483647; // Maps to int data type constraint in Java.

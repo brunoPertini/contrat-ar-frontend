@@ -1,6 +1,6 @@
 import isEmail from 'validator/lib/isEmail';
 
-const ONLY_NUMBERS_REGEX = /^[0-9.]+$/;
+const ONLY_NUMBERS_REGEX = /^[0-9.]+$/g;
 
 export const DOT_AND_COMMA_REGEX = /[.,]/gi;
 
@@ -21,23 +21,15 @@ export function cleanNumbersFromInput(value) {
 }
 
 /**
- * @param {Event} event
- * @returns {String} The given string in event's value with only numbers and '.' char
+ * @param {String} value
+ * @returns {String} The given string with only numbers and '.' char
  */
-export function deleteNonNumericCharacters(event) {
-  const { value } = event.target;
-  const lastChar = value.at(value.length - 1);
-
-  if (!lastChar) {
+export function deleteNonNumericCharacters(value) {
+  if (!value) {
     return value;
   }
 
-  if (stringHasOnlyNumbers(value)) {
-    return value.replace(DOT_AND_COMMA_REGEX, '');
-  }
-
-  return value.slice(0, value.length - 1)
-    .replace(DOT_AND_COMMA_REGEX, '');
+  return value.replace(/[^0-9.]/g, '');
 }
 
 export function escapeRegExpChars(string) {

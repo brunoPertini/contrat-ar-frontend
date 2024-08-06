@@ -3,5 +3,6 @@
     "getUsuariosInfo": "/admin/usuarios",
     "getUserInfo": "/usuarios/{userId}/info",
     "usuariosById": "/admin/usuarios/{userId}",
-    "proveedoresById": "/admin/proveedores/{userId}"
+    "proveedoresById": "/admin/proveedores/{userId}",
+    "vendiblePosts": "/v2/vendible/{vendibleId}/proveedores"
 }

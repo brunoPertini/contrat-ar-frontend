@@ -16,20 +16,17 @@ import {
   ARGENTINA_LOCALE,
   PRICE_TYPES,
   PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
-  PRODUCTS, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
+  PRODUCTS, PRODUCT_LOCATION_FIXED,
   SERVICES,
-  SERVICE_LOCATION_AT_HOME,
   SERVICE_LOCATION_FIXED,
+  pricesTypeMock,
+  productLocationsMock,
+  serviceLocationsMock,
 } from '../../Shared/Constants/System';
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
-
-const pricesTypeMock = [PRICE_TYPES.FIXED, PRICE_TYPES.VARIABLE, PRICE_TYPES.VARIABLE_WITH_AMOUNT];
-
-const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_FIXED];
-
-const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
+import { replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -88,14 +85,18 @@ function FirstStep({
   };
 
   const onChangePriceAmount = (event) => {
-    const formattedString = deleteNonNumericCharacters(event);
+    const formattedString = deleteNonNumericCharacters(
+      replaceArgentinianCurrencySymbol(event.target.value),
+    );
     const valueNumber = formattedString ? new Number(formattedString) : 0;
     // TODO: desharcodear el locale
     onChangePriceInfo({ priceAmount: valueNumber.toLocaleString(ARGENTINA_LOCALE) });
   };
 
   const onChangeStock = (event) => {
-    const formattedString = deleteNonNumericCharacters(event);
+    const formattedString = deleteNonNumericCharacters(
+      replaceArgentinianCurrencySymbol(event.target.value),
+    );
     const valueNumber = formattedString ? new Number(formattedString) : 0;
     setStock(valueNumber.toLocaleString(ARGENTINA_LOCALE));
   };
