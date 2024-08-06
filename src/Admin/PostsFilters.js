@@ -1,11 +1,10 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
 import pickBy from 'lodash/pickBy';
-import {
-  Box, FormControlLabel, Switch, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
 import BasicMenu from '../Shared/Components/Menu';
 import { sharedLabels } from '../StaticData/Shared';
 import SearcherInput from '../Shared/Components/Searcher';
@@ -91,6 +90,11 @@ function PostsFilters({
     onClick: undefined,
     props: {
       title: sharedLabels.providerName,
+      searcherConfig: {
+        sx: {
+          width: '100%',
+        },
+      },
       titleConfig: {
         variant: 'h6',
       },
@@ -114,6 +118,11 @@ function PostsFilters({
     onClick: undefined,
     props: {
       title: sharedLabels.providerSurname,
+      searcherConfig: {
+        sx: {
+          width: '100%',
+        },
+      },
       titleConfig: {
         variant: 'h6',
       },
@@ -137,6 +146,11 @@ function PostsFilters({
     onClick: undefined,
     props: {
       title: sharedLabels.mainCategory,
+      searcherConfig: {
+        sx: {
+          width: '100%',
+        },
+      },
       titleConfig: {
         variant: 'h6',
       },
@@ -295,5 +309,16 @@ function PostsFilters({
     />
   );
 }
+
+PostsFilters.propTypes = {
+  getMenuOption: PropTypes.func.isRequired,
+  vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
+  onFilterSelected: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  priceSliderProps: PropTypes.shape({
+    min: PropTypes.number,
+    max: PropTypes.number,
+  }).isRequired,
+};
 
 export default PostsFilters;

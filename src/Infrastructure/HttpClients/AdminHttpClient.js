@@ -1,5 +1,4 @@
-/* eslint-disable prefer-destructuring */
-import { pickBy } from 'lodash';
+import pickBy from 'lodash/pickBy';
 import { adminRoutes, vendiblesRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
@@ -92,7 +91,7 @@ export default class AdminHttpClient extends HttpClient {
 
   /**
    *
-   * @param {Long | String} vendibleId
+   * @param {Number | String} vendibleId
    * @param {Number} page
    * @param {Num} pageSize
    * @param {Object} [filters] filters

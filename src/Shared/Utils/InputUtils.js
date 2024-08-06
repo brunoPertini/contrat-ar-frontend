@@ -1,6 +1,6 @@
 import isEmail from 'validator/lib/isEmail';
 
-const ONLY_NUMBERS_REGEX = /^[0-9.]+$/;
+const ONLY_NUMBERS_REGEX = /^[0-9.]+$/g;
 
 export const DOT_AND_COMMA_REGEX = /[.,]/gi;
 

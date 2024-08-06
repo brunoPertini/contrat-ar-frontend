@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import Table from '@mui/material/Table';
@@ -22,6 +21,7 @@ import InformativeAlert from '../Shared/Components/Alert';
 import { proveedorLabels } from '../StaticData/Proveedor';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
 import { paginationShape } from '../Shared/PropTypes/Shared';
+import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
 
 const AdminVendiblePosts = lazy(() => import('./AdminVendiblePosts'));
 
@@ -200,6 +200,7 @@ function VendiblesTable({
 VendiblesTable.defaultProps = {
   vendibleChosen: { name: '', id: null },
   paginationInfo: {},
+  posts: [],
 };
 
 VendiblesTable.propTypes = {
@@ -213,6 +214,8 @@ VendiblesTable.propTypes = {
   vendibleChosen: PropTypes.shape({ name: PropTypes.string, id: PropTypes.number }),
   setPaginationInfo: PropTypes.func.isRequired,
   paginationInfo: PropTypes.shape(paginationShape),
+  posts: PropTypes.arrayOf(PropTypes.shape(PostShape)),
+  setPosts: PropTypes.func.isRequired,
 };
 
 export default VendiblesTable;

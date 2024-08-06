@@ -77,6 +77,8 @@ export const STOCK_SLIDER_MIN = 1;
 
 export const STOCK_SLIDER_MAX = 1000000;
 
+export const PAGE_SIZE = 10;
+
 export const pricesTypeMock = [PRICE_TYPES.FIXED,
   PRICE_TYPES.VARIABLE, PRICE_TYPES.VARIABLE_WITH_AMOUNT];
 

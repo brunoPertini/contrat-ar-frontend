@@ -7,11 +7,11 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';
-import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
+import { PAGE_SIZE, USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
 import { sharedLabels } from '../StaticData/Shared';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import { getUsuariosAdminResponseShape } from '../Shared/PropTypes/Admin';
@@ -32,8 +32,6 @@ const TABS_COMPONENTS = {
 const filtersDefaultValues = {
   name: '', surname: '', email: '', showOnlyActives: false, plan: null,
 };
-
-const PAGE_SIZE = 10;
 
 function AdminPage({
   userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts,

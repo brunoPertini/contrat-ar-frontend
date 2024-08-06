@@ -34,15 +34,15 @@ function RangeSlider({
       return () => {};
     }
 
-    let { value } = event.target;
+    const { value } = event.target;
 
-    if (value > INTEGER_MAXIMUM) {
-      value = INTEGER_MAXIMUM.toString();
-    }
-
-    const preFormattedValue = deleteNonNumericCharacters(
+    let preFormattedValue = deleteNonNumericCharacters(
       replaceArgentinianCurrencySymbol(value),
     );
+
+    if (preFormattedValue > INTEGER_MAXIMUM) {
+      preFormattedValue = INTEGER_MAXIMUM.toString();
+    }
 
     const newValues = inputType === 'min' ? handleOnChange([preFormattedValue, stateValues[1]], true)
       : handleOnChange([stateValues[0], preFormattedValue], true);
@@ -132,6 +132,7 @@ function RangeSlider({
 }
 
 RangeSlider.defaultProps = {
+  values: [],
   inputTextsHelpers: [],
   getInputTextFunction: () => {},
   shouldShowBottomInputs: false,
@@ -145,7 +146,7 @@ RangeSlider.defaultProps = {
 RangeSlider.propTypes = {
   bottomInputsProps: PropTypes.object,
   shouldShowBottomInputs: PropTypes.bool,
-  values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
+  values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])),
   handleOnChange: PropTypes.func.isRequired,
   getInputTextFunction: PropTypes.func,
   inputTextsHelpers: PropTypes.arrayOf(PropTypes.string),

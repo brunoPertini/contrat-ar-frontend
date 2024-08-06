@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import { useLoaderData } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,19 +6,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
 import {
-  useMemo, lazy, Suspense, useState, useEffect,
-  useCallback,
+  useMemo, useState, useEffect,
 } from 'react';
 import Pagination from '@mui/material/Pagination';
-import { pickBy } from 'lodash';
+import pickBy from 'lodash/pickBy';
 import { sharedLabels } from '../StaticData/Shared';
 import { PRODUCTS } from '../Shared/Constants/System';
-import { adminRoutes } from '../Shared/Constants/ApiRoutes';
 import { ATTRIBUTES_RENDERERS } from './TablesHelper';
 import MapModal from '../Shared/Components/MapModal';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
+import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
 
 const ATTIBUTES_COMMON_LABELS = {
   vendibleNombre: sharedLabels.vendibleNombre,
@@ -206,5 +202,15 @@ function AdminVendiblePosts({
     </>
   );
 }
+
+AdminVendiblePosts.propTypes = {
+  vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
+  vendibleId: PropTypes.number.isRequired,
+  fetchPosts: PropTypes.func.isRequired,
+  paginationInfo: PropTypes.any.isRequired,
+  setPaginationInfo: PropTypes.func.isRequired,
+  posts: PropTypes.arrayOf(PropTypes.shape(PostShape)).isRequired,
+  setPosts: PropTypes.func.isRequired,
+};
 
 export default AdminVendiblePosts;
