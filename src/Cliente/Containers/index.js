@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import { useState } from 'react';
 import { withRouter } from '../../Shared/Components';
 import Cliente from '../Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
-import { routes } from '../../Shared/Constants';
-import { resetUserInfo } from '../../State/Actions/usuario';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { CLIENTE } from '../../Shared/Constants/System';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
@@ -21,7 +19,6 @@ const userInfoSelector = createSelector(
 
 function ClienteContainer({ handleLogout }) {
   const userInfo = useSelector(userInfoSelector);
-  const dispatch = useDispatch();
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
@@ -41,21 +38,13 @@ function ClienteContainer({ handleLogout }) {
   const dispatchHandleSearch = ({ searchType, searchInput, filters }) => {
     const httpClient = HttpClientFactory.createVendibleHttpClient(
       searchType,
-      { token: userInfo.token },
+      { token: userInfo.token, handleLogout },
     );
 
-    return httpClient.getVendibleByFilters({ ...filters, nombre: searchInput })
-      .catch((error) => {
-        if (error.status && error.status === 401) {
-          dispatch(resetUserInfo());
-          window.location.href = routes.signin;
-        }
-
-        return error;
-      });
+    return httpClient.getVendibleByFilters({ ...filters, nombre: searchInput });
   };
 
-  if (userInfo.role !== CLIENTE) {
+  if (userInfo.role && userInfo.role !== CLIENTE) {
     throw new Response('', { status: 404 });
   }
 

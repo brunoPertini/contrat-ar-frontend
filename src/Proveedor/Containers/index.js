@@ -67,7 +67,7 @@ function ProveedorContainer({ router, handleLogout }) {
     ? PRODUCTS : SERVICES), [role]);
 
   useEffect(() => {
-    if (userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
+    if (userInfo.role && userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
       && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
       throw new Response('', { status: 404 });
     }
@@ -91,14 +91,15 @@ function ProveedorContainer({ router, handleLogout }) {
   const handleGetVendibles = async () => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
+      handleLogout,
     });
-    const newResponse = await client.getVendibles(id);
-    setResponse(newResponse);
+    client.getVendibles(id).then((newResponse) => setResponse(newResponse));
   };
 
   const handlePostVendible = async (vendibleData) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
+      handleLogout,
     });
 
     return client.postVendible({
@@ -114,6 +115,7 @@ function ProveedorContainer({ router, handleLogout }) {
   const handlePutVendible = async ({ proveedorId, vendibleId, body }) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
+      handleLogout,
     });
 
     return client.putVendible({
@@ -127,6 +129,7 @@ function ProveedorContainer({ router, handleLogout }) {
   const handleDeleteVendible = async ({ proveedorId, vendibleId }) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
+      handleLogout,
     });
 
     return client.deleteVendible({ proveedorId, vendibleId }).then((postVendibleResponse) => {

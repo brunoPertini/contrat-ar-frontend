@@ -2,7 +2,7 @@ import AdminHttpClient from './HttpClients/AdminHttpClient';
 import ClienteHttpClient from './HttpClients/ClienteHttpClient';
 import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 // eslint-disable-next-line import/named
-import { HttpClient, HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
+import { HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
 import { ProveedorHttpClient } from './HttpClients/ProveedorHttpClient';
 import { UserHttpClient } from './HttpClients/UserHttpClient';
 import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
@@ -12,6 +12,7 @@ import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
  * Params needed to be passed to instances for several purposes
  * @property {String} token
  * @property {String} alternativeUrl
+ * @property {Function} handleLogout
  */
 
 export class HttpClientFactory {
@@ -42,18 +43,6 @@ export class HttpClientFactory {
   /**
    *
    * @param {string} baseUrl
-   * @returns {HttpClient}
-   */
-  static createHttpClient(baseUrl) {
-    if (!HttpClientFactory.httpClientInstance) {
-      HttpClientFactory.httpClientInstance = new HttpClient({ baseUrl });
-    }
-    return HttpClientFactory.httpClientInstance;
-  }
-
-  /**
-   *
-   * @param {string} baseUrl
    * @param {HttpClientInstanceFactoryConfiguration} config
    * @returns {UserHttpClient}
    */
@@ -61,6 +50,7 @@ export class HttpClientFactory {
     HttpClientFactory.userHttpClientInstance = new UserHttpClient({
       baseUrl,
       headersValues: { Authorization: config.token },
+      handleLogout: config.handleLogout,
     });
     return HttpClientFactory.userHttpClientInstance;
   }
@@ -76,6 +66,7 @@ export class HttpClientFactory {
       HttpClientFactory.externalInstance = new ExternalHttpClient({
         baseUrl,
         headersValues: { Authorization: config.token },
+        handleLogout: config.handleLogout,
       });
     }
     return HttpClientFactory.externalInstance;
@@ -92,7 +83,7 @@ export class HttpClientFactory {
       || HttpClientFactory.vendibleHttpClientInstance.vendibleType !== vendibleType) {
       HttpClientFactory.vendibleHttpClientInstance = new VendibleHttpClient(
         vendibleType,
-        { headersValues: { Authorization: config.token } },
+        { headersValues: { Authorization: config.token }, handleLogout: config.handleLogout },
       );
     }
     return HttpClientFactory.vendibleHttpClientInstance;
@@ -107,6 +98,7 @@ export class HttpClientFactory {
     if (!HttpClientFactory.proveedorHttpClientInstance) {
       HttpClientFactory.proveedorHttpClientInstance = new ProveedorHttpClient({
         headersValues: { Authorization: config.token },
+        handleLogout: config.handleLogout,
       });
     }
     return HttpClientFactory.proveedorHttpClientInstance;
@@ -121,6 +113,7 @@ export class HttpClientFactory {
     if (!HttpClientFactory.clienteHttpClientInstance) {
       HttpClientFactory.clienteHttpClientInstance = new ClienteHttpClient({
         headersValues: { Authorization: config.token },
+        handleLogout: config.handleLogout,
       });
     }
     return HttpClientFactory.clienteHttpClientInstance;
@@ -137,6 +130,7 @@ export class HttpClientFactory {
       HttpClientFactory.adminHttpClientInstance = new AdminHttpClient({
         baseUrl: config.alternativeUrl,
         headersValues: { Authorization: config.token },
+        handleLogout: config.handleLogout,
       });
     }
     return HttpClientFactory.adminHttpClientInstance;
