@@ -21,13 +21,13 @@ export default function withErrorHandler(Component) {
      * @param {{ data: Object, status: number}} error
      */
     const handleError = async (error) => {
-      HttpClientFactory.cleanInstances();
-      removeOnLeavingTabHandlers();
-      Object.keys(LocalStorageService.PAGES_KEYS).forEach(
-        (page) => localStorageService.removeAllKeysOfPage(page),
-      );
-      await dispatch(resetUserInfo());
       if (error.status === 401) {
+        HttpClientFactory.cleanInstances();
+        removeOnLeavingTabHandlers();
+        Object.keys(LocalStorageService.PAGES_KEYS).forEach(
+          (page) => localStorageService.removeAllKeysOfPage(page),
+        );
+        await dispatch(resetUserInfo());
         navigate(routes.signin, { state: { errorMessage: errorMessages.sessionExpired } });
       }
     };
