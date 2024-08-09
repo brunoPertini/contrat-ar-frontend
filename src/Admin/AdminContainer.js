@@ -32,6 +32,7 @@ function AdminContainer({ handleLogout }) {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
     });
 
     const fetchedInfo = await client.getUsuariosByFilters(type, filters);
@@ -40,7 +41,7 @@ function AdminContainer({ handleLogout }) {
   }, [setUsuariosInfo]);
 
   const fetchPlanesInfo = useCallback(async () => {
-    const client = HttpClientFactory.createProveedorHttpClient();
+    const client = HttpClientFactory.createProveedorHttpClient({ handleLogout });
     const info = await client.getAllPlanes();
     setPlanesInfo([...info]);
   }, [setPlanesInfo]);
@@ -49,6 +50,7 @@ function AdminContainer({ handleLogout }) {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
     });
 
     const newUserInfo = await client.getUserInfoForLogin(userId);
@@ -60,6 +62,7 @@ function AdminContainer({ handleLogout }) {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
     });
 
     return client.deleteUser(userId).then(() => fetchFilteredUsuariosInfo({
@@ -69,13 +72,13 @@ function AdminContainer({ handleLogout }) {
   };
 
   const fetchProductos = () => {
-    const client = HttpClientFactory.createVendibleHttpClient('productos', { token: userInfo.token });
+    const client = HttpClientFactory.createVendibleHttpClient('productos', { token: userInfo.token, handleLogout });
 
     return client.getVendibleByFilters();
   };
 
   const fetchServicios = () => {
-    const client = HttpClientFactory.createVendibleHttpClient('servicios', { token: userInfo.token });
+    const client = HttpClientFactory.createVendibleHttpClient('servicios', { token: userInfo.token, handleLogout });
 
     return client.getVendibleByFilters();
   };
@@ -86,6 +89,7 @@ function AdminContainer({ handleLogout }) {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
     });
 
     return client.getVendiblePosts(vendibleId, page, pageSize, filters);
@@ -94,6 +98,7 @@ function AdminContainer({ handleLogout }) {
   const deleteVendible = (id) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
+      handleLogout,
     });
 
     return client.deleteVendible(id);

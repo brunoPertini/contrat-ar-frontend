@@ -72,7 +72,7 @@ const rolesTabs = {
     SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
 };
 
-const NEED_APPROVAL_ATTRIBUTES = ['plan', 'email', 'password'];
+const NEED_APPROVAL_ATTRIBUTES = ['email', 'password'];
 
 const accountActiveModalDefaultValues = {
   title: '',
@@ -131,6 +131,15 @@ function UserProfile({
     setPlanesInfo(fetchedPlanesInfo);
   };
 
+  const checkAttributeRequestChange = (attribute) => {
+    requestChangeExists([attribute]).then(
+      () => setChangeRequestsMade((previous) => ({
+        ...previous, [attribute]: true,
+      })),
+    )
+      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+  };
+
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
@@ -142,17 +151,13 @@ function UserProfile({
         }),
       );
 
-      NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
-        requestChangeExists([attribute]).then(
-          () => setChangeRequestsMade((previous) => ({
-            ...previous, [attribute]: true,
-          })),
-        )
-          .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
-      });
-
       handleSetPlanesInfo();
+      checkAttributeRequestChange('plan');
     }
+
+    NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
+      checkAttributeRequestChange(attribute);
+    });
 
     setHandleGoBack(() => goToIndex);
   }, []);
@@ -284,6 +289,10 @@ function UserProfile({
       handleDeny={() => setAccountActiveModalContent(accountActiveModalDefaultValues)}
     />
   ), [accountActiveModalContent.text]);
+
+  if (!(userInfo?.role)) {
+    return null;
+  }
 
   return (
     <Grid container display="flex">

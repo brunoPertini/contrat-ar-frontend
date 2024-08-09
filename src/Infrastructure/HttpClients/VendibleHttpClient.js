@@ -13,7 +13,7 @@ export class VendibleHttpClient extends HttpClient {
     if (!vendibleType) {
       throw new Error('vendibleType is mandatory');
     }
-    super({ headersValues: config.headersValues });
+    super({ headersValues: config.headersValues, handleLogout: config.handleLogout });
 
     this.vendibleType = vendibleType;
   }

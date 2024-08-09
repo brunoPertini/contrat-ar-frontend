@@ -8,14 +8,14 @@ import { ROLE_ADMIN } from '../Constants/System';
 import { getUserInfoResponseShape } from '../PropTypes/Vendibles';
 import { adminLabels } from '../../StaticData/Admin';
 
-const securityService = new SecurityService();
-
-export default function LoggedUserInfo({ userInfo }) {
+export default function LoggedUserInfo({ userInfo, handleLogout }) {
   const [labels, setLabels] = useState({
     name: '',
     surname: '',
     adminDisclaimer: '',
   });
+
+  const securityService = new SecurityService({ handleLogout });
 
   const handleSetLabels = useCallback(async () => {
     const tokenUserInfo = await securityService.readJwtPayload(userInfo.token);
@@ -58,4 +58,5 @@ export default function LoggedUserInfo({ userInfo }) {
 
 LoggedUserInfo.propTypes = {
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };

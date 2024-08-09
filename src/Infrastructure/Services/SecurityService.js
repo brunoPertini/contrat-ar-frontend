@@ -20,9 +20,15 @@ class SecurityService {
    */
   #httpClient;
 
+  #handleLogout;
+
   static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile', '/admin'];
 
   static LOGIN_PATH = '/signin';
+
+  constructor({ handleLogout }) {
+    this.#handleLogout = handleLogout;
+  }
 
   #handleError(error) {
     const errorMessages = {
@@ -77,12 +83,17 @@ class SecurityService {
   async validateJwt(jwt, alternativeId) {
     return this.readJwtPayload(jwt).then((payload) => {
       if (!isEmpty(payload)) {
-        this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt });
+        this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt, handleLogout: this.#handleLogout });
         return this.#httpClient.getUserInfo(alternativeId || payload.id).then((response) => ({
           ...payload,
           ...response,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input
-        })).catch(() => payload);
+        })).catch((response) => {
+          if (response.status === 401) {
+            return response;
+          }
+          return payload;
+        });
       }
 
       return {};

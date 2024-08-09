@@ -1,6 +1,7 @@
 /* eslint-disable prefer-promise-reject-errors */
 import axios from 'axios';
 import Logger from '../Logging/Logger';
+import { errorMessages } from '../../StaticData/Shared';
 
 /**
  * @typedef HttpClientInstanceConfiguration
@@ -26,7 +27,13 @@ export class HttpClient {
   /** @type {RequestCustomConfig} */
   #requestConfig;
 
-  constructor({ baseUrl, headersValues = defaultHeadersValues, useClientCredentials = true }) {
+  #handleLogout;
+
+  constructor({
+    baseUrl, headersValues = defaultHeadersValues,
+    useClientCredentials = true,
+    handleLogout,
+  }) {
     this.#baseUrl = baseUrl || process.env.REACT_APP_BACKEND_URL;
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
     const AuthorizationHeaderValue = headersValues.Authorization
@@ -57,6 +64,7 @@ export class HttpClient {
     });
 
     this.#requestConfig = null;
+    this.#handleLogout = handleLogout;
   }
 
   setHeaders({ name, value }) {
@@ -99,7 +107,10 @@ export class HttpClient {
       const { status } = error.response;
       if (status && status === 401) {
         Logger.log(error.response);
-        return Promise.reject({ data: error.response.data, status });
+        if (this.#handleLogout) {
+          return this.#handleLogout({ errorMessage: errorMessages.sessionExpired });
+        }
+        return Promise.reject(error.response);
       }
       const wrappedError = error.response.data.error;
       Logger.log(wrappedError);

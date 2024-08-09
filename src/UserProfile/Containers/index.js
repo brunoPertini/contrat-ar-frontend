@@ -23,19 +23,28 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   const dispatch = useDispatch();
 
   const editClienteInfo = (info) => {
-    const client = HttpClientFactory.createUserHttpClient(null, { token: userInfo.token });
+    const client = HttpClientFactory.createUserHttpClient(null, {
+      token: userInfo.token,
+      handleLogout,
+    });
 
     return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
   };
 
   const confirmPlanChange = (newPlan) => {
-    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
 
     return client.updatePlan(userInfo.id, newPlan);
   };
 
   const editProveedorInfo = (info) => {
-    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
 
     return client.updateCommonInfo(userInfo.id, info, { token: userInfo.token });
   };
@@ -44,6 +53,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     const client = HttpClientFactory.createAdminHttpClient({
       alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
       token: userInfo.token,
+      handleLogout,
     });
 
     return (userInfo.role === CLIENTE ? client.updateClientePersonalData(userInfo.id, info)
@@ -71,7 +81,10 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   };
 
   const handleUploadProfilePhoto = (file) => {
-    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
 
     return client.uploadProfilePhoto(userInfo.id, file);
   };
@@ -79,13 +92,17 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   const requestChangeExists = (attributes) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
+      handleLogout,
     });
 
     return client.requestChangeExists(userInfo.id, attributes);
   };
 
   const getAllPlanes = () => {
-    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
     return client.getAllPlanes();
   };
 

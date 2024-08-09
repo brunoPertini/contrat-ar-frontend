@@ -17,9 +17,9 @@ import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
+import { errorMessages } from '../../../StaticData/Shared';
 
 const store = createStore();
-const securityService = new SecurityService();
 const cookiesService = new CookiesService();
 const localStorageService = new LocalStorageService();
 
@@ -37,6 +37,20 @@ export default function withRouter(Component) {
     const navigate = useNavigate();
     const params = useParams();
 
+    /** This cleans site's info such as localStorage, cookies, etc and performs log out */
+    const handleLogout = async (data) => {
+      const { errorMessage } = data ?? { errorMessage: '' };
+      HttpClientFactory.cleanInstances();
+      removeOnLeavingTabHandlers();
+      Object.keys(LocalStorageService.PAGES_KEYS).forEach(
+        (page) => localStorageService.removeAllKeysOfPage(page),
+      );
+      await store.dispatch(resetUserInfo());
+      navigate(routes.signin, { state: { errorMessage } });
+    };
+
+    const securityService = new SecurityService({ handleLogout });
+
     const isSecuredRoute = useMemo(
       () => SecurityService.SECURED_PATHS.includes(location.pathname),
       [location.pathname],
@@ -46,6 +60,7 @@ export default function withRouter(Component) {
     const [tokenVerified, setTokenVerified] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
+    // eslint-disable-next-line consistent-return
     const verifyToken = useCallback(async () => {
       try {
         const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
@@ -58,6 +73,10 @@ export default function withRouter(Component) {
         }
 
         const userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
+
+        if (userInfo.status === 401) {
+          return handleLogout({ errorMessage: errorMessages.sessionExpired });
+        }
 
         userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
 
@@ -92,17 +111,6 @@ export default function withRouter(Component) {
       if (document.hidden) {
         handleOnBeforeUnload();
       }
-    };
-
-    /** This cleans site's info such as localStorage, cookies, etc and performs log out */
-    const handleLogout = async () => {
-      HttpClientFactory.cleanInstances();
-      navigate(routes.signin);
-      removeOnLeavingTabHandlers();
-      Object.keys(LocalStorageService.PAGES_KEYS).forEach(
-        (page) => localStorageService.removeAllKeysOfPage(page),
-      );
-      await store.dispatch(resetUserInfo());
     };
 
     /**

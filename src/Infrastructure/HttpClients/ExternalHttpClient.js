@@ -2,8 +2,10 @@ import { thirdPartyRoutes } from '../../Shared/Constants';
 import { HttpClient } from './HttpClient';
 
 export class ExternalHttpClient extends HttpClient {
-  constructor({ baseUrl, headersValues }) {
-    super({ baseUrl, useClientCredentials: false, headersValues });
+  constructor({ baseUrl, headersValues, handleLogout }) {
+    super({
+      baseUrl, useClientCredentials: false, headersValues, handleLogout,
+    });
   }
   /**
  * @typedef GetAddressFromLocationParams

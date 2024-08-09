@@ -12,6 +12,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
 import { UserAccountOptions } from '../Shared/Components';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
+import { EMPTY_FUNCTION } from '../Shared/Constants/System';
 
 function HeaderMenu({ options }) {
   const isNonComponentMenu = !!(options[0]?.label);
@@ -59,7 +60,7 @@ HeaderMenu.propTypes = {
 };
 
 export default function Header({
-  userInfo, menuOptions, withMenuComponent, renderNavigationLinks,
+  userInfo, menuOptions, withMenuComponent, renderNavigationLinks, handleLogout,
 }) {
   const mainMenuOption = <Avatar sx={{ width: 80, height: 80 }}>{sharedLabels.menu}</Avatar>;
 
@@ -70,7 +71,7 @@ export default function Header({
       { showUserInfo && (
       <HeaderMenu options={[{
         component: UserAccountOptions,
-        props: { userInfo },
+        props: { userInfo, handleLogout },
       }]}
       />
       )}
@@ -114,9 +115,11 @@ Header.defaultProps = {
   withMenuComponent: false,
   renderNavigationLinks: false,
   menuOptions: [],
+  handleLogout: EMPTY_FUNCTION,
 };
 
 Header.propTypes = {
+  handleLogout: PropTypes.func,
   userInfo: PropTypes.shape(getUserInfoResponseShape),
   withMenuComponent: PropTypes.bool,
   menuOptions: PropTypes.array,
