@@ -16,6 +16,7 @@ import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Link } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
@@ -41,22 +42,96 @@ const vendiblesGridProps = {
   alignContent: 'center',
 };
 
+/**
+ * @typedef ProveedoresVendiblesFiltersType
+ * @property {Number} category
+ * @property {String} categoryName
+ * @property {Array<Number>} toFilterDistances
+ * @property{Array<number>} prices
+ */
+
+/** @type {ProveedoresVendiblesFiltersType } */
+const proveedoresVendiblesFiltersModel = {
+  category: null,
+  categoryName: '',
+  toFilterDistances: [],
+  prices: [],
+};
+
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, getVendibles, router, handleLogout,
+  proveedoresInfo, vendibleType, userInfo, getVendibles, router, handleLogout, paginationInfo,
 }) {
+  const distanceFiltersEnabled = proveedoresInfo.minDistance !== proveedoresInfo.maxDistance;
+
+  const [firstSearchDone, setFirstSearchDone] = useState(false);
+
+  const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
+    let distances; let prices;
+
+    // First render, slider is loaded with the min and max values
+    if (!firstSearchDone) {
+      distances = [proveedoresInfo.minDistance, proveedoresInfo.maxDistance];
+      prices = [proveedoresInfo.minPrice, proveedoresInfo.maxPrice];
+    } else if (!proveedoresInfo.vendibles.content.length) {
+      distances = [];
+      prices = [];
+    } else {
+      distances = [proveedoresInfo.vendibles.content[0].distance,
+        proveedoresInfo.vendibles.content[proveedoresInfo.vendibles.content.length - 1].distance];
+
+      prices = [proveedoresInfo.vendibles.content[0].precio,
+        proveedoresInfo.vendibles.content[proveedoresInfo.vendibles.content.length - 1].precio];
+    }
+    const nombre = !proveedoresInfo.vendibles.content.length ? '' : proveedoresInfo.vendibles.content[0].vendibleNombre;
+
+    return {
+      distancesForSlider: distances,
+      pricesForSlider: prices,
+      vendibleNombre: nombre,
+    };
+  }, [proveedoresInfo]);
+
+  const {
+    paginationEnabled, pagesCount, canGoForward, canGoBack,
+  } = useMemo(() => {
+    if (!paginationInfo) {
+      return {
+        paginationEnabled: false,
+        pagesCount: 0,
+        canGoForward: false,
+        canGoBack: false,
+      };
+    }
+    return {
+      paginationEnabled: paginationInfo.totalPages > 1,
+      pagesCount: paginationInfo.totalPages,
+      canGoForward: !paginationInfo.last,
+      canGoBack: !paginationInfo.first,
+    };
+  }, [paginationInfo]);
+
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
 
   const [filtersEnabled, setFiltersEnabled] = useState(false);
-  const [firstSearchDone, setFirstSearchDone] = useState(false);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
   const [buttonsEnabled, setButtonsEnabled] = useState({});
 
+  const [filtersApplied, setFiltersApplied] = useState({
+    ...proveedoresVendiblesFiltersModel,
+    toFilterDistances: distanceFiltersEnabled ? distancesForSlider : [],
+    prices: pricesForSlider,
+  });
+
   const { setHandleGoBack, setParams } = useContext(NavigationContext);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
+
+  const onPageChange = (_, newPage) => {
+    getVendibles(filtersApplied, newPage - 1);
+  };
 
   const menuOptionsConfig = {
     myProfile: {
@@ -79,32 +154,6 @@ function VendiblePage({
     setHandleGoBack(() => router.navigate);
     setParams([routes.ROLE_CLIENTE]);
   }, []);
-
-  const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
-    let distances; let prices;
-
-    // First render, slider is loaded with the min and max values
-    if (!firstSearchDone) {
-      distances = [proveedoresInfo.minDistance, proveedoresInfo.maxDistance];
-      prices = [proveedoresInfo.minPrice, proveedoresInfo.maxPrice];
-    } else if (!proveedoresInfo.vendibles.length) {
-      distances = [];
-      prices = [];
-    } else {
-      distances = [proveedoresInfo.vendibles[0].distance,
-        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].distance];
-
-      prices = [proveedoresInfo.vendibles[0].precio,
-        proveedoresInfo.vendibles[proveedoresInfo.vendibles.length - 1].precio];
-    }
-    const nombre = !proveedoresInfo.vendibles.length ? '' : proveedoresInfo.vendibles[0].vendibleNombre;
-
-    return {
-      distancesForSlider: distances,
-      pricesForSlider: prices,
-      vendibleNombre: nombre,
-    };
-  }, [proveedoresInfo]);
 
   const getPriceLabel = useCallback((price) => {
     if (price === 0) {
@@ -152,14 +201,14 @@ function VendiblePage({
 
   const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
 
-  const distanceFiltersEnabled = proveedoresInfo.minDistance !== proveedoresInfo.maxDistance;
-
   const filtersSection = filtersEnabled ? (
     <Grid item xs={firstColumnBreakpoint}>
       <Typography variant="h3" sx={{ ml: '5%' }}>
         { vendibleNombre }
       </Typography>
       <VendiblesFilters
+        filtersApplied={filtersApplied}
+        setFiltersApplied={setFiltersApplied}
         enabledFilters={{ category: false, distance: distanceFiltersEnabled, price: true }}
         distances={distancesForSlider}
         prices={pricesForSlider}
@@ -198,7 +247,7 @@ function VendiblePage({
         <Layout gridProps={vendiblesGridProps} isLoading={isLoadingVendibles}>
           <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
             {
-                proveedoresInfo.vendibles.map((info) => {
+                proveedoresInfo.vendibles.content.map((info) => {
                   const {
                     precio, proveedorId, imagenUrl, distance,
                   } = info;
@@ -311,6 +360,17 @@ function VendiblePage({
               }
           </List>
           {
+      paginationEnabled && (
+        <Pagination
+          count={pagesCount}
+          hideNextButton={!canGoForward}
+          hidePrevButton={!canGoBack}
+          onChange={onPageChange}
+          sx={{ mt: '1%' }}
+        />
+      )
+    }
+          {
             !isLoadingVendibles && noResultsFound && (
               <StaticAlert
                 label={vendiblesLabels.noResultsFound}
@@ -344,6 +404,7 @@ VendiblePage.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
   vendibleType: PropTypes.oneOf(['servicios', 'productos']).isRequired,
   userInfo: PropTypes.shape(getUserInfoResponseShape).isRequired,
+  paginationInfo: PropTypes.any.isRequired,
 };
 
 export default VendiblePage;

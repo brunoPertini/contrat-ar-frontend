@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
 import VendiblePage from '../Components';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
@@ -20,6 +21,8 @@ function VendibleContainer({ router, handleLogout }) {
 
   const [proveedoresInfo, setProveedoresInfo] = useState();
 
+  const [paginationInfo, setPaginationInfo] = useState({ page: 0, pageSize: 10 });
+
   const userInfoSelector = createSelector(
     stateSelector,
     (state) => state.usuario,
@@ -30,12 +33,26 @@ function VendibleContainer({ router, handleLogout }) {
   /**
    *
    * @param {import('../Filters').ProveedoresVendiblesFiltersType} filters
+   * @param {page: Number} page
    * @returns
    */
-  const handleGetProveedoresInfo = async (filters) => {
+  const handleGetProveedoresInfo = async (
+    filters,
+    // eslint-disable-next-line no-unused-vars
+    page = 0,
+  ) => {
     const httpClient = HttpClientFactory.createClienteHttpClient({ token: userInfo.token });
-    return httpClient.getProveedoresInfoOfVendible(vendibleId, filters)
-      .then((newProveedoresInfo) => {
+    return httpClient.getProveedoresInfoOfVendible(
+      vendibleId,
+      filters,
+      paginationInfo.page,
+      paginationInfo.pageSize,
+    )
+      .then((response) => {
+        const newPaginationInfo = pickBy(response.vendibles, (_, key) => key !== 'content');
+        const newProveedoresInfo = { ...response };
+
+        setPaginationInfo({ ...newPaginationInfo, page });
         setProveedoresInfo(newProveedoresInfo);
         return Promise.resolve(!!(newProveedoresInfo?.vendibles.length));
       })
@@ -57,6 +74,7 @@ function VendibleContainer({ router, handleLogout }) {
         vendibleType={vendibleType}
         userInfo={userInfo}
         router={router}
+        paginationInfo={paginationInfo}
       />
     </NavigationContextProvider>
 
