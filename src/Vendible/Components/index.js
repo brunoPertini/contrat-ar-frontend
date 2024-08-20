@@ -147,7 +147,7 @@ function VendiblePage({
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   useEffect(() => {
-    if (proveedoresInfo?.vendibles.length >= 2) {
+    if (proveedoresInfo?.vendibles?.content.length >= 2) {
       setFiltersEnabled(true);
     }
 

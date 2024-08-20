@@ -20,6 +20,7 @@ function VendibleContainer({ router, handleLogout }) {
   const { vendibleType, vendibleId } = location.state;
 
   const [proveedoresInfo, setProveedoresInfo] = useState();
+  const [isError, setIsError] = useState(false);
 
   const [paginationInfo, setPaginationInfo] = useState({ page: 0, pageSize: 10 });
 
@@ -38,25 +39,27 @@ function VendibleContainer({ router, handleLogout }) {
    */
   const handleGetProveedoresInfo = async (
     filters,
-    // eslint-disable-next-line no-unused-vars
     page = 0,
   ) => {
-    const httpClient = HttpClientFactory.createClienteHttpClient({ token: userInfo.token });
+    const httpClient = HttpClientFactory.createClienteHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
     return httpClient.getProveedoresInfoOfVendible(
       vendibleId,
       filters,
-      paginationInfo.page,
-      paginationInfo.pageSize,
+      page,
     )
       .then((response) => {
+        setIsError(false);
         const newPaginationInfo = pickBy(response.vendibles, (_, key) => key !== 'content');
         const newProveedoresInfo = { ...response };
 
         setPaginationInfo({ ...newPaginationInfo, page });
         setProveedoresInfo(newProveedoresInfo);
-        return Promise.resolve(!!(newProveedoresInfo?.vendibles.length));
+        return Promise.resolve(!!(newProveedoresInfo?.vendibles?.content.length));
       })
-      .catch(() => Promise.resolve(false));
+      .catch(() => setIsError(true));
   };
 
   useEffect(() => {
@@ -65,7 +68,7 @@ function VendibleContainer({ router, handleLogout }) {
 
   useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
-  return !isEmpty(proveedoresInfo) ? (
+  return !isEmpty(proveedoresInfo) && !isError ? (
     <NavigationContextProvider>
       <VendiblePage
         handleLogout={handleLogout}

@@ -220,6 +220,8 @@ function Cliente({
             filtersEnabled && (
             <Grid item sx={{ mt: '3%' }}>
               <VendiblesFilters
+                filtersApplied={lastFiltersApplied}
+                setFiltersApplied={setLastFiltersApplied}
                 categories={vendiblesResponse.categorias}
                 vendibleType={searchType}
                 onFiltersApplied={handleStartSearch}

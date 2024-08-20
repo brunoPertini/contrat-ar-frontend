@@ -59,6 +59,7 @@ function VendiblesFilters({
     comesFromInput,
     iconPressed,
   ) => handleSliderValuesChanged(
+    'prices',
     newValues,
     comesFromInput,
     iconPressed,
