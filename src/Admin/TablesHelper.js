@@ -29,7 +29,6 @@ export const ATTRIBUTES_RENDERERS = {
       onClick={() => onClick()}
     >
       { label }
-      ,
     </Link>
   ),
   boolean: (attribute) => (

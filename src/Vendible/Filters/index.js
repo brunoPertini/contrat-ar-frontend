@@ -13,6 +13,7 @@ import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 import SelectedFilters from '../../Shared/Components/SelectedFilters';
 import { handleSliderValuesChanged } from '../../Shared/Helpers/PricesHelper';
+import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
 
 function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
@@ -190,6 +191,7 @@ VendiblesFilters.defaultProps = {
     toFilterDistances: [],
     prices: [],
   },
+  setFiltersApplied: EMPTY_FUNCTION,
 };
 
 VendiblesFilters.propTypes = {
@@ -204,7 +206,7 @@ VendiblesFilters.propTypes = {
   enabledFilters: PropTypes.objectOf(PropTypes.bool),
   distanceSliderAdditionalProps: PropTypes.object,
   priceSliderAdditionalProps: PropTypes.object,
-  setFiltersApplied: PropTypes.func.isRequired,
+  setFiltersApplied: PropTypes.func,
   filtersApplied: PropTypes.shape({
     category: PropTypes.number,
     categoryName: PropTypes.string,

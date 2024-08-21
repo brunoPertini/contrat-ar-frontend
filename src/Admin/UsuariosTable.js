@@ -7,6 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Modal from '@mui/material/Modal';
+import { Box, Typography } from '@mui/material';
 import { sharedLabels } from '../StaticData/Shared';
 import { EMPTY_FUNCTION, USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
@@ -25,15 +27,15 @@ const ATTRIBUTES_CONFIG = {
   email: 'text',
   birthDate: 'text',
   phone: 'text',
-  createdAt: 'text',
   location: 'map',
+  createdAt: 'text',
   active: 'boolean',
 };
 
 const PROVEEDORES_ATTRIBUTES_CONFIG = {
   dni: 'text',
-  plan: 'enum',
   fotoPerfilUrl: 'image',
+  suscripcion: 'link',
 };
 
 const ATTRIBUTES_LABELS = {
@@ -45,12 +47,13 @@ const ATTRIBUTES_LABELS = {
   phone: sharedLabels.phone,
   location: sharedLabels.location,
   createdAt: sharedLabels.createdAt,
+  active: sharedLabels.active,
 };
 
 const PROVEEDORES_ATTRIBUTES_LABELS = {
   dni: sharedLabels.dni,
-  plan: sharedLabels.plan,
   fotoPerfilUrl: sharedLabels.profilePhoto,
+  suscripcion: sharedLabels.subscription,
 };
 
 const FINAL_ATTRIBUTES_LABELS = {
@@ -62,6 +65,48 @@ const ACTIONS_OPTIONS = [sharedLabels.delete, rootPageLabels.signin];
 const deleteUserModalContentDefaultValues = { title: '', text: '', handleAccept: () => {} };
 
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
+
+function renderSuscripcionData(suscripcion) {
+  const planLabel = suscripcion.planId === 1
+    ? sharedLabels.plansNames.FREE
+    : sharedLabels.plansNames.PAID;
+
+  const styles = { mt: '5% ' };
+  return (
+    <Box sx={{
+      width: '200px',
+      height: '300px',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      background: 'white',
+    }}
+    >
+      <Typography variant="h5">
+        { sharedLabels.plan }
+        :
+      </Typography>
+      <Typography variant="h5">
+        { planLabel}
+      </Typography>
+      <Typography variant="h5" sx={{ ...styles }}>
+        { sharedLabels.state}
+        :
+      </Typography>
+      <Typography variant="h5">
+        { suscripcion.active ? sharedLabels.activeF : sharedLabels.inactiveF }
+      </Typography>
+      <Typography variant="h5" sx={{ ...styles }}>
+        { sharedLabels.activeSinceF}
+        :
+      </Typography>
+      <Typography variant="h5">
+        { suscripcion.createdDate }
+      </Typography>
+    </Box>
+  );
+}
 
 export default function UsuariosTable({
   usuarios, usuarioTypeFilter, loginAsUser, deleteUser,
@@ -83,6 +128,17 @@ export default function UsuariosTable({
   );
 
   const [snackbarProps, setSnackbarProps] = useState(snackbarDefaultValues);
+
+  const [modalProps,
+    setModalProps] = useState({
+    open: false,
+    content: null,
+    onClose: () => setModalProps((previous) => ({
+      ...previous,
+      open: false,
+      content: null,
+    })),
+  });
 
   const onCleanDeletingUserModalContent = () => setDeleteUserModalContent(
     deleteUserModalContentDefaultValues,
@@ -123,6 +179,11 @@ export default function UsuariosTable({
       text: [usuario[attribute]],
       boolean: [usuario[attribute]],
       image: [usuario[attribute]],
+      link: [sharedLabels.seeDetail, () => setModalProps((previous) => ({
+        ...previous,
+        open: true,
+        content: renderSuscripcionData(usuario.suscripcion),
+      }))],
     };
 
     return renderers[rendererType];
@@ -137,6 +198,13 @@ export default function UsuariosTable({
 
   return (
     <TableContainer component={Paper}>
+      {
+        modalProps.open && (
+          <Modal open={modalProps.open} onClose={modalProps.onClose}>
+            {modalProps.content}
+          </Modal>
+        )
+      }
       <MapModal {...mapModalProps} />
       <DialogModal
         title={deleteUserModalContent.title}
@@ -166,29 +234,29 @@ export default function UsuariosTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {usuarios.map((usuario) => ((
+          {usuarios.map((usuario) => (
             <TableRow
               key={usuario.id}
             >
               {
-                  Object.keys(usuario).map((attribute) => {
-                    const rendererType = ATTRIBUTES_CONFIG[attribute]
-                    ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
+                    Object.keys(usuario).map((attribute) => {
+                      const rendererType = ATTRIBUTES_CONFIG[attribute]
+                      ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
 
-                    return (
-                      <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
-                        {
-                          ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
-                            rendererType,
-                            usuario,
-                            attribute,
-                          }))
-                        }
+                      return (
+                        <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                          {
+                            ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
+                              rendererType,
+                              usuario,
+                              attribute,
+                            }))
+                          }
 
-                      </TableCell>
-                    );
-                  })
-                }
+                        </TableCell>
+                      );
+                    })
+                  }
               <TableCell key={`cell-${usuario.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
                 <OptionsMenu
                   title={sharedLabels.actions}
@@ -201,8 +269,8 @@ export default function UsuariosTable({
                 />
               </TableCell>
             </TableRow>
-          )
           ))}
+
         </TableBody>
       </Table>
     </TableContainer>
