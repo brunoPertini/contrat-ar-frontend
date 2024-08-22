@@ -92,6 +92,7 @@ function AdminPage({
     : setVendibles((previous) => {
       const regEx = new RegExp(searchTerm, 'i');
       const newVendibles = pickBy(previous.vendibles, (
+        _,
         vendibleName,
       ) => vendibleName.match(regEx));
       return { ...previous, vendibles: { ...newVendibles } };
@@ -165,7 +166,7 @@ function AdminPage({
 
     return paramsDictionary[tabOption];
   }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts,
-    paginationInfo, posts, priceSliderProps]);
+    paginationInfo, posts, priceSliderProps, vendibleChosen]);
 
   return (
     <>
