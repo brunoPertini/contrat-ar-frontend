@@ -59,10 +59,9 @@ const proveedoresVendiblesFiltersModel = {
 };
 
 function VendiblePage({
-  proveedoresInfo, vendibleType, userInfo, getVendibles, router, handleLogout, paginationInfo,
+  proveedoresInfo, vendibleType, userInfo, getVendibles, router,
+  handleLogout, paginationInfo,
 }) {
-  const distanceFiltersEnabled = proveedoresInfo.minDistance !== proveedoresInfo.maxDistance;
-
   const [firstSearchDone, setFirstSearchDone] = useState(false);
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
@@ -110,6 +109,12 @@ function VendiblePage({
     };
   }, [paginationInfo]);
 
+  const { isPricesSliderEnabled, isDistancesSliderEnabled } = useMemo(() => ({
+    isPricesSliderEnabled: proveedoresInfo.minPrice !== null && proveedoresInfo.maxPrice !== null,
+    isDistancesSliderEnabled: proveedoresInfo.minDistance !== null
+    && proveedoresInfo.maxDistance !== null,
+  }), [proveedoresInfo]);
+
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
 
@@ -121,7 +126,7 @@ function VendiblePage({
 
   const [filtersApplied, setFiltersApplied] = useState({
     ...proveedoresVendiblesFiltersModel,
-    toFilterDistances: distanceFiltersEnabled ? distancesForSlider : [],
+    toFilterDistances: isDistancesSliderEnabled ? distancesForSlider : [],
     prices: pricesForSlider,
   });
 
@@ -130,7 +135,8 @@ function VendiblePage({
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
   const onPageChange = (_, newPage) => {
-    getVendibles(filtersApplied, newPage - 1);
+    setFiltersApplied({ ...proveedoresVendiblesFiltersModel });
+    getVendibles(null, newPage - 1).then(() => setNoResultsFound(false));
   };
 
   const menuOptionsConfig = {
@@ -209,12 +215,16 @@ function VendiblePage({
       <VendiblesFilters
         filtersApplied={filtersApplied}
         setFiltersApplied={setFiltersApplied}
-        enabledFilters={{ category: false, distance: distanceFiltersEnabled, price: true }}
+        enabledFilters={{
+          category: false,
+          distance: isDistancesSliderEnabled,
+          price: isPricesSliderEnabled,
+        }}
         distances={distancesForSlider}
         prices={pricesForSlider}
         onFiltersApplied={handleOnFiltersApplied}
         distanceSliderAdditionalProps={{
-          step: 0.5,
+          step: 0.01,
           min: proveedoresInfo.minDistance,
           max: proveedoresInfo.maxDistance,
         }}
@@ -362,11 +372,18 @@ function VendiblePage({
           {
       paginationEnabled && (
         <Pagination
+          variant="outlined"
+          page={paginationInfo.pageable.pageNumber + 1}
           count={pagesCount}
           hideNextButton={!canGoForward}
           hidePrevButton={!canGoBack}
           onChange={onPageChange}
-          sx={{ mt: '1%' }}
+          sx={{
+            mt: '1%',
+            '& .Mui-selected': {
+              fontWeight: 900,
+            },
+          }}
         />
       )
     }

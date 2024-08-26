@@ -22,7 +22,7 @@ function VendibleContainer({ router, handleLogout }) {
   const [proveedoresInfo, setProveedoresInfo] = useState();
   const [isError, setIsError] = useState(false);
 
-  const [paginationInfo, setPaginationInfo] = useState({ page: 0, pageSize: 10 });
+  const [paginationInfo, setPaginationInfo] = useState({ pageable: { pageNumber: 0 } });
 
   const userInfoSelector = createSelector(
     stateSelector,
@@ -39,27 +39,31 @@ function VendibleContainer({ router, handleLogout }) {
    */
   const handleGetProveedoresInfo = async (
     filters,
-    page = 0,
+    page,
   ) => {
     const httpClient = HttpClientFactory.createClienteHttpClient({
       token: userInfo.token,
       handleLogout,
     });
+
+    const resolvedPage = page !== undefined ? page : paginationInfo?.pageable?.pageNumber || 0;
+
     return httpClient.getProveedoresInfoOfVendible(
       vendibleId,
       filters,
-      page,
+      resolvedPage,
     )
       .then((response) => {
         setIsError(false);
         const newPaginationInfo = pickBy(response.vendibles, (_, key) => key !== 'content');
         const newProveedoresInfo = { ...response };
 
-        setPaginationInfo({ ...newPaginationInfo, page });
+        setPaginationInfo((previous) => ({ ...previous, ...newPaginationInfo }));
         setProveedoresInfo(newProveedoresInfo);
         return Promise.resolve(!!(newProveedoresInfo?.vendibles?.content.length));
       })
-      .catch(() => setIsError(true));
+      .catch(() => setIsError(true))
+      .finally(() => window.scrollTo(0, 0));
   };
 
   useEffect(() => {
@@ -78,6 +82,7 @@ function VendibleContainer({ router, handleLogout }) {
         userInfo={userInfo}
         router={router}
         paginationInfo={paginationInfo}
+        setPaginationInfo={setPaginationInfo}
       />
     </NavigationContextProvider>
 
