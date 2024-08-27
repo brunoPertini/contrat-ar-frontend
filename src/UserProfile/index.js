@@ -106,7 +106,9 @@ function UserProfile({
     password: userInfo.password,
   });
 
-  const [planData, setPlanData] = useState(userInfo.plan);
+  // planData can be changed, currentUserPlanData is only set once
+  const [planData, setPlanData] = useState();
+  const [currentUserPlanData, setCurrentUserPlanData] = useState();
 
   const [planesInfo, setPlanesInfo] = useState();
 
@@ -129,6 +131,9 @@ function UserProfile({
   const handleSetPlanesInfo = async () => {
     const fetchedPlanesInfo = await getAllPlanes();
     setPlanesInfo(fetchedPlanesInfo);
+    const userPlanData = fetchedPlanesInfo.find((p) => p.id === userInfo.suscripcion.planId);
+    setPlanData(userPlanData.type);
+    setCurrentUserPlanData(userPlanData.type);
   };
 
   const checkAttributeRequestChange = (attribute) => {
@@ -246,17 +251,17 @@ function UserProfile({
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
-    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan && !isEmpty(planesInfo) ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
-        actualPlan={userInfo.plan}
+        actualPlan={currentUserPlanData}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
         confirmPlanChange={confirmPlanChange}
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
       />
-    ) : null), [planData, userInfo.plan, personalData.location,
+    ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
   };
 
