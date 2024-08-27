@@ -108,7 +108,7 @@ export class HttpClient {
       if (status && status === 401) {
         Logger.log(error.response);
         if (this.#handleLogout) {
-          return this.#handleLogout({ errorMessage: errorMessages.sessionExpired });
+          this.#handleLogout({ errorMessage: errorMessages.sessionExpired });
         }
         return Promise.reject(error.response);
       }

@@ -18,10 +18,10 @@ import { DialogModal } from '../Shared/Components';
 import { EMPTY_FUNCTION, dialogModalTexts } from '../Shared/Constants/System';
 import { parseVendibleUnit } from '../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../Shared/Components/Alert';
-import { proveedorLabels } from '../StaticData/Proveedor';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
 import { paginationShape } from '../Shared/PropTypes/Shared';
 import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
+import { adminLabels } from '../StaticData/Admin';
 
 const AdminVendiblePosts = lazy(() => import('./AdminVendiblePosts'));
 
@@ -188,8 +188,8 @@ function VendiblesTable({
       <InformativeAlert
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={operationResult !== null}
-        label={(operationResult ? proveedorLabels['deleteVendible.alert.success']
-          : proveedorLabels['deleteVendible.alert.error']).replace('{vendible}', vendibleChosen.name)}
+        label={(operationResult ? adminLabels['deleteVendible.alert.success']
+          : adminLabels['deleteVendible.alert.error']).replace('{vendible}', vendibleChosen.name)}
         severity={operationResult ? 'success' : 'error'}
         onClose={resetDialogData}
       />

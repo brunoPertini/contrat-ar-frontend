@@ -27,10 +27,11 @@ export default class ClienteHttpClient extends HttpClient {
      *
      * @param {number} vendibleId
      * @param {{toFilterDistances: Array<Number>, prices: Array<Number>}} [filters]
+     * @param {Number} page
      */
-  getProveedoresInfoOfVendible(vendibleId, filters) {
+  getProveedoresInfoOfVendible(vendibleId, filters, page) {
     const finalUrl = usersRoutes.getProveedoresOfVendible.replace('{vendibleId}', vendibleId);
-    const queryParams = {};
+    const queryParams = { page };
 
     if (this.#filterWasApplied(filters, 'toFilterDistances')) {
       queryParams[this.FILTERS_PARAMS.MIN_DISTANCE] = filters.toFilterDistances[0];

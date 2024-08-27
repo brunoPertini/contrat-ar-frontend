@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
 import VendiblePage from '../Components';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
@@ -19,6 +20,9 @@ function VendibleContainer({ router, handleLogout }) {
   const { vendibleType, vendibleId } = location.state;
 
   const [proveedoresInfo, setProveedoresInfo] = useState();
+  const [isError, setIsError] = useState(false);
+
+  const [paginationInfo, setPaginationInfo] = useState({ pageable: { pageNumber: 0 } });
 
   const userInfoSelector = createSelector(
     stateSelector,
@@ -30,16 +34,36 @@ function VendibleContainer({ router, handleLogout }) {
   /**
    *
    * @param {import('../Filters').ProveedoresVendiblesFiltersType} filters
+   * @param {page: Number} page
    * @returns
    */
-  const handleGetProveedoresInfo = async (filters) => {
-    const httpClient = HttpClientFactory.createClienteHttpClient({ token: userInfo.token });
-    return httpClient.getProveedoresInfoOfVendible(vendibleId, filters)
-      .then((newProveedoresInfo) => {
+  const handleGetProveedoresInfo = async (
+    filters,
+    page,
+  ) => {
+    const httpClient = HttpClientFactory.createClienteHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    const resolvedPage = page !== undefined ? page : paginationInfo?.pageable?.pageNumber || 0;
+
+    return httpClient.getProveedoresInfoOfVendible(
+      vendibleId,
+      filters,
+      resolvedPage,
+    )
+      .then((response) => {
+        setIsError(false);
+        const newPaginationInfo = pickBy(response.vendibles, (_, key) => key !== 'content');
+        const newProveedoresInfo = { ...response };
+
+        setPaginationInfo((previous) => ({ ...previous, ...newPaginationInfo }));
         setProveedoresInfo(newProveedoresInfo);
-        return Promise.resolve(!!(newProveedoresInfo?.vendibles.length));
+        return Promise.resolve(!!(newProveedoresInfo?.vendibles?.content.length));
       })
-      .catch(() => Promise.resolve(false));
+      .catch(() => setIsError(true))
+      .finally(() => window.scrollTo(0, 0));
   };
 
   useEffect(() => {
@@ -48,7 +72,7 @@ function VendibleContainer({ router, handleLogout }) {
 
   useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
-  return !isEmpty(proveedoresInfo) ? (
+  return !isEmpty(proveedoresInfo) && !isError ? (
     <NavigationContextProvider>
       <VendiblePage
         handleLogout={handleLogout}
@@ -57,6 +81,8 @@ function VendibleContainer({ router, handleLogout }) {
         vendibleType={vendibleType}
         userInfo={userInfo}
         router={router}
+        paginationInfo={paginationInfo}
+        setPaginationInfo={setPaginationInfo}
       />
     </NavigationContextProvider>
 

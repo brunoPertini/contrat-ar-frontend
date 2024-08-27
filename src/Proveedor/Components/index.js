@@ -139,7 +139,11 @@ function ProveedorPage({
   const [filteredVendibles, setFilteredVendibles] = useState();
 
   const [searchValue, setSearchValue] = useState('');
-  const [categorySelected, setCategorySelected] = useState();
+
+  const [filtersApplied, setFiltersApplied] = useState({
+    category: null,
+    categoryName: '',
+  });
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
@@ -298,21 +302,21 @@ function ProveedorPage({
       return currentSearchValue;
     });
 
-    setCategorySelected(categoryName || null);
+    setFiltersApplied((previous) => ({ ...previous, categoryName }));
   };
 
   const handleOnDeleteVendibleTerm = () => {
-    if (!categorySelected) {
+    if (!filtersApplied.categoryName) {
       setFilteredVendibles(vendibles);
     } else {
-      handleOnSelectCategory({ category: categorySelected });
+      handleOnSelectCategory({ category: filtersApplied.categoryName });
     }
   };
 
   const handleFilterVendiblesByName = () => {
     setFilteredVendibles((previous) => {
       const newFilteredVendibles = filterVendiblesByTerm({
-        sourceVendibles: categorySelected ? previous : vendibles,
+        sourceVendibles: filtersApplied.categoryName ? previous : vendibles,
         term: searchValue,
       });
 
@@ -468,6 +472,8 @@ function ProveedorPage({
           <VendiblesFilters
             categories={categorias}
             vendibleType={vendibleType}
+            filtersApplied={filtersApplied}
+            setFiltersApplied={setFiltersApplied}
             onFiltersApplied={handleOnSelectCategory}
             containerStyles={{
               mt: '5%',

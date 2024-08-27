@@ -92,5 +92,10 @@
     "offersDelivery": "Incluye envio a domicilio",
     "offersInCustomAddress": "Se ofrece/realiza en una ubicación específica",
     "category": "Categoría",
-    "vendibleNombre": "Nombre del producto/servicio"
+    "vendibleNombre": "Nombre del producto/servicio",
+    "subscription": "Suscripción",
+    "activeF": "Activa",
+    "inactiveF": "Inactiva",
+    "activeSinceF": "Activa desde",
+    "state": "Estado"
 }
