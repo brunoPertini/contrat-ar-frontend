@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -13,36 +13,15 @@ import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
 import SelectedFilters from '../../Shared/Components/SelectedFilters';
 import { handleSliderValuesChanged } from '../../Shared/Helpers/PricesHelper';
-
-/**
- * @typedef ProveedoresVendiblesFiltersType
- * @property {Number} category
- * @property {String} categoryName
- * @property {Array<Number>} toFilterDistances
- * @property{Array<number>} prices
- */
-
-/** @type {ProveedoresVendiblesFiltersType } */
-const proveedoresVendiblesFiltersModel = {
-  category: null,
-  categoryName: '',
-  toFilterDistances: [],
-  prices: [],
-};
+import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
 
 function VendiblesFilters({
-  categories, distances, prices, vendibleType,
+  categories, filtersApplied, setFiltersApplied, vendibleType,
   onFiltersApplied, containerStyles,
   showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
   alternativeAccordionTitle, distanceSliderAdditionalProps,
 }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
-
-  const [filtersApplied, setFiltersApplied] = useState({
-    ...proveedoresVendiblesFiltersModel,
-    toFilterDistances: enabledFilters.distance ? distances : [],
-    prices,
-  });
 
   const handleOnCategorySelected = (categoryId, categoryName) => {
     let newAppliedFilters = {};
@@ -81,6 +60,7 @@ function VendiblesFilters({
     comesFromInput,
     iconPressed,
   ) => handleSliderValuesChanged(
+    'prices',
     newValues,
     comesFromInput,
     iconPressed,
@@ -205,7 +185,15 @@ VendiblesFilters.defaultProps = {
   categories: {},
   distanceSliderAdditionalProps: {},
   priceSliderAdditionalProps: {},
+  filtersApplied: {
+    category: null,
+    categoryName: '',
+    toFilterDistances: [],
+    prices: [],
+  },
+  setFiltersApplied: EMPTY_FUNCTION,
 };
+
 VendiblesFilters.propTypes = {
   prices: PropTypes.arrayOf(PropTypes.number),
   distances: PropTypes.arrayOf(PropTypes.number),
@@ -218,6 +206,13 @@ VendiblesFilters.propTypes = {
   enabledFilters: PropTypes.objectOf(PropTypes.bool),
   distanceSliderAdditionalProps: PropTypes.object,
   priceSliderAdditionalProps: PropTypes.object,
+  setFiltersApplied: PropTypes.func,
+  filtersApplied: PropTypes.shape({
+    category: PropTypes.number,
+    categoryName: PropTypes.string,
+    toFilterDistances: PropTypes.array,
+    prices: PropTypes.array,
+  }),
 };
 
 export default VendiblesFilters;
