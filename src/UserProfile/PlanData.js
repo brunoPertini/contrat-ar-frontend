@@ -39,7 +39,14 @@ function PlanData({
   return (
     <Box display="flex" flexDirection="row" sx={{ ...styles }}>
       <Box display="flex" flexDirection="column">
-        <StaticAlert severity={subscriptionAlertSeverity} label={subscriptionAlertLabel} />
+        <StaticAlert
+          styles={{
+            width: '50%',
+            marginTop: '2%',
+          }}
+          severity={subscriptionAlertSeverity}
+          label={subscriptionAlertLabel}
+        />
         <SelectComponent
           defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
           values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}

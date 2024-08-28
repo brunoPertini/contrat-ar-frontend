@@ -153,7 +153,7 @@ export class HttpClient {
    * @param {Object} body Request payload
    * @param {Object} config object containing meaningful data for request (headers for instance)
    */
-  put(url, params, body, config = {}) {
+  put(url, params, body, config = { headers: {} }) {
     return this.instance.put(url, body, { params, headers: config.headers })
       .then((response) => response.data)
       .catch((error) => this.#handleError(error));

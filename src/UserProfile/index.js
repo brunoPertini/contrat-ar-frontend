@@ -137,7 +137,7 @@ function UserProfile({
   };
 
   const checkAttributeRequestChange = (attribute) => {
-    requestChangeExists([attribute]).then(
+    requestChangeExists(userInfo.suscripcion.id, [attribute]).then(
       () => setChangeRequestsMade((previous) => ({
         ...previous, [attribute]: true,
       })),
@@ -231,6 +231,12 @@ function UserProfile({
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
+  const handlePlanChangeConfirmation = (newPlanType) => {
+    const planId = planesInfo.find((p) => p.type === newPlanType).id;
+
+    return confirmPlanChange(userInfo.id, planId);
+  };
+
   const tabsComponents = {
     [TABS_NAMES.PERSONAL_DATA]: useMemo(() => (
       <UserPersonalData
@@ -257,7 +263,7 @@ function UserProfile({
         actualPlan={currentUserPlanData}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
-        confirmPlanChange={confirmPlanChange}
+        confirmPlanChange={handlePlanChangeConfirmation}
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}

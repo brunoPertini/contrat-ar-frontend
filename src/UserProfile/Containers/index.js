@@ -31,13 +31,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
   };
 
-  const confirmPlanChange = (newPlan) => {
+  const confirmPlanChange = (proveedorId, planId) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token: userInfo.token,
       handleLogout,
     });
 
-    return client.updatePlan(userInfo.id, newPlan);
+    return client.updatePlan(proveedorId, planId);
   };
 
   const editProveedorInfo = (info) => {
@@ -89,13 +89,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.uploadProfilePhoto(userInfo.id, file);
   };
 
-  const requestChangeExists = (attributes) => {
+  const requestChangeExists = (id, attributes) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       handleLogout,
     });
 
-    return client.requestChangeExists(userInfo.id, attributes);
+    return client.requestChangeExists(id, attributes);
   };
 
   const getAllPlanes = () => {
