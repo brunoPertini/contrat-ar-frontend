@@ -260,6 +260,7 @@ function UserProfile({
         confirmPlanChange={confirmPlanChange}
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
+        suscripcionData={userInfo.suscripcion}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
