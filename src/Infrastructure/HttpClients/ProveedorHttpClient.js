@@ -92,18 +92,15 @@ export class ProveedorHttpClient extends HttpClient {
   /**
    *
    * @param {String | Number} proveedorId
-   * @param {Number} newPlan
+   * @param {Number} planId new planId
    * * @returns {Promise<void> | Promise<Error>}
    */
-  updatePlan(proveedorId, newPlan) {
-    this.setHeaders({
-      name: HEADERS_NAMES.CONTENT_TYPE,
-      value: HEADERS_VALUES.CONTENT_TYPE.APPLICATION_JSON,
-    });
+  updatePlan(proveedorId, planId) {
+    const url = proveedoresRoutes.changePlan
+      .replace('{proveedorId}', proveedorId)
+      .replace('{planId}', planId);
 
-    const url = proveedoresRoutes.changePlan.replace('{id}', proveedorId);
-
-    return this.put(url, null, newPlan, this.requestConfig);
+    return this.put(url, null, null);
   }
 
   getAllPlanes() {

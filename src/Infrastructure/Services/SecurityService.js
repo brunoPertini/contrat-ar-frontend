@@ -83,8 +83,11 @@ class SecurityService {
   async validateJwt(jwt, alternativeId) {
     return this.readJwtPayload(jwt).then((payload) => {
       if (!isEmpty(payload)) {
+        const isProveedor = payload.role.startsWith('PROVEEDOR_');
         this.#httpClient = HttpClientFactory.createUserHttpClient('', { token: jwt, handleLogout: this.#handleLogout });
-        return this.#httpClient.getUserInfo(alternativeId || payload.id).then((response) => ({
+        return this.#httpClient.getUserInfo(alternativeId
+          || payload.id, isProveedor ? { formatType: 'DAY_AND_MONTH' }
+          : {}).then((response) => ({
           ...payload,
           ...response,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input

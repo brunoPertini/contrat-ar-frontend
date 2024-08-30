@@ -17,6 +17,7 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @property {String} dni
  * @property {String} fotoPerfilUrl
  * @property {Boolean} active
+ * @property{{ usuarioId: Number, planId: Number, createdDate: String, active: Boolean}} suscripcion
  */
 
 /**
@@ -34,10 +35,10 @@ export const userState = {
   indexPage: '',
   phone: '',
   password: '',
-  plan: '',
   dni: '',
   fotoPerfilUrl: '',
   active: false,
+  suscripcion: {},
 };
 
 function usuarioReducer(state = userState, action) {

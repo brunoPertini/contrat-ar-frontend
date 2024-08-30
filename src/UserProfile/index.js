@@ -106,7 +106,9 @@ function UserProfile({
     password: userInfo.password,
   });
 
-  const [planData, setPlanData] = useState(userInfo.plan);
+  // planData can be changed, currentUserPlanData is only set once
+  const [planData, setPlanData] = useState();
+  const [currentUserPlanData, setCurrentUserPlanData] = useState();
 
   const [planesInfo, setPlanesInfo] = useState();
 
@@ -129,10 +131,13 @@ function UserProfile({
   const handleSetPlanesInfo = async () => {
     const fetchedPlanesInfo = await getAllPlanes();
     setPlanesInfo(fetchedPlanesInfo);
+    const userPlanData = fetchedPlanesInfo.find((p) => p.id === userInfo.suscripcion.planId);
+    setPlanData(userPlanData.type);
+    setCurrentUserPlanData(userPlanData.type);
   };
 
-  const checkAttributeRequestChange = (attribute) => {
-    requestChangeExists([attribute]).then(
+  const checkAttributeRequestChange = (sourceTableId, attribute) => {
+    requestChangeExists(sourceTableId, [attribute]).then(
       () => setChangeRequestsMade((previous) => ({
         ...previous, [attribute]: true,
       })),
@@ -152,11 +157,11 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange('plan');
+      checkAttributeRequestChange(userInfo.suscripcion.id, 'plan');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
-      checkAttributeRequestChange(attribute);
+      checkAttributeRequestChange(userInfo.id, attribute);
     });
 
     setHandleGoBack(() => goToIndex);
@@ -226,6 +231,12 @@ function UserProfile({
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
+  const handlePlanChangeConfirmation = (newPlanType) => {
+    const planId = planesInfo.find((p) => p.type === newPlanType).id;
+
+    return confirmPlanChange(userInfo.id, planId);
+  };
+
   const tabsComponents = {
     [TABS_NAMES.PERSONAL_DATA]: useMemo(() => (
       <UserPersonalData
@@ -246,17 +257,18 @@ function UserProfile({
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
-    [TABS_NAMES.PLAN]: useMemo(() => (userInfo.plan && !isEmpty(planesInfo) ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
-        actualPlan={userInfo.plan}
+        actualPlan={currentUserPlanData}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
-        confirmPlanChange={confirmPlanChange}
+        confirmPlanChange={handlePlanChangeConfirmation}
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
+        suscripcionData={userInfo.suscripcion}
       />
-    ) : null), [planData, userInfo.plan, personalData.location,
+    ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
   };
 
