@@ -136,8 +136,8 @@ function UserProfile({
     setCurrentUserPlanData(userPlanData.type);
   };
 
-  const checkAttributeRequestChange = (attribute) => {
-    requestChangeExists(userInfo.suscripcion.id, [attribute]).then(
+  const checkAttributeRequestChange = (sourceTableId, attribute) => {
+    requestChangeExists(sourceTableId, [attribute]).then(
       () => setChangeRequestsMade((previous) => ({
         ...previous, [attribute]: true,
       })),
@@ -157,11 +157,11 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange('plan');
+      checkAttributeRequestChange(userInfo.suscripcion.id, 'plan');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
-      checkAttributeRequestChange(attribute);
+      checkAttributeRequestChange(userInfo.id, attribute);
     });
 
     setHandleGoBack(() => goToIndex);

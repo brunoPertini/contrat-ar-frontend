@@ -9,7 +9,7 @@ import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import InformativeAlert from '../Shared/Components/Alert';
-import { planShape } from '../Shared/PropTypes/Proveedor';
+import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
 import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
 
@@ -111,12 +111,7 @@ PlanData.propTypes = {
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
-  suscripcionData: PropTypes.shape({
-    isActive: PropTypes.bool,
-    createdDate: PropTypes.string,
-    planId: PropTypes.number,
-    usuarioId: PropTypes.number,
-  }).isRequired,
+  suscripcionData: PropTypes.shape(suscriptionShape).isRequired,
 };
 
 export default PlanData;

@@ -28,3 +28,11 @@ export const planShape = {
   type: PropTypes.string,
   price: PropTypes.number,
 };
+
+export const suscriptionShape = {
+  id: PropTypes.number,
+  isActive: PropTypes.bool,
+  createdDate: PropTypes.string,
+  planId: PropTypes.number,
+  usuarioId: PropTypes.number,
+};
