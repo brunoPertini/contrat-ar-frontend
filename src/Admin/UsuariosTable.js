@@ -96,7 +96,7 @@ function renderSuscripcionData(suscripcion) {
         :
       </Typography>
       <Typography variant="h5">
-        { suscripcion.active ? sharedLabels.activeF : sharedLabels.inactiveF }
+        { suscripcion.isActive ? sharedLabels.activeF : sharedLabels.inactiveF }
       </Typography>
       <Typography variant="h5" sx={{ ...styles }}>
         { sharedLabels.activeSinceF}

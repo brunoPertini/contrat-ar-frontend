@@ -30,8 +30,8 @@ function PlanData({
   };
 
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
-    subscriptionAlertSeverity: suscripcionData.active ? 'success' : 'error',
-    subscriptionAlertLabel: suscripcionData.active
+    subscriptionAlertSeverity: suscripcionData.isActive ? 'success' : 'error',
+    subscriptionAlertLabel: suscripcionData.isActive
       ? userProfileLabels['plan.subscription.activeFrom'].replace('{createdAt}', suscripcionData.createdDate)
       : userProfileLabels['plan.subscription.inactive'],
   }), [suscripcionData]);
@@ -112,7 +112,7 @@ PlanData.propTypes = {
   planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,
   suscripcionData: PropTypes.shape({
-    active: PropTypes.bool,
+    isActive: PropTypes.bool,
     createdDate: PropTypes.string,
     planId: PropTypes.number,
     usuarioId: PropTypes.number,
