@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { InputAdornment } from '@mui/material';
 import {
   CheckBoxGroup, LocationMap, Select,
 } from '../../Shared/Components';
@@ -26,7 +27,7 @@ import {
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
-import { formatNumberWithLocale, replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { formatNumberWithLocale, getLocaleCurrencySymbol, replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -178,6 +179,8 @@ function FirstStep({
         label={sharedLabels.price}
         onChange={onChangePriceAmount}
         value={formatNumberWithLocale(priceInfo.amount)}
+        InputProps={{ startAdornment: <InputAdornment position="start">{ getLocaleCurrencySymbol() }</InputAdornment> }}
+        // eslint-disable-next-line react/jsx-no-duplicate-props
         inputProps={{
           maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
         }}
@@ -218,10 +221,10 @@ function FirstStep({
                 { proveedorLabels['addVendible.stock'] }
               </Typography>
               <TextField
-                type="number"
+                type="text"
                 label={sharedLabels.stock}
                 onChange={onChangeStock}
-                value={stock}
+                value={formatNumberWithLocale(stock)}
               />
             </Box>
           )

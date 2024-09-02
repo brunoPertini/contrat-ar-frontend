@@ -43,6 +43,7 @@ export const ATTRIBUTES_RENDERERS = {
       tipoPrecio: () => PRICE_TYPES[attributeValue],
       category: () => <span dangerouslySetInnerHTML={{ __html: `${attributeValue.name}<br>(id: ${attributeValue.id})` }} />,
       precio: () => `${getLocaleCurrencySymbol('es-AR')}${formatNumberWithLocale(attributeValue)}`,
+      stock: () => `${formatNumberWithLocale(attributeValue)}`,
     };
 
     return enumAttributes[attribute]();

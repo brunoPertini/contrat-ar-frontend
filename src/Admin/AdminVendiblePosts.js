@@ -51,7 +51,7 @@ const ATTRIBUTES_CONFIG = {
 };
 
 const PRODUCTS_ATTRIBUTES_CONFIG = {
-  stock: 'text',
+  stock: 'enum',
 };
 
 function AdminVendiblePosts({
