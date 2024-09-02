@@ -26,7 +26,7 @@ import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } f
 import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
 import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
-import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
@@ -165,11 +165,13 @@ function VendiblePage({
     if (price === 0) {
       return sharedLabels.priceToBeAgreed;
     }
+    const localeFormattedPrice = formatNumberWithLocale(price);
+
     if (vendibleType === systemConstants.PRODUCTS) {
-      return `${sharedLabels.price}: ${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
+      return `${sharedLabels.price}: ${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${localeFormattedPrice}`;
     }
 
-    return `${sharedLabels.minimalPrice}${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
+    return `${sharedLabels.minimalPrice}${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${localeFormattedPrice}`;
   }, [vendibleType]);
 
   const handleEnableButton = useCallback(

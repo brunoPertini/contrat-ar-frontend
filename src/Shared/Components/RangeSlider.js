@@ -10,8 +10,8 @@ import { replaceArgentinianCurrencySymbol } from '../Helpers/PricesHelper';
 import { INTEGER_MAXIMUM } from '../Constants/System';
 
 function RangeSlider({
-  values, handleOnChange, getInputTextFunction, inputTextsHelpers,
-  shouldShowBottomInputs, bottomInputsProps, step, min, max, showInputsIcon,
+  values, handleOnChange, getInputTextFunction, inputTextsHelpers, getAriaValueText,
+  valueLabelFormat, shouldShowBottomInputs, bottomInputsProps, step, min, max, showInputsIcon,
 }) {
   const [stateValues, setStateValues] = useState(values);
   const [iconDisabled, setIconDisabled] = useState(false);
@@ -86,6 +86,8 @@ function RangeSlider({
         onChangeCommitted={onMouseUp}
         min={min}
         max={max}
+        getAriaValueText={getAriaValueText}
+        valueLabelFormat={valueLabelFormat}
       />
       {
         shouldShowBottomInputs && (
@@ -141,6 +143,8 @@ RangeSlider.defaultProps = {
   max: undefined,
   bottomInputsProps: { readOnly: true },
   showInputsIcon: false,
+  getAriaValueText: undefined,
+  valueLabelFormat: undefined,
 };
 
 RangeSlider.propTypes = {
@@ -154,6 +158,8 @@ RangeSlider.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   showInputsIcon: PropTypes.bool,
+  getAriaValueText: PropTypes.func,
+  valueLabelFormat: PropTypes.func,
 };
 
 export default RangeSlider;

@@ -26,7 +26,7 @@ import {
 import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
-import { replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { formatNumberWithLocale, replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -177,7 +177,7 @@ function FirstStep({
         type="text"
         label={sharedLabels.price}
         onChange={onChangePriceAmount}
-        value={priceInfo.amount}
+        value={formatNumberWithLocale(priceInfo.amount)}
         inputProps={{
           maxLength: maxLengthConstraints.PROVEEDOR['priceInfo.amount'],
         }}

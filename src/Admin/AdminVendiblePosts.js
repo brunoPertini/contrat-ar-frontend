@@ -43,7 +43,7 @@ const ATTRIBUTES_CONFIG = {
   descripcion: 'text',
   imagenUrl: 'image',
   location: 'map',
-  precio: 'text',
+  precio: 'enum',
   tipoPrecio: 'enum',
   offersDelivery: 'boolean',
   offersInCustomAddress: 'boolean',
