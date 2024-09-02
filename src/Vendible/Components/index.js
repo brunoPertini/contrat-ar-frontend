@@ -20,13 +20,15 @@ import Pagination from '@mui/material/Pagination';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
-import { routes, systemConstants, thirdPartyRoutes } from '../../Shared/Constants';
+import { routes, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
 import { Layout, StaticAlert } from '../../Shared/Components';
-import { ARGENTINA_LOCALE } from '../../Shared/Constants/System';
-import { getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import {
+  ARGENTINA_LOCALE, PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+} from '../../Shared/Constants/System';
+import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
@@ -161,15 +163,18 @@ function VendiblePage({
     setParams([routes.ROLE_CLIENTE]);
   }, []);
 
-  const getPriceLabel = useCallback((price) => {
-    if (price === 0) {
-      return sharedLabels.priceToBeAgreed;
-    }
-    if (vendibleType === systemConstants.PRODUCTS) {
-      return `${sharedLabels.price}: ${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
-    }
+  const getPriceLabel = useCallback((price, tipoPrecio) => {
+    const localeFormattedPrice = formatNumberWithLocale(price);
 
-    return `${sharedLabels.minimalPrice}${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${price}`;
+    const fullAmountLabel = `${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${localeFormattedPrice}`;
+
+    const renderers = {
+      [PRICE_TYPE_VARIABLE]: () => sharedLabels.priceToBeAgreed,
+      [PRICE_TYPE_FIXED]: () => `${sharedLabels.price}: ${fullAmountLabel}`,
+      [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: () => `${sharedLabels.minimalPrice}: ${fullAmountLabel}`,
+    };
+
+    return renderers[tipoPrecio]();
   }, [vendibleType]);
 
   const handleEnableButton = useCallback(
@@ -259,7 +264,7 @@ function VendiblePage({
             {
                 proveedoresInfo.vendibles.content.map((info) => {
                   const {
-                    precio, proveedorId, imagenUrl, distance,
+                    precio, proveedorId, imagenUrl, distance, tipoPrecio,
                   } = info;
 
                   const proveedorInfo = proveedoresInfo.proveedores
@@ -340,7 +345,7 @@ function VendiblePage({
                         </ImageListItem>
                         <ListItem sx={{ display: 'flex', flexDirection: 'column' }}>
                           <Typography variant="h5">
-                            {getPriceLabel(precio)}
+                            {getPriceLabel(precio, tipoPrecio)}
                           </Typography>
                           <Typography variant="h5" sx={{ mt: '50px' }}>
                             {clientLabels.contactProvider.replace('{nombreProveedor}', name)}

@@ -1,5 +1,6 @@
 /* eslint-disable no-new-wrappers */
 import { ARGENTINA_LOCALE } from '../Constants/System';
+import { deleteNonNumericCharacters } from '../Utils/InputUtils';
 
 export const ARGENTINA_CURRENCY_CODE = 'ARS';
 
@@ -12,7 +13,7 @@ export const localesCurrencies = {
  * @param {String} locale
  * @returns The given locale currency symbol
  */
-export function getLocaleCurrencySymbol(locale) {
+export function getLocaleCurrencySymbol(locale = 'es-AR') {
   const formatObject = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: localesCurrencies[locale],
@@ -64,3 +65,15 @@ export const handleSliderValuesChanged = (
   }
   return newValue;
 };
+
+/**
+ *
+ * @param {Number | String} number
+ * @param {String} locale
+ * @returns {String} number formatted with locale specs.
+ */
+export function formatNumberWithLocale(number, locale = 'es-AR') {
+  const sanitizedNumber = typeof number === 'string' || number instanceof String ? deleteNonNumericCharacters(number) : number;
+  // TODO: take locale using a backend service
+  return new Intl.NumberFormat(locale).format(sanitizedNumber);
+}

@@ -156,6 +156,8 @@ function VendiblesFilters({
           inputTextsHelpers={locationSliderInputHelperTexts}
           handleOnChange={onChangePricesWrapper}
           getInputTextFunction={getTextForPricesSliderInput}
+          getAriaValueText={getTextForPricesSliderInput}
+          valueLabelFormat={getTextForPricesSliderInput}
           bottomInputsProps={{
             readOnly: false,
           }}

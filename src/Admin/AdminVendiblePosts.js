@@ -43,7 +43,7 @@ const ATTRIBUTES_CONFIG = {
   descripcion: 'text',
   imagenUrl: 'image',
   location: 'map',
-  precio: 'text',
+  precio: 'enum',
   tipoPrecio: 'enum',
   offersDelivery: 'boolean',
   offersInCustomAddress: 'boolean',
@@ -51,7 +51,7 @@ const ATTRIBUTES_CONFIG = {
 };
 
 const PRODUCTS_ATTRIBUTES_CONFIG = {
-  stock: 'text',
+  stock: 'enum',
 };
 
 function AdminVendiblePosts({

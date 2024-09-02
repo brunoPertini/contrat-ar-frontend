@@ -14,7 +14,7 @@ import {
   SERVICES,
   SERVICE_LOCATION_FIXED,
 } from '../Constants/System';
-import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
+import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 import { vendibleInfoShape } from '../PropTypes/Proveedor';
 import { buildPriceType } from '../Helpers/ProveedorHelper';
 
@@ -105,7 +105,7 @@ export default function VendibleInfo({
               </Typography>
               <Typography variant="h6" fontWeight="bold">
                 { getLocaleCurrencySymbol(ARGENTINA_LOCALE) }
-                { priceInfoAmount }
+                { formatNumberWithLocale(priceInfoAmount) }
               </Typography>
             </CardContent>
             )

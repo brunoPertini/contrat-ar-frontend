@@ -182,6 +182,8 @@ function PostsFilters({
         values={filters.prices}
         handleOnChange={onChangePricesWrapper}
         getInputTextFunction={getTextForPricesSliderInput}
+        getAriaValueText={getTextForPricesSliderInput}
+        valueLabelFormat={getTextForPricesSliderInput}
         inputTextsHelpers={locationSliderInputHelperTexts}
         shouldShowBottomInputs
         bottomInputsProps={{

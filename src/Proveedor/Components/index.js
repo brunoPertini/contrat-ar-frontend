@@ -229,6 +229,11 @@ function ProveedorPage({
         handleAccept: handleLogout,
       });
     }
+
+    setFiltersApplied({
+      category: null,
+      categoryName: '',
+    });
   }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
