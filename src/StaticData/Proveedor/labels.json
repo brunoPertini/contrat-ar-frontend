@@ -36,5 +36,7 @@
     "modifyVendible.alert.success": "¡Tu {vendible} fue modificado!",
     "modifyVendible.alert.error": "¡Tu {vendible} no pudo ser modificado!",
     "deleteVendible.alert.success": "¡Tu {vendible} fue borrado!",
-    "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!"
+    "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!",
+    "vendible.state.pause": "Pausar publicación",
+    "vendible.state.resume": "Activar publicación"
 }

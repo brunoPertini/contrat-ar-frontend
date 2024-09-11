@@ -97,5 +97,8 @@
     "activeF": "Activa",
     "inactiveF": "Inactiva",
     "activeSinceF": "Activa desde",
-    "state": "Estado"
+    "state": "Estado",
+    "pausedF": "Pausada",
+    "rejectedF": "Rechazada",
+    "inReview": "En revisión"
 }

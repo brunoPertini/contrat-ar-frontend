@@ -43,6 +43,7 @@ export default function VendiblesList({ vendibles, handleOnOptionClicked }) {
               sx: { width: '40%' },
             }}
             ChildrenComponent={ProveedorVendibleCard}
+            state={vendible.state}
           />
         ))}
       </List>

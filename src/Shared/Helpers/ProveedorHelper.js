@@ -1,3 +1,4 @@
+import { sharedLabels } from '../../StaticData/Shared';
 import {
   PRICE_TYPES, SERVICE_LOCATION_AT_HOME,
   SERVICE_LOCATION_FIXED, PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED,
@@ -126,3 +127,11 @@ export function buildVendibleInfo(vendibleInfo, vendibleType) {
     descripcion,
   };
 }
+
+export const postStateLabelResolver = {
+  IN_REVIEW: sharedLabels.inReview,
+  ACTIVE: sharedLabels.activeF,
+  INACTIVE: sharedLabels.inactiveF,
+  PAUSED: sharedLabels.pausedF,
+  REJECTED: sharedLabels.rejectedF,
+};
