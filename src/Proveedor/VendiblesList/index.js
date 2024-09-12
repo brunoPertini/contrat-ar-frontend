@@ -12,8 +12,21 @@ import { DialogModal } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
 import InformativeAlert from '../../Shared/Components/Alert';
+import { POST_STATES } from '../../Shared/Constants/System';
 
-const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabels.delete];
+const MODIFIABLE_STATES = [POST_STATES.ACTIVE, POST_STATES.REJECTED, POST_STATES.PAUSED];
+
+const DELEATABLE_STATES = [POST_STATES.ACTIVE, POST_STATES.REJECTED, POST_STATES.PAUSED];
+
+const shouldAddOption = {
+  [sharedLabels.seeDetail]: () => true,
+  [sharedLabels.modify]: (postState) => MODIFIABLE_STATES.includes(postState),
+  [sharedLabels.delete]: (postState) => DELEATABLE_STATES.includes(postState),
+};
+
+const getVendibleOptions = (postState) => [sharedLabels.seeDetail,
+  sharedLabels.modify, sharedLabels.delete]
+  .filter((key) => shouldAddOption[key](postState));
 
 /**
  * Vendibles list of Proveedor page.
@@ -50,7 +63,7 @@ export default function VendiblesList({
   const linkSection = useCallback((vendible) => (
     <OptionsMenu
       title={sharedLabels.actions}
-      options={vendibleOptions}
+      options={getVendibleOptions(vendible.state)}
       onOptionClicked={(option) => handleOnOptionClicked(option, vendible)}
       vendibleName={vendible.vendibleNombre}
     />

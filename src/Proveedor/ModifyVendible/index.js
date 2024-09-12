@@ -26,6 +26,9 @@ import FirstStep from '../CreateVendible/FirstStep';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { vendibleInfoShape } from '../../Shared/PropTypes/Proveedor';
+import { StaticAlert } from '../../Shared/Components';
+import { proveedorLabels } from '../../StaticData/Proveedor';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 const localStorageService = new LocalStorageService();
 
@@ -102,6 +105,7 @@ function ModifyVendibleForm({
     flexDirection: 'column',
     sx: {
       minHeight: '100vh',
+      alignItems: 'center',
     },
     spacing: activeStep === 0 ? 35 : 10,
   }), [activeStep]);
@@ -213,6 +217,15 @@ function ModifyVendibleForm({
       {...containerProps}
     >
       { steps[activeStep].component }
+      {
+          activeStep === 2 && (
+            <StaticAlert
+              styles={{ mt: '3%', fontSize: '1.1rem' }}
+              severity="info"
+              label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
+            />
+          )
+        }
       <Grid
         item
         sx={{

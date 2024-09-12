@@ -41,7 +41,9 @@ export default function VendibleCard({
   );
 
   const { shouldShowStateSwitch, switchLabel } = useMemo(() => ({
-    shouldShowStateSwitch: state === POST_STATES.ACTIVE || state === POST_STATES.PAUSED,
+    shouldShowStateSwitch: !!state && (
+      state === POST_STATES.ACTIVE || state === POST_STATES.PAUSED
+    ),
     switchLabel: state === POST_STATES.ACTIVE ? proveedorLabels['vendible.state.pause']
       : proveedorLabels['vendible.state.resume'],
   }), [state]);
@@ -56,14 +58,18 @@ export default function VendibleCard({
       <Typography gutterBottom variant="h5" component="div">
         { vendibleTitle }
       </Typography>
-      <StaticAlert
-        styles={{
-          width: '125px',
-          marginTop: '2%',
-        }}
-        severity={STATE_SEVERITY[state]}
-        label={postStateLabelResolver[state]}
-      />
+      {
+        state && (
+          <StaticAlert
+            styles={{
+              width: '125px',
+              marginTop: '2%',
+            }}
+            severity={STATE_SEVERITY[state]}
+            label={postStateLabelResolver[state]}
+          />
+        )
+      }
       {
          shouldShowStateSwitch && (
          <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
