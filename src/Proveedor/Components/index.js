@@ -539,10 +539,12 @@ function ProveedorPage({
           </Box>
           <Box>
             <VendiblesList
+              proveedorId={userInfo.id}
               vendibles={filteredVendibles}
               vendibleType={vendibleType}
               userToken={userInfo.token}
               handleOnOptionClicked={handleOnOptionClicked}
+              handlePutVendible={handlePutVendible}
             />
           </Box>
         </Grid>

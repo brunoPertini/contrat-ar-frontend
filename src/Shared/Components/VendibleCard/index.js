@@ -23,7 +23,7 @@ export default function VendibleCard({
   vendibleTitle, images, LinkSection,
   imageListProps: { cols, gap, sx },
   cardStyles, linkCardStyles, ChildrenComponent,
-  state,
+  state, manageStateChange,
 }) {
   const imageSection = !!images.length && (
     <ImageList cols={cols} gap={gap} sx={sx}>
@@ -46,6 +46,11 @@ export default function VendibleCard({
       : proveedorLabels['vendible.state.resume'],
   }), [state]);
 
+  const handleChangeState = (event) => {
+    manageStateChange(!event.target.checked
+      ? POST_STATES.PAUSED : POST_STATES.ACTIVE);
+  };
+
   const titleSection = (
     <CardContent>
       <Typography gutterBottom variant="h5" component="div">
@@ -66,7 +71,7 @@ export default function VendibleCard({
              control={(
                <Switch
                  checked={state === POST_STATES.ACTIVE}
-                 onChange={() => {}}
+                 onChange={handleChangeState}
                />
 )}
              label={switchLabel}
@@ -112,4 +117,5 @@ VendibleCard.propTypes = {
     sx: PropTypes.objectOf(PropTypes.string),
   }).isRequired,
   ChildrenComponent: PropTypes.elementType.isRequired,
+  manageStateChange: PropTypes.func.isRequired,
 };

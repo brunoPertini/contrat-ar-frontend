@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import List from '@mui/material/List';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import VendibleCard from '../../Shared/Components/VendibleCard';
 import { sharedLabels } from '../../StaticData/Shared';
 import ProveedorVendibleCard from '../../Shared/Components/VendibleCard/ProveedorVendibleCard';
@@ -8,13 +8,41 @@ import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import OptionsMenu from '../../Shared/Components/OptionsMenu';
+import { DialogModal } from '../../Shared/Components';
+import { proveedorLabels } from '../../StaticData/Proveedor';
+import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 const vendibleOptions = [sharedLabels.seeDetail, sharedLabels.modify, sharedLabels.delete];
 
 /**
  * Vendibles list of Proveedor page.
  */
-export default function VendiblesList({ vendibles, handleOnOptionClicked }) {
+export default function VendiblesList({
+  vendibles, proveedorId, handleOnOptionClicked, handlePutVendible,
+}) {
+  const [modifyStateData, setModifyStateData] = useState({ state: '', vendibleId: '' });
+  const [operationResult, setOperationResult] = useState(null);
+
+  const [modalContent, setModalContent] = useState({
+    title: '',
+    text: '',
+  });
+
+  const cleanModalContent = () => {
+    setModifyStateData({ state: '', vendibleId: '' });
+    setModalContent({ title: '', text: '' });
+  };
+
+  const acceptStateChange = () => handlePutVendible({
+    proveedorId,
+    vendibleId: modifyStateData.vendibleId,
+    body: { state: modifyStateData.state },
+  })
+    .then(() => setOperationResult(true))
+    .catch(() => setOperationResult(false))
+    .finally(() => cleanModalContent());
+
   const cardStyles = {
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
   };
@@ -28,8 +56,32 @@ export default function VendiblesList({ vendibles, handleOnOptionClicked }) {
     />
   ), [handleOnOptionClicked]);
 
+  const manageStateChange = (newState, vendibleId) => {
+    setModifyStateData({ state: newState, vendibleId });
+    setModalContent({
+      title: sharedLabels.pleaseConfirmAction,
+      text: proveedorLabels['vendible.update.state'].replace('{newState}', postStateLabelResolver[newState]),
+    });
+  };
+
   return (
     <>
+      <InformativeAlert
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={operationResult !== null}
+        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
+        severity={operationResult ? 'success' : 'error'}
+        onClose={() => setOperationResult(null)}
+      />
+      <DialogModal
+        title={modalContent.title}
+        contextText={modalContent.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+        open={!!(modalContent?.title && modalContent.text)}
+        handleAccept={acceptStateChange}
+        handleDeny={cleanModalContent}
+      />
       <List>
         {vendibles.map((vendible) => (
           <VendibleCard
@@ -44,6 +96,7 @@ export default function VendiblesList({ vendibles, handleOnOptionClicked }) {
             }}
             ChildrenComponent={ProveedorVendibleCard}
             state={vendible.state}
+            manageStateChange={(state) => manageStateChange(state, vendible.vendibleId)}
           />
         ))}
       </List>
@@ -71,6 +124,8 @@ VendiblesList.defaultProps = {
 };
 
 VendiblesList.propTypes = {
+  proveedorId: PropTypes.number.isRequired,
   vendibles: proveedoresVendiblesShape,
   handleOnOptionClicked: PropTypes.func.isRequired,
+  handlePutVendible: PropTypes.func.isRequired,
 };
