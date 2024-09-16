@@ -1,11 +1,12 @@
-/* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import {
   useContext, useMemo,
   useState,
 } from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import isEqual from 'lodash/isEqual';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
   PRICE_TYPE_VARIABLE,
@@ -29,6 +30,7 @@ import { vendibleInfoShape } from '../../Shared/PropTypes/Proveedor';
 import { StaticAlert } from '../../Shared/Components';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 const localStorageService = new LocalStorageService();
 
@@ -45,7 +47,7 @@ function ModifyVendibleForm({
     amount: vendibleInfo.precio,
   });
 
-  const [stock, setStock] = useState(new String(vendibleInfo.stock));
+  const [stock, setStock] = useState(String(vendibleInfo.stock));
 
   const [locationTypes, setLocationTypes] = useState(buildLocationTypesArray(
     vendibleInfo,
@@ -60,9 +62,26 @@ function ModifyVendibleForm({
   // undefined = no result; false = something went wrong; true= all good
   const [operationResult, setOperationResult] = useState();
 
+  // eslint-disable-next-line no-unused-vars
+  const [operationMessage, setOperationMessage] = useState('');
+
   const { setHandleGoBack } = useContext(NavigationContext);
 
   setHandleGoBack(() => showSaveChangesAlertModal);
+
+  const resetMessageOperationData = () => {
+    setOperationMessage('');
+    setOperationResult(null);
+  };
+
+  const setMessageOperationData = () => {
+    setOperationResult(false);
+    setOperationMessage(sharedLabels.noFieldModified);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+    });
+  };
 
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
@@ -71,21 +90,39 @@ function ModifyVendibleForm({
       const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
       || locationTypes.includes(PRODUCT_LOCATION_FIXED);
 
+      const parsePrecio = () => Number(priceInfo.amount.toString().replace(DOT_AND_COMMA_REGEX, ''));
+
+      const checkAndIncludeField = (
+        fieldKey,
+        fieldValue,
+      ) => (vendibleInfo[fieldKey] !== fieldValue ? fieldValue : undefined);
+
       const body = {
-        descripcion,
-        precio: new Number(priceInfo.amount.toString().replace(DOT_AND_COMMA_REGEX, '')),
-        tipoPrecio: priceInfo.type,
-        imagenUrl,
-        location: vendibleLocation,
-        stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
-        offersDelivery,
-        offersInCustomAddress,
+        descripcion: checkAndIncludeField('descripcion', descripcion),
+        precio: vendibleInfo.precio !== priceInfo.amount ? parsePrecio() : undefined,
+        tipoPrecio: checkAndIncludeField('tipoPrecio', priceInfo.type),
+        imagenUrl: checkAndIncludeField('imagenUrl', imagenUrl),
+        location: !isEqual(vendibleLocation, vendibleInfo.location) ? vendibleLocation : undefined,
+        stock: checkAndIncludeField('stock', Number(stock.replace(DOT_AND_COMMA_REGEX, ''))),
+        offersDelivery: checkAndIncludeField('offersDelivery', offersDelivery),
+        offersInCustomAddress: checkAndIncludeField('offersInCustomAddress', offersInCustomAddress),
       };
+
+      const cleanBody = Object.entries(body).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+      if (isEmpty(cleanBody)) {
+        return setMessageOperationData();
+      }
 
       handlePutVendible({
         proveedorId,
         vendibleId: vendibleInfo.vendibleId,
-        body,
+        body: cleanBody,
 
       }).then(() => {
         setOperationResult(true);
@@ -226,6 +263,13 @@ function ModifyVendibleForm({
             />
           )
         }
+      <InformativeAlert
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={operationResult !== null}
+        label={operationMessage}
+        severity={operationResult ? 'success' : 'error'}
+        onClose={resetMessageOperationData}
+      />
       <Grid
         item
         sx={{

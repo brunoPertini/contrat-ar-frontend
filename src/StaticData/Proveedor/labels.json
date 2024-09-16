@@ -42,5 +42,5 @@
     "vendible.update.state": "¿Establecer la publicacion en estado {newState}?",
     "vendible.state.update.ok": "¡Se cambió el estado de tu publicación!",
     "vendible.state.update.failed": "¡Hubo un error! Por favor, intentalo más tarde",
-    "vendible.new.confirmation.disclaimer": "Tu {vendible} va a ser revisado por un administrador. Te vamos a avisar por mail si fue aprobado, o si necesitemos que hagas alguna modificación. Tené en cuenta que hasta ese momento no va a ser visible a tus clientes."
+    "vendible.new.confirmation.disclaimer": "Algunos cambios a tu {vendible} pueden requerir revisión de un administrador. En ese caso, te vamos a avisar por mail si fue aprobado, o si necesitemos que hagas alguna modificación. Tené en cuenta que hasta ese momento no va a ser visible a tus clientes."
 }

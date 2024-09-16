@@ -100,5 +100,6 @@
     "state": "Estado",
     "pausedF": "Pausada",
     "rejectedF": "Rechazada",
-    "inReview": "En revisión"
+    "inReview": "En revisión",
+    "noFieldModified": "Ningún campo fue modificado"
 }
