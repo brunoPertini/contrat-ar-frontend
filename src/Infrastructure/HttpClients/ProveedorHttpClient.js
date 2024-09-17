@@ -1,3 +1,4 @@
+import pickBy from 'lodash/pickBy';
 import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
 import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
 import { HEADERS_NAMES, HEADERS_VALUES } from '../Constants';
@@ -61,7 +62,8 @@ export class ProveedorHttpClient extends HttpClient {
    */
   getVendibles(proveedorId, filters) {
     const url = proveedoresRoutes.getVendibles.replace('{proveedorId}', proveedorId);
-    return this.post(url, null, filters);
+    const sanitizedFilters = pickBy(filters, (value) => !!value);
+    return this.post(url, null, sanitizedFilters);
   }
 
   postVendible({ role, proveedorId, body }) {

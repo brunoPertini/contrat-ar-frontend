@@ -98,6 +98,7 @@
     "inactiveF": "Inactiva",
     "activeSinceF": "Activa desde",
     "state": "Estado",
+    "postState": "Estado de la publicación",
     "pausedF": "Pausada",
     "rejectedF": "Rechazada",
     "inReview": "En revisión",

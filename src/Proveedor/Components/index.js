@@ -145,6 +145,7 @@ function ProveedorPage({
     category: null,
     categoryName: '',
     vendibleNombre: '',
+    state: '',
   });
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
@@ -453,6 +454,7 @@ function ProveedorPage({
             )}
             enabledFilters={{
               category: categoriesFiltersEnabled,
+              state: true,
             }}
           />
         </Grid>
