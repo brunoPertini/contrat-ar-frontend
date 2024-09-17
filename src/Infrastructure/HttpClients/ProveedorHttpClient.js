@@ -49,9 +49,19 @@ export class ProveedorHttpClient extends HttpClient {
     return this.post(url, null, formData, this.requestConfig);
   }
 
-  getVendibles(proveedorId) {
+  /**
+   *
+   * @param {Number} proveedorId
+   * @param {{
+   * state: String,
+   * vendibleNombre: String,
+   * categoryName: String,
+   * }} filters
+   * @returns
+   */
+  getVendibles(proveedorId, filters) {
     const url = proveedoresRoutes.getVendibles.replace('{proveedorId}', proveedorId);
-    return this.get(url);
+    return this.post(url, null, filters);
   }
 
   postVendible({ role, proveedorId, body }) {

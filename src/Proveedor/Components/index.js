@@ -26,7 +26,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import { menuOptionsShape } from '../../Shared/PropTypes/Header';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
-import { buildVendibleInfo, filterVendiblesByCategory, filterVendiblesByTerm } from '../../Shared/Helpers/ProveedorHelper';
+import { buildVendibleInfo } from '../../Shared/Helpers/ProveedorHelper';
 import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
@@ -127,6 +127,7 @@ function ProveedorPage({
   handlePostVendible,
   handlePutVendible,
   handleDeleteVendible,
+  handleGetVendibles,
   router,
 }) {
   const { vendibleType, labelVendibleType } = useMemo(() => ({
@@ -138,11 +139,12 @@ function ProveedorPage({
 
   const [filteredVendibles, setFilteredVendibles] = useState();
 
-  const [searchValue, setSearchValue] = useState('');
+  // const [searchValue, setSearchValue] = useState('');
 
   const [filtersApplied, setFiltersApplied] = useState({
     category: null,
     categoryName: '',
+    vendibleNombre: '',
   });
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
@@ -254,7 +256,7 @@ function ProveedorPage({
   }, [currentInnerScreen]);
 
   const handleSetSearchValue = (value) => {
-    setSearchValue(value);
+    setFiltersApplied((previous) => ({ ...previous, vendibleNombre: value }));
   };
 
   const { openSnackbar, alertSeverity, alertLabel } = useMemo(() => {
@@ -283,49 +285,10 @@ function ProveedorPage({
     });
   }, [crudOperationResult]);
 
-  const handleOnSelectCategory = ({ categoryName }) => {
-    setSearchValue((currentSearchValue) => {
-      setFilteredVendibles((previous) => {
-        let newFilteredVendibles;
-        const vendiblesSource = currentSearchValue ? previous : vendibles;
-        if (categoryName) {
-          newFilteredVendibles = filterVendiblesByCategory({
-            vendibles: vendiblesSource,
-            categoryName,
-          });
-        } else if (currentSearchValue) {
-          newFilteredVendibles = filterVendiblesByTerm({
-            sourceVendibles: vendibles,
-            term: currentSearchValue,
-          });
-        } else {
-          newFilteredVendibles = [...vendibles];
-        }
-
-        return newFilteredVendibles;
-      });
-      return currentSearchValue;
-    });
-
-    setFiltersApplied((previous) => ({ ...previous, categoryName }));
-  };
-
-  const handleOnDeleteVendibleTerm = () => {
-    if (!filtersApplied.categoryName) {
-      setFilteredVendibles(vendibles);
-    } else {
-      handleOnSelectCategory({ category: filtersApplied.categoryName });
-    }
-  };
-
-  const handleFilterVendiblesByName = () => {
-    setFilteredVendibles((previous) => {
-      const newFilteredVendibles = filterVendiblesByTerm({
-        sourceVendibles: filtersApplied.categoryName ? previous : vendibles,
-        term: searchValue,
-      });
-
-      return newFilteredVendibles;
+  const handleStartSearch = () => {
+    setFiltersApplied((current) => {
+      handleGetVendibles(current);
+      return current;
     });
   };
 
@@ -465,21 +428,20 @@ function ProveedorPage({
                 mt: '5%',
               },
             }}
-            onSearchClick={handleFilterVendiblesByName}
+            onSearchClick={handleStartSearch}
             keyEvents={{
               onKeyUp: handleSetSearchValue,
-              onEnterPressed: handleFilterVendiblesByName,
-              onDeletePressed: handleOnDeleteVendibleTerm,
+              onEnterPressed: handleStartSearch,
             }}
             placeholder={proveedorLabels.filterByName}
-            inputValue={searchValue}
+            inputValue={filtersApplied.vendibleNombre}
           />
           <VendiblesFilters
             categories={categorias}
             vendibleType={vendibleType}
             filtersApplied={filtersApplied}
             setFiltersApplied={setFiltersApplied}
-            onFiltersApplied={handleOnSelectCategory}
+            onFiltersApplied={handleStartSearch}
             containerStyles={{
               mt: '5%',
             }}
@@ -598,6 +560,7 @@ ProveedorPage.propTypes = {
   handlePostVendible: PropTypes.func.isRequired,
   handlePutVendible: PropTypes.func.isRequired,
   handleDeleteVendible: PropTypes.func.isRequired,
+  handleGetVendibles: PropTypes.func.isRequired,
   router: PropTypes.shape(routerShape).isRequired,
 };
 

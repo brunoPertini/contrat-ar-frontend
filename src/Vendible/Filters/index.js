@@ -23,13 +23,9 @@ function VendiblesFilters({
 }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
-  const handleOnCategorySelected = (categoryId, categoryName) => {
-    let newAppliedFilters = {};
-    setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous, category: categoryId, categoryName };
-      return newAppliedFilters;
-    });
-    onFiltersApplied(newAppliedFilters);
+  const handleOnCategorySelected = async (categoryId, categoryName) => {
+    await setFiltersApplied((previous) => ({ ...previous, category: categoryId, categoryName }));
+    onFiltersApplied();
   };
 
   const handleOnDistancesChanged = (newValue) => {
