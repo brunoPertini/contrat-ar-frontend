@@ -89,13 +89,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.uploadProfilePhoto(userInfo.id, file);
   };
 
-  const requestChangeExists = (id, attributes) => {
+  const requestChangeExists = (ids, attributes) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
       handleLogout,
     });
 
-    return client.requestChangeExists(id, attributes);
+    return client.requestChangeExists(ids, attributes);
   };
 
   const getAllPlanes = () => {

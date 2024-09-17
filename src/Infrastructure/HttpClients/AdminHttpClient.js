@@ -9,15 +9,17 @@ export default class AdminHttpClient extends HttpClient {
 
   /**
    *
-   * @param {String | Number} sourceTableId
+   * @param {String | Number} sourceTableIds
    * @param {String[]} attributes
    * @returns {Promise<any | Error>}
    */
-  requestChangeExists(sourceTableId, attributes) {
-    return this.get(
-      adminRoutes.changeRequestExists,
-      { sourceTableId, searchAttributes: attributes },
-    );
+  requestChangeExists(sourceTableIds, attributes) {
+    const body = {
+      searchIds: sourceTableIds,
+      searchAttributes: attributes,
+    };
+
+    return this.post(adminRoutes.changeRequestExists, null, body);
   }
 
   getUsuariosInfo() {

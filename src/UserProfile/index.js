@@ -157,11 +157,11 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange(userInfo.suscripcion.id, 'plan');
+      checkAttributeRequestChange([userInfo.suscripcion.id], 'plan');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
-      checkAttributeRequestChange(userInfo.id, attribute);
+      checkAttributeRequestChange([userInfo.id], attribute);
     });
 
     setHandleGoBack(() => goToIndex);
