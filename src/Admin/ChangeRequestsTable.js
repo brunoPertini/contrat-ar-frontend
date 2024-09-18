@@ -25,7 +25,7 @@ import { ATTRIBUTES_RENDERERS } from './TablesHelper';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
-  sourceTable: 'text',
+  sourceTable: 'enum',
   attributes: 'text',
   sourceTableIdNames: 'enum',
   sourceTableIds: 'enum',
@@ -45,7 +45,7 @@ const FINAL_ATTRIBUTES_LABELS = {
   actions: sharedLabels.actions,
 };
 
-const ACTIONS_OPTIONS = [sharedLabels.apply, sharedLabels.deny];
+const ACTIONS_OPTIONS = [sharedLabels.seeDetail, sharedLabels.apply, sharedLabels.deny];
 
 const modalContentDefaultValues = { title: '', text: '', handleAccept: () => {} };
 
@@ -169,7 +169,7 @@ export default function ChangeRequestsTable({
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
             {
-              Object.values(ATTRIBUTES_LABELS).map((label) => (
+              Object.values({ ...ATTRIBUTES_LABELS, ...FINAL_ATTRIBUTES_LABELS }).map((label) => (
                 <TableCell
                   sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
                 >

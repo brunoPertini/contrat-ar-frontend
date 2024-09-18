@@ -5,6 +5,11 @@ import { sharedLabels } from '../StaticData/Shared';
 import { PRICE_TYPES } from '../Shared/Constants/System';
 import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
 
+const changeRequestEntityTranslator = {
+  proveedor_vendible: 'Publicación de producto o servicio',
+  suscripcion: 'Suscripción de usuario',
+};
+
 export const ATTRIBUTES_RENDERERS = {
   text: (attribute) => attribute,
   image: (attribute) => (
@@ -44,7 +49,10 @@ export const ATTRIBUTES_RENDERERS = {
       category: () => <span dangerouslySetInnerHTML={{ __html: `${attributeValue.name}<br>(id: ${attributeValue.id})` }} />,
       precio: () => `${getLocaleCurrencySymbol('es-AR')}${formatNumberWithLocale(attributeValue)}`,
       stock: () => `${formatNumberWithLocale(attributeValue)}`,
-      wasApplied: () => {},
+      wasApplied: () => (attributeValue ? sharedLabels.yes : sharedLabels.no),
+      sourceTableIdNames: () => attributeValue.join(','),
+      sourceTableIds: () => attributeValue.join(','),
+      sourceTable: () => changeRequestEntityTranslator[attributeValue] || attributeValue,
     };
 
     return enumAttributes[attribute]();

@@ -105,5 +105,7 @@
     "noFieldModified": "Ningún campo fue modificado",
     "apply": "Aplicar",
     "deny": "Rechazar",
-    "wasApplied": "Fue aplicado"
+    "wasApplied": "Fue aplicado",
+    "yes": "Sí",
+    "no": "No"
 }
