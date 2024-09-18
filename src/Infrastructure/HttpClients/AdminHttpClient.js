@@ -116,4 +116,14 @@ export default class AdminHttpClient extends HttpClient {
       maxStock: hasStocks && filters.stocks[1],
     } : {}).then((data) => data);
   }
+
+  /**
+   * @returns {Promise<[{sourceTableIdNames: Array<String>,
+   *  sourceTableIds: Array<Number>,
+   *  sourceTable: String,
+   *  attributes: String}]>}
+   */
+  getAllChangeRequests() {
+    return this.get(adminRoutes.getAllChangeRequests);
+  }
 }

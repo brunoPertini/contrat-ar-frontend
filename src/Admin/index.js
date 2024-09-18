@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
@@ -17,16 +18,18 @@ import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import { getUsuariosAdminResponseShape } from '../Shared/PropTypes/Admin';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import { menuOptionsShape } from '../Shared/PropTypes/Header';
-import VendblesTable from './VendiblesTable';
+import VendiblesTable from './VendiblesTable';
+import ChangeRequestsTable from './ChangeRequestsTable';
 
-const TAB_VALUES = ['usuarios', 'productos', 'servicios'];
+const TAB_VALUES = ['usuarios', 'productos', 'servicios', 'changeRequests'];
 
-const TABS_LABELS = ['Usuarios', 'Productos', 'Servicios'];
+const TABS_LABELS = ['Usuarios', 'Productos', 'Servicios', 'Pedidos de cambio'];
 
 const TABS_COMPONENTS = {
   usuarios: (props) => <UsuariosTable {...props} />,
-  productos: (props) => <VendblesTable {...props} />,
-  servicios: (props) => <VendblesTable {...props} />,
+  productos: (props) => <VendiblesTable {...props} />,
+  servicios: (props) => <VendiblesTable {...props} />,
+  changeRequests: (props) => <ChangeRequestsTable {...props} />,
 };
 
 const filtersDefaultValues = {
@@ -34,15 +37,17 @@ const filtersDefaultValues = {
 };
 
 function AdminPage({
-  userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts,
+  userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts, getAllChangeRequests,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
 
   const [filters, setFilters] = useState(filtersDefaultValues);
+
   const [vendibles, setVendibles] = useState({});
   const [posts, setPosts] = useState();
+  const [changeRequests, setChangeRequests] = useState();
 
   const [isShowingVendiblePosts, setIsShowingVendiblePosts] = useState(false);
   const [vendibleChosen, setVendibleChosen] = useState({ id: null, name: null });
@@ -88,6 +93,11 @@ function AdminPage({
     setVendibles(fetched);
   }, [tabOption]);
 
+  const fetchChangeRequests = useCallback(async () => {
+    const requests = await getAllChangeRequests();
+    setChangeRequests(requests);
+  }, [tabOption]);
+
   const filterVendiblesByName = (searchTerm) => (!searchTerm ? handleFetchVendibles()
     : setVendibles((previous) => {
       const regEx = new RegExp(searchTerm, 'i');
@@ -128,6 +138,9 @@ function AdminPage({
   });
 
   useEffect(() => {
+    if (tabOption === 'changeRequests') {
+      fetchChangeRequests();
+    }
     handleFetchVendibles();
   }, [tabOption]);
 
@@ -162,6 +175,10 @@ function AdminPage({
       },
       productos: vendiblesProps,
       servicios: vendiblesProps,
+      changeRequests: {
+        requests: changeRequests,
+      },
+
     };
 
     return paramsDictionary[tabOption];
@@ -271,6 +288,7 @@ AdminPage.propTypes = {
   fetchServicios: PropTypes.func.isRequired,
   deleteVendible: PropTypes.func.isRequired,
   fetchPosts: PropTypes.func.isRequired,
+  getAllChangeRequests: PropTypes.func.isRequired,
 };
 
 export default AdminPage;

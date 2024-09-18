@@ -4,5 +4,6 @@
     "getUserInfo": "/usuarios/{userId}/info",
     "usuariosById": "/admin/usuarios/{userId}",
     "proveedoresById": "/admin/proveedores/{userId}",
-    "vendiblePosts": "/v2/vendible/{vendibleId}/proveedores"
+    "vendiblePosts": "/v2/vendible/{vendibleId}/proveedores",
+    "getAllChangeRequests": "/admin/change-requests"
 }

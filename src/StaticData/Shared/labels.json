@@ -102,5 +102,8 @@
     "pausedF": "Pausada",
     "rejectedF": "Rechazada",
     "inReview": "En revisión",
-    "noFieldModified": "Ningún campo fue modificado"
+    "noFieldModified": "Ningún campo fue modificado",
+    "apply": "Aplicar",
+    "deny": "Rechazar",
+    "wasApplied": "Fue aplicado"
 }
