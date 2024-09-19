@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,18 +10,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../StaticData/Shared';
-import { EMPTY_FUNCTION, USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
-import MapModal from '../Shared/Components/MapModal';
+import { EMPTY_FUNCTION } from '../Shared/Constants/System';
 import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
-import { rootPageLabels } from '../StaticData/RootPage';
 import { adminLabels } from '../StaticData/Admin';
-import { DialogModal } from '../Shared/Components';
 import InformativeAlert from '../Shared/Components/Alert';
 import { ATTRIBUTES_RENDERERS } from './TablesHelper';
+import { ENTITY_NAME } from '../Infrastructure/Constants';
+import VendibleInfo from '../Shared/Components/VendibleInfo';
+import SuscriptionData from '../Shared/Components/SuscriptionData';
+import { buildVendibleInfo } from '../Shared/Helpers/ProveedorHelper';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -51,50 +50,46 @@ const modalContentDefaultValues = { title: '', text: '', handleAccept: () => {} 
 
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
 
-function renderSuscripcionData(suscripcion) {
-  const planLabel = suscripcion.planId === 1
-    ? sharedLabels.plansNames.FREE
-    : sharedLabels.plansNames.PAID;
+function renderChangeRequestDetail({ request, requestDetail }, userToken) {
+  let InnerComponent = null;
+  let props = {};
 
-  const styles = { mt: '5% ' };
-  return (
-    <Box sx={{
-      width: '200px',
-      height: '300px',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      background: 'white',
-    }}
-    >
-      <Typography variant="h5">
-        { sharedLabels.plan }
-        :
-      </Typography>
-      <Typography variant="h5">
-        { planLabel}
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.state}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.isActive ? sharedLabels.activeF : sharedLabels.inactiveF }
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.activeSinceF}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.createdDate }
-      </Typography>
-    </Box>
-  );
+  if (request.sourceTable === ENTITY_NAME.proveedor_vendible) {
+    const { vendibleType } = requestDetail;
+    InnerComponent = VendibleInfo;
+    props = {
+      userToken,
+      vendibleType,
+      vendibleInfo: buildVendibleInfo(requestDetail, vendibleType),
+      cardStyles: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: 'white',
+        height: '100%',
+        width: '40rem',
+        overflowY: 'scroll',
+        overflowX: 'none',
+      },
+    };
+  }
+
+  if (request.sourceTable === ENTITY_NAME.suscripcion) {
+    InnerComponent = SuscriptionData;
+    props = {
+      suscripcion: requestDetail,
+      styles: { mt: '5% ' },
+    };
+  }
+
+  return <InnerComponent {...props} />;
 }
 
 export default function ChangeRequestsTable({
   requests,
+  getChangeRequestDetail,
+  userToken,
 }) {
   const [modalContent, setModalContent] = useState(
     modalContentDefaultValues,
@@ -135,12 +130,24 @@ export default function ChangeRequestsTable({
       text: [request[attribute]],
     };
 
-    return renderers[rendererType];
+    return renderers[rendererType] ?? {};
   };
 
   const optionsHandlers = {
     [sharedLabels.apply]: () => {},
     [sharedLabels.deny]: () => {},
+    [sharedLabels.seeDetail]: async (changeRequest) => {
+      const detail = await getChangeRequestDetail(changeRequest.changeDetailUrl);
+
+      setModalProps((previous) => ({
+        ...previous,
+        open: true,
+        content: renderChangeRequestDetail({
+          request: { ...changeRequest },
+          requestDetail: { ...detail },
+        }, userToken),
+      }));
+    },
   };
 
   return (
@@ -187,18 +194,22 @@ export default function ChangeRequestsTable({
               {
                     Object.keys(request).map((attribute) => {
                       const rendererType = ATTRIBUTES_CONFIG[attribute];
-                      return (
-                        <TableCell key={`cell-${request.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
-                          {
-                            ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
-                              rendererType,
-                              request,
-                              attribute,
-                            }))
-                          }
+                      if (rendererType) {
+                        return (
+                          <TableCell key={`cell-${request.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                            {
+                              ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
+                                rendererType,
+                                request,
+                                attribute,
+                              }))
+                            }
 
-                        </TableCell>
-                      );
+                          </TableCell>
+                        );
+                      }
+
+                      return null;
                     })
                   }
               <TableCell key={`cell-${request.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>

@@ -114,6 +114,16 @@ function AdminContainer({ handleLogout }) {
     return client.getAllChangeRequests();
   };
 
+  const getChangeRequestDetail = (url) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.get(url);
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -145,6 +155,7 @@ function AdminContainer({ handleLogout }) {
       deleteVendible={deleteVendible}
       fetchPosts={fetchPosts}
       getAllChangeRequests={getAllChangeRequests}
+      getChangeRequestDetail={getChangeRequestDetail}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

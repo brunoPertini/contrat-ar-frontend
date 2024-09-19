@@ -8,3 +8,10 @@ export const HEADERS_VALUES = {
     APPLICATION_JSON: 'application/json',
   },
 };
+
+// TODO: take this from backend
+export const ENTITY_NAME = {
+  proveedor_vendible: 'proveedor_vendible',
+  suscripcion: 'suscripcion',
+  usuario: 'usuario',
+};

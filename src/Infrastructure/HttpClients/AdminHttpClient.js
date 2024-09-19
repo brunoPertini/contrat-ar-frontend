@@ -121,7 +121,8 @@ export default class AdminHttpClient extends HttpClient {
    * @returns {Promise<[{sourceTableIdNames: Array<String>,
    *  sourceTableIds: Array<Number>,
    *  sourceTable: String,
-   *  attributes: String}]>}
+   *  attributes: String,
+   * changeDetailUrl: String}]>}
    */
   getAllChangeRequests() {
     return this.get(adminRoutes.getAllChangeRequests);
