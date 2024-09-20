@@ -127,4 +127,22 @@ export default class AdminHttpClient extends HttpClient {
   getAllChangeRequests() {
     return this.get(adminRoutes.getAllChangeRequests);
   }
+
+  /**
+   *
+   * @param {Number | String} changeRequestId
+   */
+  confirmChangeRequest(changeRequestId) {
+    const url = adminRoutes.changeRequestById.replace('{id}', changeRequestId);
+
+    return this.patch(url);
+  }
+
+  putProveedorVendible(proveedorId, vendibleId, postInfo) {
+    const url = adminRoutes.proveedorVendibleById
+      .replace('{proveedorId}', proveedorId)
+      .replace('{vendibleId}', vendibleId);
+
+    return this.put(url, null, postInfo);
+  }
 }

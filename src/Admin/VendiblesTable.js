@@ -37,6 +37,7 @@ const ACTIONS_OPTIONS = [sharedLabels.delete];
 function VendiblesTable({
   vendibles, vendibleType, deleteVendible, fetchPosts, setIsShowingVendiblePosts, posts, setPosts,
   isShowingVendiblePosts, vendibleChosen, setVendibleChosen, paginationInfo, setPaginationInfo,
+  confirmChangeRequest, updatePost,
 }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -102,6 +103,8 @@ function VendiblesTable({
           vendibleId={vendibleChosen.id}
           paginationInfo={paginationInfo}
           setPaginationInfo={setPaginationInfo}
+          confirmChangeRequest={confirmChangeRequest}
+          updatePost={updatePost}
         />
       </Suspense>
     );
@@ -216,6 +219,8 @@ VendiblesTable.propTypes = {
   paginationInfo: PropTypes.shape(paginationShape),
   posts: PropTypes.arrayOf(PropTypes.shape(PostShape)),
   setPosts: PropTypes.func.isRequired,
+  confirmChangeRequest: PropTypes.func.isRequired,
+  updatePost: PropTypes.func.isRequired,
 };
 
 export default VendiblesTable;

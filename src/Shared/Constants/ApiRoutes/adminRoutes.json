@@ -1,9 +1,11 @@
 {
     "changeRequestExists": "/change-requests",
+    "changeRequestById": "/change-requests/{id}",
     "getUsuariosInfo": "/admin/usuarios",
     "getUserInfo": "/usuarios/{userId}/info",
     "usuariosById": "/admin/usuarios/{userId}",
     "proveedoresById": "/admin/proveedores/{userId}",
     "vendiblePosts": "/v2/vendible/{vendibleId}/proveedores",
-    "getAllChangeRequests": "/admin/change-requests"
+    "getAllChangeRequests": "/admin/change-requests",
+    "proveedorVendibleById": "/admin/proveedores/{id}/vendible/{vendibleId}" 
 }

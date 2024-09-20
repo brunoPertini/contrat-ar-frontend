@@ -159,15 +159,6 @@ export default function ChangeRequestsTable({
           </Modal>
         )
       }
-      {/* <DialogModal
-        title={deleteUserModalContent.title}
-        contextText={deleteUserModalContent.text}
-        cancelText={sharedLabels.cancel}
-        acceptText={sharedLabels.accept}
-        open={!!(deleteUserModalContent.text)}
-        handleAccept={deleteUserModalContent.handleAccept}
-        handleDeny={onCleanDeletingUserModalContent}
-      /> */}
       <InformativeAlert
         {...snackbarProps}
         onClose={() => setSnackbarProps(snackbarDefaultValues)}

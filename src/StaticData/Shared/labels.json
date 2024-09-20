@@ -107,5 +107,6 @@
     "deny": "Rechazar",
     "wasApplied": "Fue aplicado",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "state.change.confirmation": "¿Cambiar el estado a {newState}?"
 }

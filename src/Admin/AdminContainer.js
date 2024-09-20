@@ -124,6 +124,26 @@ function AdminContainer({ handleLogout }) {
     return client.get(url);
   };
 
+  const confirmChangeRequest = (id) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.confirmChangeRequest(id);
+  };
+
+  const updatePost = (proveedorId, vendibleId, body) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.putProveedorVendible(proveedorId, vendibleId, body);
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -156,6 +176,8 @@ function AdminContainer({ handleLogout }) {
       fetchPosts={fetchPosts}
       getAllChangeRequests={getAllChangeRequests}
       getChangeRequestDetail={getChangeRequestDetail}
+      confirmChangeRequest={confirmChangeRequest}
+      updatePost={updatePost}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

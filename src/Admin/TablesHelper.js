@@ -4,6 +4,8 @@ import { labels } from '../StaticData/LocationMap';
 import { sharedLabels } from '../StaticData/Shared';
 import { PRICE_TYPES } from '../Shared/Constants/System';
 import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
+import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
+import { Select } from '../Shared/Components';
 
 const changeRequestEntityTranslator = {
   proveedor_vendible: 'Publicación de producto o servicio',
@@ -42,7 +44,7 @@ export const ATTRIBUTES_RENDERERS = {
       checked={attribute}
     />
   ),
-  enum: (attribute, attributeValue) => {
+  enum: (attribute, attributeValue, additionalProps) => {
     const enumAttributes = {
       plan: () => sharedLabels.plansNames[attributeValue],
       tipoPrecio: () => PRICE_TYPES[attributeValue],
@@ -53,6 +55,23 @@ export const ATTRIBUTES_RENDERERS = {
       sourceTableIdNames: () => attributeValue.join(','),
       sourceTableIds: () => attributeValue.join(','),
       sourceTable: () => changeRequestEntityTranslator[attributeValue] || attributeValue,
+      state: () => {
+        const statesValues = [...Object.values(postStateLabelResolver)];
+
+        const { onChange, selectedValue } = additionalProps.state;
+
+        const getStateKey = (stateValue) => Object.keys(postStateLabelResolver)
+          .find((s) => postStateLabelResolver[s] === stateValue);
+        return (
+          <Select
+            defaultSelected={statesValues
+              .findIndex((s) => postStateLabelResolver[selectedValue || attributeValue] === s)}
+            label={sharedLabels.postState}
+            values={statesValues}
+            handleOnChange={(value) => onChange('state', getStateKey(value))}
+          />
+        );
+      },
     };
 
     return enumAttributes[attribute]();
