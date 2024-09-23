@@ -108,5 +108,7 @@
     "wasApplied": "Fue aplicado",
     "yes": "Sí",
     "no": "No",
-    "state.change.confirmation": "¿Cambiar el estado a {newState}?"
+    "state.change.confirmation": "¿Cambiar el estado a {newState}?",
+    "post.modified.success": "¡Publicación modificada!",
+    "post.modified.error": "¡La publicación no pudo ser modificada! Intentalo más tarde"
 }

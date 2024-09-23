@@ -19,6 +19,7 @@ import BackdropLoader from '../Shared/Components/BackdropLoader';
 import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
 import { DialogModal } from '../Shared/Components';
 import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
+import InformativeAlert from '../Shared/Components/Alert';
 
 const ATTIBUTES_COMMON_LABELS = {
   vendibleNombre: sharedLabels.vendibleNombre,
@@ -90,6 +91,7 @@ function AdminVendiblePosts({
   });
 
   const [infoToChangeFields, setInfoToChangeFields] = useState({
+    currentField: '',
     state: {
       newValue: '',
       proveedorId: '',
@@ -97,6 +99,8 @@ function AdminVendiblePosts({
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [fieldOperationResult, setFieldOperationResult] = useState(null);
 
   const fetchPostsCallback = async (page = 0) => {
     setIsLoading(true);
@@ -112,7 +116,6 @@ function AdminVendiblePosts({
   };
 
   const cleanModalContent = () => {
-    console.log('clean modal content 115');
     setInfoToChangeFields({
       state: {
         newValue: '',
@@ -138,12 +141,29 @@ function AdminVendiblePosts({
   const FINAL_ATTRIBUTES_CONFIG = useMemo(() => (vendibleType !== PRODUCTS ? ATTRIBUTES_CONFIG
     : { ...ATTRIBUTES_CONFIG, ...PRODUCTS_ATTRIBUTES_CONFIG }), [vendibleType]);
 
-  const handleAcceptForField = {
-    state: () => updatePost(
-      infoToChangeFields.state.proveedorId,
-      vendibleId,
-      { state: infoToChangeFields.state.newValue },
-    ),
+  const handleAcceptForField = () => {
+    const handlers = {
+      state: () => updatePost(
+        infoToChangeFields.state.proveedorId,
+        vendibleId,
+        { state: infoToChangeFields.state.newValue },
+      ),
+    };
+
+    return handlers[infoToChangeFields.currentField]()
+      .then(() => setFieldOperationResult(true))
+      .catch(() => {
+        setFieldOperationResult(false);
+        setInfoToChangeFields({
+          state: {
+            newValue: '',
+            proveedorId: '',
+          },
+        });
+      })
+      .finally(() => setModalProps(
+        (previous) => ({ ...previous, ...modalContentDefaultValues }),
+      ));
   };
 
   const {
@@ -187,29 +207,37 @@ function AdminVendiblePosts({
   };
 
   const onChangeField = (key, value, additionalInfo) => {
-    console.log('ENTRA ON CHANGE FIELD');
     setInfoToChangeFields((previous) => ({
       ...previous,
       [key]: { ...additionalInfo, newValue: value },
+      currentField: key,
     }));
     setModalProps((previous) => ({
       ...previous,
       text: modalContexts[key](value),
-      handleAccept: () => handleAcceptForField[key](),
     }));
   };
+
+  const resetAlertData = () => setFieldOperationResult(null);
 
   return (
     <>
       <TableContainer component={Paper}>
         <MapModal {...mapModalProps} />
+        <InformativeAlert
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={fieldOperationResult !== null}
+          label={fieldOperationResult ? sharedLabels['post.modified.success'] : sharedLabels['post.modified.error']}
+          severity={fieldOperationResult ? 'success' : 'error'}
+          onClose={resetAlertData}
+        />
         <DialogModal
           title={sharedLabels.pleaseConfirmAction}
           contextText={modalProps.text}
           cancelText={sharedLabels.cancel}
           acceptText={sharedLabels.accept}
           open={!!(modalProps.text)}
-          handleAccept={modalProps.handleAccept}
+          handleAccept={handleAcceptForField}
           handleDeny={cleanModalContent}
         />
         <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
@@ -242,11 +270,13 @@ function AdminVendiblePosts({
                       attribute,
                       additionalProps: {
                         state: {
-                          onChange: (key, value) => onChangeField(
-                            key,
-                            value,
-                            { proveedorId: post.proveedorId },
-                          ),
+                          onChange: (key, value) => {
+                            onChangeField(
+                              key,
+                              value,
+                              { proveedorId: post.proveedorId },
+                            );
+                          },
                           selectedValue: infoToChangeFields.state.newValue,
                         },
                       },

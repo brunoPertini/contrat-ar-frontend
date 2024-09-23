@@ -140,7 +140,7 @@ export default class AdminHttpClient extends HttpClient {
 
   putProveedorVendible(proveedorId, vendibleId, postInfo) {
     const url = adminRoutes.proveedorVendibleById
-      .replace('{proveedorId}', proveedorId)
+      .replace('{id}', proveedorId)
       .replace('{vendibleId}', vendibleId);
 
     return this.put(url, null, postInfo);
