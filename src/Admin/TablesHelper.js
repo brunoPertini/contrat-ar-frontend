@@ -58,14 +58,22 @@ export const ATTRIBUTES_RENDERERS = {
       state: () => {
         const statesValues = [...Object.values(postStateLabelResolver)];
 
-        const { onChange, selectedValue } = additionalProps.state;
+        const {
+          onChange, selectedValue, proveedorId, selectedProveedorId,
+        } = additionalProps.state;
 
         const getStateKey = (stateValue) => Object.keys(postStateLabelResolver)
           .find((s) => postStateLabelResolver[s] === stateValue);
+
+        // If this post proveedorId matches with the selected one, have to show that value.
+        // Otherwise, show the original value
+        const isValueSet = proveedorId === selectedProveedorId;
+
         return (
           <Select
             defaultSelected={statesValues
-              .findIndex((s) => postStateLabelResolver[selectedValue || attributeValue] === s)}
+              .findIndex((s) => postStateLabelResolver[isValueSet
+                ? selectedValue : attributeValue] === s)}
             label={sharedLabels.postState}
             values={statesValues}
             handleOnChange={(value) => onChange('state', getStateKey(value))}

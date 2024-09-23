@@ -155,6 +155,7 @@ function AdminVendiblePosts({
       .catch(() => {
         setFieldOperationResult(false);
         setInfoToChangeFields({
+          currentField: '',
           state: {
             newValue: '',
             proveedorId: '',
@@ -278,6 +279,8 @@ function AdminVendiblePosts({
                             );
                           },
                           selectedValue: infoToChangeFields.state.newValue,
+                          proveedorId: post.proveedorId,
+                          selectedProveedorId: infoToChangeFields.state.proveedorId,
                         },
                       },
                     };
