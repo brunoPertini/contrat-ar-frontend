@@ -369,7 +369,7 @@ function ProveedorPage({
       component: VendibleCreateForm,
       props: {
         userInfo,
-        vendibleType: vendibleType.toLowerCase(),
+        vendibleType,
         handleUploadImage,
         handlePostVendible: managePostVendibleResults,
         router,

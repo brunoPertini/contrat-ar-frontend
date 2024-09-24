@@ -74,6 +74,7 @@ function VendibleCreateForm({
 
       handlePostVendible({
         nombre,
+        vendibleType,
         proveedoresVendibles,
       }).then(() => {
         setOperationResult(true);
@@ -206,7 +207,7 @@ function VendibleCreateForm({
       {
           activeStep === 2 && (
             <StaticAlert
-              styles={{ mt: '3%', fontSize: '1.1rem' }}
+              styles={{ mt: '3%', fontSize: '1rem' }}
               severity="info"
               label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
             />
