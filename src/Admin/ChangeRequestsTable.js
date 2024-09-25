@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,6 +21,7 @@ import { ENTITY_NAME } from '../Infrastructure/Constants';
 import VendibleInfo from '../Shared/Components/VendibleInfo';
 import SuscriptionData from '../Shared/Components/SuscriptionData';
 import { buildVendibleInfo } from '../Shared/Helpers/ProveedorHelper';
+import DialogModal from '../Shared/Components/DialogModal';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -46,7 +47,9 @@ const FINAL_ATTRIBUTES_LABELS = {
 
 const ACTIONS_OPTIONS = [sharedLabels.seeDetail, sharedLabels.apply, sharedLabels.deny];
 
-const modalContentDefaultValues = { title: '', text: '', handleAccept: () => {} };
+const dialogModalContentDefaultValues = {
+  text: '', open: false, operation: '', handleAccept: () => {},
+};
 
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
 
@@ -89,10 +92,12 @@ function renderChangeRequestDetail({ request, requestDetail }, userToken) {
 export default function ChangeRequestsTable({
   requests,
   getChangeRequestDetail,
+  confirmChangeRequest,
+  denyChangeRequest,
   userToken,
 }) {
-  const [modalContent, setModalContent] = useState(
-    modalContentDefaultValues,
+  const [dialogModalContent, setDialogModalContent] = useState(
+    dialogModalContentDefaultValues,
   );
 
   const [snackbarProps, setSnackbarProps] = useState(snackbarDefaultValues);
@@ -108,21 +113,47 @@ export default function ChangeRequestsTable({
     })),
   });
 
-  const onCleanModalContent = () => setModalContent(
-    modalContentDefaultValues,
+  const onCleanDialogModalContent = () => setDialogModalContent(
+    dialogModalContentDefaultValues,
   );
 
-  //   const showDeleteUserAlertModal = useCallback(({ userId, name, surname }) => {
-  //     setDeleteUserModalContent({
-  //       title: sharedLabels.pleaseConfirmAction,
-  //       text: adminLabels.deleteUserText.replace('{nameAndSurname}', `${name} ${surname}`),
-  //       handleAccept: () => deleteUser(userId).then(() => setSnackbarProps({
-  //         open: true, severity: 'success', label: adminLabels.userDeleted,
-  //       })).catch(() => setSnackbarProps({
-  //         open: true, severity: 'error', label: adminLabels.userNotDeleted,
-  //       })).finally(() => onCleanDeletingUserModalContent()),
-  //     });
-  //   }, [setDeleteUserModalContent]);
+  const OPERATION_DATA = {
+    CONFIRM: {
+      callingFunction: confirmChangeRequest,
+      successLabel: adminLabels['changeRequest.confirm.success'],
+      errorLabel: adminLabels['changeRequest.confirm.error'],
+    },
+    DENY: {
+      callingFunction: denyChangeRequest,
+      successLabel: adminLabels['changeRequest.delete.success'],
+      errorLabel: adminLabels['changeRequest.delete.error'],
+    },
+  };
+
+  const showDialogModal = (changeRequestId, operation) => {
+    setDialogModalContent({
+      open: true,
+      text: (operation === 'CONFIRM' ? adminLabels['changeRequest.confirm'] : adminLabels['changeRequest.delete.confirm']).replace('{id}', changeRequestId),
+      handleAccept: () => {
+        const newSnackbarProps = {
+          open: true,
+          label: '',
+          severity: '',
+        };
+
+        OPERATION_DATA[operation].callingFunction(changeRequestId).then(() => {
+          newSnackbarProps.label = OPERATION_DATA[operation].successLabel;
+          newSnackbarProps.severity = 'success';
+        }).catch(() => {
+          newSnackbarProps.label = OPERATION_DATA[operation].errorLabel;
+          newSnackbarProps.severity = 'error';
+        }).finally(() => {
+          setSnackbarProps({ ...newSnackbarProps });
+          onCleanDialogModalContent();
+        });
+      },
+    });
+  };
 
   const paramsToRender = ({ rendererType, request, attribute }) => {
     const renderers = {
@@ -134,8 +165,8 @@ export default function ChangeRequestsTable({
   };
 
   const optionsHandlers = {
-    [sharedLabels.apply]: () => {},
-    [sharedLabels.deny]: () => {},
+    [sharedLabels.apply]: (changeRequest) => showDialogModal(changeRequest.id, 'CONFIRM'),
+    [sharedLabels.deny]: (changeRequest) => showDialogModal(changeRequest.id, 'DENY'),
     [sharedLabels.seeDetail]: async (changeRequest) => {
       const detail = await getChangeRequestDetail(changeRequest.changeDetailUrl);
 
@@ -159,6 +190,15 @@ export default function ChangeRequestsTable({
           </Modal>
         )
       }
+      <DialogModal
+        title={sharedLabels.pleaseConfirmAction}
+        contextText={dialogModalContent.text}
+        cancelText={sharedLabels.cancel}
+        acceptText={sharedLabels.accept}
+        open={dialogModalContent.open}
+        handleAccept={dialogModalContent.handleAccept}
+        handleDeny={onCleanDialogModalContent}
+      />
       <InformativeAlert
         {...snackbarProps}
         onClose={() => setSnackbarProps(snackbarDefaultValues)}
@@ -233,5 +273,6 @@ ChangeRequestsTable.propTypes = {
   usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
   loginAsUser: PropTypes.func.isRequired,
   deleteUser: PropTypes.func.isRequired,
+  confirmChangeRequest: PropTypes.func.isRequired,
   requests: PropTypes.array,
 };

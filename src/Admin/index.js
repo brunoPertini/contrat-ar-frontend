@@ -164,7 +164,6 @@ function AdminPage({
       setPaginationInfo,
       posts,
       setPosts,
-      confirmChangeRequest,
       updatePost,
     };
 
@@ -181,6 +180,7 @@ function AdminPage({
       changeRequests: {
         requests: changeRequests,
         getChangeRequestDetail,
+        confirmChangeRequest,
         userToken: userInfo.token,
       },
 
