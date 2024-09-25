@@ -138,6 +138,16 @@ export default class AdminHttpClient extends HttpClient {
     return this.patch(url);
   }
 
+  /**
+   *
+   * @param {Number | String} changeRequestId
+   */
+  denyChangeRequest(changeRequestId) {
+    const url = adminRoutes.changeRequestById.replace('{id}', changeRequestId);
+
+    return this.delete(url);
+  }
+
   putProveedorVendible(proveedorId, vendibleId, postInfo) {
     const url = adminRoutes.proveedorVendibleById
       .replace('{id}', proveedorId)

@@ -134,6 +134,16 @@ function AdminContainer({ handleLogout }) {
     return client.confirmChangeRequest(id);
   };
 
+  const deleteChangeRequest = (id) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.denyChangeRequest(id);
+  };
+
   const updatePost = (proveedorId, vendibleId, body) => {
     const client = HttpClientFactory.createAdminHttpClient({
       token: userInfo.token,
@@ -177,6 +187,7 @@ function AdminContainer({ handleLogout }) {
       getAllChangeRequests={getAllChangeRequests}
       getChangeRequestDetail={getChangeRequestDetail}
       confirmChangeRequest={confirmChangeRequest}
+      deleteChangeRequest={deleteChangeRequest}
       updatePost={updatePost}
     />
   ) : null), [usuariosInfo, planesInfo]);

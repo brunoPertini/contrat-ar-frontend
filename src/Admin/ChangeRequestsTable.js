@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,7 +10,6 @@ import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
 import { sharedLabels } from '../StaticData/Shared';
 import { EMPTY_FUNCTION } from '../Shared/Constants/System';
-import { clienteAdminShape, proveedorAdminShape } from '../Shared/PropTypes/Admin';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
@@ -45,7 +42,9 @@ const FINAL_ATTRIBUTES_LABELS = {
   actions: sharedLabels.actions,
 };
 
-const ACTIONS_OPTIONS = [sharedLabels.seeDetail, sharedLabels.apply, sharedLabels.deny];
+const ACTIONS_OPTIONS = (requestWasApplied) => (!requestWasApplied
+  ? [sharedLabels.seeDetail, sharedLabels.apply, sharedLabels.deny]
+  : [sharedLabels.seeDetail]);
 
 const dialogModalContentDefaultValues = {
   text: '', open: false, operation: '', handleAccept: () => {},
@@ -93,7 +92,7 @@ export default function ChangeRequestsTable({
   requests,
   getChangeRequestDetail,
   confirmChangeRequest,
-  denyChangeRequest,
+  deleteChangeRequest,
   userToken,
 }) {
   const [dialogModalContent, setDialogModalContent] = useState(
@@ -124,7 +123,7 @@ export default function ChangeRequestsTable({
       errorLabel: adminLabels['changeRequest.confirm.error'],
     },
     DENY: {
-      callingFunction: denyChangeRequest,
+      callingFunction: deleteChangeRequest,
       successLabel: adminLabels['changeRequest.delete.success'],
       errorLabel: adminLabels['changeRequest.delete.error'],
     },
@@ -246,7 +245,7 @@ export default function ChangeRequestsTable({
               <TableCell key={`cell-${request.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
                 <OptionsMenu
                   title={sharedLabels.actions}
-                  options={ACTIONS_OPTIONS}
+                  options={ACTIONS_OPTIONS(request.wasApplied)}
                   onOptionClicked={(option) => (option
                     ? optionsHandlers[option](request)
                     : EMPTY_FUNCTION)}
@@ -262,17 +261,13 @@ export default function ChangeRequestsTable({
 }
 
 ChangeRequestsTable.defaultProps = {
-  usuarios: [],
   requests: [],
 };
 
 ChangeRequestsTable.propTypes = {
-  usuarios: PropTypes.arrayOf(PropTypes.oneOfType([
-    PropTypes.shape(proveedorAdminShape),
-    PropTypes.shape(clienteAdminShape)])),
-  usuarioTypeFilter: PropTypes.oneOf(['proveedores', 'clientes']).isRequired,
-  loginAsUser: PropTypes.func.isRequired,
-  deleteUser: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
   confirmChangeRequest: PropTypes.func.isRequired,
+  deleteChangeRequest: PropTypes.func.isRequired,
+  getChangeRequestDetail: PropTypes.func.isRequired,
   requests: PropTypes.array,
 };

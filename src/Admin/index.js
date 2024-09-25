@@ -39,7 +39,7 @@ const filtersDefaultValues = {
 function AdminPage({
   userInfo, usuariosInfo, planesInfo, deleteVendible, fetchPosts, getAllChangeRequests,
   menuOptions, applyFilters, loginAsUser, deleteUser, fetchProductos, fetchServicios,
-  getChangeRequestDetail, confirmChangeRequest, updatePost,
+  getChangeRequestDetail, confirmChangeRequest, updatePost, deleteChangeRequest,
 }) {
   const [tabOption, setTabOption] = useState(TAB_VALUES[0]);
   const [usuarioTypeFilter, setUsuarioTypeFilter] = useState(USUARIO_TYPE_PROVEEDORES);
@@ -181,6 +181,7 @@ function AdminPage({
         requests: changeRequests,
         getChangeRequestDetail,
         confirmChangeRequest,
+        deleteChangeRequest: (id) => deleteChangeRequest(id).then(() => fetchChangeRequests()),
         userToken: userInfo.token,
       },
 
@@ -188,7 +189,7 @@ function AdminPage({
 
     return paramsDictionary[tabOption];
   }, [tabOption, usuariosInfo, vendibles, isShowingVendiblePosts,
-    paginationInfo, posts, priceSliderProps, vendibleChosen]);
+    paginationInfo, posts, priceSliderProps, vendibleChosen, changeRequests]);
 
   return (
     <>
@@ -296,6 +297,7 @@ AdminPage.propTypes = {
   getAllChangeRequests: PropTypes.func.isRequired,
   getChangeRequestDetail: PropTypes.func.isRequired,
   confirmChangeRequest: PropTypes.func.isRequired,
+  deleteChangeRequest: PropTypes.func.isRequired,
   updatePost: PropTypes.func.isRequired,
 };
 
