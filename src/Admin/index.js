@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
@@ -23,7 +22,10 @@ import ChangeRequestsTable from './ChangeRequestsTable';
 
 const TAB_VALUES = ['usuarios', 'productos', 'servicios', 'changeRequests'];
 
-const TABS_LABELS = ['Usuarios', 'Productos', 'Servicios', 'Pedidos de cambio'];
+const TABS_LABELS = [sharedLabels.users,
+  sharedLabels.products,
+  sharedLabels.services,
+  sharedLabels.changeRequests];
 
 const TABS_COMPONENTS = {
   usuarios: (props) => <UsuariosTable {...props} />,

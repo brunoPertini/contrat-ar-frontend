@@ -58,23 +58,16 @@ function PostsFilters({
   const [runApplyFiltersCallback, setRunApplyFiltersCallback] = useState(false);
 
   const onFilterSet = (key, newValue, shouldRunApplyFiltersCallback = false) => {
+    const shouldParseValues = (key === 'priceType') || (key === 'state');
+
     let parsedValue = newValue;
 
-    if (key === 'priceType') {
+    if (shouldParseValues) {
       if (newValue === '-') {
         parsedValue = '';
       } else {
-        parsedValue = Object.keys(PRICE_TYPES).find((k) => PRICE_TYPES[k] === newValue);
-      }
-    }
-
-    if (key === 'state') {
-      if (newValue === '-') {
-        parsedValue = '';
-      } else {
-        parsedValue = Object.keys(postStateLabelResolver).find(
-          (s) => postStateLabelResolver[s] === newValue,
-        );
+        const sourceObject = key === 'priceType' ? PRICE_TYPES : postStateLabelResolver;
+        parsedValue = Object.keys(sourceObject).find((k) => sourceObject[k] === newValue);
       }
     }
 

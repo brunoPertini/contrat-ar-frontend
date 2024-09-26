@@ -1,4 +1,3 @@
-/* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
@@ -19,7 +18,7 @@ import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
 import { buildCategoryObject } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
-import { StaticAlert } from '../../Shared/Components';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
@@ -62,11 +61,11 @@ function VendibleCreateForm({
         {
           category,
           descripcion,
-          precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
+          precio: Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
           tipoPrecio: priceInfo.type,
           imagenUrl,
           location: vendibleLocation,
-          stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
+          stock: Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
           offersDelivery,
           offersInCustomAddress,
         },

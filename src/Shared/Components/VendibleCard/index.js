@@ -1,11 +1,12 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import { Box, FormControlLabel, Switch } from '@mui/material';
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import { useMemo } from 'react';
 import StaticAlert from '../StaticAlert';
 import { POST_STATES } from '../../Constants/System';
@@ -124,4 +125,5 @@ VendibleCard.propTypes = {
   }).isRequired,
   ChildrenComponent: PropTypes.elementType.isRequired,
   manageStateChange: PropTypes.func.isRequired,
+  state: PropTypes.string.isRequired,
 };

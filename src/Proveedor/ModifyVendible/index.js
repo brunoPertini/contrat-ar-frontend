@@ -27,7 +27,7 @@ import FirstStep from '../CreateVendible/FirstStep';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { vendibleInfoShape } from '../../Shared/PropTypes/Proveedor';
-import { StaticAlert } from '../../Shared/Components';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../../Shared/Components/Alert';
@@ -62,7 +62,6 @@ function ModifyVendibleForm({
   // undefined = no result; false = something went wrong; true= all good
   const [operationResult, setOperationResult] = useState();
 
-  // eslint-disable-next-line no-unused-vars
   const [operationMessage, setOperationMessage] = useState('');
 
   const { setHandleGoBack } = useContext(NavigationContext);
@@ -257,7 +256,7 @@ function ModifyVendibleForm({
       {
           activeStep === 2 && (
             <StaticAlert
-              styles={{ mt: '3%', fontSize: '1.1rem' }}
+              styles={{ mt: '3%', fontSize: '1rem' }}
               severity="info"
               label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
             />

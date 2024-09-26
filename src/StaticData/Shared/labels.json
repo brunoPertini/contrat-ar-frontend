@@ -110,5 +110,9 @@
     "no": "No",
     "state.change.confirmation": "¿Cambiar el estado a {newState}?",
     "post.modified.success": "¡Publicación modificada!",
-    "post.modified.error": "¡La publicación no pudo ser modificada! Intentalo más tarde"
+    "post.modified.error": "¡La publicación no pudo ser modificada! Intentalo más tarde",
+    "users": "Usuarios",
+    "products": "Productos",
+    "services": "Servicios",
+    "changeRequests": "Pedidos de cambio"
 }

@@ -21,5 +21,9 @@
     "changeRequest.confirm.success": "¡Solicitud de cambio aplicada!",
     "changeRequest.confirm.error": "¡La solicitud de cambio no pudo ser aplicada!",
     "changeRequest.delete.success": "¡Solicitud de cambio rechazada!",
-    "changeRequest.delete.error": "¡La solicitud de cambio no pudo ser rechazada!"
+    "changeRequest.delete.error": "¡La solicitud de cambio no pudo ser rechazada!",
+    "changeRequest.entity.translators": {
+        "proveedor_vendible": "Publicación de producto o servicio",
+        "suscripcion": "Suscripción de usuario"
+    }
 }

@@ -6,10 +6,11 @@ import { PRICE_TYPES } from '../Shared/Constants/System';
 import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
 import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
 import { Select } from '../Shared/Components';
+import { adminLabels } from '../StaticData/Admin';
 
 const changeRequestEntityTranslator = {
-  proveedor_vendible: 'Publicación de producto o servicio',
-  suscripcion: 'Suscripción de usuario',
+  proveedor_vendible: adminLabels['changeRequest.entity.translators'].proveedor_vendible,
+  suscripcion: adminLabels['changeRequest.entity.translators'].suscripcion,
 };
 
 export const ATTRIBUTES_RENDERERS = {

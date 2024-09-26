@@ -68,25 +68,29 @@ function Cliente({
       if (filters) {
         setLastFiltersApplied(filters);
       }
-      const finalAppliedFilters = filters ?? lastFiltersApplied;
-      const params = {
-        searchType,
-        searchInput: searchInputValue,
-        filters: finalAppliedFilters,
-      };
-      dispatchHandleSearch(params).then((response) => {
-        setPreviousSearchInputValue(searchInputValue);
-        setSearchDone(true);
-        setVendiblesResponse(response);
-        setFiltersEnabled(!!response.categorias);
-        setThereIsNoResults(isEmpty(response.vendibles));
-      })
-        .catch((errorMessage) => {
-          setErrorMessage(errorMessage);
+      setLastFiltersApplied((updatedLastFiltersApplied) => {
+        const finalAppliedFilters = filters ?? updatedLastFiltersApplied;
+        const params = {
+          searchType,
+          searchInput: searchInputValue,
+          filters: finalAppliedFilters,
+        };
+        dispatchHandleSearch(params).then((response) => {
+          setPreviousSearchInputValue(searchInputValue);
+          setSearchDone(true);
+          setVendiblesResponse(response);
+          setFiltersEnabled(!!response.categorias);
+          setThereIsNoResults(isEmpty(response.vendibles));
         })
-        .finally(() => {
-          setIsLoading(false);
-        });
+          .catch((errorMessage) => {
+            setErrorMessage(errorMessage);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+
+        return updatedLastFiltersApplied;
+      });
     } else {
       setErrorMessage(labels.searchErrorMessage);
     }
@@ -225,6 +229,7 @@ function Cliente({
                 categories={vendiblesResponse.categorias}
                 vendibleType={searchType}
                 onFiltersApplied={handleStartSearch}
+                enabledFilters={{ category: true, state: false }}
               />
             </Grid>
             )

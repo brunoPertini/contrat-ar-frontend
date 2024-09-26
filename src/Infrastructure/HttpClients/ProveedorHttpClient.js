@@ -58,7 +58,6 @@ export class ProveedorHttpClient extends HttpClient {
    * vendibleNombre: String,
    * categoryName: String,
    * }} filters
-   * @returns
    */
   getVendibles(proveedorId, filters) {
     const url = proveedoresRoutes.getVendibles.replace('{proveedorId}', proveedorId);

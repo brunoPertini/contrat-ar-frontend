@@ -8,7 +8,7 @@ import { vendiblesLabels } from '../../StaticData/Vendibles';
 import { proveedoresVendiblesShape } from '../../Shared/PropTypes/Proveedor';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import OptionsMenu from '../../Shared/Components/OptionsMenu';
-import { DialogModal } from '../../Shared/Components';
+import DialogModal from '../../Shared/Components/DialogModal';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
 import InformativeAlert from '../../Shared/Components/Alert';

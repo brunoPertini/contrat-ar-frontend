@@ -17,7 +17,7 @@ import { ATTRIBUTES_RENDERERS } from './TablesHelper';
 import MapModal from '../Shared/Components/MapModal';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
 import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
-import { DialogModal } from '../Shared/Components';
+import DialogModal from '../Shared/Components/DialogModal';
 import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
 import InformativeAlert from '../Shared/Components/Alert';
 

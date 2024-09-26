@@ -139,8 +139,6 @@ function ProveedorPage({
 
   const [filteredVendibles, setFilteredVendibles] = useState();
 
-  // const [searchValue, setSearchValue] = useState('');
-
   const [filtersApplied, setFiltersApplied] = useState({
     category: null,
     categoryName: '',
