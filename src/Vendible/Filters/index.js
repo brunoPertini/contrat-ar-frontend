@@ -87,7 +87,7 @@ function VendiblesFilters({
       return statesValues.findIndex((state) => state === stateLabel);
     }
     return 0;
-  }, []);
+  }, [filtersApplied]);
 
   useEffect(() => {
     if (previousVendibleType && previousVendibleType !== vendibleType) {

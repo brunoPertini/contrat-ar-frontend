@@ -23,7 +23,7 @@ import DialogModal from '../Shared/Components/DialogModal';
 const ATTRIBUTES_CONFIG = {
   id: 'text',
   sourceTable: 'enum',
-  attributes: 'text',
+  attributes: 'enum',
   sourceTableIdNames: 'enum',
   sourceTableIds: 'enum',
   wasApplied: 'enum',

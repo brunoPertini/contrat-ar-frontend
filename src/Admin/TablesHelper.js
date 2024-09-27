@@ -7,10 +7,18 @@ import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../Shared/Helpe
 import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
 import { Select } from '../Shared/Components';
 import { adminLabels } from '../StaticData/Admin';
+import { getPlanLabel } from '../Shared/Helpers/PlanesHelper';
 
+// TODO: train a IA to translate these values?
 const changeRequestEntityTranslator = {
   proveedor_vendible: adminLabels['changeRequest.entity.translators'].proveedor_vendible,
   suscripcion: adminLabels['changeRequest.entity.translators'].suscripcion,
+};
+
+// TODO: train a IA to translate these values?
+const changeRequestAttributeTranslator = {
+  state: (value) => `${sharedLabels.state}:${postStateLabelResolver[value]}`,
+  plan: (value) => `${sharedLabels.plan}:${getPlanLabel(value)}`,
 };
 
 export const ATTRIBUTES_RENDERERS = {
@@ -53,6 +61,11 @@ export const ATTRIBUTES_RENDERERS = {
       precio: () => `${getLocaleCurrencySymbol('es-AR')}${formatNumberWithLocale(attributeValue)}`,
       stock: () => `${formatNumberWithLocale(attributeValue)}`,
       wasApplied: () => (attributeValue ? sharedLabels.yes : sharedLabels.no),
+      attributes: () => {
+        const [attributeKey, attributeInnerValue] = attributeValue.split('=');
+        return (attributeKey in changeRequestAttributeTranslator)
+          ? changeRequestAttributeTranslator[attributeKey](attributeInnerValue.replace(/'/g, '')) : attributeValue;
+      },
       sourceTableIdNames: () => attributeValue.join(','),
       sourceTableIds: () => attributeValue.join(','),
       sourceTable: () => changeRequestEntityTranslator[attributeValue] || attributeValue,

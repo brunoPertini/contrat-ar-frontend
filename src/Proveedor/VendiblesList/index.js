@@ -32,7 +32,7 @@ const getVendibleOptions = (postState) => [sharedLabels.seeDetail,
  * Vendibles list of Proveedor page.
  */
 export default function VendiblesList({
-  vendibles, proveedorId, handleOnOptionClicked, handlePutVendible,
+  vendibles, proveedorId, handleOnOptionClicked, handlePutVendible, resetFiltersApplied,
 }) {
   const [modifyStateData, setModifyStateData] = useState({ state: '', vendibleId: '' });
   const [operationResult, setOperationResult] = useState(null);
@@ -54,7 +54,10 @@ export default function VendiblesList({
   })
     .then(() => setOperationResult(true))
     .catch(() => setOperationResult(false))
-    .finally(() => cleanModalContent());
+    .finally(() => {
+      cleanModalContent();
+      resetFiltersApplied();
+    });
 
   const cardStyles = {
     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
@@ -141,4 +144,5 @@ VendiblesList.propTypes = {
   vendibles: proveedoresVendiblesShape,
   handleOnOptionClicked: PropTypes.func.isRequired,
   handlePutVendible: PropTypes.func.isRequired,
+  resetFiltersApplied: PropTypes.func.isRequired,
 };

@@ -113,6 +113,13 @@ const operationsMessages = {
   },
 };
 
+const filtersDefaultValues = {
+  category: null,
+  categoryName: '',
+  vendibleNombre: '',
+  state: '',
+};
+
 function ProveedorPage({
   menuOptions,
   addVendibleSectionProps: {
@@ -139,12 +146,7 @@ function ProveedorPage({
 
   const [filteredVendibles, setFilteredVendibles] = useState();
 
-  const [filtersApplied, setFiltersApplied] = useState({
-    category: null,
-    categoryName: '',
-    vendibleNombre: '',
-    state: '',
-  });
+  const [filtersApplied, setFiltersApplied] = useState(filtersDefaultValues);
 
   const [currentInnerScreen, setCurrentInnerScreen] = useState();
 
@@ -231,10 +233,7 @@ function ProveedorPage({
       });
     }
 
-    setFiltersApplied({
-      category: null,
-      categoryName: '',
-    });
+    setFiltersApplied(filtersDefaultValues);
   }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
@@ -327,6 +326,7 @@ function ProveedorPage({
     })
     .finally(() => {
       handlePostServiceCall();
+      setFiltersApplied((previous) => ({ ...previous, ...filtersDefaultValues }));
     }), [setCrudOperationResult]);
 
   const handleDeleteVendibleResults = useCallback(({
@@ -401,6 +401,8 @@ function ProveedorPage({
       setVendibleOperationsComponent(OperationsComponent);
     }
   };
+
+  const resetFiltersApplied = () => setFiltersApplied(filtersDefaultValues);
 
   if (currentInnerScreen) {
     const InnerComponent = innerScreens[currentInnerScreen].component;
@@ -507,6 +509,7 @@ function ProveedorPage({
               userToken={userInfo.token}
               handleOnOptionClicked={handleOnOptionClicked}
               handlePutVendible={handlePutVendible}
+              resetFiltersApplied={resetFiltersApplied}
             />
           </Box>
         </Grid>

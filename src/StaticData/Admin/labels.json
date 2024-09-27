@@ -15,7 +15,7 @@
     "sourceTableIdNames.label": "Nombre de los identificadores de la entidad que solicita el cambio",
     "sourceTableIds.label": "Identificadores de la entidad que solicita el cambio",
     "sourceTable.label": "Entidad que solicita el cambio",
-    "attributes.label": "Atributos a modificarse",
+    "attributes.label": "Nuevo valor del atributo",
     "changeRequest.confirm": "¿Confirmar la solicitud de cambio número {id}?",
     "changeRequest.delete.confirm": "¿Eliminar la solicitud de cambio número {id}?",
     "changeRequest.confirm.success": "¡Solicitud de cambio aplicada!",

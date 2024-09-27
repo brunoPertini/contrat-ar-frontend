@@ -182,7 +182,7 @@ function AdminPage({
       changeRequests: {
         requests: changeRequests,
         getChangeRequestDetail,
-        confirmChangeRequest,
+        confirmChangeRequest: (id) => confirmChangeRequest(id).then(() => fetchChangeRequests()),
         deleteChangeRequest: (id) => deleteChangeRequest(id).then(() => fetchChangeRequests()),
         userToken: userInfo.token,
       },

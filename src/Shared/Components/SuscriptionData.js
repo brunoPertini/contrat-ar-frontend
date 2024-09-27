@@ -3,11 +3,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../../StaticData/Shared';
 import { suscriptionShape } from '../PropTypes/Proveedor';
+import { getPlanLabel } from '../Helpers/PlanesHelper';
 
 export default function SuscriptionData({ suscripcion, styles }) {
-  const planLabel = suscripcion.planId === 1
-    ? sharedLabels.plansNames.FREE
-    : sharedLabels.plansNames.PAID;
+  const planLabel = getPlanLabel(suscripcion.planId);
 
   return (
     <Box sx={{
