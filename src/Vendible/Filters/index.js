@@ -14,6 +14,11 @@ import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSli
 import SelectedFilters from '../../Shared/Components/SelectedFilters';
 import { handleSliderValuesChanged } from '../../Shared/Helpers/PricesHelper';
 import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
+import Select from '../../Shared/Components/Select';
+import { sharedLabels } from '../../StaticData/Shared';
+import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
+
+const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
 function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
@@ -23,13 +28,16 @@ function VendiblesFilters({
 }) {
   const previousVendibleType = usePreviousPropValue(vendibleType);
 
-  const handleOnCategorySelected = (categoryId, categoryName) => {
-    let newAppliedFilters = {};
-    setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous, category: categoryId, categoryName };
-      return newAppliedFilters;
-    });
-    onFiltersApplied(newAppliedFilters);
+  const handleOnCategorySelected = async (categoryId, categoryName) => {
+    await setFiltersApplied((previous) => ({ ...previous, category: categoryId, categoryName }));
+    onFiltersApplied();
+  };
+
+  const handleOnStateSelected = async (stateValue) => {
+    const stateKey = Object.keys(postStateLabelResolver)
+      .find((s) => postStateLabelResolver[s] === stateValue);
+    await setFiltersApplied((previous) => ({ ...previous, state: stateValue === '-' ? '' : stateKey }));
+    onFiltersApplied();
   };
 
   const handleOnDistancesChanged = (newValue) => {
@@ -71,6 +79,14 @@ function VendiblesFilters({
   const filtersLabels = useMemo(() => {
     const filtersOfInterest = pick(filtersApplied, ['categoryName']);
     return Object.values(filtersOfInterest).filter((label) => label);
+  }, [filtersApplied]);
+
+  const defaultStateSelected = useMemo(() => {
+    if (filtersApplied.state) {
+      const stateLabel = postStateLabelResolver[filtersApplied.state];
+      return statesValues.findIndex((state) => state === stateLabel);
+    }
+    return 0;
   }, [filtersApplied]);
 
   useEffect(() => {
@@ -167,11 +183,22 @@ function VendiblesFilters({
     </Grid>
   );
 
+  const stateSection = (
+    <Select
+      containerStyles={{ mt: '5%', width: '50%' }}
+      defaultSelected={defaultStateSelected}
+      label={sharedLabels.postState}
+      values={statesValues}
+      handleOnChange={(value) => handleOnStateSelected(value)}
+    />
+  );
+
   return (
     <Grid container flexDirection="column" sx={{ ...containerStyles }}>
       {enabledFilters.category && categoriesSection}
       {enabledFilters.distance && locationsDistanceSection}
       {enabledFilters.price && priceSection }
+      {enabledFilters.state && stateSection }
     </Grid>
   );
 }
@@ -182,7 +209,9 @@ VendiblesFilters.defaultProps = {
   containerStyles: {},
   showAccordionTitle: true,
   alternativeAccordionTitle: null,
-  enabledFilters: { category: true, distance: false, price: false },
+  enabledFilters: {
+    category: true, state: true, distance: false, price: false,
+  },
   vendibleType: undefined,
   categories: {},
   distanceSliderAdditionalProps: {},
@@ -192,6 +221,7 @@ VendiblesFilters.defaultProps = {
     categoryName: '',
     toFilterDistances: [],
     prices: [],
+    state: '',
   },
   setFiltersApplied: EMPTY_FUNCTION,
 };
@@ -214,6 +244,7 @@ VendiblesFilters.propTypes = {
     categoryName: PropTypes.string,
     toFilterDistances: PropTypes.array,
     prices: PropTypes.array,
+    state: PropTypes.string,
   }),
 };
 

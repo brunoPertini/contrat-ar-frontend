@@ -9,15 +9,17 @@ export default class AdminHttpClient extends HttpClient {
 
   /**
    *
-   * @param {String | Number} sourceTableId
+   * @param {String | Number} sourceTableIds
    * @param {String[]} attributes
    * @returns {Promise<any | Error>}
    */
-  requestChangeExists(sourceTableId, attributes) {
-    return this.get(
-      adminRoutes.changeRequestExists,
-      { sourceTableId, searchAttributes: attributes },
-    );
+  requestChangeExists(sourceTableIds, attributes) {
+    const body = {
+      searchIds: sourceTableIds,
+      searchAttributes: attributes,
+    };
+
+    return this.post(adminRoutes.changeRequestExists, null, body);
   }
 
   getUsuariosInfo() {
@@ -113,5 +115,44 @@ export default class AdminHttpClient extends HttpClient {
       minStock: hasStocks && filters.stocks[0],
       maxStock: hasStocks && filters.stocks[1],
     } : {}).then((data) => data);
+  }
+
+  /**
+   * @returns {Promise<[{sourceTableIdNames: Array<String>,
+   *  sourceTableIds: Array<Number>,
+   *  sourceTable: String,
+   *  attributes: String,
+   * changeDetailUrl: String}]>}
+   */
+  getAllChangeRequests() {
+    return this.get(adminRoutes.getAllChangeRequests);
+  }
+
+  /**
+   *
+   * @param {Number | String} changeRequestId
+   */
+  confirmChangeRequest(changeRequestId) {
+    const url = adminRoutes.changeRequestById.replace('{id}', changeRequestId);
+
+    return this.patch(url);
+  }
+
+  /**
+   *
+   * @param {Number | String} changeRequestId
+   */
+  denyChangeRequest(changeRequestId) {
+    const url = adminRoutes.changeRequestById.replace('{id}', changeRequestId);
+
+    return this.delete(url);
+  }
+
+  putProveedorVendible(proveedorId, vendibleId, postInfo) {
+    const url = adminRoutes.proveedorVendibleById
+      .replace('{id}', proveedorId)
+      .replace('{vendibleId}', vendibleId);
+
+    return this.put(url, null, postInfo);
   }
 }

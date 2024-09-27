@@ -11,5 +11,19 @@
     "userDeleted": "¡Usuario borrado!",
     "userNotDeleted": "¡El usuario no pudo ser borrado!",
     "deleteVendible.alert.success": "¡{vendible} fue borrado!",
-    "deleteVendible.alert.error": "¡{vendible} no pudo ser borrado!"
+    "deleteVendible.alert.error": "¡{vendible} no pudo ser borrado!",
+    "sourceTableIdNames.label": "Nombre de los identificadores de la entidad que solicita el cambio",
+    "sourceTableIds.label": "Identificadores de la entidad que solicita el cambio",
+    "sourceTable.label": "Entidad que solicita el cambio",
+    "attributes.label": "Nuevo valor del atributo",
+    "changeRequest.confirm": "¿Confirmar la solicitud de cambio número {id}?",
+    "changeRequest.delete.confirm": "¿Eliminar la solicitud de cambio número {id}?",
+    "changeRequest.confirm.success": "¡Solicitud de cambio aplicada!",
+    "changeRequest.confirm.error": "¡La solicitud de cambio no pudo ser aplicada!",
+    "changeRequest.delete.success": "¡Solicitud de cambio rechazada!",
+    "changeRequest.delete.error": "¡La solicitud de cambio no pudo ser rechazada!",
+    "changeRequest.entity.translators": {
+        "proveedor_vendible": "Publicación de producto o servicio",
+        "suscripcion": "Suscripción de usuario"
+    }
 }

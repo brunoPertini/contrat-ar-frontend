@@ -97,5 +97,22 @@
     "activeF": "Activa",
     "inactiveF": "Inactiva",
     "activeSinceF": "Activa desde",
-    "state": "Estado"
+    "state": "Estado",
+    "postState": "Estado de la publicación",
+    "pausedF": "Pausada",
+    "rejectedF": "Rechazada",
+    "inReview": "En revisión",
+    "noFieldModified": "Ningún campo fue modificado",
+    "apply": "Aplicar",
+    "deny": "Rechazar",
+    "wasApplied": "Fue aplicado",
+    "yes": "Sí",
+    "no": "No",
+    "state.change.confirmation": "¿Cambiar el estado a {newState}?",
+    "post.modified.success": "¡Publicación modificada!",
+    "post.modified.error": "¡La publicación no pudo ser modificada! Intentalo más tarde",
+    "users": "Usuarios",
+    "products": "Productos",
+    "services": "Servicios",
+    "changeRequests": "Pedidos de cambio"
 }

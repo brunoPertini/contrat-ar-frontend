@@ -1,4 +1,3 @@
-/* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
@@ -19,6 +18,9 @@ import ConfirmationPage from './ConfirmationPage';
 import { DOT_AND_COMMA_REGEX } from '../../Shared/Utils/InputUtils';
 import { buildCategoryObject } from '../../Shared/Helpers/ProveedorHelper';
 import BackdropLoader from '../../Shared/Components/BackdropLoader';
+import StaticAlert from '../../Shared/Components/StaticAlert';
+import { proveedorLabels } from '../../StaticData/Proveedor';
+import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
@@ -59,11 +61,11 @@ function VendibleCreateForm({
         {
           category,
           descripcion,
-          precio: new Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
+          precio: Number(priceInfo.amount.replace(DOT_AND_COMMA_REGEX, '')),
           tipoPrecio: priceInfo.type,
           imagenUrl,
           location: vendibleLocation,
-          stock: new Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
+          stock: Number(stock.replace(DOT_AND_COMMA_REGEX, '')),
           offersDelivery,
           offersInCustomAddress,
         },
@@ -71,6 +73,7 @@ function VendibleCreateForm({
 
       handlePostVendible({
         nombre,
+        vendibleType,
         proveedoresVendibles,
       }).then(() => {
         setOperationResult(true);
@@ -90,6 +93,7 @@ function VendibleCreateForm({
     flexDirection: 'column',
     sx: {
       minHeight: '100vh',
+      alignItems: 'center',
     },
     spacing: activeStep === 0 ? 35 : 10,
   }), [activeStep]);
@@ -199,6 +203,15 @@ function VendibleCreateForm({
       {...containerProps}
     >
       { steps[activeStep].component }
+      {
+          activeStep === 2 && (
+            <StaticAlert
+              styles={{ mt: '3%', fontSize: '1rem' }}
+              severity="info"
+              label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
+            />
+          )
+        }
       <Grid
         item
         sx={{

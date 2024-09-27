@@ -16,6 +16,7 @@ import {
   PRICE_TYPES, pricesTypeMock, PRODUCTS, STOCK_SLIDER_MAX, STOCK_SLIDER_MIN,
 } from '../Shared/Constants/System';
 import { Select } from '../Shared/Components';
+import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
 
 const DEFAULT_BASE_VALUES = {
   proveedorName: '',
@@ -25,12 +26,15 @@ const DEFAULT_BASE_VALUES = {
   offersDelivery: null,
   offersInCustomAddress: null,
   priceType: '',
+  state: '',
 };
 
 const PRODUCT_BASE_VALUES = {
   ...DEFAULT_BASE_VALUES,
   stocks: [STOCK_SLIDER_MIN, STOCK_SLIDER_MAX],
 };
+
+const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
 function PostsFilters({
   getMenuOption, vendibleType, onFilterSelected, page, priceSliderProps,
@@ -43,18 +47,30 @@ function PostsFilters({
     prices: [priceSliderProps.min, priceSliderProps.max],
   });
 
+  const defaultStateSelected = useMemo(() => {
+    if (filters.state) {
+      const stateLabel = postStateLabelResolver[filters.state];
+      return statesValues.findIndex((state) => state === stateLabel);
+    }
+    return 0;
+  }, [filters.state]);
+
   const [runApplyFiltersCallback, setRunApplyFiltersCallback] = useState(false);
 
   const onFilterSet = (key, newValue, shouldRunApplyFiltersCallback = false) => {
+    const shouldParseValues = (key === 'priceType') || (key === 'state');
+
     let parsedValue = newValue;
 
-    if (key === 'priceType') {
+    if (shouldParseValues) {
       if (newValue === '-') {
         parsedValue = '';
       } else {
-        parsedValue = Object.keys(PRICE_TYPES).find((k) => PRICE_TYPES[k] === newValue);
+        const sourceObject = key === 'priceType' ? PRICE_TYPES : postStateLabelResolver;
+        parsedValue = Object.keys(sourceObject).find((k) => sourceObject[k] === newValue);
       }
     }
+
     setFilters((previous) => ({ ...previous, [key]: parsedValue }));
     setRunApplyFiltersCallback(shouldRunApplyFiltersCallback);
   };
@@ -272,10 +288,20 @@ function PostsFilters({
 
   );
 
+  const stateMenuOption = (
+    <Select
+      containerStyles={{ mt: '5%', width: '50%' }}
+      defaultSelected={defaultStateSelected}
+      label={sharedLabels.postState}
+      values={statesValues}
+      handleOnChange={(value) => onFilterSet('state', value, true)}
+    />
+  );
+
   const menuOptions = useMemo(() => {
     const baseOptions = [nameMenuOption, surnameMenuOption, categoryMenuOption,
       filterByPriceMenuOption, filterByPriceTypeMenuOption,
-      offersDeliveryMenuOption, offersCustomAddressMenuOption];
+      offersDeliveryMenuOption, offersCustomAddressMenuOption, stateMenuOption];
 
     if (vendibleType === 'productos') {
       baseOptions.splice(3, 0, filterByStockMenuOption);

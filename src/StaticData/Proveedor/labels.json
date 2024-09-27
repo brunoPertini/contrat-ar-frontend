@@ -36,5 +36,11 @@
     "modifyVendible.alert.success": "¡Tu {vendible} fue modificado!",
     "modifyVendible.alert.error": "¡Tu {vendible} no pudo ser modificado!",
     "deleteVendible.alert.success": "¡Tu {vendible} fue borrado!",
-    "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!"
+    "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!",
+    "vendible.state.pause": "Pausar publicación",
+    "vendible.state.resume": "Activar publicación",
+    "vendible.update.state": "¿Establecer la publicacion en estado {newState}?",
+    "vendible.state.update.ok": "¡Se cambió el estado de tu publicación!",
+    "vendible.state.update.failed": "¡Hubo un error! Por favor, intentalo más tarde",
+    "vendible.new.confirmation.disclaimer": "Algunos cambios a tu {vendible} pueden requerir revisión de un administrador. En ese caso, te vamos a avisar por mail si fue aprobado, o si necesitemos que hagas alguna modificación. Tené en cuenta que hasta ese momento no va a ser visible a tus clientes."
 }

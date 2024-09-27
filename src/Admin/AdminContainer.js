@@ -104,6 +104,56 @@ function AdminContainer({ handleLogout }) {
     return client.deleteVendible(id);
   };
 
+  const getAllChangeRequests = () => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.getAllChangeRequests();
+  };
+
+  const getChangeRequestDetail = (url) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.get(url);
+  };
+
+  const confirmChangeRequest = (id) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.confirmChangeRequest(id);
+  };
+
+  const deleteChangeRequest = (id) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.denyChangeRequest(id);
+  };
+
+  const updatePost = (proveedorId, vendibleId, body) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.putProveedorVendible(proveedorId, vendibleId, body);
+  };
+
   // First info fetching, with default values
   useEffect(() => {
     fetchFilteredUsuariosInfo({
@@ -134,6 +184,11 @@ function AdminContainer({ handleLogout }) {
       fetchServicios={fetchServicios}
       deleteVendible={deleteVendible}
       fetchPosts={fetchPosts}
+      getAllChangeRequests={getAllChangeRequests}
+      getChangeRequestDetail={getChangeRequestDetail}
+      confirmChangeRequest={confirmChangeRequest}
+      deleteChangeRequest={deleteChangeRequest}
+      updatePost={updatePost}
     />
   ) : null), [usuariosInfo, planesInfo]);
 

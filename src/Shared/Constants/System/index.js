@@ -86,4 +86,12 @@ export const serviceLocationsMock = [SERVICE_LOCATION_AT_HOME, SERVICE_LOCATION_
 
 export const productLocationsMock = [PRODUCT_LOCATION_AT_HOME, PRODUCT_LOCATION_FIXED];
 
-export const INTEGER_MAXIMUM = 2147483647; // Maps to int data type constraint in Java.
+export const INTEGER_MAXIMUM = 2147483647; // Maps to int data type constraint in Java.\
+
+export const POST_STATES = {
+  IN_REVIEW: 'IN_REVIEW',
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  PAUSED: 'PAUSED',
+  REJECTED: 'REJECTED',
+};

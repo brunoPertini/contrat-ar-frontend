@@ -53,7 +53,7 @@ export default function VendibleInfo({
 
   const vendibleUnit = (vendibleType === PRODUCTS ? PRODUCT : SERVICE).toLowerCase();
 
-  const renderCategories = !isEditionEnabled;
+  const renderCategories = !isEditionEnabled && !!categoriesString;
 
   const formattedStock = stock.toLocaleString(ARGENTINA_LOCALE);
 

@@ -17,6 +17,9 @@ import { ATTRIBUTES_RENDERERS } from './TablesHelper';
 import MapModal from '../Shared/Components/MapModal';
 import BackdropLoader from '../Shared/Components/BackdropLoader';
 import { PostShape } from '../Shared/PropTypes/ProveedorVendible';
+import DialogModal from '../Shared/Components/DialogModal';
+import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
+import InformativeAlert from '../Shared/Components/Alert';
 
 const ATTIBUTES_COMMON_LABELS = {
   vendibleNombre: sharedLabels.vendibleNombre,
@@ -30,6 +33,7 @@ const ATTIBUTES_COMMON_LABELS = {
   offersDelivery: sharedLabels.offersDelivery,
   offersInCustomAddress: sharedLabels.offersInCustomAddress,
   category: sharedLabels.category,
+  state: sharedLabels.postState,
 };
 
 const PRODUCT_LABELS = {
@@ -48,15 +52,22 @@ const ATTRIBUTES_CONFIG = {
   offersDelivery: 'boolean',
   offersInCustomAddress: 'boolean',
   category: 'enum',
+  state: 'enum',
 };
 
 const PRODUCTS_ATTRIBUTES_CONFIG = {
   stock: 'enum',
 };
 
+const modalContentDefaultValues = { text: '', handleAccept: () => {} };
+
+const modalContexts = {
+  state: (value) => sharedLabels['state.change.confirmation'].replace('{newState}', postStateLabelResolver[value]),
+};
+
 function AdminVendiblePosts({
   vendibleType, vendibleId, fetchPosts, paginationInfo, setPaginationInfo, posts,
-  setPosts,
+  setPosts, updatePost,
 }) {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
@@ -70,7 +81,26 @@ function AdminVendiblePosts({
     title: '',
   });
 
+  const [modalProps,
+    setModalProps] = useState({
+    ...modalContentDefaultValues,
+    onClose: () => setModalProps((previous) => ({
+      ...previous,
+      ...modalContentDefaultValues,
+    })),
+  });
+
+  const [infoToChangeFields, setInfoToChangeFields] = useState({
+    currentField: '',
+    state: {
+      newValue: '',
+      proveedorId: '',
+    },
+  });
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const [fieldOperationResult, setFieldOperationResult] = useState(null);
 
   const fetchPostsCallback = async (page = 0) => {
     setIsLoading(true);
@@ -85,6 +115,19 @@ function AdminVendiblePosts({
     fetchPostsCallback(newPage - 1);
   };
 
+  const cleanModalContent = () => {
+    setInfoToChangeFields({
+      state: {
+        newValue: '',
+        proveedorId: '',
+      },
+    });
+
+    setModalProps(
+      (previous) => ({ ...previous, ...modalContentDefaultValues }),
+    );
+  };
+
   useEffect(() => {
     if (vendibleId) {
       fetchPostsCallback();
@@ -97,6 +140,32 @@ function AdminVendiblePosts({
 
   const FINAL_ATTRIBUTES_CONFIG = useMemo(() => (vendibleType !== PRODUCTS ? ATTRIBUTES_CONFIG
     : { ...ATTRIBUTES_CONFIG, ...PRODUCTS_ATTRIBUTES_CONFIG }), [vendibleType]);
+
+  const handleAcceptForField = () => {
+    const handlers = {
+      state: () => updatePost(
+        infoToChangeFields.state.proveedorId,
+        vendibleId,
+        { state: infoToChangeFields.state.newValue },
+      ),
+    };
+
+    return handlers[infoToChangeFields.currentField]()
+      .then(() => setFieldOperationResult(true))
+      .catch(() => {
+        setFieldOperationResult(false);
+        setInfoToChangeFields({
+          currentField: '',
+          state: {
+            newValue: '',
+            proveedorId: '',
+          },
+        });
+      })
+      .finally(() => setModalProps(
+        (previous) => ({ ...previous, ...modalContentDefaultValues }),
+      ));
+  };
 
   const {
     paginationEnabled, pagesCount, canGoForward, canGoBack,
@@ -124,9 +193,11 @@ function AdminVendiblePosts({
     title: sharedLabels.locationOfVendible.replace('{vendible}', post.vendibleNombre).replace('{proveedor}', post.proveedorName),
   }));
 
-  const paramsToRender = ({ rendererType, post, attribute }) => {
+  const paramsToRender = ({
+    rendererType, post, attribute, additionalProps,
+  }) => {
     const renderers = {
-      enum: [attribute, post[attribute]],
+      enum: [attribute, post[attribute], additionalProps],
       map: [post.location ? () => renderMapModal(post) : null],
       text: [post[attribute]],
       boolean: [post[attribute]],
@@ -136,10 +207,40 @@ function AdminVendiblePosts({
     return renderers[rendererType];
   };
 
+  const onChangeField = (key, value, additionalInfo) => {
+    setInfoToChangeFields((previous) => ({
+      ...previous,
+      [key]: { ...additionalInfo, newValue: value },
+      currentField: key,
+    }));
+    setModalProps((previous) => ({
+      ...previous,
+      text: modalContexts[key](value),
+    }));
+  };
+
+  const resetAlertData = () => setFieldOperationResult(null);
+
   return (
     <>
       <TableContainer component={Paper}>
         <MapModal {...mapModalProps} />
+        <InformativeAlert
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={fieldOperationResult !== null}
+          label={fieldOperationResult ? sharedLabels['post.modified.success'] : sharedLabels['post.modified.error']}
+          severity={fieldOperationResult ? 'success' : 'error'}
+          onClose={resetAlertData}
+        />
+        <DialogModal
+          title={sharedLabels.pleaseConfirmAction}
+          contextText={modalProps.text}
+          cancelText={sharedLabels.cancel}
+          acceptText={sharedLabels.accept}
+          open={!!(modalProps.text)}
+          handleAccept={handleAcceptForField}
+          handleDeny={cleanModalContent}
+        />
         <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
           <TableHead>
             {
@@ -164,6 +265,26 @@ function AdminVendiblePosts({
                   Object.keys(FINAL_ATTRIBUTES_CONFIG).map((attribute) => {
                     const rendererType = FINAL_ATTRIBUTES_CONFIG[attribute];
 
+                    const paramsConfig = {
+                      rendererType,
+                      post,
+                      attribute,
+                      additionalProps: {
+                        state: {
+                          onChange: (key, value) => {
+                            onChangeField(
+                              key,
+                              value,
+                              { proveedorId: post.proveedorId },
+                            );
+                          },
+                          selectedValue: infoToChangeFields.state.newValue,
+                          proveedorId: post.proveedorId,
+                          selectedProveedorId: infoToChangeFields.state.proveedorId,
+                        },
+                      },
+                    };
+
                     return (
                       <TableCell
                         key={`cell-${post.proveedorId}${post.vendibleNombre}-${attribute}`}
@@ -171,11 +292,7 @@ function AdminVendiblePosts({
                         sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
                       >
                         {
-                          ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
-                            rendererType,
-                            post,
-                            attribute,
-                          }))
+                          ATTRIBUTES_RENDERERS[rendererType](...paramsToRender(paramsConfig))
                         }
 
                       </TableCell>
@@ -211,6 +328,7 @@ AdminVendiblePosts.propTypes = {
   setPaginationInfo: PropTypes.func.isRequired,
   posts: PropTypes.arrayOf(PropTypes.shape(PostShape)).isRequired,
   setPosts: PropTypes.func.isRequired,
+  updatePost: PropTypes.func.isRequired,
 };
 
 export default AdminVendiblePosts;

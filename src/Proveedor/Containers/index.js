@@ -88,12 +88,12 @@ function ProveedorContainer({ router, handleLogout }) {
     return client.uploadImage(file, id);
   };
 
-  const handleGetVendibles = async () => {
+  const handleGetVendibles = async (filters) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token,
       handleLogout,
     });
-    client.getVendibles(id).then((newResponse) => setResponse(newResponse));
+    client.getVendibles(id, filters).then((newResponse) => setResponse(newResponse));
   };
 
   const handlePostVendible = async (vendibleData) => {
@@ -158,6 +158,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handlePostVendible={handlePostVendible}
         handlePutVendible={handlePutVendible}
         handleDeleteVendible={handleDeleteVendible}
+        handleGetVendibles={handleGetVendibles}
         router={router}
       />
     </NavigationContextProvider>

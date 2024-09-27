@@ -8,8 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../StaticData/Shared';
 import { EMPTY_FUNCTION, USUARIO_TYPE_CLIENTES } from '../Shared/Constants/System';
 import MapModal from '../Shared/Components/MapModal';
@@ -20,6 +18,7 @@ import { adminLabels } from '../StaticData/Admin';
 import { DialogModal } from '../Shared/Components';
 import InformativeAlert from '../Shared/Components/Alert';
 import { ATTRIBUTES_RENDERERS } from './TablesHelper';
+import SuscriptionData from '../Shared/Components/SuscriptionData';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -68,44 +67,8 @@ const deleteUserModalContentDefaultValues = { title: '', text: '', handleAccept:
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
 
 function renderSuscripcionData(suscripcion) {
-  const planLabel = suscripcion.planId === 1
-    ? sharedLabels.plansNames.FREE
-    : sharedLabels.plansNames.PAID;
-
-  const styles = { mt: '5% ' };
   return (
-    <Box sx={{
-      width: '200px',
-      height: '300px',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      background: 'white',
-    }}
-    >
-      <Typography variant="h5">
-        { sharedLabels.plan }
-        :
-      </Typography>
-      <Typography variant="h5">
-        { planLabel}
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.state}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.isActive ? sharedLabels.activeF : sharedLabels.inactiveF }
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.activeSinceF}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.createdDate }
-      </Typography>
-    </Box>
+    <SuscriptionData styles={{ mt: '5% ' }} suscripcion={suscripcion} />
   );
 }
 

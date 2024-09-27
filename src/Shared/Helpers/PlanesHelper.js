@@ -80,3 +80,7 @@ export const getPlanId = (planesInfo, planType) => planesInfo.find(
 export const getPlanType = (planesInfo, planId) => planesInfo.find(
   (planInfo) => planInfo.id === planId,
 ).type;
+
+export const getPlanLabel = (planId) => (planId === 1
+  ? sharedLabels.plansNames.FREE
+  : sharedLabels.plansNames.PAID);
