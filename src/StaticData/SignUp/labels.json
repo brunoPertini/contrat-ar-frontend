@@ -21,6 +21,8 @@
     "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
     "signup.want.to.client": "Quiero comprar productos y contratar servicios",
     "signup.success": "¡Recibimos tu registro! Un administrador lo revisará a la brevedad.",
-    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo."
-
+    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo.",
+    "signup.accountConfirmation.title": "Para confirmar tu cuenta, te vamos a enviar un mail a la dirección que registraste con un enlace al que tenés que acceder.",
+    "signup.mail.send": "¡El mail fue enviado a {email}!",
+    "account.confirmation.email": "Confirmacion de email"
 }

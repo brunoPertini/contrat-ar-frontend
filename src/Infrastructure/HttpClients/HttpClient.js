@@ -112,7 +112,7 @@ export class HttpClient {
         }
         return Promise.reject(error.response);
       }
-      const wrappedError = error.response.data.error;
+      const wrappedError = error.response.data || error.response.data.error;
       Logger.log(wrappedError);
       return Promise.reject(wrappedError);
     }

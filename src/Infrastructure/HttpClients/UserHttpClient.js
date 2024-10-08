@@ -69,4 +69,10 @@ export class UserHttpClient extends HttpClient {
 
     return this.put(url, null, { ...info, location: parsedLocation });
   }
+
+  sendRegistrationConfirmEmail(email) {
+    const url = `${usersRoutes.mailSignUp}/link`;
+
+    return this.post(url, { email });
+  }
 }

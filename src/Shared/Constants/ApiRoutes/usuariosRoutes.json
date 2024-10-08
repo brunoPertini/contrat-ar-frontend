@@ -7,5 +7,6 @@
     "getProveedoresOfVendible": "/vendible/{vendibleId}/proveedores",
     "usuariosBaseUrl": "/usuarios/{usuarioId}",
     "clientesBaseUrl": "/cliente/{usuarioId}",
-    "proveedoresBaseUrl": "/proveedor/{usuarioId}"
+    "proveedoresBaseUrl": "/proveedor/{usuarioId}",
+    "mailSignUp": "/mail/signup"
 }

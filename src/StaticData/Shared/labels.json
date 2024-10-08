@@ -30,6 +30,7 @@
     "minimalPrice": "Presupuesto mínimo",
     "priceToBeAgreed": "Precio a  acordar",
     "sendMessage": "Enviar mensaje",
+    "sendEmail": "Enviar email",
     "seeDetail": "Ver detalle",
     "filters": "Filtros"    ,
     "priceType": "Tipo de precio",
@@ -114,5 +115,6 @@
     "users": "Usuarios",
     "products": "Productos",
     "services": "Servicios",
-    "changeRequests": "Pedidos de cambio"
+    "changeRequests": "Pedidos de cambio",
+    "sendingEmail": "Enviando email"
 }
