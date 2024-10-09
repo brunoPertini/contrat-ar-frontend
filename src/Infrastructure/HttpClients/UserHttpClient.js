@@ -75,4 +75,14 @@ export class UserHttpClient extends HttpClient {
 
     return this.post(url, { email });
   }
+
+  /**
+   *
+   * @param {String} toAddress user email
+   * @param {String} token token given at registration email
+   * @returns
+   */
+  confirmUserAccount(toAddress, token) {
+    return this.post(usersRoutes.confirmUserAccount, null, { toAddress, token });
+  }
 }

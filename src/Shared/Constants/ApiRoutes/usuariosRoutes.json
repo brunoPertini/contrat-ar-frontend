@@ -8,5 +8,6 @@
     "usuariosBaseUrl": "/usuarios/{usuarioId}",
     "clientesBaseUrl": "/cliente/{usuarioId}",
     "proveedoresBaseUrl": "/proveedor/{usuarioId}",
-    "mailSignUp": "/mail/signup"
+    "mailSignUp": "/mail/signup",
+    "confirmUserAccount": "/mail/signup/ok"
 }

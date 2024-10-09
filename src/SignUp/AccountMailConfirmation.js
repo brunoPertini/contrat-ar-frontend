@@ -37,10 +37,13 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
       <Typography variant="h5">
         { !wasEmailSend ? signUpLabels['signup.accountConfirmation.title'] : sharedLabels.youCanLeavePage}
       </Typography>
-      <Typography variant="h5" sx={{ mt: '2%' }}>
-        <PriorityHighIcon fontSize="medium" />
-        { signUpLabels['account.confirmation.disclaimer']}
-      </Typography>
+      <Box display="flex" sx={{ mt: '2%' }} flexDirection="row">
+        <PriorityHighIcon style={{ fontSize: '2rem' }} />
+        <Typography variant="h5">
+          { signUpLabels['account.confirmation.disclaimer']}
+        </Typography>
+      </Box>
+
       { isLoading && (
         <>
           <CircularProgress sx={{ mt: '2%' }} />

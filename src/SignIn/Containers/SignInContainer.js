@@ -27,7 +27,7 @@ function SignInContainer({ router, securityService, cookiesService }) {
         cookiesService.add(CookiesService.COOKIES_NAMES.USER_TOKEN, response);
         router.navigate(userInfo.indexPage);
       }
-    }).catch((error) => {
+    }).catch(({ error }) => {
       setErrorMessage(error);
     });
   };

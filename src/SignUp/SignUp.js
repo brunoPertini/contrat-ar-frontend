@@ -203,7 +203,7 @@ export default function UserSignUp({
       email={personalDataFieldsValues.email}
       sendAccountConfirmEmail={sendAccountConfirmEmail}
     />,
-    backButtonEnabled: true,
+    backButtonEnabled: false,
     nextButtonEnabled: false,
   }];
 

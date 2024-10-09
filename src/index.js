@@ -16,6 +16,7 @@ import Proveedor from './Proveedor/Containers';
 import { VendiblePage } from './Vendible';
 import UserProfile from './UserProfile/Containers';
 import AdminPage from './Admin/AdminContainer';
+import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage';
 
 function ErrorComponent() {
 // TODO: crear páginas de errores
@@ -92,6 +93,12 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: <AdminPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/signup/email-confirm',
+    element: <AccountConfirmationPage />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },
