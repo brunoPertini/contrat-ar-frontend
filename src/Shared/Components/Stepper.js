@@ -16,8 +16,6 @@ export default function LinearStepper({
 
   const onButtonClick = useCallback((newStep) => onStepChange(newStep), [onStepChange]);
 
-  const notNullSteps = steps.filter((s) => s);
-
   return (
     <>
       <Grid
@@ -51,7 +49,7 @@ export default function LinearStepper({
         }}
       >
         <Stepper activeStep={activeStep}>
-          {notNullSteps.map(({ label, isOptional }) => (
+          {steps.map(({ label, isOptional }) => (
             <Step key={label}>
               <StepLabel optional={isOptional ? optionalLabel : undefined}>{label}</StepLabel>
             </Step>

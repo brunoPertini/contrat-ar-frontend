@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useCallback, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { signUpLabels } from '../StaticData/SignUp';
 import { sharedLabels } from '../StaticData/Shared';
 import StaticAlert from '../Shared/Components/StaticAlert';
@@ -34,15 +35,19 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Typography variant="h5">
-        { signUpLabels['signup.accountConfirmation.title']}
+        { !wasEmailSend ? signUpLabels['signup.accountConfirmation.title'] : sharedLabels.youCanLeavePage}
+      </Typography>
+      <Typography variant="h5" sx={{ mt: '2%' }}>
+        <PriorityHighIcon fontSize="medium" />
+        { signUpLabels['account.confirmation.disclaimer']}
       </Typography>
       { isLoading && (
-      <>
-        <CircularProgress />
-        <Typography variant="h6">
-          { sharedLabels.sendingEmail }
-        </Typography>
-      </>
+        <>
+          <CircularProgress sx={{ mt: '2%' }} />
+          <Typography variant="h6">
+            {sharedLabels.sendingEmail}
+          </Typography>
+        </>
       ) }
       {
         buttonClicked && <StaticAlert {...alertData} styles={{ mt: '5%' }} />

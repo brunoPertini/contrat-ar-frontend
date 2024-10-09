@@ -196,7 +196,7 @@ export default function UserSignUp({
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
   },
-  createdUserInfo?.creationToken ? {
+  {
     label: signUpLabels['account.confirmation.email'],
     isOptional: false,
     component: <AccountMailConfirmation
@@ -205,7 +205,7 @@ export default function UserSignUp({
     />,
     backButtonEnabled: true,
     nextButtonEnabled: false,
-  } : null];
+  }];
 
   if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
     const profilePhotoStep = {
@@ -250,7 +250,9 @@ export default function UserSignUp({
       fotoPerfilUrl: profilePhoto,
       location,
     }).then((response) => setCreatedUserInfo(response))
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const prepareFormRendering = async (stepIndex) => {
@@ -259,10 +261,16 @@ export default function UserSignUp({
 
     };
 
+    const handleOpenConfirmationModal = () => {
+      if (isEmpty(createdUserInfo)) {
+        setOpenConfirmationModal(true);
+      }
+    };
+
     const nonClientFunctions = {
       ...commonSteps,
 
-      3: () => (isEmpty(createdUserInfo) ? manageSignUp() : EMPTY_FUNCTION),
+      3: handleOpenConfirmationModal,
 
       4: () => (isEmpty(subscriptionInfo) ? createSubscription(
         createdUserInfo.id,
@@ -272,14 +280,12 @@ export default function UserSignUp({
         .then((response) => setSubscriptionInfo(response))
         : EMPTY_FUNCTION),
 
-      5: () => setOpenConfirmationModal(true),
-
     };
 
     const clientFunctions = {
       ...commonSteps,
 
-      2: () => setOpenConfirmationModal(true),
+      2: handleOpenConfirmationModal,
 
     };
 
@@ -328,7 +334,12 @@ export default function UserSignUp({
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
         open={openConfirmationModal && !hasError}
-        handleAccept={() => manageSignUp()}
+        handleAccept={() => {
+          if (isEmpty(createdUserInfo)) {
+            manageSignUp();
+          }
+          setOpenConfirmationModal(false);
+        }}
         handleDeny={() => {
           setOpenConfirmationModal(false);
           handleOnStepChange(0);
