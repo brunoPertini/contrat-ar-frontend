@@ -6,22 +6,41 @@ import { StaticAlert } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { signUpLabels } from '../../StaticData/SignUp';
 import { routes } from '../../Shared/Constants';
+import AccountMailConfirmation from '../AccountMailConfirmation';
 
 const userHttpClient = HttpClientFactory.createUserHttpClient();
 
 function AccountConfirmationPage() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const email = queryParams.get('email');
+
   const [operationResult, setOperationResult] = useState(null);
 
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [errorCode, setErrorCode] = useState();
+
+  const [mailWasResend, setMailWasResend] = useState(false);
+
+  const sendAccountConfirmEmail = useCallback(() => userHttpClient.sendRegistrationConfirmEmail(
+    email,
+  )
+    .then(() => {
+      setErrorMessage('');
+    })
+    .finally(() => setMailWasResend(true)), [email]);
+
   const handleAccountConfirmation = useCallback(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    userHttpClient.confirmUserAccount(queryParams.get('email'), queryParams.get('token')).then(() => setOperationResult(true))
+    userHttpClient.confirmUserAccount(email, queryParams.get('token'))
+      .then(() => {
+        setOperationResult(true);
+      })
       .catch(((error) => {
         setOperationResult(false);
-        setErrorMessage(error);
+        setErrorMessage(error.error);
+        setErrorCode(error.relatedFields.verificationCode);
       }));
-  }, [setOperationResult]);
+  }, [setOperationResult, setErrorMessage]);
 
   useEffect(() => {
     handleAccountConfirmation();
@@ -41,7 +60,7 @@ function AccountConfirmationPage() {
         </>
       ) }
       {
-        operationResult === false && (
+        operationResult === false && !mailWasResend && (
         <StaticAlert severity="error" label={errorMessage} styles={{ mt: '5%' }} />
         )
       }
@@ -53,6 +72,15 @@ function AccountConfirmationPage() {
           label={signUpLabels['account.confirmation.success'].replace('{loginLink}', linkLabel)}
         />
         )
+      }
+      {
+         operationResult === false && errorCode !== 401 && (
+         <AccountMailConfirmation
+           email={email}
+           sendAccountConfirmEmail={sendAccountConfirmEmail}
+           containerProps={{ sx: { mt: '5%' } }}
+         />
+         )
       }
     </Box>
   );

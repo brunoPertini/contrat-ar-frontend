@@ -12,7 +12,7 @@ import Header from '../../Header';
 import { ExpandableCard, withRouter } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
 import UserSignUp from '../SignUp';
-import { systemConstants } from '../../Shared/Constants';
+import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
@@ -31,14 +31,11 @@ function SignUpContainer({ router }) {
     return httpClient.crearUsuario(signupType, {}, {
       ...body,
       proveedorType: signupType,
-    }).then((response) => {
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
-      return response;
-    })
+    }).then((response) => response)
       .catch(() => {
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
+        window.location.href = routes.index;
       });
   };
 

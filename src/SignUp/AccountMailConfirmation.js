@@ -8,8 +8,22 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { signUpLabels } from '../StaticData/SignUp';
 import { sharedLabels } from '../StaticData/Shared';
 import StaticAlert from '../Shared/Components/StaticAlert';
+import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
 
-function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
+const buttonEnablingDuration = 2 * 60 * 1000;
+
+const localStorageService = new LocalStorageService();
+
+function getRemainingTime() {
+  const storedTime = localStorage.getItem(LocalStorageService.PAGES_KEYS.SHARED.BUTTON_ENABLE_TIME);
+  if (!storedTime) {
+    return 0;
+  }
+  const currentTime = new Date().getTime();
+  return storedTime - currentTime;
+}
+
+function AccountMailConfirmation({ email, sendAccountConfirmEmail, containerProps }) {
   // null = not send, false = send with errors, true = send and ok
   const [wasEmailSend, setWasEmailSend] = useState(null);
 
@@ -17,9 +31,35 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [buttonEnabled, setButtonEnabled] = useState(!isLoading);
+
   const buttonClicked = wasEmailSend !== null;
 
+  function updateTimer() {
+    const remainingTime = getRemainingTime();
+
+    if (remainingTime <= 0) {
+      setButtonEnabled(true);
+      localStorage.removeItem('buttonUnlockTime');
+    } else {
+      setTimeout(updateTimer, 1000);
+    }
+  }
+
+  function startTimer() {
+    setButtonEnabled(false);
+
+    const unlockTime = new Date().getTime() + buttonEnablingDuration;
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.SHARED.BUTTON_ENABLE_TIME,
+      unlockTime,
+    );
+
+    updateTimer();
+  }
+
   const handleSendEmail = useCallback(() => {
+    startTimer();
     setIsLoading(true);
     sendAccountConfirmEmail(email).then(() => {
       setWasEmailSend(true);
@@ -27,13 +67,13 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
     })
       .catch((error) => {
         setWasEmailSend(false);
-        setAlertData({ label: error, severity: 'error' });
+        setAlertData({ label: error.error, severity: 'error' });
       })
       .finally(() => setIsLoading(false));
   }, [email, sendAccountConfirmEmail]);
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center">
+    <Box display="flex" flexDirection="column" alignItems="center" {...containerProps}>
       <Typography variant="h5">
         { !wasEmailSend ? signUpLabels['signup.accountConfirmation.title'] : sharedLabels.youCanLeavePage}
       </Typography>
@@ -56,7 +96,7 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
         buttonClicked && <StaticAlert {...alertData} styles={{ mt: '5%' }} />
       }
       <Button
-        disabled={buttonClicked || isLoading}
+        disabled={!buttonEnabled}
         onClick={() => handleSendEmail(email)}
         variant="contained"
         size="small"
@@ -67,6 +107,13 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail }) {
       >
         { sharedLabels.sendEmail }
       </Button>
+      {
+        wasEmailSend && !buttonEnabled && (
+          <Typography variant="h6" sx={{ color: 'red' }}>
+            { signUpLabels['email.send.wait.minutes'] }
+          </Typography>
+        )
+      }
     </Box>
   );
 }
