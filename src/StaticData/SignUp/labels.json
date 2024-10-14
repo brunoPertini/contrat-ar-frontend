@@ -26,6 +26,5 @@
     "signup.mail.send": "¡El mail fue enviado a {email}! Ahí vas a encontrar un enlace para activar tu cuenta",
     "account.confirmation.email": "Confirmacion de email",
     "account.confirmation.disclaimer": "Tené en cuenta que aunque tu cuenta sea confirmada, no va a estar activa hasta que revisemos tus datos.",
-    "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} ",
-    "email.send.wait.minutes": "¿El mail no llegó? En 2 minutos vas a poder reenviarlo"
+    "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} "
 }

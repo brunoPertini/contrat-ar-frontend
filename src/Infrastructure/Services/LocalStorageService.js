@@ -12,7 +12,7 @@ export class LocalStorageService {
     },
     SHARED: {
       BACKPRESSED: 'backPressed',
-      BUTTON_ENABLE_TIME: 'buttonEnableTime',
+      ENABLE_TIME: 'enableTime',
     },
     PRODUCT: {
       INDEX: 'producto',

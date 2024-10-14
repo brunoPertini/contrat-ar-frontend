@@ -9,14 +9,15 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { signUpLabels } from '../StaticData/SignUp';
 import { labels as locationMapLabels } from '../StaticData/LocationMap';
 
-import {
-  DialogModal,
-  Form, LocationMap, PlanSelection, Stepper,
-} from '../Shared/Components';
+import DialogModal from '../Shared/Components/DialogModal';
+import Form from '../Shared/Components/Form';
+import LocationMap from '../Shared/Components/LocationMap';
+import PlanSelection from '../Shared/Components/PlanSelection';
+import Stepper from '../Shared/Components/Stepper';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';

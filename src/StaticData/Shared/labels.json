@@ -118,5 +118,6 @@
     "changeRequests": "Pedidos de cambio",
     "sendingEmail": "Enviando email",
     "youCanLeavePage": "¡No queda nada más para hacer! Podés abandonar esta página",
-    "here": "acá"
+    "here": "acá",
+    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo"
 }
