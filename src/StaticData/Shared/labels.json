@@ -30,6 +30,7 @@
     "minimalPrice": "Presupuesto mínimo",
     "priceToBeAgreed": "Precio a  acordar",
     "sendMessage": "Enviar mensaje",
+    "sendEmail": "Enviar email",
     "seeDetail": "Ver detalle",
     "filters": "Filtros"    ,
     "priceType": "Tipo de precio",
@@ -114,5 +115,9 @@
     "users": "Usuarios",
     "products": "Productos",
     "services": "Servicios",
-    "changeRequests": "Pedidos de cambio"
+    "changeRequests": "Pedidos de cambio",
+    "sendingEmail": "Enviando email",
+    "youCanLeavePage": "¡No queda nada más para hacer! Podés abandonar esta página",
+    "here": "acá",
+    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo"
 }

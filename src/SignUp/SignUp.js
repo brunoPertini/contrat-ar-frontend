@@ -8,18 +8,24 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import isEmpty from 'lodash/isEmpty';
 import { signUpLabels } from '../StaticData/SignUp';
 import { labels as locationMapLabels } from '../StaticData/LocationMap';
 
-import {
-  DialogModal,
-  Form, LocationMap, PlanSelection, Stepper,
-} from '../Shared/Components';
+import DialogModal from '../Shared/Components/DialogModal';
+import Form from '../Shared/Components/Form';
+import LocationMap from '../Shared/Components/LocationMap';
+import PlanSelection from '../Shared/Components/PlanSelection';
+import Stepper from '../Shared/Components/Stepper';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
+import AccountMailConfirmation from './AccountMailConfirmation';
+import { sharedLabels } from '../StaticData/Shared';
+import { EMPTY_FUNCTION } from '../Shared/Constants/System';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -35,6 +41,7 @@ const geoSettings = {
  */
 export default function UserSignUp({
   signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
+  sendAccountConfirmEmail, createSubscription,
 }) {
   const { title } = signUpLabels;
 
@@ -66,6 +73,11 @@ export default function UserSignUp({
 
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [createdUserInfo, setCreatedUserInfo] = useState({});
+
+  const [subscriptionInfo, setSubscriptionInfo] = useState();
 
   const handleGranted = (position) => {
     setLocation({
@@ -184,6 +196,16 @@ export default function UserSignUp({
   </Box>,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
+  },
+  {
+    label: signUpLabels['account.confirmation.email'],
+    isOptional: false,
+    component: <AccountMailConfirmation
+      email={personalDataFieldsValues.email}
+      sendAccountConfirmEmail={sendAccountConfirmEmail}
+    />,
+    backButtonEnabled: false,
+    nextButtonEnabled: false,
   }];
 
   if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
@@ -203,9 +225,9 @@ export default function UserSignUp({
       nextButtonEnabled: !!(profilePhoto),
     };
 
-    steps.splice(1, 0, profilePhotoStep);
+    steps.splice(2, 0, profilePhotoStep);
 
-    steps.push({
+    const planTypeStep = {
       label: signUpLabels['steps.planType'],
       isOptional: false,
       component: <PlanSelection
@@ -217,8 +239,22 @@ export default function UserSignUp({
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,
-    });
+    };
+
+    steps.splice(3, 0, planTypeStep);
   }
+
+  const manageSignUp = () => {
+    setIsLoading(true);
+    dispatchSignUp({
+      ...personalDataFieldsValues,
+      fotoPerfilUrl: profilePhoto,
+      location,
+    }).then((response) => setCreatedUserInfo(response))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const prepareFormRendering = async (stepIndex) => {
     const commonSteps = {
@@ -226,16 +262,31 @@ export default function UserSignUp({
 
     };
 
+    const handleOpenConfirmationModal = () => {
+      if (isEmpty(createdUserInfo)) {
+        setOpenConfirmationModal(true);
+      }
+    };
+
     const nonClientFunctions = {
       ...commonSteps,
 
-      4: () => setOpenConfirmationModal(true),
+      3: handleOpenConfirmationModal,
+
+      4: () => (isEmpty(subscriptionInfo) ? createSubscription(
+        createdUserInfo.id,
+        selectedPlan,
+        createdUserInfo.creationToken,
+      )
+        .then((response) => setSubscriptionInfo(response))
+        : EMPTY_FUNCTION),
+
     };
 
     const clientFunctions = {
       ...commonSteps,
 
-      2: () => setOpenConfirmationModal(true),
+      2: handleOpenConfirmationModal,
 
     };
 
@@ -258,7 +309,10 @@ export default function UserSignUp({
     setActiveStep(newStepIndex);
   };
 
-  const isStepValid = activeStep < steps.length;
+  const isStepValid = useMemo(
+    () => activeStep < steps.length && !!steps[activeStep],
+    [activeStep, steps],
+  );
 
   useEffect(() => {
     handlePermission();
@@ -266,6 +320,14 @@ export default function UserSignUp({
 
   return (
     <Box display="flex" flexDirection="column">
+      { isLoading && (
+      <>
+        <CircularProgress />
+        <Typography variant="h6">
+          { sharedLabels.loading }
+        </Typography>
+      </>
+      ) }
       { isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
@@ -273,13 +335,16 @@ export default function UserSignUp({
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
         open={openConfirmationModal && !hasError}
-        handleAccept={() => dispatchSignUp({
-          ...personalDataFieldsValues,
-          plan: selectedPlan,
-          fotoPerfilUrl: profilePhoto,
-          location,
-        })}
-        handleDeny={() => handleOnStepChange(steps.length - 1)}
+        handleAccept={() => {
+          if (isEmpty(createdUserInfo)) {
+            manageSignUp();
+          }
+          setOpenConfirmationModal(false);
+        }}
+        handleDeny={() => {
+          setOpenConfirmationModal(false);
+          handleOnStepChange(0);
+        }}
       />
       <DialogModal
         title={dialogLabels.title}
@@ -311,6 +376,8 @@ UserSignUp.defaultProps = {
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
+  createSubscription: PropTypes.func.isRequired,
+  sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,

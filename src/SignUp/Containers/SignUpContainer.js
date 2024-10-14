@@ -31,15 +31,12 @@ function SignUpContainer({ router }) {
     return httpClient.crearUsuario(signupType, {}, {
       ...body,
       proveedorType: signupType,
-    }).then(() => {
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
-    })
+    }).then((response) => response)
       .catch(() => {
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
-      })
-      .finally(() => router.navigate(routes.index));
+        window.location.href = routes.index;
+      });
   };
 
   const getAllPlanes = () => {
@@ -56,6 +53,18 @@ function SignUpContainer({ router }) {
     const client = HttpClientFactory.createProveedorHttpClient();
 
     return client.uploadTemporalProfilePhoto(dni, file);
+  };
+
+  const sendAccountConfirmEmail = (email) => {
+    const client = HttpClientFactory.createUserHttpClient();
+
+    return client.sendRegistrationConfirmEmail(email);
+  };
+
+  const handleCreateSubscription = (proveedorId, planId, temporalToken) => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
+
+    return client.createSubscription(proveedorId, planId);
   };
 
   const signupTypeColumns = (
@@ -139,6 +148,8 @@ function SignUpContainer({ router }) {
         dispatchSignUp={dispatchSignUp}
         router={router}
         handleUploadProfilePhoto={handleUploadProfilePhoto}
+        sendAccountConfirmEmail={sendAccountConfirmEmail}
+        createSubscription={handleCreateSubscription}
       />
     );
 

@@ -95,7 +95,9 @@ export class HttpClientFactory {
    * @returns {ProveedorHttpClient}
    */
   static createProveedorHttpClient(config = {}) {
-    if (!HttpClientFactory.proveedorHttpClientInstance) {
+    if (!HttpClientFactory.proveedorHttpClientInstance
+      || !HttpClientFactory.proveedorHttpClientInstance?.requestConfig?.headers.Authorization
+    ) {
       HttpClientFactory.proveedorHttpClientInstance = new ProveedorHttpClient({
         headersValues: { Authorization: config.token },
         handleLogout: config.handleLogout,

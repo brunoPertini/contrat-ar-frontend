@@ -12,7 +12,7 @@
     "planSelection.free.description": "Con este plan podrás ser encontrado por tus clientes en un radio de X km",
     "planSelection.paid.description": "Con este plan podrás ser encontrado por tus clientes en toda la ciudad y alrededores",
     "confirmation.title": "Confirmación de Registro",
-    "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si el registro es aprobado, o si encontramos algún inconveniente, te vamos a avisar a tu mail.",
+    "confirmation.context": "Estás terminando la primer etapa del registro. Por cuestiones de seguridad, vamos a  revisar los datos que nos diste y te vamos a avisar el resultado al mail dado.",
     "confirmation.ok": "Terminar",
     "confirmation.cancel": "Tengo que modificar algún dato",
     "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
@@ -21,6 +21,10 @@
     "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
     "signup.want.to.client": "Quiero comprar productos y contratar servicios",
     "signup.success": "¡Recibimos tu registro! Un administrador lo revisará a la brevedad.",
-    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo."
-
+    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo.",
+    "signup.accountConfirmation.title": "Para confirmar tu cuenta, te vamos a enviar un mail a la dirección que registraste con un enlace al que tenés que acceder.",
+    "signup.mail.send": "¡El mail fue enviado a {email}! Ahí vas a encontrar un enlace para activar tu cuenta",
+    "account.confirmation.email": "Confirmacion de email",
+    "account.confirmation.disclaimer": "Tené en cuenta que aunque tu cuenta sea confirmada, no va a estar activa hasta que revisemos tus datos.",
+    "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} "
 }
