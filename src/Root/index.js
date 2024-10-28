@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
 import Header from '../Header';
 import { withRouter } from '../Shared/Components';
 import InformativeAlert from '../Shared/Components/Alert';
@@ -6,6 +7,7 @@ import { routes } from '../Shared/Constants';
 import { rootPageLabels } from '../StaticData/RootPage';
 import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
 import { signUpLabels } from '../StaticData/SignUp';
+import { indexLabels } from '../StaticData/Index';
 
 const localStorageService = new LocalStorageService();
 
@@ -68,7 +70,7 @@ const RootPage = withRouter(({ router }) => {
   }, []);
 
   return (
-    <>
+    <Box display="flex" flexDirection="column">
       <InformativeAlert
         onClose={handleAlertClose}
         open={alertData.isAlertOpen}
@@ -77,7 +79,30 @@ const RootPage = withRouter(({ router }) => {
         autoHideDuration={5000}
       />
       <Header menuOptions={menuOptions} />
-    </>
+      <Stack direction="column" useFlexGap spacing={2}>
+        <Typography variant="h5" sx={{ marginLeft: '1%' }}>
+          { indexLabels['mission.title'] }
+        </Typography>
+        <Typography variant="p">
+          { indexLabels['mission.description']}
+        </Typography>
+        <Typography variant="h5">
+          { indexLabels['howWeDoIt.title'] }
+        </Typography>
+        <Typography variant="p">
+          { indexLabels['howWeDoIt.description']}
+        </Typography>
+        <Typography variant="h5">
+          { indexLabels['benefits.title'] }
+        </Typography>
+        <Box sx={{ marginLeft: '2%' }}>
+          <Typography variant="h5">
+            { indexLabels['benefits.forProviders.title'] }
+          </Typography>
+        </Box>
+
+      </Stack>
+    </Box>
   );
 });
 
