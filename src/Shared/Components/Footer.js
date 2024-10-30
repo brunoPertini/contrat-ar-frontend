@@ -37,8 +37,20 @@ export default function Footer() {
           <ListItemText primary="Términos y condiciones" />
         </ListItem>
       </List>
-      <Box display="flex" flexDirection="column" sx={{ paddingRight: '20px' }}>
-        <Link variant="body2">
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-evenly"
+        sx={{ paddingRight: '20px' }}
+      >
+        <Link
+          variant="body2"
+          sx={{
+            color: 'white',
+            textAlign: 'left',
+            cursor: 'pointer',
+          }}
+        >
           Contactanos
         </Link>
         <Typography variant="body2">

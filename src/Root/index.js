@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  Box, Card, CardActionArea, CardContent, CardMedia, Stack, Typography,
+  Box, Button, Card, CardActionArea, CardContent, CardMedia, Divider, Stack, Typography,
 } from '@mui/material';
 import Header from '../Header';
 import { withRouter } from '../Shared/Components';
@@ -11,8 +11,91 @@ import { LocalStorageService } from '../Infrastructure/Services/LocalStorageServ
 import { signUpLabels } from '../StaticData/SignUp';
 import { indexLabels } from '../StaticData/Index';
 import Footer from '../Shared/Components/Footer';
+import { getPlanLabel, getPlanDescription } from '../Shared/Helpers/PlanesHelper';
+import { sharedLabels } from '../StaticData/Shared';
+import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
+import { ARGENTINA_LOCALE } from '../Shared/Constants/System';
 
 const localStorageService = new LocalStorageService();
+
+const plans = [
+  {
+    id: 1,
+    descripcion: 'Cualquier persona dentro del radio de ejemplo que el mapa muestra te va a poder encontrar.',
+    type: 'FREE',
+    value: 0,
+  },
+  {
+    id: 2,
+    descripcion: 'Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar. Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y recibir la opinión sobre ellos de tus clientes. La posibilidad de acceder a nuestro plan de beneficios, donde podrás ganar bonos por cada trabajo hecho.',
+    type: 'PAID',
+    value: 500,
+  },
+];
+
+function PricingSection() {
+  return (
+    <Box
+      sx={{
+        py: 5, px: 2, backgroundColor: '#f4f4f9', textAlign: 'center',
+      }}
+      display="flex"
+      flexDirection="column"
+    >
+      <Typography variant="h4" gutterBottom>
+        Nuestros Planes
+      </Typography>
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent="center"
+        gap={4}
+        mt={4}
+      >
+        {plans.map((plan, index) => (
+          <Card
+            key={index}
+            display="flex"
+            flexDirection="column"
+            sx={{
+              height: '100%',
+              maxWidth: 345,
+              borderRadius: 3,
+              flex: '1 1 300px',
+              justifyContent: 'space-between',
+            }}
+          >
+            <CardContent
+              display="flex"
+              flexDirection="column"
+              sx={{ flexGrow: 1 }}
+            >
+              <Typography variant="h5" fontWeight="bold">
+                { getPlanLabel(plan.id)}
+              </Typography>
+              <Typography variant="h6" color="primary" sx={{ my: 2 }}>
+                { sharedLabels.finalMonthlyPrice.replace(
+                  '{price}',
+                  getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.value,
+                )}
+              </Typography>
+              <Divider sx={{ my: 2 }} />
+              <Box>
+                { getPlanDescription(plan.type, plans, false) }
+              </Box>
+            </CardContent>
+            <Box display="flex" flexDirection="column" alignSelf="flex-end">
+              <Button variant="contained" color="primary" fullWidth>
+                ¡Suscríbete!
+              </Button>
+            </Box>
+
+          </Card>
+        ))}
+      </Box>
+    </Box>
+  );
+}
 
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({
@@ -194,6 +277,7 @@ const RootPage = withRouter(({ router }) => {
         </Card>
 
       </Stack>
+      <PricingSection />
       <Footer />
     </Box>
   );
