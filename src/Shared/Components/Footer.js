@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -5,43 +6,49 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+import { Link } from '@mui/material';
 
 export default function Footer() {
   return (
     <Box
       component="footer"
+      display="flex"
+      flexShrink="unset"
+      justifyContent="space-between"
       sx={{
+        paddingLeft: '20px',
         bgcolor: 'primary.main',
         color: 'white',
         textAlign: 'center',
-        height: '200px',
+        position: 'sticky',
       }}
     >
-      <Typography variant="h6" gutterBottom>
-        Contacto
-      </Typography>
-      <List>
+      <List sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
         <ListItem disablePadding>
           <ListItemText primary="Sobre Nosotros" />
         </ListItem>
         <ListItem disablePadding>
-          <ListItemText primary="Servicios" />
+          <ListItemText primary="Nuestros planes" />
         </ListItem>
         <ListItem disablePadding>
-          <ListItemText primary="Contacto" />
+          <ListItemText primary="Ayuda" />
         </ListItem>
         <ListItem disablePadding>
-          <ListItemText primary="Soporte" />
+          <ListItemText primary="Términos y condiciones" />
         </ListItem>
       </List>
-      <Divider orientation="vertical" flexItem sx={{ bgcolor: 'white' }} />
-      <Typography variant="body2">
-        ©
-        {' '}
-        {new Date().getFullYear()}
-        {' '}
-        - Todos los derechos reservados.
-      </Typography>
+      <Box display="flex" flexDirection="column" sx={{ paddingRight: '20px' }}>
+        <Link variant="body2">
+          Contactanos
+        </Link>
+        <Typography variant="body2">
+          Copyright ©
+          {' '}
+          {new Date().getFullYear()}
+          {' '}
+          - ContractAr
+        </Typography>
+      </Box>
     </Box>
   );
 }

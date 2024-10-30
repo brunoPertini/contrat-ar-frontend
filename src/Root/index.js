@@ -83,6 +83,8 @@ const RootPage = withRouter(({ router }) => {
 
   const indent = { marginLeft: '1%' };
 
+  const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
+
   return (
     <Box display="flex" flexDirection="column">
       <InformativeAlert
@@ -93,13 +95,16 @@ const RootPage = withRouter(({ router }) => {
         autoHideDuration={5000}
       />
       <Header menuOptions={menuOptions} />
-      <Stack direction="row" useFlexGap spacing={5} sx={{ ...indent, mt: '2%' }}>
-        <Card sx={{ maxWidth: 400 }}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={5}
+        sx={{ ...indent, mt: '2%' }}
+      >
+        <Card sx={cardStyles}>
           <CardActionArea>
             <CardMedia
               component="img"
-              height="250"
-              width="250"
+              sx={{ objectFit: 'cover', height: '100%' }}
               image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_RKR8CFTODQ.jpg"
               alt="nuestra mision"
             />
@@ -107,39 +112,37 @@ const RootPage = withRouter(({ router }) => {
               <Typography variant="h5">
                 { indexLabels['mission.title'] }
               </Typography>
-              <Typography variant="p">
+              <Typography variant="body2">
                 { indexLabels['mission.description']}
               </Typography>
             </CardContent>
           </CardActionArea>
         </Card>
-        <Card sx={{ maxWidth: 400 }}>
+        <Card sx={cardStyles}>
           <CardActionArea>
             <CardMedia
               component="img"
-              height="250"
-              width="250"
               image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_89AZTB8E5H.jpg"
               alt="como lo hacemos"
+              sx={{ objectFit: 'cover', height: '100%' }}
             />
             <CardContent>
               <Typography variant="h5">
                 { indexLabels['howWeDoIt.title'] }
               </Typography>
-              <Typography variant="p">
+              <Typography variant="body2">
                 { indexLabels['howWeDoIt.description']}
               </Typography>
             </CardContent>
           </CardActionArea>
         </Card>
-        <Card sx={{ maxWidth: 600 }}>
+        <Card sx={cardStyles}>
           <CardActionArea>
             <CardMedia
               component="img"
-              height="250"
-              width="250"
               image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_IHBPBLYUFE.jpg"
-              alt="como lo hacemos"
+              alt="beneficios"
+              sx={{ objectFit: 'cover', height: '100%' }}
             />
             <CardContent>
               <Typography variant="h5">
