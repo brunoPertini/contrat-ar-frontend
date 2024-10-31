@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-  Box, Button, Card, CardActionArea, CardContent, CardMedia, Divider, Stack, Typography,
+  Box, Card, CardActionArea, CardContent, CardMedia, Stack, Typography,
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 import Header from '../Header';
 import { withRouter } from '../Shared/Components';
 import InformativeAlert from '../Shared/Components/Alert';
@@ -11,10 +12,7 @@ import { LocalStorageService } from '../Infrastructure/Services/LocalStorageServ
 import { signUpLabels } from '../StaticData/SignUp';
 import { indexLabels } from '../StaticData/Index';
 import Footer from '../Shared/Components/Footer';
-import { getPlanLabel, getPlanDescription } from '../Shared/Helpers/PlanesHelper';
-import { sharedLabels } from '../StaticData/Shared';
-import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
-import { ARGENTINA_LOCALE } from '../Shared/Constants/System';
+import PlansSection from '../Shared/Components/PlansSection';
 
 const localStorageService = new LocalStorageService();
 
@@ -32,70 +30,6 @@ const plans = [
     value: 500,
   },
 ];
-
-function PricingSection() {
-  return (
-    <Box
-      sx={{
-        py: 5, px: 2, backgroundColor: '#f4f4f9', textAlign: 'center',
-      }}
-      display="flex"
-      flexDirection="column"
-    >
-      <Typography variant="h4" gutterBottom>
-        Nuestros Planes
-      </Typography>
-      <Box
-        display="flex"
-        flexDirection={{ xs: 'column', sm: 'row' }}
-        justifyContent="center"
-        gap={4}
-        mt={4}
-      >
-        {plans.map((plan, index) => (
-          <Card
-            key={index}
-            display="flex"
-            flexDirection="column"
-            sx={{
-              height: '100%',
-              maxWidth: 345,
-              borderRadius: 3,
-              flex: '1 1 300px',
-              justifyContent: 'space-between',
-            }}
-          >
-            <CardContent
-              display="flex"
-              flexDirection="column"
-              sx={{ flexGrow: 1 }}
-            >
-              <Typography variant="h5" fontWeight="bold">
-                { getPlanLabel(plan.id)}
-              </Typography>
-              <Typography variant="h6" color="primary" sx={{ my: 2 }}>
-                { sharedLabels.finalMonthlyPrice.replace(
-                  '{price}',
-                  getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.value,
-                )}
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Box>
-                { getPlanDescription(plan.type, plans, false) }
-              </Box>
-            </CardContent>
-            <Box display="flex" flexDirection="column" alignSelf="flex-end">
-              <Button variant="contained" color="primary" fullWidth>
-                ¡Suscríbete!
-              </Button>
-            </Box>
-
-          </Card>
-        ))}
-      </Box>
-    </Box>
-  );
-}
 
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({
@@ -158,8 +92,9 @@ const RootPage = withRouter(({ router }) => {
   const renderBenefits = (benefits) => benefits.split('.')
     .filter((line) => !!(line))
     .map((line) => (
-      <li>
-        { line }
+      <li style={{ display: 'flex' }}>
+        <CheckIcon sx={{ mr: '2%' }} />
+        <span>{ line }</span>
       </li>
 
     ));
@@ -182,6 +117,7 @@ const RootPage = withRouter(({ router }) => {
         direction={{ xs: 'column', md: 'row' }}
         spacing={5}
         sx={{ ...indent, mt: '2%' }}
+        justifyContent="center"
       >
         <Card sx={cardStyles}>
           <CardActionArea>
@@ -240,6 +176,7 @@ const RootPage = withRouter(({ router }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '10px',
+                    listStyleType: 'none',
                     listStylePosition: 'inside',
                     padding: 0,
                     margin: 0,
@@ -259,6 +196,7 @@ const RootPage = withRouter(({ router }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '10px',
+                    listStyleType: 'none',
                     listStylePosition: 'inside',
                     padding: 0,
                     margin: 0,
@@ -277,7 +215,7 @@ const RootPage = withRouter(({ router }) => {
         </Card>
 
       </Stack>
-      <PricingSection />
+      <PlansSection plans={plans} />
       <Footer />
     </Box>
   );

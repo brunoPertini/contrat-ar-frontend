@@ -61,7 +61,7 @@ function PlanData({
         plan === PLAN_TYPE_FREE && (
           <LocationMap
             enableDragEvents={false}
-            circleRadius={1500}
+            circleRadius={1000}
             location={parseLocationForMap(userLocation)}
             containerStyles={{
               height: '500px',
