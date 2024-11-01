@@ -31,7 +31,7 @@ export default function Footer() {
           <ListItemText primary="Nuestros planes" />
         </ListItem>
         <ListItem disablePadding>
-          <ListItemText primary="Ayuda" />
+          <ListItemText primary="Ayuda y preguntas frecuentes" />
         </ListItem>
         <ListItem disablePadding>
           <ListItemText primary="Términos y condiciones" />

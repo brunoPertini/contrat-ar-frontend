@@ -13,6 +13,7 @@ import { signUpLabels } from '../StaticData/SignUp';
 import { indexLabels } from '../StaticData/Index';
 import Footer from '../Shared/Components/Footer';
 import PlansSection from '../Shared/Components/PlansSection';
+import FAQSection from '../Shared/Components/FAQSection';
 
 const localStorageService = new LocalStorageService();
 
@@ -216,6 +217,7 @@ const RootPage = withRouter(({ router }) => {
 
       </Stack>
       <PlansSection plans={plans} />
+      <FAQSection />
       <Footer />
     </Box>
   );
