@@ -19,8 +19,7 @@ function FAQSection() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body2">
-            Contract Ar es una plataforma que facilita la conexión entre clientes y
-            vendedores de productos o servicios.
+            { indexLabels['faq.a.1']}
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -42,8 +41,7 @@ function FAQSection() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body2">
-            La plataforma ofrece planes gratuitos y pagos, según el alcance de visibilidad y
-            los beneficios adicionales que desees aprovechar.
+            { indexLabels['faq.a.3']}
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -54,8 +52,7 @@ function FAQSection() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body2">
-            Contract Ar aplica una pequeña comisión en cada transacción para
-            cubrir los costos de mantenimien
+            { indexLabels['faq.a.4']}
           </Typography>
         </AccordionDetails>
       </Accordion>

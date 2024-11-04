@@ -13,8 +13,13 @@
     "plansTitle": "¿Querés vender tus productos o querés ofrecer tus servicios? Tenemos estos planes para vos",
     "faqTitle": "Preguntas Frecuentes",
     "faq.q.1": "¿Qué es Contract Ar?",
+    "faq.a.1": "Es una plataforma que facilita la conexión entre clientes y vendedores de productos o servicios.",
     "faq.q.2" : "¿Qué puedo vender?",
-     "faq.q.3" : "¿Qué costo tiene la plataforma",
+    "faq.a.2": "Podés ofrecer una amplia variedad de productos: de tecnología, alimentos, muebles, ropa, etc. También podés ofrecer tus habilidades como servicios, como pueden ser clases particulares, arreglo de electrodomésticos, jardinería, etc. Tené en cuenta que tus publicaciones tienen que cumplir con nuestra <a href=#>política de seguridad.</a>",
+     "faq.q.3" : "¿Qué costo tiene la plataforma?",
+     "faq.a.3": "Es gratuita, ofreciendo para los proveedores la posibilidad de un plan pago para acceder a más beneficios.",
      "faq.q.4": "¿La plataforma cobra alguna comisión por comprar o vender?",
-     "faq.a.2": "Podés ofrecer una amplia variedad de productos: de tecnología, alimentos, muebles, ropa, etc. También podés ofrecer tus habilidades como servicios, como pueden ser clases particulares, arreglo de electrodomésticos, jardinería, etc. Tené en cuenta que tus publicaciones tienen que cumplir con nuestra <a href=#>política de seguridad.</a>"
+     "faq.a.4": "Contract Ar no aplica ningún tipo de comisión.",
+     "contact.title": "¿Tenés más dudas? Contactanos y te responderemos a la brevedad.",
+     "contact.success": "¡Gracias por contactarnos! Te responderemos a la brevedad."
 }

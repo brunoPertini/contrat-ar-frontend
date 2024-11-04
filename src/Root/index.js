@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import {
-  Box, Card, CardActionArea, CardContent, CardMedia, Stack, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import Header from '../Header';
-import { withRouter } from '../Shared/Components';
+import withRouter from '../Shared/Components/HighOrderComponents/withRouter';
 import InformativeAlert from '../Shared/Components/Alert';
 import { routes } from '../Shared/Constants';
 import { rootPageLabels } from '../StaticData/RootPage';
@@ -14,6 +18,7 @@ import { indexLabels } from '../StaticData/Index';
 import Footer from '../Shared/Components/Footer';
 import PlansSection from '../Shared/Components/PlansSection';
 import FAQSection from '../Shared/Components/FAQSection';
+import ContactForm from '../Shared/Components/ContactForm';
 
 const localStorageService = new LocalStorageService();
 
@@ -218,6 +223,7 @@ const RootPage = withRouter(({ router }) => {
       </Stack>
       <PlansSection plans={plans} />
       <FAQSection />
+      <ContactForm />
       <Footer />
     </Box>
   );

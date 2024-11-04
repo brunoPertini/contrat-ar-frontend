@@ -114,5 +114,7 @@
     "users": "Usuarios",
     "products": "Productos",
     "services": "Servicios",
-    "changeRequests": "Pedidos de cambio"
+    "changeRequests": "Pedidos de cambio",
+    "mandatoryField": "* Campo obligatorio",
+    "message": "Mensaje"
 }

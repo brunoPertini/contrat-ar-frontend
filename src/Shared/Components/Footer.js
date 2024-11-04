@@ -1,12 +1,11 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import { Link } from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
+import Link from '@mui/material/Link';
 
 export default function Footer() {
   return (
@@ -43,16 +42,22 @@ export default function Footer() {
         justifyContent="space-evenly"
         sx={{ paddingRight: '20px' }}
       >
-        <Link
-          variant="body2"
-          sx={{
-            color: 'white',
-            textAlign: 'left',
-            cursor: 'pointer',
-          }}
-        >
-          Contactanos
-        </Link>
+        <Box display="flex" flexDirection="row">
+          <EmailIcon fontSize="small" />
+          <Link
+            variant="body2"
+            href="mailto:hola@contratar.com.ar"
+            sx={{
+              color: 'white',
+              textAlign: 'left',
+              cursor: 'pointer',
+              ml: '2%',
+            }}
+          >
+            hola@contratar.com.ar
+          </Link>
+        </Box>
+
         <Typography variant="body2">
           Copyright ©
           {' '}
