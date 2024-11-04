@@ -82,6 +82,7 @@ export default function Header({
 
   return (
     <AppBar
+      className="site-container"
       position="sticky"
       sx={{
         height: '100%',

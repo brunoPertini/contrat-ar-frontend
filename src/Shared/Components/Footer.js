@@ -6,8 +6,21 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import EmailIcon from '@mui/icons-material/Email';
 import Link from '@mui/material/Link';
+import { indexLabels } from '../../StaticData/Index';
 
 export default function Footer() {
+  const textProps = {
+    disablePadding: true,
+    sx: {
+      color: 'black',
+    },
+  };
+
+  const optionsLabels = [indexLabels.aboutUs,
+    indexLabels.ourPlans,
+    indexLabels.helpAndQuestions,
+    indexLabels.termsAndConditions];
+
   return (
     <Box
       component="footer"
@@ -23,18 +36,13 @@ export default function Footer() {
       }}
     >
       <List sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
-        <ListItem disablePadding>
-          <ListItemText primary="Sobre Nosotros" />
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemText primary="Nuestros planes" />
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemText primary="Ayuda y preguntas frecuentes" />
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemText primary="Términos y condiciones" />
-        </ListItem>
+        {
+          optionsLabels.map((label) => (
+            <ListItem {...textProps}>
+              <ListItemText primary={label} />
+            </ListItem>
+          ))
+        }
       </List>
       <Box
         display="flex"
@@ -63,7 +71,7 @@ export default function Footer() {
           {' '}
           {new Date().getFullYear()}
           {' '}
-          - ContractAr
+          - ContratAr
         </Typography>
       </Box>
     </Box>
