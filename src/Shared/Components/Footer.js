@@ -8,11 +8,17 @@ import EmailIcon from '@mui/icons-material/Email';
 import Link from '@mui/material/Link';
 import { indexLabels } from '../../StaticData/Index';
 
+const scrollToElement = (element) => element.scrollIntoView({
+  behavior: 'smooth',
+  block: 'start',
+});
+
 export default function Footer() {
   const textProps = {
     disablePadding: true,
     sx: {
-      color: 'black',
+      color: '#f5c242',
+      cursor: 'pointer',
     },
   };
 
@@ -20,6 +26,21 @@ export default function Footer() {
     indexLabels.ourPlans,
     indexLabels.helpAndQuestions,
     indexLabels.termsAndConditions];
+
+  const clickHandlers = {
+    [indexLabels.aboutUs]: () => {
+      scrollToElement(document.querySelector('.companyDescription'));
+    },
+    [indexLabels.ourPlans]: () => {
+      scrollToElement(document.querySelector('.plansDescriptions'));
+    },
+
+    [indexLabels.helpAndQuestions]: () => {
+      scrollToElement(document.querySelector('.faqSection'));
+    },
+
+    [indexLabels.termsAndConditions]: () => {},
+  };
 
   return (
     <Box
@@ -30,7 +51,6 @@ export default function Footer() {
       sx={{
         paddingLeft: '20px',
         bgcolor: 'primary.main',
-        color: 'white',
         textAlign: 'center',
         position: 'sticky',
       }}
@@ -38,7 +58,7 @@ export default function Footer() {
       <List sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
         {
           optionsLabels.map((label) => (
-            <ListItem {...textProps}>
+            <ListItem {...textProps} onClick={() => clickHandlers[label]()}>
               <ListItemText primary={label} />
             </ListItem>
           ))
@@ -51,12 +71,12 @@ export default function Footer() {
         sx={{ paddingRight: '20px' }}
       >
         <Box display="flex" flexDirection="row">
-          <EmailIcon fontSize="small" />
+          <EmailIcon fontSize="small" sx={{ fill: '#f5c242' }} />
           <Link
             variant="body2"
             href="mailto:hola@contratar.com.ar"
             sx={{
-              color: 'white',
+              color: '#f5c242',
               textAlign: 'left',
               cursor: 'pointer',
               ml: '2%',
@@ -66,7 +86,7 @@ export default function Footer() {
           </Link>
         </Box>
 
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ color: '#f5c242' }}>
           Copyright ©
           {' '}
           {new Date().getFullYear()}

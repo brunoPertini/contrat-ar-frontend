@@ -13,14 +13,19 @@ import { parseLocationForMap } from '../Helpers/UtilsHelper';
 import LocationMap from './LocationMap';
 import { indexLabels } from '../../StaticData/Index';
 
-function PlansSection({ plans }) {
+function PlansSection({ plans, containerStyles }) {
   return (
     <Box
       sx={{
-        py: 5, px: 2, backgroundColor: '#f4f4f9', textAlign: 'center',
+        py: 5,
+        px: 2,
+        backgroundColor: '#f4f4f9',
+        textAlign: 'center',
+        ...containerStyles,
       }}
       display="flex"
       flexDirection="column"
+      className="plansDescriptions"
     >
       <Typography variant="h4" gutterBottom>
         { indexLabels.plansTitle }

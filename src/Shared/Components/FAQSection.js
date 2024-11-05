@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -6,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { indexLabels } from '../../StaticData/Index';
 
-function FAQSection() {
+function FAQSection({ containerStyles }) {
   return (
-    <Box sx={{ margin: '2%' }}>
+    <Box className="faqSection" sx={{ margin: '2%', ...containerStyles }}>
       <Typography variant="h4" align="center" gutterBottom>
         { indexLabels.faqTitle }
       </Typography>

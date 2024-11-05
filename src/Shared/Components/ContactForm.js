@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,7 +11,7 @@ import { indexLabels } from '../../StaticData/Index';
 
 const mandatoryFields = ['name', 'email', 'message'];
 
-function ContactForm() {
+function ContactForm({ containerStyles }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -54,7 +55,10 @@ function ContactForm() {
   };
 
   return (
-    <Box sx={{ mt: 5, mb: 5, px: { xs: 2, sm: 4 } }}>
+    <Box sx={{
+      mt: 5, mb: 5, px: { xs: 2, sm: 4 }, ...containerStyles,
+    }}
+    >
       <Typography variant="h4" align="center" gutterBottom>
         { indexLabels['contact.title']}
       </Typography>

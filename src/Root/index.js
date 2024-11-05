@@ -109,8 +109,19 @@ const RootPage = withRouter(({ router }) => {
 
   const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
 
+  const sectionStyles = {
+    border: '1px solid #d1d1d1',
+    borderRadius: '8px',
+    padding: '20px',
+    marginBottom: '20px',
+  };
+
   return (
-    <Box display="flex" flexDirection="column">
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+    >
       <InformativeAlert
         onClose={handleAlertClose}
         open={alertData.isAlertOpen}
@@ -120,9 +131,10 @@ const RootPage = withRouter(({ router }) => {
       />
       <Header menuOptions={menuOptions} />
       <Stack
+        className="companyDescription"
         direction={{ xs: 'column', md: 'row' }}
         spacing={5}
-        sx={{ ...indent, mt: '2%' }}
+        sx={{ ...indent, ...sectionStyles }}
         justifyContent="center"
       >
         <Card sx={cardStyles}>
@@ -221,9 +233,9 @@ const RootPage = withRouter(({ router }) => {
         </Card>
 
       </Stack>
-      <PlansSection plans={plans} />
-      <FAQSection />
-      <ContactForm />
+      <PlansSection plans={plans} containerStyles={sectionStyles} />
+      <FAQSection containerStyles={sectionStyles} />
+      <ContactForm containerStyles={sectionStyles} />
       <Footer />
     </Box>
   );

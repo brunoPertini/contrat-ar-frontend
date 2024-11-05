@@ -82,10 +82,9 @@ export default function Header({
 
   return (
     <AppBar
-      className="site-container"
       position="sticky"
       sx={{
-        height: '100%',
+        height: '10%',
       }}
     >
       <Grid container sx={{ justifyContent: 'space-between' }}>
