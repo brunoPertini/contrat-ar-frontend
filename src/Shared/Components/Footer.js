@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -6,14 +7,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import EmailIcon from '@mui/icons-material/Email';
 import Link from '@mui/material/Link';
-import { indexLabels } from '../../StaticData/Index';
 
-const scrollToElement = (element) => element.scrollIntoView({
-  behavior: 'smooth',
-  block: 'start',
-});
-
-export default function Footer() {
+export default function Footer({ options }) {
   const textProps = {
     disablePadding: true,
     sx: {
@@ -22,31 +17,10 @@ export default function Footer() {
     },
   };
 
-  const optionsLabels = [indexLabels.aboutUs,
-    indexLabels.ourPlans,
-    indexLabels.helpAndQuestions,
-    indexLabels.termsAndConditions];
-
-  const clickHandlers = {
-    [indexLabels.aboutUs]: () => {
-      scrollToElement(document.querySelector('.companyDescription'));
-    },
-    [indexLabels.ourPlans]: () => {
-      scrollToElement(document.querySelector('.plansDescriptions'));
-    },
-
-    [indexLabels.helpAndQuestions]: () => {
-      scrollToElement(document.querySelector('.faqSection'));
-    },
-
-    [indexLabels.termsAndConditions]: () => {},
-  };
-
   return (
     <Box
       component="footer"
       display="flex"
-      flexShrink="unset"
       justifyContent="space-between"
       sx={{
         paddingLeft: '20px',
@@ -57,8 +31,8 @@ export default function Footer() {
     >
       <List sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
         {
-          optionsLabels.map((label) => (
-            <ListItem {...textProps} onClick={() => clickHandlers[label]()}>
+          options.map(({ label, onClick }) => (
+            <ListItem {...textProps} onClick={onClick}>
               <ListItemText primary={label} />
             </ListItem>
           ))
@@ -97,3 +71,10 @@ export default function Footer() {
     </Box>
   );
 }
+
+Footer.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string,
+    onClick: PropTypes.func,
+  })).isRequired,
+};

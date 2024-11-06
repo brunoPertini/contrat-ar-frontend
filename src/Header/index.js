@@ -4,10 +4,10 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import isEmpty from 'lodash/isEmpty';
 import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
 import { UserAccountOptions } from '../Shared/Components';
@@ -27,9 +27,7 @@ function HeaderMenu({ options }) {
       />
       {
       isNonComponentMenu && options.map((option, index) => {
-        const {
-          label, onClick,
-        } = option;
+        const { label, onClick } = option;
         return (
           <Button
             color="inherit"
@@ -40,14 +38,13 @@ function HeaderMenu({ options }) {
           </Button>
         );
       })
-     }
+}
       {
       !isNonComponentMenu && options.map((option, index) => {
         const { component: Component, props } = option;
-
         return <Component key={`header-menu-${index}`} {...props} />;
       })
-     }
+}
     </Toolbar>
   );
 }
@@ -63,49 +60,54 @@ export default function Header({
   userInfo, menuOptions, withMenuComponent, renderNavigationLinks, handleLogout,
 }) {
   const mainMenuOption = <Avatar sx={{ width: 80, height: 80 }}>{sharedLabels.menu}</Avatar>;
-
   const showUserInfo = !isEmpty(userInfo);
 
   const menusMarkup = (
-    <Grid item display="flex">
+    <Box display="flex" alignItems="center">
       { showUserInfo && (
-      <HeaderMenu options={[{
-        component: UserAccountOptions,
-        props: { userInfo, handleLogout },
-      }]}
-      />
+        <HeaderMenu options={[{
+          component: UserAccountOptions,
+          props: { userInfo, handleLogout },
+        }]}
+        />
       )}
       { withMenuComponent && <Menu options={menuOptions} buttonLabel={mainMenuOption} />}
-      {!showUserInfo && <HeaderMenu options={menuOptions} /> }
-    </Grid>
+      { !showUserInfo && <HeaderMenu options={menuOptions} />}
+    </Box>
   );
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        height: '10%',
-      }}
-    >
-      <Grid container sx={{ justifyContent: 'space-between' }}>
-        <Grid item>
+    <AppBar position="sticky">
+      <Box
+        display="flex"
+        flexDirection={{
+          xs: 'column',
+          sm: 'row',
+          md: 'row',
+          lg: 'row',
+        }}
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ padding: 1 }}
+      >
+        <Box flexGrow={1}>
           <Link
             variant="h3"
-            sx={{ width: '30%', color: 'white', cursor: 'pointer' }}
+            sx={{
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: { xs: '1.5rem', md: '2rem' },
+              textAlign: { xs: 'center', md: 'left' },
+              display: 'block',
+            }}
             href="/"
           >
-
-            { sharedLabels.siteName }
+            {sharedLabels.siteName}
           </Link>
-        </Grid>
-        { renderNavigationLinks
-        && (
-        <Grid item>
-          { menusMarkup }
-        </Grid>
-        )}
-        { !renderNavigationLinks && menusMarkup }
-      </Grid>
+        </Box>
+        {renderNavigationLinks && <Box>{menusMarkup}</Box>}
+        {!renderNavigationLinks && menusMarkup}
+      </Box>
     </AppBar>
   );
 }

@@ -6,7 +6,7 @@ import {
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Header from '../../Header';
 import {
   RadioList, Layout, SearcherInput, StaticAlert,
@@ -22,6 +22,8 @@ import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
+import Footer from '../../Shared/Components/Footer';
+import { indexLabels } from '../../StaticData/Index';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
@@ -127,11 +129,10 @@ function Cliente({
   };
 
   const gridProps = {
-    container: true,
-    item: true,
-    xs: 6,
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
     sx: {
-      flexDirection: 'column',
       alignItems: 'center',
     },
   };
@@ -160,55 +161,58 @@ function Cliente({
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
+  const footerOptions = [
+    { label: indexLabels.helpAndQuestions, onClick: () => {} },
+    { label: indexLabels.termsAndConditions, onClick: () => {} },
+  ];
+
   return (
-    <>
+
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+    >
       <Header withMenuComponent menuOptions={menuOptions} userInfo={userInfo} />
-      <GoBackLink />
+      <GoBackLink styles={{ pl: '2%' }} />
       { ExitAppDialog }
-      <Grid
-        container
-        sx={{
-          flexDirection: 'row',
-        }}
-        justifyContent="center"
+      <Box
+        display="flex"
+        flexDirection="row"
+        height="100%"
+        minHeight="80vh"
+        sx={{ pl: '2%' }}
+        flexGrow={1}
       >
-        <Grid
-          container
-          item
-          height="30%"
-          xs={6}
-          sx={{
-            flexDirection: 'column',
-            position: 'sticky',
-            'z-index': 100,
-          }}
+        <Box
+          display="flex"
+          flexDirection="column"
+          flexGrow={1}
         >
-          <Grid
-            item
-          >
-            <SearcherInput
-              title={labels.title}
-              onSearchClick={handleStartSearch}
-              isSearchDisabled={isSearchDisabled}
-              searchLabel={!searchInputValue ? sharedLabels.search : ''}
-              hasError={!!searchErrorMessage}
-              errorMessage={searchErrorMessage}
-              inputValue={searchInputValue}
-              titleConfig={{
-                variant: 'h2',
-                color: '#1976d2',
-              }}
-              searcherConfig={{
-                variant: 'outlined',
-                sx: { width: '60%' },
-              }}
-              keyEvents={{
-                onKeyUp: handleKeyUp,
-                onEnterPressed: handleStartSearch,
-              }}
-            />
-          </Grid>
-          <Grid item>
+          <SearcherInput
+            title={labels.title}
+            onSearchClick={handleStartSearch}
+            isSearchDisabled={isSearchDisabled}
+            searchLabel={!searchInputValue ? sharedLabels.search : ''}
+            hasError={!!searchErrorMessage}
+            errorMessage={searchErrorMessage}
+            inputValue={searchInputValue}
+            titleConfig={{
+              variant: 'h6',
+              color: '#1976d2',
+              width: '30%',
+              sx: { mb: '1%' },
+            }}
+            searcherConfig={{
+              variant: 'outlined',
+              sx: { width: '40%' },
+            }}
+            keyEvents={{
+              onKeyUp: handleKeyUp,
+              onEnterPressed: handleStartSearch,
+            }}
+          />
+          <Box>
             <FormControl sx={{ mt: '3%' }}>
               <FormLabel>
                 {' '}
@@ -219,10 +223,10 @@ function Cliente({
               </FormLabel>
               <RadioList {...radioGroupConfig} />
             </FormControl>
-          </Grid>
+          </Box>
           {
             filtersEnabled && (
-            <Grid item sx={{ mt: '3%' }}>
+            <Box sx={{ mt: '3%' }}>
               <VendiblesFilters
                 filtersApplied={lastFiltersApplied}
                 setFiltersApplied={setLastFiltersApplied}
@@ -231,10 +235,10 @@ function Cliente({
                 onFiltersApplied={handleStartSearch}
                 enabledFilters={{ category: true, state: false }}
               />
-            </Grid>
+            </Box>
             )
           }
-        </Grid>
+        </Box>
         <Layout gridProps={gridProps} isLoading={isLoading}>
           {searchDone && !thereIsNoResults && (
           <Typography variant="h3">
@@ -258,8 +262,10 @@ function Cliente({
             )
           }
         </Layout>
-      </Grid>
-    </>
+      </Box>
+
+      <Footer options={footerOptions} />
+    </Box>
   );
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { useContext } from 'react';
@@ -8,10 +9,13 @@ import { NavigationContext } from '../../State/Contexts/NavigationContext';
  * Renders a link which reads a function from NavigationContext and runs it when clicked.
  * It should be wrapped under NavigationContextProvider
  */
-function GoBackLink() {
+function GoBackLink({ styles }) {
   const { handleGoBack: goBackFunction, params } = useContext(NavigationContext);
   return (
-    <Box sx={{ mt: '1rem', mb: '1rem', width: '30%' }}>
+    <Box sx={{
+      mt: '1rem', mb: '1rem', width: '10%', ...styles,
+    }}
+    >
       <Link
         id="goBackLink"
         component="button"

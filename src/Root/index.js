@@ -37,6 +37,20 @@ const plans = [
   },
 ];
 
+const scrollToElement = (element) => element.scrollIntoView({
+  behavior: 'smooth',
+  block: 'start',
+});
+
+const footerOptions = [{
+  label: indexLabels.aboutUs,
+  onClick: () => scrollToElement(document.querySelector('.companyDescription')),
+},
+{ label: indexLabels.ourPlans, onClick: () => scrollToElement(document.querySelector('.plansDescriptions')) },
+{ label: indexLabels.helpAndQuestions, onClick: () => scrollToElement(document.querySelector('.faqSection')) },
+{ label: indexLabels.termsAndConditions, onClick: () => {} },
+];
+
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({
     isAlertOpen: false,
@@ -236,7 +250,7 @@ const RootPage = withRouter(({ router }) => {
       <PlansSection plans={plans} containerStyles={sectionStyles} />
       <FAQSection containerStyles={sectionStyles} />
       <ContactForm containerStyles={sectionStyles} />
-      <Footer />
+      <Footer options={footerOptions} />
     </Box>
   );
 });

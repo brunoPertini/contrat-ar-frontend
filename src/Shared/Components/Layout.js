@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import { sharedLabels } from '../../StaticData/Shared';
 
 /**
@@ -15,7 +15,7 @@ import { sharedLabels } from '../../StaticData/Shared';
  */
 function Layout({ gridProps, children, isLoading }) {
   return (
-    <Grid
+    <Box
       {...gridProps}
     >
       { isLoading && (
@@ -30,7 +30,7 @@ function Layout({ gridProps, children, isLoading }) {
       </>
       ) }
       {!isLoading && children }
-    </Grid>
+    </Box>
   );
 }
 
