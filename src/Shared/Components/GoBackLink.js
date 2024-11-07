@@ -21,7 +21,7 @@ function GoBackLink({ styles }) {
         component="button"
         variant="h5"
         onClick={() => goBackFunction(...params)}
-        sx={{ cursor: 'pointer' }}
+        sx={{ cursor: 'pointer', color: '#f5c242', textDecoration: 0 }}
       >
         { sharedLabels.goBack }
       </Link>

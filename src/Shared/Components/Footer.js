@@ -22,6 +22,7 @@ export default function Footer({ options }) {
       component="footer"
       display="flex"
       justifyContent="space-between"
+      marginTop="auto"
       sx={{
         paddingLeft: '20px',
         bgcolor: 'primary.main',

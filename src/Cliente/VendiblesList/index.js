@@ -14,13 +14,18 @@ import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/Syst
 function LinkSection({ linkLabel, onClick, vendibleId }) {
   return (
     <>
-      <Groups2Icon fontSize="large" />
+      <Groups2Icon fontSize="large" color="primary" />
       <Link
         onClick={() => onClick(vendibleId)}
         variant="h5"
         sx={{
-          ml: '10px',
+          ml: 2,
+          color: 'primary.main',
           cursor: 'pointer',
+          fontWeight: 'bold',
+          '&:hover': {
+            textDecoration: 'underline',
+          },
         }}
       >
         {linkLabel}
@@ -29,21 +34,17 @@ function LinkSection({ linkLabel, onClick, vendibleId }) {
   );
 }
 
-/**
- * List that shows each service or product info, including its provider
- * @param {Object<String, Array>} vendiblesObject
- * @param {String} vendibleType
- */
 export default function VendiblesList({ vendiblesObject, vendibleType }) {
   const vendiblesNames = useMemo(() => Object.keys(vendiblesObject.vendibles), [vendiblesObject]);
-
-  const { linkLabel, redirectLink } = useMemo(() => (vendibleType === systemConstants.PRODUCTS ? {
-    linkLabel: labels.linkVendibleCardProduct,
-    redirectLink: routes.productoIndex,
-  } : {
-    linkLabel: labels.linkVendibleCardService,
-    redirectLink: routes.servicioIndex,
-  }), [vendibleType]);
+  const { linkLabel, redirectLink } = useMemo(() => (
+    vendibleType === systemConstants.PRODUCTS ? {
+      linkLabel: labels.linkVendibleCardProduct,
+      redirectLink: routes.productoIndex,
+    } : {
+      linkLabel: labels.linkVendibleCardService,
+      redirectLink: routes.servicioIndex,
+    }
+  ), [vendibleType]);
 
   const navigate = useNavigate();
 
@@ -52,13 +53,11 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
   }, [navigate]);
 
   return (
-    <List>
-      { vendiblesNames.map((vendibleName) => {
+    <List sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {vendiblesNames.map((vendibleName) => {
         const images = [];
-        for (let i = 0;
-          i < vendiblesObject.vendibles[vendibleName].length
-          && images.length < MAX_CLIENT_VENDIBLES_GALLERY_IMAGES;
-          i++) {
+        for (let i = 0; i < vendiblesObject.vendibles[vendibleName].length
+          && images.length < MAX_CLIENT_VENDIBLES_GALLERY_IMAGES; i++) {
           if (vendiblesObject.vendibles[vendibleName][i].imagenUrl) {
             images.push(vendiblesObject.vendibles[vendibleName][i].imagenUrl);
           }
@@ -71,18 +70,19 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
             vendibleTitle={vendibleName}
             images={images}
             key={`vendibleCard_${vendibleName}`}
-            cardStyles={{ mb: '2%', display: 'flex', flexDirection: 'column' }}
+            cardStyles={{ mb: 4, boxShadow: 3, borderRadius: 2 }}
             LinkSection={(
               <LinkSection
                 vendibleId={vendibleId}
                 onClick={handleGoToVendiblePage}
                 linkLabel={linkLabel}
               />
-)}
-            linkCardStyles={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+            )}
+            linkCardStyles={{ display: 'flex', alignItems: 'center', gap: 1 }}
             imageListProps={{
               cols: 3,
-              gap: 10,
+              gap: 8,
+              sx: { borderRadius: 2 },
             }}
             ChildrenComponent={ClienteVendibleCard}
           />

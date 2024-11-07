@@ -102,30 +102,28 @@ function CategoryAccordion({
   useEffect(() => {
     const firstCategoriesSections = [];
     const allHierarchies = Object.values(categories);
-    allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
+    // allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
 
-    allHierarchies.forEach((hierarchiesList) => {
-      hierarchiesList.forEach((hierarchy) => {
-        const { root, rootId, children } = hierarchy;
+    allHierarchies.forEach((hierarchy) => {
+      const { root, rootId, children } = hierarchy;
 
-        const isSuperCategory = !!(children.length);
+      const isSuperCategory = !!(children.length);
 
-        const childrenJsx = [];
+      const childrenJsx = [];
 
-        const onChange = () => handleAccordionClick({ rootId, children });
+      const onChange = () => handleAccordionClick({ rootId, children });
 
-        const accordionElement = isSuperCategory ? new RootRenderer({
-          rootName: root, rootId, onChange, isExpanded: false, children: childrenJsx,
-        })
-          : new EmptyTreeRenderer({
-            rootName: root,
-            rootId,
-            isExpanded: true,
-            handleCategorySelected,
-          });
+      const accordionElement = isSuperCategory ? new RootRenderer({
+        rootName: root, rootId, onChange, isExpanded: false, children: childrenJsx,
+      })
+        : new EmptyTreeRenderer({
+          rootName: root,
+          rootId,
+          isExpanded: true,
+          handleCategorySelected,
+        });
 
-        firstCategoriesSections.push(accordionElement);
-      });
+      firstCategoriesSections.push(accordionElement);
     });
 
     setCategoriesSubSection(firstCategoriesSections);

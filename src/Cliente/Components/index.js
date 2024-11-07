@@ -24,6 +24,7 @@ import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
 import Footer from '../../Shared/Components/Footer';
 import { indexLabels } from '../../StaticData/Index';
+import { mockVendiblesObject } from '../../Shared/Mocks/clienteServiciosMock';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
@@ -34,7 +35,7 @@ function Cliente({
   const [previousSearchInputValue, setPreviousSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
-  const [vendiblesResponse, setVendiblesResponse] = useState({});
+  const [vendiblesResponse, setVendiblesResponse] = useState(mockVendiblesObject);
 
   const [lastFiltersApplied, setLastFiltersApplied] = useState({});
 
@@ -42,7 +43,7 @@ function Cliente({
   const [isLoading, setIsLoading] = useState(false);
   const [thereIsNoResults, setThereIsNoResults] = useState(false);
 
-  const [filtersEnabled, setFiltersEnabled] = useState(false);
+  const [filtersEnabled, setFiltersEnabled] = useState(true);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
@@ -132,8 +133,14 @@ function Cliente({
     display: 'flex',
     flexDirection: 'column',
     flexGrow: 1,
+    minHeight: '100vh',
     sx: {
       alignItems: 'center',
+      bgcolor: '#ffffff',
+      border: '1px solid #e0e0e0',
+      borderRadius: '8px',
+      padding: '24px',
+      boxShadow: 2,
     },
   };
 
@@ -179,9 +186,12 @@ function Cliente({
       <Box
         display="flex"
         flexDirection="row"
-        height="100%"
-        minHeight="80vh"
-        sx={{ pl: '2%' }}
+        sx={{
+          pl: '2%',
+          bgcolor: 'background.default',
+          padding: '16px',
+          gap: '24px',
+        }}
         flexGrow={1}
       >
         <Box
@@ -189,30 +199,15 @@ function Cliente({
           flexDirection="column"
           flexGrow={1}
         >
-          <SearcherInput
-            title={labels.title}
-            onSearchClick={handleStartSearch}
-            isSearchDisabled={isSearchDisabled}
-            searchLabel={!searchInputValue ? sharedLabels.search : ''}
-            hasError={!!searchErrorMessage}
-            errorMessage={searchErrorMessage}
-            inputValue={searchInputValue}
-            titleConfig={{
-              variant: 'h6',
-              color: '#1976d2',
-              width: '30%',
-              sx: { mb: '1%' },
-            }}
-            searcherConfig={{
-              variant: 'outlined',
-              sx: { width: '40%' },
-            }}
-            keyEvents={{
-              onKeyUp: handleKeyUp,
-              onEnterPressed: handleStartSearch,
-            }}
-          />
-          <Box>
+          <Box sx={{
+            bgcolor: '#f5f5f5',
+            border: '2px solid',
+            borderColor: 'rgb(36, 134, 164)',
+            borderRadius: 2,
+            padding: '24px',
+            boxShadow: '2px 0px 8px rgba(0, 0, 0, 0.1)',
+          }}
+          >
             <FormControl sx={{ mt: '3%' }}>
               <FormLabel>
                 {' '}
@@ -223,6 +218,42 @@ function Cliente({
               </FormLabel>
               <RadioList {...radioGroupConfig} />
             </FormControl>
+            <SearcherInput
+              title={labels.title}
+              onSearchClick={handleStartSearch}
+              isSearchDisabled={isSearchDisabled}
+              searchLabel={!searchInputValue ? sharedLabels.search : ''}
+              hasError={!!searchErrorMessage}
+              errorMessage={searchErrorMessage}
+              inputValue={searchInputValue}
+              titleConfig={{
+                variant: 'h6',
+                sx: { mb: 2 },
+              }}
+              searcherConfig={{
+                variant: 'outlined',
+                sx: {
+                  width: '100%',
+                  boxShadow: 1,
+                  borderRadius: 2,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#1976d2',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'secondary.main',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                  },
+                },
+              }}
+              keyEvents={{
+                onKeyUp: handleKeyUp,
+                onEnterPressed: handleStartSearch,
+              }}
+            />
           </Box>
           {
             filtersEnabled && (

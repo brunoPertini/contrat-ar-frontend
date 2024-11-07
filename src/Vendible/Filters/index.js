@@ -98,15 +98,20 @@ function VendiblesFilters({
   const categoriesSection = (
     <>
       {(isEmpty(filtersLabels)) && (
-      <Grid item xs={4}>
-        {!showAccordionTitle && alternativeAccordionTitle}
+      <Box sx={{
+        mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
+      }}
+      >
+        <Typography variant="h6" color="primary">
+          { !enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle }
+        </Typography>
         <CategoryAccordion
           categories={categories}
           vendibleType={vendibleType}
           onCategorySelected={handleOnCategorySelected}
           showTitle={showAccordionTitle}
         />
-      </Grid>
+      </Box>
       )}
       {
       !(isEmpty(filtersLabels)) && (
@@ -121,66 +126,51 @@ function VendiblesFilters({
   );
 
   const locationsDistanceSection = (
-    <Grid
-      item
-      sx={{ mt: '5%', ml: '5%' }}
+    <Box sx={{
+      mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
+    }}
     >
-      <Typography variant="h4">
-        { labels.filterByDistanceTitle }
+      <Typography variant="h6" color="primary">
+        {labels.filterByDistanceTitle}
       </Typography>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{ mt: '5%', ml: '5%' }}
-      >
-        <Typography id="input-slider" gutterBottom>
-          { labels.filterByDistanceExplanation }
-        </Typography>
-        <RangeSlider
-          shouldShowBottomInputs
-          values={filtersApplied.toFilterDistances}
-          handleOnChange={handleOnDistancesChanged}
-          inputTextsHelpers={locationSliderInputHelperTexts}
-          getInputTextFunction={getTextForDistanceSliderInput}
-          {...distanceSliderAdditionalProps}
-        />
-      </Box>
-    </Grid>
-
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+        {labels.filterByDistanceExplanation}
+      </Typography>
+      <RangeSlider
+        shouldShowBottomInputs
+        values={filtersApplied.toFilterDistances}
+        handleOnChange={handleOnDistancesChanged}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        getInputTextFunction={getTextForDistanceSliderInput}
+        {...distanceSliderAdditionalProps}
+      />
+    </Box>
   );
 
   const priceSection = (
-    <Grid
-      item
-      sx={{ mt: '5%', ml: '5%' }}
+    <Box sx={{
+      mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
+    }}
     >
-      <Typography variant="h4">
-        { labels.filterByPriceTitle }
+      <Typography variant="h6" color="primary">
+        {labels.filterByPriceTitle}
       </Typography>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{ mt: '5%', ml: '5%' }}
-      >
-        <Typography gutterBottom>
-          { labels.filterByPriceExplanation }
-        </Typography>
-        <RangeSlider
-          showInputsIcon
-          shouldShowBottomInputs
-          values={filtersApplied.prices}
-          inputTextsHelpers={locationSliderInputHelperTexts}
-          handleOnChange={onChangePricesWrapper}
-          getInputTextFunction={getTextForPricesSliderInput}
-          getAriaValueText={getTextForPricesSliderInput}
-          valueLabelFormat={getTextForPricesSliderInput}
-          bottomInputsProps={{
-            readOnly: false,
-          }}
-          {...priceSliderAdditionalProps}
-        />
-      </Box>
-    </Grid>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+        {labels.filterByPriceExplanation}
+      </Typography>
+      <RangeSlider
+        showInputsIcon
+        shouldShowBottomInputs
+        values={filtersApplied.prices}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        handleOnChange={onChangePricesWrapper}
+        getInputTextFunction={getTextForPricesSliderInput}
+        getAriaValueText={getTextForPricesSliderInput}
+        valueLabelFormat={getTextForPricesSliderInput}
+        bottomInputsProps={{ readOnly: false }}
+        {...priceSliderAdditionalProps}
+      />
+    </Box>
   );
 
   const stateSection = (
@@ -194,7 +184,7 @@ function VendiblesFilters({
   );
 
   return (
-    <Grid container flexDirection="column" sx={{ ...containerStyles }}>
+    <Grid container flexDirection="column" sx={{ ...containerStyles, mt: 2 }}>
       {enabledFilters.category && categoriesSection}
       {enabledFilters.distance && locationsDistanceSection}
       {enabledFilters.price && priceSection }
