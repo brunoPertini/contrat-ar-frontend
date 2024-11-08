@@ -24,6 +24,8 @@ class LeafRenderer extends CategoryRenderer {
           variant="caption"
           sx={{
             cursor: 'pointer',
+            color: '#f5c242',
+            textDecoration: 0,
           }}
           onClick={() => handleCategorySelected(rootId, rootName)}
         >
@@ -38,6 +40,8 @@ class LeafRenderer extends CategoryRenderer {
             variant="caption"
             sx={{
               cursor: 'pointer',
+              color: '#f5c242',
+              textDecoration: 0,
             }}
           >
             { rootName }

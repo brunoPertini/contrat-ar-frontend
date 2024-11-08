@@ -151,7 +151,22 @@ function CategoryAccordion({
           )}
           {categoriesSubSection.map((accordionElement) => accordionElement.render())}
         </div>
-        <Link sx={{ mt: '10%' }} onClick={() => setIsModalOpen(true)}>
+        <Link
+          sx={{
+            display: 'inline-block',
+            mt: 2,
+            textAlign: 'center',
+            color: '#1976d2',
+            border: '1px solid #1976d2',
+            borderRadius: '16px',
+            padding: '8px 16px',
+            '&:hover': {
+              bgcolor: '#e3f2fd',
+              textDecoration: 'none',
+            },
+          }}
+          onClick={() => setIsModalOpen(true)}
+        >
           {sharedLabels.seeMore}
         </Link>
       </Box>

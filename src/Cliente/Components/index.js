@@ -209,7 +209,7 @@ function Cliente({
           }}
           >
             <FormControl sx={{ mt: '3%' }}>
-              <FormLabel>
+              <FormLabel sx={{ color: 'black' }}>
                 {' '}
                 <Typography variant="h5">
                   { labels.lookingFor }
@@ -227,7 +227,7 @@ function Cliente({
               errorMessage={searchErrorMessage}
               inputValue={searchInputValue}
               titleConfig={{
-                variant: 'h6',
+                variant: 'h5',
                 sx: { mb: 2 },
               }}
               searcherConfig={{

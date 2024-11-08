@@ -59,7 +59,16 @@ HeaderMenu.propTypes = {
 export default function Header({
   userInfo, menuOptions, withMenuComponent, renderNavigationLinks, handleLogout,
 }) {
-  const mainMenuOption = <Avatar sx={{ width: 80, height: 80 }}>{sharedLabels.menu}</Avatar>;
+  const mainMenuOption = (
+    <Avatar sx={{
+      width: 80,
+      height: 80,
+      backgroundColor: '#f5c242',
+    }}
+    >
+      {sharedLabels.menu}
+    </Avatar>
+  );
   const showUserInfo = !isEmpty(userInfo);
 
   const menusMarkup = (
