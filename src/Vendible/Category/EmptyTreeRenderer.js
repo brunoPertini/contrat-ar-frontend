@@ -23,6 +23,7 @@ class EmptyTreeRenderer extends CategoryRenderer {
             variant="caption"
             sx={{
               cursor: 'pointer',
+              color: '#f5c242',
             }}
             onClick={() => handleCategorySelected(rootId, rootName)}
           >
@@ -36,6 +37,7 @@ class EmptyTreeRenderer extends CategoryRenderer {
           <Link
             sx={{
               cursor: 'pointer',
+              color: '#f5c242',
             }}
           >
             { rootName }

@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from 'react';
 import RootRenderer from './RootRenderer';
 import EmptyTreeRenderer from './EmptyTreeRenderer';
@@ -118,9 +122,7 @@ const buildCategoriesToRender = ({
   };
 
   Object.values(sourceObject).forEach((hierarchiesList) => {
-    hierarchiesList.forEach((hierarchy) => {
-      processHierarchy(hierarchy);
-    });
+    processHierarchy(hierarchiesList);
   });
 
   const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);
@@ -170,30 +172,38 @@ function CategoryModal({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-    >
+    <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          background: 'white',
-          height: '70%',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+          width: { xs: '90%', sm: '70%', md: '60%' },
+          maxHeight: '80vh',
+          overflowY: 'auto',
         }}
       >
-        <Box display="flex" flexDirection="column" sx={{ mb: '5%' }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h6">{sharedLabels.searchCategory}</Typography>
+          <IconButton onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <Box display="flex" alignItems="center" mb={3}>
           <SearcherInput
             autoFocus
-            title={sharedLabels.searchCategory}
+            title=""
             titleConfig={{ variant: 'h6' }}
             searcherConfig={{
               variant: 'outlined',
-              sx: { width: '50%' },
+              sx: { width: '100%' },
             }}
-            inputStyles={{ border: '2px solid black' }}
             onSearchClick={filterCategories}
             keyEvents={{
               onKeyUp: handleKeyUp,
@@ -202,16 +212,20 @@ function CategoryModal({
             inputValue={searchTerm}
           />
         </Box>
-        <Box display="flex" flexDirection="row">
-          {
-            filteredCategories.map((column) => (
-              <Box display="flex" flexDirection="column">
-                {
-                    column.map((category) => category.render())
-                }
-              </Box>
-            ))
-          }
+
+        <Divider sx={{ mb: 3 }} />
+
+        {/* Categories List */}
+        <Box display="flex" flexWrap="wrap" gap={3}>
+          {filteredCategories.map((column, index) => (
+            <Box key={index} display="flex" flexDirection="column" gap={2}>
+              {column.map((category, idx) => (
+                <Box key={idx}>
+                  {category.render()}
+                </Box>
+              ))}
+            </Box>
+          ))}
         </Box>
       </Box>
     </Modal>

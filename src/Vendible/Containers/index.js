@@ -12,14 +12,16 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import { proveedoresInfoMock } from '../../Shared/Mocks/proveedoresInfoMock';
+import { userInfoMock } from '../../Shared/Mocks/userInfoMock';
 
 const stateSelector = (state) => state;
 
 function VendibleContainer({ router, handleLogout }) {
   const location = useLocation();
-  const { vendibleType, vendibleId } = location.state;
+  const { vendibleType = 'servicios', vendibleId = 1 } = location.state;
 
-  const [proveedoresInfo, setProveedoresInfo] = useState();
+  const [proveedoresInfo, setProveedoresInfo] = useState(proveedoresInfoMock);
   const [isError, setIsError] = useState(false);
 
   const [paginationInfo, setPaginationInfo] = useState({ pageable: { pageNumber: 0 } });
@@ -67,7 +69,7 @@ function VendibleContainer({ router, handleLogout }) {
   };
 
   useEffect(() => {
-    handleGetProveedoresInfo();
+    // handleGetProveedoresInfo();
   }, []);
 
   useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
@@ -77,9 +79,9 @@ function VendibleContainer({ router, handleLogout }) {
       <VendiblePage
         handleLogout={handleLogout}
         getVendibles={handleGetProveedoresInfo}
-        proveedoresInfo={proveedoresInfo}
+        proveedoresInfo={proveedoresInfoMock}
         vendibleType={vendibleType}
-        userInfo={userInfo}
+        userInfo={userInfoMock}
         router={router}
         paginationInfo={paginationInfo}
         setPaginationInfo={setPaginationInfo}

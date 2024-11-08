@@ -19,8 +19,8 @@ const userInfoSelector = createSelector(
 );
 
 const mockProps = {
-  dispatchHandleSearch: () => {}, // función vacía
-  handleLogout: () => {}, // función vacía
+  dispatchHandleSearch: () => {},
+  handleLogout: () => {},
   userInfo: {
     id: 1,
     name: 'John',

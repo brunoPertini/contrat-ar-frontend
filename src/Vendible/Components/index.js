@@ -2,7 +2,6 @@ import {
   Fragment, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import ImageListItem from '@mui/material/ImageListItem';
 import Button from '@mui/material/Button';
@@ -14,6 +13,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Link } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
@@ -34,15 +34,8 @@ import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
-
-const vendiblesGridProps = {
-  item: true,
-  xs: 9,
-  display: 'flex',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  alignContent: 'center',
-};
+import Footer from '../../Shared/Components/Footer';
+import { indexLabels } from '../../StaticData/Index';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -59,6 +52,11 @@ const proveedoresVendiblesFiltersModel = {
   toFilterDistances: [],
   prices: [],
 };
+
+const footerOptions = [
+  { label: indexLabels.helpAndQuestions, onClick: () => {} },
+  { label: indexLabels.termsAndConditions, onClick: () => {} },
+];
 
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router,
@@ -210,40 +208,40 @@ function VendiblePage({
     }, 1000);
   };
 
-  const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
-
   const filtersSection = filtersEnabled ? (
-    <Grid item xs={firstColumnBreakpoint}>
-      <Typography variant="h3" sx={{ ml: '5%' }}>
-        { vendibleNombre }
-      </Typography>
-      <VendiblesFilters
-        filtersApplied={filtersApplied}
-        setFiltersApplied={setFiltersApplied}
-        enabledFilters={{
-          category: false,
-          distance: isDistancesSliderEnabled,
-          price: isPricesSliderEnabled,
-        }}
-        distances={distancesForSlider}
-        prices={pricesForSlider}
-        onFiltersApplied={handleOnFiltersApplied}
-        distanceSliderAdditionalProps={{
-          step: 0.01,
-          min: proveedoresInfo.minDistance,
-          max: proveedoresInfo.maxDistance,
-        }}
-        priceSliderAdditionalProps={{
-          step: 10,
-          min: proveedoresInfo.minPrice,
-          max: proveedoresInfo.maxPrice,
-        }}
-      />
+    <Grid item xs={12} md={3} lg={2}>
+      <Box sx={{ position: 'sticky', top: 95 }}>
+        <Typography variant="h3" sx={{ ml: '5%' }}>
+          { vendibleNombre }
+        </Typography>
+        <VendiblesFilters
+          filtersApplied={filtersApplied}
+          setFiltersApplied={setFiltersApplied}
+          enabledFilters={{
+            category: false,
+            distance: isDistancesSliderEnabled,
+            price: isPricesSliderEnabled,
+          }}
+          distances={distancesForSlider}
+          prices={pricesForSlider}
+          onFiltersApplied={handleOnFiltersApplied}
+          distanceSliderAdditionalProps={{
+            step: 0.01,
+            min: proveedoresInfo.minDistance,
+            max: proveedoresInfo.maxDistance,
+          }}
+          priceSliderAdditionalProps={{
+            step: 10,
+            min: proveedoresInfo.minPrice,
+            max: proveedoresInfo.maxPrice,
+          }}
+        />
+      </Box>
     </Grid>
   ) : null;
 
   return (
-    <>
+    <Grid container spacing={2} sx={{ padding: 2 }}>
       { ExitAppDialog }
       <Header
         withMenuComponent
@@ -252,16 +250,15 @@ function VendiblePage({
         renderNavigationLinks
       />
       <GoBackLink />
-      <Grid
-        container
-        sx={{
-          flexDirection: 'row',
-        }}
+      <Box
+        display="flex"
+        flexDirection="row"
       >
         { filtersSection }
-        <Layout gridProps={vendiblesGridProps} isLoading={isLoadingVendibles}>
-          <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
-            {
+        <Grid item xs={12} md={9} lg={10}>
+          <Layout isLoading={isLoadingVendibles}>
+            <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
+              {
                 proveedoresInfo.vendibles.content.map((info) => {
                   const {
                     precio, proveedorId, imagenUrl, distance, tipoPrecio,
@@ -373,8 +370,8 @@ function VendiblePage({
                   );
                 })
               }
-          </List>
-          {
+            </List>
+            {
       paginationEnabled && (
         <Pagination
           variant="outlined"
@@ -392,7 +389,7 @@ function VendiblePage({
         />
       )
     }
-          {
+            {
             !isLoadingVendibles && noResultsFound && (
               <StaticAlert
                 label={vendiblesLabels.noResultsFound}
@@ -406,9 +403,11 @@ function VendiblePage({
               />
             )
           }
-        </Layout>
-      </Grid>
-    </>
+          </Layout>
+        </Grid>
+      </Box>
+      <Footer options={footerOptions} />
+    </Grid>
   );
 }
 
