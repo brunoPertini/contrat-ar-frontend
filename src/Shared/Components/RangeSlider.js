@@ -88,6 +88,17 @@ function RangeSlider({
         max={max}
         getAriaValueText={getAriaValueText}
         valueLabelFormat={valueLabelFormat}
+        sx={{
+          '& .MuiSlider-track': {
+            backgroundColor: 'primary.main',
+          },
+          '& .MuiSlider-thumb': {
+            backgroundColor: 'primary.main',
+          },
+          '& .MuiSlider-rail': {
+            backgroundColor: 'text.disabled',
+          },
+        }}
       />
       {
         shouldShowBottomInputs && (

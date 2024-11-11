@@ -186,8 +186,25 @@ function VendiblesFilters({
   return (
     <Grid container flexDirection="column" sx={{ ...containerStyles, mt: 2 }}>
       {enabledFilters.category && categoriesSection}
-      {enabledFilters.distance && locationsDistanceSection}
-      {enabledFilters.price && priceSection }
+      {
+       (enabledFilters.distance || enabledFilters.price) && (
+       <Box
+         sx={{
+           mt: 3,
+           padding: 2,
+           borderRadius: 2,
+           border: '1px solid',
+           borderColor: 'rgb(36, 134, 164)',
+           backgroundColor: 'background.paper',
+           boxShadow: 2,
+         }}
+       >
+         {enabledFilters.distance && locationsDistanceSection}
+         {enabledFilters.price && priceSection }
+       </Box>
+       )
+      }
+
       {enabledFilters.state && stateSection }
     </Grid>
   );

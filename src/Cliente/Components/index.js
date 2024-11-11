@@ -178,7 +178,8 @@ function Cliente({
     <Box
       display="flex"
       flexDirection="column"
-      height="100%"
+      height="100vh"
+      minHeight="100vh"
     >
       <Header withMenuComponent menuOptions={menuOptions} userInfo={userInfo} />
       <GoBackLink styles={{ pl: '2%' }} />

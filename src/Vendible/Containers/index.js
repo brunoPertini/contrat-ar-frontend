@@ -19,7 +19,7 @@ const stateSelector = (state) => state;
 
 function VendibleContainer({ router, handleLogout }) {
   const location = useLocation();
-  const { vendibleType = 'servicios', vendibleId = 1 } = location.state;
+  const { vendibleType = 'servicios', vendibleId = 1 } = location?.state ?? {};
 
   const [proveedoresInfo, setProveedoresInfo] = useState(proveedoresInfoMock);
   const [isError, setIsError] = useState(false);
