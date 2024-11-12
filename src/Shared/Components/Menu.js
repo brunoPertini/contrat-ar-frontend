@@ -2,12 +2,14 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { EMPTY_FUNCTION } from '../Constants/System';
 
 export default function BasicMenu({
-  options, buttonLabel, styles, itemsStyles, onClose,
+  options, buttonLabel, styles, itemsStyles, onClose, showButtonIcon, slotProps,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -23,15 +25,31 @@ export default function BasicMenu({
 
   return (
     <div style={{ ...styles }}>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
-        { buttonLabel }
-      </Button>
+      {
+        showButtonIcon ? (
+          <IconButton
+            aria-label="abrir menu"
+            id="menu-button"
+            aria-controls={open ? 'menu-button' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        ) : (
+          <Button
+            id="menu-buttom"
+            aria-controls={open ? 'menu-button' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+          >
+            { buttonLabel }
+          </Button>
+        )
+      }
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
@@ -41,6 +59,7 @@ export default function BasicMenu({
           'aria-labelledby': 'basic-button',
         }}
         variant="menu"
+        slotProps={slotProps}
       >
         {
           options.map((option, index) => {
@@ -91,7 +110,9 @@ export default function BasicMenu({
 BasicMenu.defaultProps = {
   styles: {},
   itemsStyles: {},
+  slotProps: {},
   onClose: EMPTY_FUNCTION,
+  showButtonIcon: false,
 };
 
 BasicMenu.propTypes = {
@@ -103,5 +124,7 @@ BasicMenu.propTypes = {
   buttonLabel: PropTypes.any.isRequired,
   styles: PropTypes.object,
   itemsStyles: PropTypes.object,
+  slotProps: PropTypes.object,
   onClose: PropTypes.func,
+  showButtonIcon: PropTypes.bool,
 };

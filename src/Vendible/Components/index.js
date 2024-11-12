@@ -10,8 +10,9 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import PlaceIcon from '@mui/icons-material/Place';
-import { Link } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
+import Link from '@mui/material/Link';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
@@ -19,7 +20,8 @@ import { routes, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
-import { Layout, StaticAlert } from '../../Shared/Components';
+import Layout from '../../Shared/Components/Layout';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
 } from '../../Shared/Constants/System';
@@ -31,6 +33,7 @@ import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import Footer from '../../Shared/Components/Footer';
 import { indexLabels } from '../../StaticData/Index';
+import BasicMenu from '../../Shared/Components/Menu';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -212,38 +215,82 @@ function VendiblePage({
     }, 1000);
   };
 
-  const filtersSection = filtersEnabled ? (
-    <Box
-      width="20%"
-      sx={{ position: 'sticky', top: 95 }}
-    >
-      <Typography variant="h3" sx={{ ml: '5%' }}>
-        { vendibleNombre }
-      </Typography>
-      <VendiblesFilters
-        filtersApplied={filtersApplied}
-        setFiltersApplied={setFiltersApplied}
-        enabledFilters={{
-          category: false,
-          distance: isDistancesSliderEnabled,
-          price: isPricesSliderEnabled,
+  const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
+
+  const filtersProps = {
+    filtersApplied,
+    setFiltersApplied,
+    enabledFilters: {
+      category: false,
+      distance: isDistancesSliderEnabled,
+      price: isPricesSliderEnabled,
+    },
+    distances: distancesForSlider,
+    prices: pricesForSlider,
+    onFiltersApplied: handleOnFiltersApplied,
+    distanceSliderAdditionalProps: {
+      step: 0.01,
+      min: proveedoresInfo.minDistance,
+      max: proveedoresInfo.maxDistance,
+    },
+    priceSliderAdditionalProps: {
+      step: 10,
+      min: proveedoresInfo.minPrice,
+      max: proveedoresInfo.maxPrice,
+    },
+  };
+
+  const ResolvedFiltersSection = useCallback(() => {
+    if (!filtersEnabled) {
+      return null;
+    }
+    return !shouldChangeLayout ? (
+      <Box
+        width="30%"
+        sx={{ top: 95 }}
+      >
+        <VendiblesFilters
+          filtersApplied={filtersApplied}
+          setFiltersApplied={setFiltersApplied}
+          enabledFilters={{
+            category: false,
+            distance: isDistancesSliderEnabled,
+            price: isPricesSliderEnabled,
+          }}
+          distances={distancesForSlider}
+          prices={pricesForSlider}
+          onFiltersApplied={handleOnFiltersApplied}
+          distanceSliderAdditionalProps={{
+            step: 0.01,
+            min: proveedoresInfo.minDistance,
+            max: proveedoresInfo.maxDistance,
+          }}
+          priceSliderAdditionalProps={{
+            step: 10,
+            min: proveedoresInfo.minPrice,
+            max: proveedoresInfo.maxPrice,
+          }}
+        />
+      </Box>
+    ) : (
+      <BasicMenu
+        showButtonIcon
+        options={[{
+          component: VendiblesFilters,
+          props: filtersProps,
+        }]}
+        slotProps={{
+          paper: {
+            style: {
+              maxHeight: 500,
+              width: '60%',
+            },
+          },
         }}
-        distances={distancesForSlider}
-        prices={pricesForSlider}
-        onFiltersApplied={handleOnFiltersApplied}
-        distanceSliderAdditionalProps={{
-          step: 0.01,
-          min: proveedoresInfo.minDistance,
-          max: proveedoresInfo.maxDistance,
-        }}
-        priceSliderAdditionalProps={{
-          step: 10,
-          min: proveedoresInfo.minPrice,
-          max: proveedoresInfo.maxPrice,
-        }}
+
       />
-    </Box>
-  ) : null;
+    );
+  }, [shouldChangeLayout, filtersEnabled]);
 
   return (
     <Box
@@ -267,7 +314,7 @@ function VendiblePage({
         flex={1}
         gap="15%"
       >
-        {filtersSection}
+        <ResolvedFiltersSection />
         <Layout isLoading={isLoadingVendibles}>
           <List>
             {proveedoresInfo.vendibles.content.map((info) => {
@@ -296,8 +343,8 @@ function VendiblePage({
                 <Fragment key={`${vendibleNombre}_${fullName}`}>
                   <Box
                     display="flex"
-                    alignItems="flex-start"
-                    flexDirection={{ xs: 'column', md: 'row' }}
+                    alignItems={{ xs: 'center', md: '"flex-start"' }}
+                    flexDirection={shouldChangeLayout ? 'column' : 'row'}
                     gap={3}
                     sx={{
                       p: 3,
@@ -309,7 +356,8 @@ function VendiblePage({
                   >
                     <Box
                       display="flex"
-                      alignItems="center"
+                      flexDirection="column"
+                      alignItems="flex-start"
                       gap={2}
                     >
                       <Avatar
@@ -338,16 +386,6 @@ function VendiblePage({
                         </Link>
                         )}
                       </Box>
-                    </Box>
-
-                    <Box
-                      flexGrow={2}
-                      flexBasis="50%"
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      gap={2}
-                    >
                       {!!imagenUrl && (
                       <Box
                         component="img"
@@ -385,9 +423,8 @@ function VendiblePage({
                       display="flex"
                       flexDirection="column"
                       alignItems="stretch"
+                      width="50%"
                       gap={2}
-                      flexGrow={2}
-                      flexBasis="50%"
                     >
                       <Typography variant="h5" color="primary" fontWeight="bold">
                         {getPriceLabel(precio, tipoPrecio)}
@@ -397,10 +434,9 @@ function VendiblePage({
                       </Typography>
                       <TextareaAutosize
                         id={textAreaId}
-                        minRows={4}
+                        minRows={15}
                         placeholder={sharedLabels.sendMessage}
                         style={{
-                          width: '100%',
                           padding: '8px',
                           borderRadius: '8px',
                           border: '1px solid #ccc',

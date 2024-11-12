@@ -67,7 +67,7 @@ function RangeSlider({
 
   const inputCommonProps = {
     size: 'small',
-    sx: { width: '30%' },
+    width: '30%',
   };
 
   useEffect(() => {
@@ -102,7 +102,13 @@ function RangeSlider({
       />
       {
         shouldShowBottomInputs && (
-        <Box display="flex" flexDirection="row" justifyContent="space-evenly">
+        <Box
+          display="flex"
+          flexDirection={{
+            xs: 'column', sm: 'column', md: 'column', lg: 'row',
+          }}
+          gap={4}
+        >
           <TextField
             value={getInputTextFunction(stateValues[0])}
             helperText={inputTextsHelpers[0]}
