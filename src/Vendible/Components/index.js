@@ -217,6 +217,8 @@ function VendiblePage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
 
+  const isNearTabletSize = useMediaQuery('(max-width:600px)');
+
   const filtersProps = {
     filtersApplied,
     setFiltersApplied,
@@ -238,6 +240,9 @@ function VendiblePage({
       min: proveedoresInfo.minPrice,
       max: proveedoresInfo.maxPrice,
     },
+    containerStyles: {
+      width: !shouldChangeLayout ? '20%' : '100%',
+    },
   };
 
   const ResolvedFiltersSection = useCallback(() => {
@@ -245,33 +250,7 @@ function VendiblePage({
       return null;
     }
     return !shouldChangeLayout ? (
-      <Box
-        width="30%"
-        sx={{ top: 95 }}
-      >
-        <VendiblesFilters
-          filtersApplied={filtersApplied}
-          setFiltersApplied={setFiltersApplied}
-          enabledFilters={{
-            category: false,
-            distance: isDistancesSliderEnabled,
-            price: isPricesSliderEnabled,
-          }}
-          distances={distancesForSlider}
-          prices={pricesForSlider}
-          onFiltersApplied={handleOnFiltersApplied}
-          distanceSliderAdditionalProps={{
-            step: 0.01,
-            min: proveedoresInfo.minDistance,
-            max: proveedoresInfo.maxDistance,
-          }}
-          priceSliderAdditionalProps={{
-            step: 10,
-            min: proveedoresInfo.minPrice,
-            max: proveedoresInfo.maxPrice,
-          }}
-        />
-      </Box>
+      <VendiblesFilters {...filtersProps} />
     ) : (
       <BasicMenu
         showButtonIcon
@@ -282,8 +261,10 @@ function VendiblePage({
         slotProps={{
           paper: {
             style: {
+              display: 'flex',
+              flexDirection: 'column',
+              width: !isNearTabletSize ? '40%' : '80%',
               maxHeight: 500,
-              width: '60%',
             },
           },
         }}
@@ -312,10 +293,19 @@ function VendiblePage({
         display="flex"
         flexDirection={{ xs: 'column', md: 'row' }}
         flex={1}
-        gap="15%"
+        gap="5%"
       >
         <ResolvedFiltersSection />
-        <Layout isLoading={isLoadingVendibles}>
+        <Layout
+          isLoading={isLoadingVendibles}
+          gridProps={{
+            sx: {
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+            },
+          }}
+        >
           <List>
             {proveedoresInfo.vendibles.content.map((info) => {
               const {

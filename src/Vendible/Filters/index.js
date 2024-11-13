@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
 import { useEffect, useMemo } from 'react';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CategoryAccordion from '../Category/CategoryAccordion';
@@ -126,14 +125,28 @@ function VendiblesFilters({
   );
 
   const locationsDistanceSection = (
-    <Box sx={{
-      mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
-    }}
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{
+        mt: 3,
+        p: 2,
+        borderRadius: 1,
+        boxShadow: 2,
+        bgcolor: 'background.paper',
+
+      }}
     >
       <Typography variant="h6" color="primary">
         {labels.filterByDistanceTitle}
       </Typography>
-      <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+      <Typography
+        color="textSecondary"
+        sx={{
+          mb: 2,
+        }}
+        paragraph
+      >
         {labels.filterByDistanceExplanation}
       </Typography>
       <RangeSlider
@@ -155,7 +168,7 @@ function VendiblesFilters({
       <Typography variant="h6" color="primary">
         {labels.filterByPriceTitle}
       </Typography>
-      <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+      <Typography paragraph color="textSecondary" sx={{ mb: 2 }}>
         {labels.filterByPriceExplanation}
       </Typography>
       <RangeSlider
@@ -184,14 +197,21 @@ function VendiblesFilters({
   );
 
   return (
-    <Grid container flexDirection="column" sx={{ ...containerStyles, mt: 2 }}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      maxWidth="100%"
+      sx={{
+        ...containerStyles,
+        mt: 2,
+      }}
+    >
       {enabledFilters.category && categoriesSection}
       {
        (enabledFilters.distance || enabledFilters.price) && (
        <Box
          sx={{
            mt: 3,
-           padding: 2,
            borderRadius: 2,
            border: '1px solid',
            borderColor: 'rgb(36, 134, 164)',
@@ -206,7 +226,7 @@ function VendiblesFilters({
       }
 
       {enabledFilters.state && stateSection }
-    </Grid>
+    </Box>
   );
 }
 

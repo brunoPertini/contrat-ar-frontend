@@ -34,6 +34,11 @@ export default function BasicMenu({
             aria-expanded={open ? 'true' : undefined}
             aria-haspopup="true"
             onClick={handleClick}
+            sx={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 1100,
+            }}
           >
             <MenuIcon />
           </IconButton>

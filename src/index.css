@@ -18,6 +18,10 @@ code {
     monospace;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  white-space: normal;
+}
+
 /* Hidding input type number arrows */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
