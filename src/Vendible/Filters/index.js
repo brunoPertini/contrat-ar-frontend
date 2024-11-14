@@ -21,7 +21,7 @@ const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
 function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
-  onFiltersApplied, containerStyles,
+  onFiltersApplied, containerStyles, sliderContainerStyles,
   showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
   alternativeAccordionTitle, distanceSliderAdditionalProps,
 }) {
@@ -211,12 +211,12 @@ function VendiblesFilters({
        (enabledFilters.distance || enabledFilters.price) && (
        <Box
          sx={{
-           mt: 3,
            borderRadius: 2,
            border: '1px solid',
            borderColor: 'rgb(36, 134, 164)',
            backgroundColor: 'background.paper',
            boxShadow: 2,
+           ...sliderContainerStyles,
          }}
        >
          {enabledFilters.distance && locationsDistanceSection}
@@ -243,6 +243,7 @@ VendiblesFilters.defaultProps = {
   categories: {},
   distanceSliderAdditionalProps: {},
   priceSliderAdditionalProps: {},
+  sliderContainerStyles: {},
   filtersApplied: {
     category: null,
     categoryName: '',
@@ -260,6 +261,7 @@ VendiblesFilters.propTypes = {
   vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   onFiltersApplied: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.string),
+  sliderContainerStyles: PropTypes.object,
   showAccordionTitle: PropTypes.bool,
   alternativeAccordionTitle: PropTypes.node,
   enabledFilters: PropTypes.objectOf(PropTypes.bool),

@@ -168,6 +168,10 @@ function VendiblePage({
     setParams([routes.ROLE_CLIENTE]);
   }, []);
 
+  useEffect(() => {
+    document.title = vendibleNombre;
+  }, [vendibleNombre]);
+
   const getPriceLabel = useCallback((price, tipoPrecio) => {
     const localeFormattedPrice = formatNumberWithLocale(price);
 
@@ -241,8 +245,13 @@ function VendiblePage({
       max: proveedoresInfo.maxPrice,
     },
     containerStyles: {
-      width: !shouldChangeLayout ? '20%' : '100%',
+      width: !shouldChangeLayout ? '40%' : '100%',
     },
+    sliderContainerStyles: shouldChangeLayout ? {
+      position: 'sticky',
+      top: '175px',
+      'z-index': 1100,
+    } : undefined,
   };
 
   const ResolvedFiltersSection = useCallback(() => {
@@ -280,6 +289,7 @@ function VendiblePage({
       flexDirection="column"
       width="100%"
       height="100%"
+      className="scrolleable"
     >
       {ExitAppDialog}
       <Header
@@ -288,14 +298,20 @@ function VendiblePage({
         userInfo={userInfo}
         renderNavigationLinks
       />
-      <GoBackLink styles={{ ml: '1%' }} />
       <Box
         display="flex"
         flexDirection={{ xs: 'column', md: 'row' }}
         flex={1}
         gap="5%"
       >
-        <ResolvedFiltersSection />
+        <Box
+          display="flex"
+          flexDirection="column"
+        >
+          <GoBackLink />
+          <ResolvedFiltersSection />
+        </Box>
+
         <Layout
           isLoading={isLoadingVendibles}
           gridProps={{

@@ -180,13 +180,14 @@ function Cliente({
       flexDirection="column"
       height="100vh"
       minHeight="100vh"
+      className="scrolleable"
     >
       <Header withMenuComponent menuOptions={menuOptions} userInfo={userInfo} />
       <GoBackLink styles={{ pl: '2%' }} />
       { ExitAppDialog }
       <Box
         display="flex"
-        flexDirection="row"
+        flexDirection={{ xs: 'column', md: 'row' }}
         sx={{
           pl: '2%',
           bgcolor: 'background.default',

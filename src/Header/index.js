@@ -97,7 +97,12 @@ export default function Header({
         }}
         alignItems="center"
         justifyContent="space-between"
-        sx={{ padding: 1 }}
+        sx={{
+          top: 0,
+          zIndex: 1100,
+          overflow: 'hidden',
+          padding: 1,
+        }}
       >
         <Box flexGrow={1}>
           <Link
