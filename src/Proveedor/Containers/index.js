@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useSelector } from 'react-redux';
@@ -17,6 +18,7 @@ import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
+import { proveedorVendiblesResponse } from '../../Shared/Mocks/proveedorVendiblesMock';
 
 const stateSelector = (state) => state;
 
@@ -38,10 +40,33 @@ const addNewVendiblesLabels = {
 
 const localStorageService = new LocalStorageService();
 
-function ProveedorContainer({ router, handleLogout }) {
-  const userInfo = useSelector(userInfoSelector);
+const mockProps = {
+  dispatchHandleSearch: () => {},
+  handleLogout: () => {},
+  userInfo: {
+    id: 1,
+    name: 'John',
+    surname: 'Doe',
+    email: 'john.doe@example.com',
+    birthDate: '1990-01-01',
+    location: {
+      coordinates: [-34.9200364392778, -57.9542080490215],
+    },
+    role: 'PROVEEDOR_SERVICIOS',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    indexPage: '/cliente',
+    phone: '+541100000000',
+    password: 'securePassword123',
+    plan: 'FREE',
+    dni: '12345678',
+    authorities: ['ROLE_PROVEEDOR_SERVICIOS'],
+  },
+};
 
-  const [response, setResponse] = useState({ vendibles: [], categorias: {} });
+function ProveedorContainer({ router, handleLogout }) {
+  const { userInfo } = mockProps;
+
+  const [response, setResponse] = useState(proveedorVendiblesResponse);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
@@ -160,6 +185,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handleDeleteVendible={handleDeleteVendible}
         handleGetVendibles={handleGetVendibles}
         router={router}
+        {...mockProps}
       />
     </NavigationContextProvider>
 

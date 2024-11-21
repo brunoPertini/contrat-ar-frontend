@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
@@ -12,6 +13,8 @@ import Link from '@mui/material/Link';
 import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
 import isEmpty from 'lodash/isEmpty';
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
@@ -366,29 +369,47 @@ export class SignInFormBuilder extends FormBuilder {
     const passwordValue = fieldsValues.password || this.fields.password;
 
     const row = (
-      <>
-        <Grid item xs={12} sx={{ width: '30%' }}>
-          <TextField
-            id="form-email"
-            value={emailValue}
-            error={this.#hasError(errorFields, 'email')}
-            label={sharedLabels.email}
-            type="email"
-            onChange={(e) => onChangeFields('email', e.target.value)}
-            sx={{ width: '100%' }}
-          />
-        </Grid>
-        <Grid item xs={12} sx={{ width: '30%' }}>
-          <TextField
-            id="form-password"
-            value={passwordValue}
-            error={this.#hasError(errorFields, 'password')}
-            label={sharedLabels.password}
-            type="password"
-            onChange={(e) => onChangeFields('password', e.target.value)}
-            sx={{ width: '100%' }}
-          />
-          {
+      <Box
+        display="flex"
+        flexDirection="column"
+        width={{ xs: '80%', md: '60%', xl: '40%' }}
+      >
+        <TextField
+          id="form-email"
+          value={emailValue}
+          error={this.#hasError(errorFields, 'email')}
+          label={sharedLabels.email}
+          type="email"
+          onChange={(e) => onChangeFields('email', e.target.value)}
+          InputProps={{
+            sx: {
+              border: '1px solid rgb(36, 134, 164)',
+              '&:focus-within': {
+                border: '1px solid transparent',
+                boxShadow: 'none',
+              },
+            },
+          }}
+        />
+        <TextField
+          id="form-password"
+          value={passwordValue}
+          error={this.#hasError(errorFields, 'password')}
+          label={sharedLabels.password}
+          type="password"
+          onChange={(e) => onChangeFields('password', e.target.value)}
+          sx={{ marginTop: '3%' }}
+          InputProps={{
+            sx: {
+              border: '1px solid rgb(36, 134, 164)',
+              '&:focus-within': {
+                border: '1px solid transparent',
+                boxShadow: 'none',
+              },
+            },
+          }}
+        />
+        {
             !!errorMessage && (
             <Typography
               variant="h6"
@@ -400,21 +421,19 @@ export class SignInFormBuilder extends FormBuilder {
             </Typography>
             )
           }
-          <Button
-            variant="contained"
-            sx={{ marginTop: '15px' }}
-            onClick={onButtonClick}
-          >
-            { signinLabels.buttonLabel }
-          </Button>
-        </Grid>
-        <Grid item xs={12} sx={{ width: '30%' }}>
+        <Button
+          variant="contained"
+          sx={{ marginTop: '15px' }}
+          onClick={onButtonClick}
+        >
+          { signinLabels.buttonLabel }
+        </Button>
+        <Grid item xs={12} sx={{ mt: '2%' }}>
           <Link href="#">
             { signinLabels.forgotPassword }
           </Link>
         </Grid>
-
-      </>
+      </Box>
     );
 
     return [row];
