@@ -25,6 +25,7 @@ import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
 import Footer from '../../Shared/Components/Footer';
 import { indexLabels } from '../../StaticData/Index';
 import { mockVendiblesObject } from '../../Shared/Mocks/clienteServiciosMock';
+import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
@@ -180,7 +181,6 @@ function Cliente({
       flexDirection="column"
       height="100vh"
       minHeight="100vh"
-      className="scrolleable"
     >
       <Header withMenuComponent menuOptions={menuOptions} userInfo={userInfo} />
       <GoBackLink styles={{ pl: '2%' }} />
@@ -296,7 +296,7 @@ function Cliente({
           }
         </Layout>
       </Box>
-
+      <ScrollUpIcon />
       <Footer options={footerOptions} />
     </Box>
   );

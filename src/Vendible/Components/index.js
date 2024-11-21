@@ -34,6 +34,7 @@ import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import Footer from '../../Shared/Components/Footer';
 import { indexLabels } from '../../StaticData/Index';
 import BasicMenu from '../../Shared/Components/Menu';
+import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -223,6 +224,8 @@ function VendiblePage({
 
   const isNearTabletSize = useMediaQuery('(max-width:600px)');
 
+  const isNearMobileSize = useMediaQuery('(max-width:565px)');
+
   const filtersProps = {
     filtersApplied,
     setFiltersApplied,
@@ -289,7 +292,6 @@ function VendiblePage({
       flexDirection="column"
       width="100%"
       height="100%"
-      className="scrolleable"
     >
       {ExitAppDialog}
       <Header
@@ -429,7 +431,7 @@ function VendiblePage({
                       display="flex"
                       flexDirection="column"
                       alignItems="stretch"
-                      width="50%"
+                      width={!isNearMobileSize ? '50%' : '100%'}
                       gap={2}
                     >
                       <Typography variant="h5" color="primary" fontWeight="bold">
@@ -492,7 +494,6 @@ function VendiblePage({
           />
           )}
 
-          {/* Mensaje de No Resultados */}
           {!isLoadingVendibles && noResultsFound && (
           <StaticAlert
             label={vendiblesLabels.noResultsFound}
@@ -507,6 +508,7 @@ function VendiblePage({
           )}
         </Layout>
       </Box>
+      <ScrollUpIcon />
       <Footer options={footerOptions} />
     </Box>
   );

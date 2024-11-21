@@ -74,6 +74,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: true,
         state: 'ACTIVE',
+        vendibleNombre: 'Servicio de Plomería',
       },
       {
         proveedorId: 2,
@@ -90,6 +91,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: false,
         state: 'INACTIVE',
+        vendibleNombre: 'Reparación de Electrodomésticos',
       },
       {
         proveedorId: 3,
@@ -106,6 +108,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: true,
         state: 'ACTIVE',
+        vendibleNombre: 'Servicio de Plomería',
       },
       {
         proveedorId: 4,
@@ -122,6 +125,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: true,
         state: 'ACTIVE',
+        vendibleNombre: 'Servicios de Jardinería',
       },
       {
         proveedorId: 5,
@@ -138,6 +142,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: false,
         state: 'ACTIVE',
+        vendibleNombre: 'Servicio de Plomería',
       },
       {
         proveedorId: 6,
@@ -154,6 +159,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: false,
         state: 'INACTIVE',
+        vendibleNombre: 'Cerajero',
       },
       {
         proveedorId: 7,
@@ -170,6 +176,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: true,
         state: 'ACTIVE',
+        vendibleNombre: 'Clases particulares de matematica',
       },
       {
         proveedorId: 8,
@@ -186,6 +193,7 @@ export const proveedoresInfoMock = {
         },
         offersInCustomAddress: true,
         state: 'ACTIVE',
+        vendibleNombre: 'Clases de yoga',
       },
     ],
     minDistance: 0,
