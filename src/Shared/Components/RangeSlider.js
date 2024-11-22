@@ -107,7 +107,7 @@ function RangeSlider({
           flexDirection={{
             xs: 'column', sm: 'column', md: 'column', lg: 'row',
           }}
-          gap={4}
+          gap={2}
         >
           <TextField
             value={getInputTextFunction(stateValues[0])}
@@ -135,9 +135,9 @@ function RangeSlider({
           />
           {
             showInputsIcon && (
-              <IconButton disabled={iconDisabled}>
+              <IconButton disabled={iconDisabled} sx={{ padding: 0 }}>
                 <SearchOutlinedIcon
-                  style={{ fontSize: '2.5rem', cursor: 'pointer' }}
+                  style={{ fontSize: '1.5rem', cursor: 'pointer' }}
                   onClick={onIconClick}
                 />
               </IconButton>

@@ -8,7 +8,7 @@ export default function ScrollUpIcon() {
       justifyContent="center"
       onClick={() => window.scrollTo(0, 0)}
     >
-      <ArrowCircleUpRoundedIcon sx={{ fontSize: '3.2rem', mb: '5px' }} />
+      <ArrowCircleUpRoundedIcon sx={{ fontSize: '3.2rem', mb: '5px', cursor: 'pointer' }} />
     </Box>
   );
 }

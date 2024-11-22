@@ -222,9 +222,19 @@ function VendiblePage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
 
-  const isNearTabletSize = useMediaQuery('(max-width:600px)');
-
   const isNearMobileSize = useMediaQuery('(max-width:565px)');
+
+  const isNearMobileLittleSize = useMediaQuery('(max-width:450px)');
+
+  let filtersResolvedWidth;
+
+  if (isNearMobileLittleSize) {
+    filtersResolvedWidth = '80%';
+  } else if (shouldChangeLayout) {
+    filtersResolvedWidth = '60%';
+  } else {
+    filtersResolvedWidth = '45%';
+  }
 
   const filtersProps = {
     filtersApplied,
@@ -248,7 +258,7 @@ function VendiblePage({
       max: proveedoresInfo.maxPrice,
     },
     containerStyles: {
-      width: !shouldChangeLayout ? '40%' : '100%',
+      width: filtersResolvedWidth,
     },
     sliderContainerStyles: shouldChangeLayout ? {
       position: 'sticky',
@@ -275,7 +285,7 @@ function VendiblePage({
             style: {
               display: 'flex',
               flexDirection: 'column',
-              width: !isNearTabletSize ? '40%' : '80%',
+              width: filtersResolvedWidth,
               maxHeight: 500,
             },
           },

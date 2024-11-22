@@ -25,7 +25,13 @@ function SelectComponent({
   return (
     <Box sx={{ ...containerStyles }}>
       <FormControl fullWidth disabled={disabled}>
-        <InputLabel>{label}</InputLabel>
+        <InputLabel sx={{
+          color: 'rgb(36, 134, 164)',
+          opacity: 1,
+        }}
+        >
+          {label}
+        </InputLabel>
         <Select
           value={value}
           label={label}
