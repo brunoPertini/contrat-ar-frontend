@@ -60,7 +60,9 @@ export default function VendiblesList({
     });
 
   const cardStyles = {
-    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+    display: 'flex',
+    flexDirection: { xs: 'column', sm: 'row' },
+    justifyContent: 'space-between',
   };
 
   const linkSection = useCallback((vendible) => (
@@ -108,11 +110,22 @@ export default function VendiblesList({
             LinkSection={linkSection(vendible)}
             imageListProps={{
               cols: 1,
-              sx: { width: '40%' },
+              rowHeight: 164,
+              sx: {
+                cols: 1,
+                gap: 8,
+                sx: {
+                  width: '100%',
+                  maxWidth: '100%',
+                  height: 'auto',
+                  margin: '0 auto',
+                },
+              },
             }}
             ChildrenComponent={ProveedorVendibleCard}
             state={vendible.state}
             manageStateChange={(state) => manageStateChange(state, vendible.vendibleId)}
+            linkCardStyles={{ display: 'flex', alignItems: 'center', gap: 1 }}
           />
         ))}
       </List>

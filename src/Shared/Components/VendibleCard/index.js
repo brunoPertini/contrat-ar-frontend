@@ -23,23 +23,36 @@ const STATE_SEVERITY = {
 
 export default function VendibleCard({
   vendibleTitle, images, LinkSection,
-  imageListProps: { cols, gap, sx },
+  imageListProps,
   cardStyles, linkCardStyles, ChildrenComponent,
   state, manageStateChange,
 }) {
+  const contentStyles = {
+    display: 'flex', flex: 1, flexDirection: 'column',
+  };
+
   const imageSection = images.length > 0 && (
-    <ImageList cols={cols} gap={gap} sx={{ ...sx, borderRadius: 2, overflow: 'hidden' }}>
-      {images.map((imageUrl, i) => (
-        <ImageListItem key={`image_${vendibleTitle}_${i}`}>
-          <img
-            src={imageUrl}
-            alt={vendibleTitle}
-            loading="lazy"
-            style={{ borderRadius: '8px' }}
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
+    <CardContent sx={{ ...contentStyles }}>
+      <ImageList {...imageListProps}>
+        {images.map((imageUrl, i) => (
+          <ImageListItem key={`image_${vendibleTitle}_${i}`} sx={{ height: '100%' }}>
+            <img
+              src={imageUrl}
+              alt={vendibleTitle}
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                maxWidth: '100%',
+                overflowY: 'auto',
+              }}
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </CardContent>
   );
 
   const { shouldShowStateSwitch, switchLabel } = useMemo(() => ({
@@ -57,7 +70,7 @@ export default function VendibleCard({
   };
 
   const titleSection = (
-    <CardContent>
+    <CardContent sx={{ ...contentStyles }}>
       <Typography variant="h5" component="div" fontWeight="bold">
         {vendibleTitle}
       </Typography>
@@ -80,7 +93,10 @@ export default function VendibleCard({
   );
 
   const linkContent = (
-    <CardContent sx={{ ...linkCardStyles, borderTop: '1px solid #ddd', mt: 1 }}>
+    <CardContent sx={{
+      ...linkCardStyles, ...contentStyles, borderTop: '1px solid #ddd', mt: 1,
+    }}
+    >
       {LinkSection}
     </CardContent>
   );

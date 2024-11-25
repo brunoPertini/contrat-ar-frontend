@@ -287,7 +287,9 @@ function ProveedorPage({
     });
   }, [crudOperationResult]);
 
-  const shouldChangeLayout = useMediaQuery('(max-width:1025px)');
+  const shouldChangeLayout = useMediaQuery('(max-width:1200px)');
+
+  const moveAddVendibleTexts = useMediaQuery('(max-width:1000px)');
 
   const handleStartSearch = () => {
     setFiltersApplied((current) => {
@@ -390,11 +392,6 @@ function ProveedorPage({
     containerStyles: {
       mt: '5%',
     },
-    alternativeAccordionTitle: (
-      <Typography variant="h6">
-        {proveedorLabels.filterByCategory}
-      </Typography>
-    ),
     enabledFilters: {
       category: categoriesFiltersEnabled,
       state: true,
@@ -513,6 +510,11 @@ function ProveedorPage({
     { label: indexLabels.termsAndConditions, onClick: () => {} },
   ];
 
+  const absolute = moveAddVendibleTexts ? {
+    position: 'absolute',
+    marginTop: '-190px',
+  } : {};
+
   return (
     <Box
       display="flex"
@@ -530,13 +532,14 @@ function ProveedorPage({
       <Box
         display="flex"
         justifyContent="space-between"
-        flexDirection={{ xs: 'column', md: 'row' }}
+        flexDirection={{ xs: 'column', lg: 'row' }}
         flex={1}
       >
         <Box
           display="flex"
           flexDirection="column"
           width="30%"
+          sx={{ paddingLeft: '1%' }}
         >
           <GoBackLink />
           <ResolvedFiltersSection />
@@ -544,8 +547,26 @@ function ProveedorPage({
         <Box
           display="flex"
           flexDirection="column"
-          width="60%"
+          width={!shouldChangeLayout ? '60%' : '100%'}
+          sx={{ paddingRight: '1%' }}
         >
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignSelf: 'flex-end',
+            ...absolute,
+          }}
+          >
+            <Typography variant="h6">
+              {addVendibleLabel}
+            </Typography>
+            <Link
+              sx={{ mt: '10px', cursor: 'pointer' }}
+              onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+            >
+              {addVendibleLink}
+            </Link>
+          </Box>
           <Box
             display="flex"
             flexDirection="row"
@@ -565,22 +586,6 @@ function ProveedorPage({
               >
                 <HelpOutline />
               </Tooltip>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-            >
-              <Typography variant="h6">
-                {addVendibleLabel}
-              </Typography>
-              <Link
-                sx={{ mt: '10px', cursor: 'pointer' }}
-                onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
-              >
-                {addVendibleLink}
-              </Link>
             </Box>
           </Box>
           <Box>
