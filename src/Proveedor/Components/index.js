@@ -241,7 +241,7 @@ function ProveedorPage({
   }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
-    setFilteredVendibles(vendibles);
+    setFilteredVendibles([...vendibles]);
   }, [vendibles]);
 
   useEffect(() => {
@@ -288,8 +288,6 @@ function ProveedorPage({
   }, [crudOperationResult]);
 
   const shouldChangeLayout = useMediaQuery('(max-width:1200px)');
-
-  const moveAddVendibleTexts = useMediaQuery('(max-width:1000px)');
 
   const handleStartSearch = () => {
     setFiltersApplied((current) => {
@@ -422,37 +420,6 @@ function ProveedorPage({
     },
   };
 
-  const ResolvedFiltersSection = useCallback(() => (!shouldChangeLayout ? (
-    <>
-      <SearcherInput {...searcherProps} />
-      <VendiblesFilters {...filtersProps} />
-    </>
-
-  ) : (
-    <BasicMenu
-      showButtonIcon
-      options={[
-        {
-          component: SearcherInput,
-          props: searcherProps,
-        },
-        {
-          component: VendiblesFilters,
-          props: filtersProps,
-        }]}
-      slotProps={{
-        paper: {
-          style: {
-            display: 'flex',
-            flexDirection: 'column',
-            width: filtersResolvedWidth,
-            maxHeight: 500,
-          },
-        },
-      }}
-    />
-  )), [shouldChangeLayout]);
-
   const innerScreens = {
     addNewVendible: {
       component: VendibleCreateForm,
@@ -510,10 +477,161 @@ function ProveedorPage({
     { label: indexLabels.termsAndConditions, onClick: () => {} },
   ];
 
-  const absolute = moveAddVendibleTexts ? {
-    position: 'absolute',
-    marginTop: '-190px',
-  } : {};
+  const addVendibleLinkLayout = (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignSelf: shouldChangeLayout ? 'flex-start' : 'flex-end',
+    }}
+    >
+      <Typography variant="h6">
+        {addVendibleLabel}
+      </Typography>
+      <Link
+        sx={{ mt: '10px', cursor: 'pointer' }}
+        onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+      >
+        {addVendibleLink}
+      </Link>
+    </Box>
+  );
+
+  const ResolvedFiltersSection = useCallback(() => (!shouldChangeLayout ? (
+    <>
+      <SearcherInput {...searcherProps} />
+      <VendiblesFilters {...filtersProps} />
+    </>
+
+  ) : (
+    <BasicMenu
+      showButtonIcon
+      options={[
+        {
+          component: SearcherInput,
+          props: searcherProps,
+        },
+        {
+          component: VendiblesFilters,
+          props: filtersProps,
+        }]}
+      slotProps={{
+        paper: {
+          style: {
+            display: 'flex',
+            flexDirection: 'column',
+            width: filtersResolvedWidth,
+            maxHeight: 500,
+          },
+        },
+      }}
+    />
+  )), [shouldChangeLayout]);
+
+  const FirstColumn = useCallback(() => (!shouldChangeLayout ? (
+    <>
+      <GoBackLink />
+      <ResolvedFiltersSection />
+    </>
+  ) : (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="space-between"
+      gap={10}
+    >
+      <Box display="flex" flexDirection="column">
+        <GoBackLink />
+        <ResolvedFiltersSection />
+      </Box>
+      { addVendibleLinkLayout }
+    </Box>
+  )), [shouldChangeLayout]);
+
+  const secondColumn = (
+    <>
+      {
+        !shouldChangeLayout ? addVendibleLinkLayout : null
+      }
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <Typography variant="h4">
+            {proveedorLabels.yourPosts}
+          </Typography>
+          <Tooltip
+            placement="right-start"
+            title={(
+              <Typography variant="h6">
+                {proveedorLabels.tooltipLabel}
+              </Typography>
+          )}
+          >
+            <HelpOutline />
+          </Tooltip>
+        </Box>
+        <VendiblesList
+          proveedorId={userInfo.id}
+          vendibles={filteredVendibles}
+          vendibleType={vendibleType}
+          userToken={userInfo.token}
+          handleOnOptionClicked={handleOnOptionClicked}
+          handlePutVendible={handlePutVendible}
+          resetFiltersApplied={resetFiltersApplied}
+        />
+      </Box>
+
+    </>
+  );
+  const ResponsiveLayout = useCallback(() => {
+    if (!shouldChangeLayout) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexDirection={{ xs: 'column', lg: 'row' }}
+          flex={1}
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="30%"
+            sx={{ paddingLeft: '1%' }}
+          >
+            <FirstColumn />
+          </Box>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            width={!shouldChangeLayout ? '60%' : '100%'}
+            sx={{ paddingRight: '1%' }}
+          >
+            { secondColumn }
+          </Box>
+        </Box>
+      );
+    }
+
+    return (
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        width="100%"
+      >
+        <FirstColumn />
+        {secondColumn}
+      </Box>
+    );
+  }, [shouldChangeLayout, secondColumn]);
 
   return (
     <Box
@@ -529,78 +647,7 @@ function ProveedorPage({
         menuOptions={menuOptions}
         userInfo={userInfo}
       />
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        flexDirection={{ xs: 'column', lg: 'row' }}
-        flex={1}
-      >
-        <Box
-          display="flex"
-          flexDirection="column"
-          width="30%"
-          sx={{ paddingLeft: '1%' }}
-        >
-          <GoBackLink />
-          <ResolvedFiltersSection />
-        </Box>
-        <Box
-          display="flex"
-          flexDirection="column"
-          width={!shouldChangeLayout ? '60%' : '100%'}
-          sx={{ paddingRight: '1%' }}
-        >
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignSelf: 'flex-end',
-            ...absolute,
-          }}
-          >
-            <Typography variant="h6">
-              {addVendibleLabel}
-            </Typography>
-            <Link
-              sx={{ mt: '10px', cursor: 'pointer' }}
-              onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
-            >
-              {addVendibleLink}
-            </Link>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-          >
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-              <Typography variant="h4">
-                { proveedorLabels.yourPosts }
-              </Typography>
-              <Tooltip
-                placement="right-start"
-                title={(
-                  <Typography variant="h6">
-                    {proveedorLabels.tooltipLabel}
-                  </Typography>
-            )}
-              >
-                <HelpOutline />
-              </Tooltip>
-            </Box>
-          </Box>
-          <Box>
-            <VendiblesList
-              proveedorId={userInfo.id}
-              vendibles={filteredVendibles}
-              vendibleType={vendibleType}
-              userToken={userInfo.token}
-              handleOnOptionClicked={handleOnOptionClicked}
-              handlePutVendible={handlePutVendible}
-              resetFiltersApplied={resetFiltersApplied}
-            />
-          </Box>
-        </Box>
-      </Box>
+      <ResponsiveLayout />
       { mainContent }
       { vendibleOperationsComponent }
       <InformativeAlert
