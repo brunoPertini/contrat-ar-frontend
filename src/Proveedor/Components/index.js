@@ -289,7 +289,7 @@ function ProveedorPage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1200px)');
 
-  const moveAddVendibleTexts = useMediaQuery('(max-width:1000px)');
+  const isGoingToMobileSize = useMediaQuery('(max-width:600px)');
 
   const handleStartSearch = () => {
     setFiltersApplied((current) => {
@@ -510,11 +510,6 @@ function ProveedorPage({
     { label: indexLabels.termsAndConditions, onClick: () => {} },
   ];
 
-  const absolute = moveAddVendibleTexts ? {
-    position: 'absolute',
-    marginTop: '-190px',
-  } : {};
-
   return (
     <Box
       display="flex"
@@ -544,29 +539,32 @@ function ProveedorPage({
           <GoBackLink />
           <ResolvedFiltersSection />
         </Box>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignSelf: 'flex-end',
+          position: 'fixed',
+          top: !isGoingToMobileSize ? '115px' : '135px',
+          right: '16px',
+          'z-index': 2000,
+        }}
+        >
+          <Typography variant="h6">
+            {addVendibleLabel}
+          </Typography>
+          <Link
+            sx={{ mt: '10px', cursor: 'pointer' }}
+            onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+          >
+            {addVendibleLink}
+          </Link>
+        </Box>
         <Box
           display="flex"
           flexDirection="column"
           width={!shouldChangeLayout ? '60%' : '100%'}
           sx={{ paddingRight: '1%' }}
         >
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignSelf: 'flex-end',
-            ...absolute,
-          }}
-          >
-            <Typography variant="h6">
-              {addVendibleLabel}
-            </Typography>
-            <Link
-              sx={{ mt: '10px', cursor: 'pointer' }}
-              onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
-            >
-              {addVendibleLink}
-            </Link>
-          </Box>
           <Box
             display="flex"
             flexDirection="row"
