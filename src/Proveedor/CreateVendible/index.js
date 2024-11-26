@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import {
@@ -89,10 +89,11 @@ function VendibleCreateForm({
   };
 
   const containerProps = useMemo(() => ({
-    container: true,
+    display: 'flex',
     flexDirection: 'column',
+    height: '100vh',
+    gap: 15,
     sx: {
-      minHeight: '100vh',
       alignItems: 'center',
     },
     spacing: activeStep === 0 ? 35 : 10,
@@ -199,7 +200,7 @@ function VendibleCreateForm({
   useOnLeavingTabHandler();
 
   return (
-    <Grid
+    <Box
       {...containerProps}
     >
       { steps[activeStep].component }
@@ -212,7 +213,7 @@ function VendibleCreateForm({
             />
           )
         }
-      <Grid
+      <Box
         item
         sx={{
           display: 'flex',
@@ -237,8 +238,8 @@ function VendibleCreateForm({
         >
           {nexButtonLabel}
         </Button>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

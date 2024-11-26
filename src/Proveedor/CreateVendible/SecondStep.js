@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import ImageListItem from '@mui/material/ImageListItem';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
@@ -36,13 +35,13 @@ function SecondStep({
 
   const { imageTitle, mainTitle } = useMemo(() => (isEditionEnabled ? {
     imageTitle:
-    <Typography variant="h5" sx={{ paddingRight: '5%' }}>
+    <Typography variant="h5">
       { sharedLabels.currentImage }
     </Typography>,
     mainTitle: null,
   } : {
     mainTitle: (
-      <Typography variant="h4" sx={{ paddingLeft: '5%' }}>
+      <Typography variant="h4">
         { proveedorLabels['addVendible.lastStep'] }
       </Typography>
     ),
@@ -52,17 +51,15 @@ function SecondStep({
   const vendibleUnit = useMemo(() => parseVendibleUnit(vendibleType), [vendibleType]);
 
   return (
-    <Grid
-      item
+    <Box
       display="flex"
-      flexDirection="row"
-      xs={10}
+      flexDirection={{ xs: 'column', md: 'row' }}
+      height="100vh"
     >
-      <Grid
-        item
+      <Box
         display="flex"
         flexDirection="column"
-        xs={6}
+        flex={1}
       >
 
         { mainTitle }
@@ -129,12 +126,11 @@ function SecondStep({
             </Button>
           </Box>
         </Box>
-      </Grid>
-      <Grid
-        item
+      </Box>
+      <Box
         display="flex"
         flexDirection="column"
-        xs={6}
+        flex={1}
       >
         <Typography variant="h4" sx={{ paddingRight: '5%' }}>
           { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleUnit)}
@@ -147,8 +143,8 @@ function SecondStep({
           value={description}
           onChange={handleChangeDescription}
         />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

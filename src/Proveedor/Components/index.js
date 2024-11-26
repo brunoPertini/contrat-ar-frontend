@@ -647,8 +647,7 @@ function ProveedorPage({
         menuOptions={menuOptions}
         userInfo={userInfo}
       />
-      <ResponsiveLayout />
-      { mainContent }
+      {!mainContent ? <ResponsiveLayout /> : mainContent}
       { vendibleOperationsComponent }
       <InformativeAlert
         open={openSnackbar}
@@ -665,7 +664,7 @@ function ProveedorPage({
         handleAccept={modalContent.handleAccept}
         handleDeny={onCancelLeavingPage}
       />
-      <ScrollUpIcon />
+      {!mainContent && <ScrollUpIcon />}
       <Footer options={footerOptions} />
     </Box>
   );

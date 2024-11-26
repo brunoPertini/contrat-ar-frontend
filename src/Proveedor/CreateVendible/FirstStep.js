@@ -1,14 +1,14 @@
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-import {
-  CheckBoxGroup, LocationMap, Select,
-} from '../../Shared/Components';
+import CheckBoxGroup from '../../Shared/Components/CheckboxGroup';
+import LocationMap from '../../Shared/Components/LocationMap';
+import Select from '../../Shared/Components/Select';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
@@ -129,7 +129,7 @@ function FirstStep({
   }), [isEditionEnabled]);
 
   const categoriesSection = (
-    <Grid item sx={{ mt: '5%' }}>
+    <Box sx={{ mt: '5%' }}>
       <Typography variant="h4">
         {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleUnit)}
       </Typography>
@@ -150,7 +150,7 @@ function FirstStep({
           required: true,
         }}
       />
-    </Grid>
+    </Box>
   );
 
   const priceSection = (
@@ -166,7 +166,7 @@ function FirstStep({
         sx={{ paddingRight: '5px', width: '70%' }}
       />
       <Select
-        containerStyles={{ mt: '2%', width: '50%' }}
+        containerStyles={{ mt: '2%', width: '30%' }}
         label={sharedLabels.priceType}
         values={pricesTypeMock}
         defaultSelected={defaultPriceTypeSelected}
@@ -174,7 +174,7 @@ function FirstStep({
       />
       {showPriceInput && (
       <TextField
-        sx={{ mt: '2%' }}
+        sx={{ mt: '2%', width: '30%' }}
         type="text"
         label={sharedLabels.price}
         onChange={onChangePriceAmount}
@@ -190,9 +190,18 @@ function FirstStep({
     </>
   );
 
+  const shouldChangeLayout = useMediaQuery('(max-width: 768px');
+
   return (
-    <Grid item display="flex" flexDirection="row" xs={10}>
-      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
+    <Box
+      display="flex"
+      flexDirection={!shouldChangeLayout ? 'row' : 'column'}
+      height="100vh"
+    >
+      <Box
+        display="flex"
+        flexDirection={!shouldChangeLayout ? 'column' : 'row'}
+      >
         <Searcher
           title={nameFieldTitle}
           placeholder={nameFieldPlaceholder}
@@ -229,8 +238,8 @@ function FirstStep({
             </Box>
           )
         }
-      </Grid>
-      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
+      </Box>
+      <Box display="flex" flexDirection={!shouldChangeLayout ? 'column' : 'row'}>
         {
           !isEditionEnabled && priceSection
         }
@@ -277,8 +286,8 @@ function FirstStep({
 
         </>
         )}
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 
