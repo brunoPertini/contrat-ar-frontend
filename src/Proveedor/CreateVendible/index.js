@@ -205,7 +205,7 @@ function VendibleCreateForm({
       {
           activeStep === 2 && (
             <StaticAlert
-              styles={{ mt: '3%', fontSize: '1rem' }}
+              styles={{ mt: '3%', fontSize: '1rem', width: '80%' }}
               severity="info"
               label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
             />

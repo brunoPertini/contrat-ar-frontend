@@ -73,7 +73,7 @@ function SecondStep({
             __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit),
           }}
           textAlign="justify"
-          sx={{ width: { xs: '100%', md: '50%' }, mt: '2%' }}
+          sx={{ width: { xs: '80%', md: '50%' }, mt: '2%' }}
         />
         <Box display="flex" flexDirection="column">
           <ImageListItem

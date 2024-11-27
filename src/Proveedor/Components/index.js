@@ -68,7 +68,7 @@ const optionsMenuHandlers = ({
           cardStyles={{
             display: 'flex',
             flexDirection: 'column',
-            width: '60%',
+            width: '85%',
             overflow: 'scroll',
           }}
           userToken={userToken}
@@ -439,14 +439,15 @@ function ProveedorPage({
 
   let mainContent;
 
+  // eslint-disable-next-line no-unused-vars
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
         handlePutVendible: managePutVendibleResults,
         handleUploadImage,
-        vendibleInfo,
+        vendibleInfo: vendibles[0],
         option,
-        vendibleType,
+        vendibleType: 'servicios',
         userToken: userInfo.token,
         userId: userInfo.id,
         onCloseInnerComponent: cleanOperationsComponents,
