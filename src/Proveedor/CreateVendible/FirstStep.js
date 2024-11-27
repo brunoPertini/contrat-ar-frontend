@@ -57,6 +57,8 @@ function FirstStep({
     ? { shouldRenderStock: true, locationTypesMock: productLocationsMock }
     : { shouldRenderStock: false, locationTypesMock: serviceLocationsMock }), [vendibleType]);
 
+  const shouldChangeLayout = useMediaQuery('(max-width: 768px');
+
   const handleSetLoation = ({ coords }) => {
     const newCoordinates = {
       coordinates: [coords.latitude, coords.longitude],
@@ -154,7 +156,7 @@ function FirstStep({
   );
 
   const priceSection = (
-    <>
+    <Box>
       <Typography variant="h4">
         {sharedLabels.price}
       </Typography>
@@ -166,7 +168,7 @@ function FirstStep({
         sx={{ paddingRight: '5px', width: '70%' }}
       />
       <Select
-        containerStyles={{ mt: '2%', width: '30%' }}
+        containerStyles={{ mt: '2%', width: !shouldChangeLayout ? '30%' : '50%' }}
         label={sharedLabels.priceType}
         values={pricesTypeMock}
         defaultSelected={defaultPriceTypeSelected}
@@ -174,7 +176,7 @@ function FirstStep({
       />
       {showPriceInput && (
       <TextField
-        sx={{ mt: '2%', width: '30%' }}
+        sx={{ mt: '2%', width: !shouldChangeLayout ? '30%' : '50%' }}
         type="text"
         label={sharedLabels.price}
         onChange={onChangePriceAmount}
@@ -187,20 +189,19 @@ function FirstStep({
         helperText={inputHelperLabels.onlyIntNumbers}
       />
       )}
-    </>
+    </Box>
   );
-
-  const shouldChangeLayout = useMediaQuery('(max-width: 768px');
 
   return (
     <Box
       display="flex"
       flexDirection={!shouldChangeLayout ? 'row' : 'column'}
-      height="100vh"
+      gap={!shouldChangeLayout ? 0 : 10}
+      height={!shouldChangeLayout ? '100vh' : 'auto'}
     >
       <Box
         display="flex"
-        flexDirection={!shouldChangeLayout ? 'column' : 'row'}
+        flexDirection="column"
       >
         <Searcher
           title={nameFieldTitle}
@@ -239,12 +240,12 @@ function FirstStep({
           )
         }
       </Box>
-      <Box display="flex" flexDirection={!shouldChangeLayout ? 'column' : 'row'}>
+      <Box display="flex" flexDirection="column" gap={5}>
         {
           !isEditionEnabled && priceSection
         }
         {gridConfig[vendibleType].showLocationColumn && (
-        <>
+        <Box>
           <Typography sx={{ mt: '5%' }}>
             {proveedorLabels['addVendible.location.text'][vendibleType]}
           </Typography>
@@ -284,7 +285,7 @@ function FirstStep({
             )
           }
 
-        </>
+        </Box>
         )}
       </Box>
     </Box>

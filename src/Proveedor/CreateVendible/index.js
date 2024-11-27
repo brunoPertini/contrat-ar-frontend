@@ -91,8 +91,7 @@ function VendibleCreateForm({
   const containerProps = useMemo(() => ({
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
-    gap: 15,
+    gap: { xs: 0, md: 15 },
     sx: {
       alignItems: 'center',
     },

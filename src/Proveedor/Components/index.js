@@ -639,7 +639,6 @@ function ProveedorPage({
       flexDirection="column"
       height="100vh"
       minHeight="100vh"
-      flex={{ xs: 1, md: 9, lg: 10 }}
     >
       <Header
         withMenuComponent
