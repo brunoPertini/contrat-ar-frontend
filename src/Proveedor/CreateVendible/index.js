@@ -42,7 +42,7 @@ function VendibleCreateForm({
 
   const [categories, setCategories] = useState([]);
 
-  const [imagenUrl, setImagenUrl] = useState('');
+  const [imagenUrl, setImagenUrl] = useState('https://www.lg.com/ar/images/lavarropas/MD05962336/gallery/medium01.jpg');
   const [descripcion, setDescripcion] = useState('');
 
   const [activeStep, setActiveStep] = useState(0);
@@ -88,15 +88,14 @@ function VendibleCreateForm({
     return setActiveStep(newStep);
   };
 
-  const containerProps = useMemo(() => ({
+  const containerProps = {
     display: 'flex',
     flexDirection: 'column',
-    gap: { xs: 0, md: 15 },
+    gap: { xs: 2, sm: 7 },
     sx: {
       alignItems: 'center',
     },
-    spacing: activeStep === 0 ? 35 : 10,
-  }), [activeStep]);
+  };
 
   const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
@@ -218,6 +217,7 @@ function VendibleCreateForm({
           display: 'flex',
           flexDirection: 'row',
           alignSelf: 'center',
+          marginBottom: { xs: '1%', md: 0 },
         }}
       >
         <Button

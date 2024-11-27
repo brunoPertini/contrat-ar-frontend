@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -50,16 +51,20 @@ function SecondStep({
 
   const vendibleUnit = useMemo(() => parseVendibleUnit(vendibleType), [vendibleType]);
 
+  const shouldChangeLayout = useMediaQuery('(max-width: 900px');
+
   return (
     <Box
       display="flex"
       flexDirection={{ xs: 'column', md: 'row' }}
-      height="100vh"
+      gap={!shouldChangeLayout ? 0 : 5}
+      height={!shouldChangeLayout ? '100vh' : 'auto'}
     >
       <Box
         display="flex"
         flexDirection="column"
         flex={1}
+        sx={{ paddingLeft: '1%' }}
       >
 
         { mainTitle }
@@ -68,15 +73,12 @@ function SecondStep({
             __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit),
           }}
           textAlign="justify"
-          sx={{ width: '50%', mt: '2%' }}
+          sx={{ width: { xs: '100%', md: '50%' }, mt: '2%' }}
         />
-        <Box>
+        <Box display="flex" flexDirection="column">
           <ImageListItem
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              width: '50%',
+              width: { xs: '100%', md: '50%' },
               mt: '5%',
             }}
           >
@@ -101,7 +103,7 @@ function SecondStep({
               )
             }
           </ImageListItem>
-          <Box display="flex" flexDirection="column" sx={{ width: '20%' }}>
+          <Box display="flex" flexDirection="column" sx={{ width: { xs: '100%', md: '20%' } }}>
             <Button
               component="label"
               variant="contained"

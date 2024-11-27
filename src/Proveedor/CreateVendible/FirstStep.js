@@ -202,6 +202,7 @@ function FirstStep({
       <Box
         display="flex"
         flexDirection="column"
+        sx={{ paddingLeft: '1%' }}
       >
         <Searcher
           title={nameFieldTitle}
@@ -256,32 +257,33 @@ function FirstStep({
           />
           {
             gridConfig[vendibleType].showMap && (
-              <>
-                <Box display="flex" flexDirection="column">
-                  <Typography
-                    dangerouslySetInnerHTML={{
-                      __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],
-                    }}
-                    textAlign="justify"
-                    sx={{ paddingRight: '5px', width: '70%' }}
-                  />
-                </Box>
-                <LocationMap
-                  showTranslatedAddress
-                  location={{
-                    coords: {
-                      latitude: vendibleLocation.coordinates[0],
-                      longitude: vendibleLocation.coordinates[1],
-                    },
-                  }}
-                  setLocation={handleSetLoation}
-                  containerStyles={{
-                    width: '50%',
-                    height: '50%',
-                  }}
-                  token={token}
-                />
-              </>
+
+            <Box display="flex" flexDirection="column">
+              <Typography
+                dangerouslySetInnerHTML={{
+                  __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],
+                }}
+                textAlign="justify"
+                sx={{ paddingRight: '5px', width: '70%' }}
+              />
+
+              <LocationMap
+                showTranslatedAddress
+                location={{
+                  coords: {
+                    latitude: vendibleLocation.coordinates[0],
+                    longitude: vendibleLocation.coordinates[1],
+                  },
+                }}
+                setLocation={handleSetLoation}
+                containerStyles={{
+                  height: '300px',
+                  width: '500px',
+                }}
+                token={token}
+              />
+            </Box>
+
             )
           }
 
