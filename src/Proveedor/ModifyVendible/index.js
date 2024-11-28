@@ -5,7 +5,7 @@ import {
   useState,
 } from 'react';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import isEqual from 'lodash/isEqual';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
@@ -136,15 +136,11 @@ function ModifyVendibleForm({
     return setActiveStep(newStep);
   };
 
-  const containerProps = useMemo(() => ({
-    container: true,
+  const containerProps = {
+    display: 'flex',
     flexDirection: 'column',
-    sx: {
-      minHeight: '100vh',
-      alignItems: 'center',
-    },
-    spacing: activeStep === 0 ? 35 : 10,
-  }), [activeStep]);
+    gap: { xs: 2, sm: 7 },
+  };
 
   const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
@@ -249,7 +245,7 @@ function ModifyVendibleForm({
   ));
 
   return (
-    <Grid
+    <Box
       {...containerProps}
     >
       { steps[activeStep].component }
@@ -269,8 +265,7 @@ function ModifyVendibleForm({
         severity={operationResult ? 'success' : 'error'}
         onClose={resetMessageOperationData}
       />
-      <Grid
-        item
+      <Box
         sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -294,8 +289,8 @@ function ModifyVendibleForm({
         >
           {nexButtonLabel}
         </Button>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

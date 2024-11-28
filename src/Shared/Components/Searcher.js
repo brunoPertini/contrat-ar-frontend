@@ -44,9 +44,14 @@ function Searcher({
 
   return (
     <>
-      <Typography {...titleConfig}>
-        {title}
-      </Typography>
+      {
+      !!title && (
+        <Typography {...titleConfig}>
+          {title}
+        </Typography>
+      )
+    }
+
       <FormControl {...searcherConfig}>
         <TextField
           required={required}
@@ -81,7 +86,6 @@ function Searcher({
           sx={{ ...inputStyles }}
         />
       </FormControl>
-
     </>
   );
 }

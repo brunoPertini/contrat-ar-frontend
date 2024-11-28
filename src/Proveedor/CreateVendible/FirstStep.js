@@ -211,6 +211,7 @@ function FirstStep({
           searcherConfig={{
             sx: {
               width: '70%',
+              marginTop: !isEditionEnabled ? 0 : '3%',
             },
           }}
           inputValue={nombre}
@@ -277,8 +278,8 @@ function FirstStep({
                 }}
                 setLocation={handleSetLoation}
                 containerStyles={{
-                  height: '300px',
-                  width: '500px',
+                  height: '15rem',
+                  width: '15rem',
                 }}
                 token={token}
               />

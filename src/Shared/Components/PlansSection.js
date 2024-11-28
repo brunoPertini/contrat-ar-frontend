@@ -76,7 +76,7 @@ function PlansSection({ plans, containerStyles }) {
                     circleRadius={1000}
                     location={parseLocationForMap({ coordinates: [-34.919056, -57.9503485] })}
                     containerStyles={{
-                      height: '160px',
+                      height: '25rem',
                       width: '100%',
                     }}
                   />

@@ -78,6 +78,8 @@ function SecondStep({
         <Box display="flex" flexDirection="column">
           <ImageListItem
             sx={{
+              display: 'flex',
+              flexDirection: 'column',
               width: { xs: '100%', md: '50%' },
               mt: '5%',
             }}

@@ -98,7 +98,7 @@ function VendiblesFilters({
     <>
       {(isEmpty(filtersLabels)) && (
       <Box sx={{
-        mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
+        mt: 3, p: 2, borderRadius: 1, bgcolor: 'background.paper',
       }}
       >
         <Typography variant="h6" color="primary">
