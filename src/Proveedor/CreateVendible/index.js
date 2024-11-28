@@ -21,6 +21,7 @@ import BackdropLoader from '../../Shared/Components/BackdropLoader';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import GoBackLink from '../../Shared/Components/GoBackLink';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
@@ -201,6 +202,7 @@ function VendibleCreateForm({
     <Box
       {...containerProps}
     >
+      <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
       {
           activeStep === 2 && (

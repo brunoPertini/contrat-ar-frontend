@@ -21,7 +21,7 @@ const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
 function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
-  onFiltersApplied, containerStyles, sliderContainerStyles,
+  onFiltersApplied, containerStyles, sliderContainerStyles, stateContainerStyles,
   showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
   alternativeAccordionTitle, distanceSliderAdditionalProps,
 }) {
@@ -188,7 +188,7 @@ function VendiblesFilters({
 
   const stateSection = (
     <Select
-      containerStyles={{ mt: '5%', width: '50%' }}
+      containerStyles={{ mt: '5%', width: '50%', ...stateContainerStyles }}
       defaultSelected={defaultStateSelected}
       label={sharedLabels.postState}
       values={statesValues}
@@ -244,6 +244,7 @@ VendiblesFilters.defaultProps = {
   distanceSliderAdditionalProps: {},
   priceSliderAdditionalProps: {},
   sliderContainerStyles: {},
+  stateContainerStyles: {},
   filtersApplied: {
     category: null,
     categoryName: '',
@@ -261,6 +262,7 @@ VendiblesFilters.propTypes = {
   vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   onFiltersApplied: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.string),
+  stateContainerStyles: PropTypes.object,
   sliderContainerStyles: PropTypes.object,
   showAccordionTitle: PropTypes.bool,
   alternativeAccordionTitle: PropTypes.node,

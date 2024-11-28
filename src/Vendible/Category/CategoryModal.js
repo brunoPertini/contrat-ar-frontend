@@ -215,7 +215,6 @@ function CategoryModal({
 
         <Divider sx={{ mb: 3 }} />
 
-        {/* Categories List */}
         <Box display="flex" flexWrap="wrap" gap={3}>
           {filteredCategories.map((column, index) => (
             <Box key={index} display="flex" flexDirection="column" gap={2}>

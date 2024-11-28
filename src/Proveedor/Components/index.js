@@ -403,6 +403,7 @@ function ProveedorPage({
     searcherConfig: {
       sx: {
         mt: '5%',
+        paddingLeft: '10px',
       },
     },
     onSearchClick: handleStartSearch,
@@ -498,10 +499,15 @@ function ProveedorPage({
   );
 
   const ResolvedFiltersSection = useCallback(() => (!shouldChangeLayout ? (
-    <>
+    <Box sx={{
+      borderRadius: 2,
+      border: '1px solid',
+      borderColor: 'rgb(36, 134, 164)',
+    }}
+    >
       <SearcherInput {...searcherProps} />
-      <VendiblesFilters {...filtersProps} />
-    </>
+      <VendiblesFilters stateContainerStyles={{ paddingBottom: '10px', paddingLeft: '10px' }} {...filtersProps} />
+    </Box>
 
   ) : (
     <BasicMenu

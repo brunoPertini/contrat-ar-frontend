@@ -320,7 +320,7 @@ function VendiblePage({
           display="flex"
           flexDirection="column"
         >
-          <GoBackLink />
+          <GoBackLink styles={{ pl: '2%' }} />
           <ResolvedFiltersSection />
         </Box>
 

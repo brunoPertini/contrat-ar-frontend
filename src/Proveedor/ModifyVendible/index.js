@@ -31,6 +31,7 @@ import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../../Shared/Components/Alert';
+import GoBackLink from '../../Shared/Components/GoBackLink';
 
 const localStorageService = new LocalStorageService();
 
@@ -248,6 +249,7 @@ function ModifyVendibleForm({
     <Box
       {...containerProps}
     >
+      <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
       {
           activeStep === 2 && (
