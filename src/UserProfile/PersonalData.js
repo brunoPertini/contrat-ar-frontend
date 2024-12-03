@@ -180,9 +180,8 @@ function UserPersonalData({
           <LocationMap
             token={userToken}
             containerStyles={{
-              height: '500px',
-              width: '500px',
-              marginTop: '5%',
+              height: '200px',
+              width: '100%',
             }}
             enableDragEvents={isEditModeEnabled}
             location={parseLocationForMap(fieldsValues.location)}

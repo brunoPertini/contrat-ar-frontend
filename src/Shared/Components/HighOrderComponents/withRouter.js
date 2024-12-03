@@ -18,6 +18,7 @@ import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
 import { errorMessages } from '../../../StaticData/Shared';
+import { userInfoMock } from '../../Mocks/userInfoMock';
 
 const store = createStore();
 const cookiesService = new CookiesService();
@@ -72,24 +73,7 @@ export default function withRouter(Component) {
           setIsAdmin(true);
         }
 
-        const userInfo = {
-          id: 1,
-          name: 'John',
-          surname: 'Doe',
-          email: 'john.doe@example.com',
-          birthDate: '1990-01-01',
-          location: {
-            coordinates: [-34.9200364392778, -57.9542080490215],
-          },
-          role: 'CLIENTE',
-          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-          indexPage: '/cliente',
-          phone: '+541100000000',
-          password: 'securePassword123',
-          plan: 'FREE',
-          dni: '12345678',
-          authorities: ['ROLE_CLIENTE'],
-        };
+        const userInfo = userInfoMock;
 
         if (userInfo.status === 401) {
           return handleLogout({ errorMessage: errorMessages.sessionExpired });

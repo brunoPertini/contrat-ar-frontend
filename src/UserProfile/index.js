@@ -4,7 +4,6 @@ import {
   useCallback,
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
@@ -30,6 +29,8 @@ import { DialogModal, StaticAlert } from '../Shared/Components';
 import { sharedLabels } from '../StaticData/Shared';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
+import Footer from '../Shared/Components/Footer';
+import { indexLabels } from '../StaticData/Index';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -80,6 +81,11 @@ const accountActiveModalDefaultValues = {
   handleAccept: () => {},
   checked: undefined,
 };
+
+const footerOptions = [
+  { label: indexLabels.helpAndQuestions, onClick: () => {} },
+  { label: indexLabels.termsAndConditions, onClick: () => {} },
+];
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
@@ -307,7 +313,13 @@ function UserProfile({
   }
 
   return (
-    <Grid container display="flex">
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100vh"
+      minHeight="100vh"
+    >
+
       <UserActiveModal />
       <InformativeAlert
         open={alertConfig.open}
@@ -323,13 +335,19 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Grid item>
+      <Box display="flex" flexDirection="column">
         <GoBackLink />
-        <Tabs value={tabOption} onChange={handleTabOptionChange}>
+        <Tabs
+          value={tabOption}
+          onChange={handleTabOptionChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+        >
           { rolesTabs[userInfo.role].map((tab) => tab) }
         </Tabs>
         { tabsComponents[tabOption] }
-      </Grid>
+      </Box>
       {
         isAdmin && (
           <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
@@ -346,7 +364,8 @@ function UserProfile({
           </Box>
         )
       }
-    </Grid>
+      <Footer options={footerOptions} />
+    </Box>
 
   );
 }

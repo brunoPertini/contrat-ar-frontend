@@ -87,8 +87,6 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <UserProfile />,
-    errorElement: <ErrorComponent />,
-    hasErrorBoundary: true,
   },
   {
     path: '/admin',

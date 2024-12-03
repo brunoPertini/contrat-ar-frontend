@@ -19,23 +19,9 @@ import Footer from '../Shared/Components/Footer';
 import PlansSection from '../Shared/Components/PlansSection';
 import FAQSection from '../Shared/Components/FAQSection';
 import ContactForm from '../Shared/Components/ContactForm';
+import { plansMock } from '../Shared/Mocks/plansMock';
 
 const localStorageService = new LocalStorageService();
-
-const plans = [
-  {
-    id: 1,
-    descripcion: 'Cualquier persona dentro del radio de ejemplo que el mapa muestra te va a poder encontrar.',
-    type: 'FREE',
-    value: 0,
-  },
-  {
-    id: 2,
-    descripcion: 'Un radio de alcance completo para que cualquier persona en tu país te pueda encontrar. Un perfil completamente personalizado, donde vas a poder subir tus trabajos hechos, y recibir la opinión sobre ellos de tus clientes. La posibilidad de acceder a nuestro plan de beneficios, donde podrás ganar bonos por cada trabajo hecho.',
-    type: 'PAID',
-    value: 500,
-  },
-];
 
 const scrollToElement = (element) => element.scrollIntoView({
   behavior: 'smooth',
@@ -247,7 +233,7 @@ const RootPage = withRouter(({ router }) => {
         </Card>
 
       </Stack>
-      <PlansSection plans={plans} containerStyles={sectionStyles} />
+      <PlansSection plans={plansMock} containerStyles={sectionStyles} />
       <FAQSection containerStyles={sectionStyles} />
       <ContactForm containerStyles={sectionStyles} />
       <Footer options={footerOptions} />
