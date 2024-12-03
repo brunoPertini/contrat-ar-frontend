@@ -58,7 +58,7 @@ function UserPersonalData({
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
     },
-    gridStyles: { display: 'flex', flexDirection: 'column', width: '31rem' },
+    gridStyles: { display: 'flex', flexDirection: 'column' },
     showInlineLabels: true,
     fieldsOwnConfig: {
       name: {
@@ -140,7 +140,11 @@ function UserPersonalData({
   const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
   return (
-    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{ ...styles }}
+    >
       <InformativeAlert
         open={alertConfig.openSnackbar}
         onClose={() => resetAlertData()}
@@ -149,13 +153,24 @@ function UserPersonalData({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
       <Box display="flex" flexDirection="column">
-        <Box display="flex" flexDirection="row">
-          <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            order={{ xs: 2, md: 0 }}
+            flexGrow={1}
+          >
             {
                 formFields.map((field) => field)
             }
           </Box>
-          <Box display="flex" flexDirection="column" sx={{ ml: '5%' }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            order={{ xs: 1, md: 0 }}
+            width={{ xs: '50%', md: 'auto' }}
+            ml={{ xs: 0, md: '1%' }}
+          >
             <FormControlLabel
               control={<Switch checked={isEditModeEnabled} />}
               label={userProfileLabels.modifyData}
@@ -171,7 +186,11 @@ function UserPersonalData({
             </Button>
           </Box>
         </Box>
-        <Box display="flex" flexDirection="column" sx={{ mt: '5%' }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          sx={{ mt: { xs: '5%', md: '1%' } }}
+        >
           <Typography variant="h6" fontWeight="bold">
             {personalDataFormBuilder.fieldsLabels.location}
             {' '}
@@ -181,7 +200,7 @@ function UserPersonalData({
             token={userToken}
             containerStyles={{
               height: '200px',
-              width: '100%',
+              width: '70%',
             }}
             enableDragEvents={isEditModeEnabled}
             location={parseLocationForMap(fieldsValues.location)}

@@ -37,44 +37,36 @@ function PlanData({
   }), [suscripcionData]);
 
   return (
-    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
-      <Box display="flex" flexDirection="column">
-        <StaticAlert
-          styles={{
-            width: '50%',
-            marginTop: '2%',
-          }}
-          severity={subscriptionAlertSeverity}
-          label={subscriptionAlertLabel}
-        />
-        <SelectComponent
-          defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
-          values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-          containerStyles={{ width: '31rem', mt: '5%' }}
-          handleOnChange={onPlanChange}
-          label={userProfileLabels['plan.label']}
-          renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
-          disabled={planRequestChangeExists || hasPendingRequest}
-        />
-        { getPlanDescription(plan, planesInfo, true) }
-        {
-        plan === PLAN_TYPE_FREE && (
-          <LocationMap
-            enableDragEvents={false}
-            circleRadius={1000}
-            location={parseLocationForMap(userLocation)}
-            containerStyles={{
-              height: '500px',
-              width: '100%',
-              marginTop: '5%',
-            }}
-          />
-        )
-      }
-      </Box>
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{ ...styles }}
+    >
+      <StaticAlert
+        styles={{
+          width: '50%',
+          marginTop: '2%',
+        }}
+        severity={subscriptionAlertSeverity}
+        label={subscriptionAlertLabel}
+      />
+      <SelectComponent
+        defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
+        values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
+        containerStyles={{ mt: '5%' }}
+        handleOnChange={onPlanChange}
+        label={userProfileLabels['plan.label']}
+        renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
+        disabled={planRequestChangeExists || hasPendingRequest}
+      />
       {
         !hasPendingRequest && (
-          <Box display="flex" flexDirection="column" alignSelf="flex-start">
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignSelf="flex-start"
+            order={{ xs: 2, md: 0 }}
+          >
             <Button
               variant="contained"
               sx={{ mt: '5%' }}
@@ -84,6 +76,20 @@ function PlanData({
               { sharedLabels.saveChanges }
             </Button>
           </Box>
+        )
+      }
+      { getPlanDescription(plan, planesInfo, true) }
+      {
+        plan === PLAN_TYPE_FREE && (
+          <LocationMap
+            enableDragEvents={false}
+            circleRadius={1000}
+            location={parseLocationForMap(userLocation)}
+            containerStyles={{
+              height: '200px',
+              width: '50%',
+            }}
+          />
         )
       }
       <InformativeAlert

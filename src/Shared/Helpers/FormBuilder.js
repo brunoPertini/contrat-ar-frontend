@@ -158,12 +158,10 @@ export class PersonalDataFormBuilder extends FormBuilder {
   }) {
     super.build({ usuarioType });
 
-    const finalStyles = isEmpty(gridStyles) ? { xs: 12 } : { ...gridStyles };
-
     const renderNameRow = 'name' in fieldsValues && 'surname' in fieldsValues;
 
     const nameAndSurnameRow = renderNameRow ? (
-      <Grid item {...finalStyles}>
+      <Box {...gridStyles}>
         {TextFieldWithLabel(showInlineLabels, {
           id: 'form-name',
           type: 'text',
@@ -179,13 +177,13 @@ export class PersonalDataFormBuilder extends FormBuilder {
           onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
           InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
         }, sharedLabels.surname) }
-      </Grid>
+      </Box>
     ) : null;
 
     const rendeEmailRow = 'email' in fieldsValues && 'password' in fieldsValues;
 
     const emailAndPasswordRow = rendeEmailRow ? (
-      <Grid item {...finalStyles}>
+      <Box {...gridStyles}>
         {TextFieldWithLabel(showInlineLabels, {
           id: 'form-email',
           type: 'email',
@@ -210,11 +208,11 @@ export class PersonalDataFormBuilder extends FormBuilder {
           inputProps,
           onChange: (e) => onChangeFields('password', e.target.value),
         }, sharedLabels.password)}
-      </Grid>
+      </Box>
     ) : null;
 
     const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (
-      <Grid item xs={12} sx={{ width: '31rem' }}>
+      <Box>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.dni }
         </Typography>
@@ -226,7 +224,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           onChange={(e) => onChangeFields('dni', e.target.value)}
           {...('dni' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.dni } } : {})}
         />
-      </Grid>
+      </Box>
     ) : null;
 
     let birthDateRow = null;
@@ -243,7 +241,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
         : fieldsValues.birthDate;
 
       birthDateRow = (
-        <Grid item xs={12} sx={{ width: '31rem' }}>
+        <Box>
           <Typography variant="subtitle1" align="left">
             { sharedLabels.birthDate }
           </Typography>
@@ -256,12 +254,12 @@ export class PersonalDataFormBuilder extends FormBuilder {
             {...('birthDate' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.birthDate } } : {})}
             {...inputProps}
           />
-        </Grid>
+        </Box>
       );
     }
 
     const phoneRow = 'phone' in fieldsValues ? (
-      <Grid item xs={12} sx={{ width: '31rem' }}>
+      <Box>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.phone }
         </Typography>
@@ -272,7 +270,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
           sx={{ width: '100%' }}
           onChange={(e) => onChangeFields('phone', e.target.value)}
         />
-      </Grid>
+      </Box>
     ) : null;
 
     const personalDataFields = [nameAndSurnameRow,
