@@ -10,7 +10,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
 
   const renderDescripctionLine = (innerContent) => (
-    <Box display="flex" flexDirection="row" alignItems="center">
+    <Box display="flex" flexDirection="row">
       { innerContent}
     </Box>
   );

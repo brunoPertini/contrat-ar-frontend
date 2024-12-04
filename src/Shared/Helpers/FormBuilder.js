@@ -158,27 +158,31 @@ export class PersonalDataFormBuilder extends FormBuilder {
   }) {
     super.build({ usuarioType });
 
-    const renderNameRow = 'name' in fieldsValues && 'surname' in fieldsValues;
+    const baseBox = (component) => <Box {...gridStyles}>{component}</Box>;
 
-    const nameAndSurnameRow = renderNameRow ? (
-      <Box {...gridStyles}>
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-name',
-          type: 'text',
-          value: fieldsValues.name,
-          onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
-          InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
-        }, sharedLabels.name) }
-        {' '}
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-surname',
-          type: 'text',
-          value: fieldsValues.surname,
-          onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
-          InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
-        }, sharedLabels.surname) }
-      </Box>
-    ) : null;
+    const commonInputStyles = {
+      border: '2px solid rgb(36, 134, 164)',
+      borderRadius: '10px',
+      width: '100%',
+    };
+
+    const nameRow = 'name' in fieldsValues ? baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-name',
+      type: 'text',
+      value: fieldsValues.name,
+      onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
+      sx: { ...commonInputStyles },
+      InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
+    }, sharedLabels.name)) : null;
+
+    const surnameRow = 'surname' in fieldsValues ? baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-surname',
+      type: 'text',
+      value: fieldsValues.surname,
+      onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
+      sx: { ...commonInputStyles },
+      InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
+    }, sharedLabels.surname)) : null;
 
     const rendeEmailRow = 'email' in fieldsValues && 'password' in fieldsValues;
 
@@ -211,8 +215,8 @@ export class PersonalDataFormBuilder extends FormBuilder {
       </Box>
     ) : null;
 
-    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (
-      <Box>
+    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? baseBox(
+      <>
         <Typography variant="subtitle1" align="left">
           { sharedLabels.dni }
         </Typography>
@@ -220,11 +224,11 @@ export class PersonalDataFormBuilder extends FormBuilder {
           id="form-dni"
           value={fieldsValues.dni}
           type="number"
-          sx={{ width: '100%' }}
+          sx={{ ...commonInputStyles }}
           onChange={(e) => onChangeFields('dni', e.target.value)}
           {...('dni' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.dni } } : {})}
         />
-      </Box>
+      </>,
     ) : null;
 
     let birthDateRow = null;
@@ -240,8 +244,8 @@ export class PersonalDataFormBuilder extends FormBuilder {
         })
         : fieldsValues.birthDate;
 
-      birthDateRow = (
-        <Box>
+      birthDateRow = baseBox(
+        <>
           <Typography variant="subtitle1" align="left">
             { sharedLabels.birthDate }
           </Typography>
@@ -249,31 +253,32 @@ export class PersonalDataFormBuilder extends FormBuilder {
             id="form-birthDate"
             value={birthDateFinalValue}
             type="date"
-            sx={{ width: '100%' }}
+            sx={{ ...commonInputStyles }}
             onChange={(e) => onChangeFields('birthDate', e.target.value)}
             {...('birthDate' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.birthDate } } : {})}
             {...inputProps}
           />
-        </Box>
+        </>,
       );
     }
 
-    const phoneRow = 'phone' in fieldsValues ? (
-      <Box>
+    const phoneRow = 'phone' in fieldsValues ? baseBox(
+      <>
         <Typography variant="subtitle1" align="left">
-          { sharedLabels.phone }
+          {sharedLabels.phone}
         </Typography>
         <TextField
           id="form-phone"
           value={fieldsValues.phone}
           type="number"
-          sx={{ width: '100%' }}
+          sx={{ ...commonInputStyles }}
           onChange={(e) => onChangeFields('phone', e.target.value)}
         />
-      </Box>
+      </>,
     ) : null;
 
-    const personalDataFields = [nameAndSurnameRow,
+    const personalDataFields = [nameRow,
+      surnameRow,
       emailAndPasswordRow,
       dniRow, birthDateRow,
       phoneRow];

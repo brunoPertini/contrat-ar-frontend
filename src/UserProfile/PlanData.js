@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import SaveIcon from '@mui/icons-material/Save';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo, useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
@@ -56,7 +57,7 @@ function PlanData({
       <SelectComponent
         defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
         values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-        containerStyles={{ mt: '3%', width: '20%' }}
+        containerStyles={{ mt: !isLayourNearTabletSize ? '3%' : '10%', width: '20%' }}
         handleOnChange={onPlanChange}
         label={userProfileLabels['plan.label']}
         renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
@@ -71,7 +72,8 @@ function PlanData({
           >
             <Button
               variant="contained"
-              sx={{ mt: '5%' }}
+              startIcon={<SaveIcon />}
+              sx={{ mt: '5%', mb: !isLayourNearTabletSize ? 0 : '10%' }}
               disabled={actualPlan === plan}
               onClick={() => handleConfirmPlan()}
             >
@@ -88,8 +90,7 @@ function PlanData({
             circleRadius={1000}
             location={parseLocationForMap(userLocation)}
             containerStyles={{
-              height: '200px',
-              width: '50%',
+              height: '600px',
             }}
           />
         )

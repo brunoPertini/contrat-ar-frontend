@@ -273,6 +273,7 @@ function UserProfile({
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
+        styles={{ height: '100vh' }}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),

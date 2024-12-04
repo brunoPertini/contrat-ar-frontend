@@ -6,6 +6,8 @@ import pickBy from 'lodash/pickBy';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import SaveIcon from '@mui/icons-material/Save';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -44,21 +46,38 @@ function UserPersonalData({
 
   const formFields = useMemo(() => (!isEditModeEnabled ? (
     Object.keys(textFields).map((dataKey) => (
-      <Typography variant="h6" fontWeight="bold" sx={{ mt: '5%' }}>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        sx={{
+          mt: '5%',
+          border: '2px solid rgb(36, 134, 164)',
+          borderRadius: '10px',
+          padding: '10px',
+          backgroundColor: '#f5f5f5',
+        }}
+      >
         {personalDataFormBuilder.fieldsLabels[dataKey]}
         :
-        {' '}
-        { fieldsValues[dataKey] }
+        <Typography
+          variant="body1"
+          sx={{ ml: '10px', display: 'inline', color: '#666' }}
+        >
+          {fieldsValues[dataKey]}
+        </Typography>
       </Typography>
     ))
   ) : personalDataFormBuilder.build({
     usuarioType,
+    gridStyles: { mt: '2%' },
     fieldsValues,
-    inputProps: { readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled },
+    inputProps: {
+      readOnly: !isEditModeEnabled,
+      disabled: !isEditModeEnabled,
+    },
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
     },
-    gridStyles: { display: 'flex', flexDirection: 'column' },
     showInlineLabels: true,
     fieldsOwnConfig: {
       name: {
@@ -75,6 +94,8 @@ function UserPersonalData({
       },
     },
   })), [isEditModeEnabled, fieldsValues]);
+
+  const shouldResizeMap = useMediaQuery('(min-width:1800px)');
 
   useEffect(() => {
     setFieldsValues(userInfo);
@@ -172,13 +193,24 @@ function UserPersonalData({
             ml={{ xs: 0, md: '1%' }}
           >
             <FormControlLabel
-              control={<Switch checked={isEditModeEnabled} />}
+              control={(
+                <Switch
+                  checked={isEditModeEnabled}
+                  color="primary"
+                />
+              )}
               label={userProfileLabels.modifyData}
               onChange={handleEditModeChange}
+              sx={{ color: '#333', fontSize: '16px' }}
             />
             <Button
               variant="contained"
-              sx={{ mt: '5%' }}
+              startIcon={<SaveIcon />}
+              sx={{
+                mt: '5%',
+                backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
+                '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
+              }}
               disabled={!isEditModeEnabled}
               onClick={handleConfirmEdition}
             >
@@ -199,7 +231,7 @@ function UserPersonalData({
           <LocationMap
             token={userToken}
             containerStyles={{
-              height: '200px',
+              height: shouldResizeMap ? '10rem' : '400px',
               width: '70%',
             }}
             enableDragEvents={isEditModeEnabled}
