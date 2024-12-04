@@ -28,7 +28,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
 
   const PLAN_DESCRIPTIONS = {
     [PLAN_TYPE_FREE]: (
-      <Typography paragraph variant="body" sx={{ mt: '5%' }}>
+      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
         { userProfileLabels['plan.includes'] }
         <br />
         <br />
@@ -37,7 +37,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
           }
       </Typography>),
     [PLAN_TYPE_PAID]: (
-      <Typography paragraph variant="body" sx={{ mt: '5%' }}>
+      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
         { userProfileLabels['plan.includes'] }
         <br />
         <br />

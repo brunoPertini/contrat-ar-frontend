@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo, useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import { PLAN_TYPE_FREE } from '../Shared/Constants/System';
@@ -36,6 +37,8 @@ function PlanData({
       : userProfileLabels['plan.subscription.inactive'],
   }), [suscripcionData]);
 
+  const isLayourNearTabletSize = useMediaQuery('(max-width: 700px');
+
   return (
     <Box
       display="flex"
@@ -44,7 +47,7 @@ function PlanData({
     >
       <StaticAlert
         styles={{
-          width: '50%',
+          width: !isLayourNearTabletSize ? '15%' : '80%',
           marginTop: '2%',
         }}
         severity={subscriptionAlertSeverity}
@@ -53,7 +56,7 @@ function PlanData({
       <SelectComponent
         defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
         values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-        containerStyles={{ mt: '5%' }}
+        containerStyles={{ mt: '3%', width: '20%' }}
         handleOnChange={onPlanChange}
         label={userProfileLabels['plan.label']}
         renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
@@ -65,7 +68,6 @@ function PlanData({
             display="flex"
             flexDirection="column"
             alignSelf="flex-start"
-            order={{ xs: 2, md: 0 }}
           >
             <Button
               variant="contained"

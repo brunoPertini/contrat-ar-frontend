@@ -24,10 +24,11 @@ function SelectComponent({
 
   return (
     <Box sx={{ ...containerStyles }}>
-      <FormControl fullWidth disabled={disabled}>
+      <FormControl disabled={disabled}>
         <InputLabel sx={{
           color: 'rgb(36, 134, 164)',
           opacity: 1,
+          maxWidth: 'unset',
         }}
         >
           {label}
@@ -37,6 +38,7 @@ function SelectComponent({
           label={label}
           onChange={handleChange}
           renderValue={renderValue}
+          sx={{ mt: '3%' }}
         >
           {
                 values.map((valueLabel) => (

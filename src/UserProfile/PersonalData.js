@@ -189,7 +189,7 @@ function UserPersonalData({
         <Box
           display="flex"
           flexDirection="column"
-          sx={{ mt: { xs: '5%', md: '1%' } }}
+          sx={{ mt: '5%' }}
         >
           <Typography variant="h6" fontWeight="bold">
             {personalDataFormBuilder.fieldsLabels.location}
