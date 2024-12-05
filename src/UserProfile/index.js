@@ -252,7 +252,7 @@ function UserProfile({
         editCommonInfo={editCommonInfo}
         uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
-        styles={{ ml: '5%', height: '100vh' }}
+        styles={{ pl: '1%', height: '100vh' }}
         isAdmin={isAdmin}
       />
     ), [personalData, userInfo.token]),

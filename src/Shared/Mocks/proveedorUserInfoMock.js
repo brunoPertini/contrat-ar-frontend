@@ -3,6 +3,7 @@ export const proveedorUserInfoMock = {
   name: 'John',
   surname: 'Doe',
   email: 'john.doe@example.com',
+  fotoPerfilUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80',
   birthDate: '1990-01-01',
   location: {
     coordinates: [-34.9200364392778, -57.9542080490215],

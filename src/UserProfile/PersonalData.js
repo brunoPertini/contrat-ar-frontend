@@ -50,7 +50,7 @@ function UserPersonalData({
         variant="h6"
         fontWeight="bold"
         sx={{
-          mt: '5%',
+          mt: '3%',
           border: '2px solid rgb(36, 134, 164)',
           borderRadius: '10px',
           padding: '10px',
@@ -178,45 +178,74 @@ function UserPersonalData({
           <Box
             display="flex"
             flexDirection="column"
+            width="60%"
             order={{ xs: 2, md: 0 }}
             flexGrow={1}
           >
             {
                 formFields.map((field) => field)
             }
+
           </Box>
           <Box
             display="flex"
-            flexDirection="column"
-            order={{ xs: 1, md: 0 }}
-            width={{ xs: '50%', md: 'auto' }}
-            ml={{ xs: 0, md: '1%' }}
+            pr="2%"
+            pl="2%"
+            flexDirection={{ xs: 'row', md: 'column' }}
+            mt={{ xs: '3%', md: 0 }}
+            mb={{ xs: '3%', md: 0 }}
           >
-            <FormControlLabel
-              control={(
-                <Switch
-                  checked={isEditModeEnabled}
-                  color="primary"
-                />
-              )}
-              label={userProfileLabels.modifyData}
-              onChange={handleEditModeChange}
-              sx={{ color: '#333', fontSize: '16px' }}
-            />
-            <Button
-              variant="contained"
-              startIcon={<SaveIcon />}
-              sx={{
-                mt: '5%',
-                backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
-                '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
-              }}
-              disabled={!isEditModeEnabled}
-              onClick={handleConfirmEdition}
+            <Box
+              display="flex"
+              flexDirection="column"
+              order={{ xs: 1, md: 0 }}
+              width={{ xs: '50%', md: 'auto' }}
+              ml={{ xs: 0, md: '1%' }}
             >
-              { sharedLabels.saveChanges }
-            </Button>
+              <FormControlLabel
+                control={(
+                  <Switch
+                    checked={isEditModeEnabled}
+                    color="primary"
+                  />
+              )}
+                label={userProfileLabels.modifyData}
+                onChange={handleEditModeChange}
+                sx={{ color: '#333', fontSize: '16px' }}
+              />
+              <Button
+                variant="contained"
+                startIcon={<SaveIcon />}
+                sx={{
+                  mt: '5%',
+                  backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
+                  '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
+                }}
+                disabled={!isEditModeEnabled}
+                onClick={handleConfirmEdition}
+              >
+                { sharedLabels.saveChanges }
+              </Button>
+            </Box>
+            {
+              !!fieldsValues.fotoPerfilUrl && (
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  sx={{ mt: { xs: 0, md: '20%' } }}
+                >
+                  {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
+                  <ProfilePhoto
+                    src={fieldsValues.fotoPerfilUrl}
+                    alt={userInfo.name}
+                    onUpload={callHandleUploadPhoto}
+                    onSuccess={onSuccessUploadPhoto}
+                  />
+                </Box>
+              )
+            }
           </Box>
+
         </Box>
         <Box
           display="flex"
@@ -231,8 +260,7 @@ function UserPersonalData({
           <LocationMap
             token={userToken}
             containerStyles={{
-              height: shouldResizeMap ? '10rem' : '400px',
-              width: '70%',
+              height: shouldResizeMap ? '20rem' : '400px',
             }}
             enableDragEvents={isEditModeEnabled}
             location={parseLocationForMap(fieldsValues.location)}
@@ -240,23 +268,6 @@ function UserPersonalData({
           />
         </Box>
       </Box>
-      {
-        !!(fieldsValues.fotoPerfilUrl) && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            sx={{ height: '30%', ml: '5%' }}
-          >
-            {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
-            <ProfilePhoto
-              src={fieldsValues.fotoPerfilUrl}
-              alt={userInfo.name}
-              onUpload={callHandleUploadPhoto}
-              onSuccess={onSuccessUploadPhoto}
-            />
-          </Box>
-        )
-      }
     </Box>
   );
 }

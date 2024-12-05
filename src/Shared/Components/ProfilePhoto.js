@@ -59,7 +59,6 @@ export default function ProfilePhoto({
         component="label"
         variant="contained"
         startIcon={<CloudUploadIcon />}
-        sx={{ mt: '5%' }}
       >
         {sharedLabels.changeImage}
         <input
@@ -70,11 +69,10 @@ export default function ProfilePhoto({
             clipPath: 'inset(50%)',
             height: 1,
             overflow: 'hidden',
-            position: 'absolute',
             bottom: 0,
             left: 0,
-            whiteSpace: 'nowrap',
             width: 1,
+            whiteSpace: 'nowrap',
           }}
         />
       </Button>
