@@ -6,9 +6,9 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const ExpandMore = styled((props) => {
   const { ...other } = props;
@@ -23,7 +23,7 @@ const ExpandMore = styled((props) => {
 
 export default function ExpandableCard({
   title, collapsableContent,
-  gridStyles, collapsableAreaStyles,
+  boxStyles, collapsableAreaStyles,
   keepCollapsableAreaOpen,
 }) {
   const [expanded, setExpanded] = useState(keepCollapsableAreaOpen);
@@ -34,45 +34,52 @@ export default function ExpandableCard({
     }
   };
 
+  const lessThanTabletSize = useMediaQuery('(max-width: 768px)');
+
   return (
-    <Grid
-      container
-      sx={gridStyles}
-      spacing={2}
+    <Box
+      display="flex"
+      alignItems="center"
+      gap={2}
+      sx={{
+        ...boxStyles,
+      }}
     >
-      <Grid item sx={{ width: '100%' }}>
-        <Card>
-          <CardContent>
-            <Typography paragraph>
-              { title }
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
-            </ExpandMore>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <Grid
-              container
-              sx={collapsableAreaStyles}
-            >
-              { collapsableContent }
-            </Grid>
-          </Collapse>
-        </Card>
-      </Grid>
-    </Grid>
+      <Card>
+        <CardContent>
+          {title}
+        </CardContent>
+        <CardActions>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              flexDirection: lessThanTabletSize ? 'column' : 'row',
+              gap: 2,
+              padding: 2,
+              ...collapsableAreaStyles,
+            }}
+          >
+            {collapsableContent}
+          </Box>
+        </Collapse>
+      </Card>
+    </Box>
   );
 }
 
 ExpandableCard.defaultProps = {
-  gridStyles: {},
+  boxStyles: {},
   collapsableAreaStyles: {},
   keepCollapsableAreaOpen: false,
 };
@@ -80,7 +87,7 @@ ExpandableCard.defaultProps = {
 ExpandableCard.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   collapsableContent: PropTypes.node.isRequired,
-  gridStyles: PropTypes.objectOf(PropTypes.string),
-  collapsableAreaStyles: PropTypes.objectOf(PropTypes.string),
+  boxStyles: PropTypes.object,
+  collapsableAreaStyles: PropTypes.object,
   keepCollapsableAreaOpen: PropTypes.bool,
 };

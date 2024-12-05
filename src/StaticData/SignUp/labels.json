@@ -15,12 +15,15 @@
     "confirmation.context": "Estás finalizando el registro. Una vez hecho, pasará a estado de revisión para su posterior aprobación. Si el registro es aprobado, o si encontramos algún inconveniente, te vamos a avisar a tu mail.",
     "confirmation.ok": "Terminar",
     "confirmation.cancel": "Tengo que modificar algún dato",
-    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
+    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros! El registro es rápido y sencillo, y una vez hecho te permitirá empezar a aprovechar los beneficios de la plataforma.",
     "signup.CLIENTE.descripcion": "¿Buscás un producto",
     "signup.want.to.offer.services": "Quiero ofrecer mis servicios",
     "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
     "signup.want.to.client": "Quiero comprar productos y contratar servicios",
     "signup.success": "¡Recibimos tu registro! Un administrador lo revisará a la brevedad.",
-    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo."
+    "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo.",
+    "client.content.text": "Encontrá rápido lo que buscás, elegí al vendedor que mejor se adapte a tus necesidades y contactalo de forma fácil y rápida.",
+    "provider.service.context.text":"Creá tu perfil, publicá tus servicios y empezá a recibir solicitudes de clientes interesados en minutos.",
+    "provider.product.context.text": "Si vendés productos, nuestra plataforma es el lugar perfecto para vos. Creá tu perfil y empezá a conectar con tus clientes. No te preocupes por configuraciones complicadas: publicá tus productos de forma sencilla y hacelos visibles a miles de clientes al instante."
 
 }
