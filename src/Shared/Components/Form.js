@@ -21,7 +21,6 @@ export default function Form({
         marginTop: '5%',
         marginBottom: '5%',
         flexDirection: 'column',
-        alignItems: 'center',
         ml: 0,
         ...styles,
       }}

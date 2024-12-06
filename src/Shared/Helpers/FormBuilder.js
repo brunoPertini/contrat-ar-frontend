@@ -184,36 +184,34 @@ export class PersonalDataFormBuilder extends FormBuilder {
       InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
     }, sharedLabels.surname)) : null;
 
-    const rendeEmailRow = 'email' in fieldsValues && 'password' in fieldsValues;
+    const emailRow = 'email' in fieldsValues ? (
+      baseBox(TextFieldWithLabel(showInlineLabels, {
+        id: 'form-email',
+        type: 'email',
+        value: fieldsValues.email,
+        inputProps,
+        sx: { ...commonInputStyles },
+        onChange: (e) => {
+          if (this.shouldValidateField('email')) {
+            const isEmailValid = this.validators.email(fieldsValues.email);
+            return onChangeFields('email', e.target.value, !isEmailValid);
+          }
 
-    const emailAndPasswordRow = rendeEmailRow ? (
-      <Box {...gridStyles}>
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-email',
-          type: 'email',
-          value: fieldsValues.email,
-          inputProps,
-          onChange: (e) => {
-            if (this.shouldValidateField('email')) {
-              const isEmailValid = this.validators.email(fieldsValues.email);
-              return onChangeFields('email', e.target.value, !isEmailValid);
-            }
-
-            return onChangeFields('email', e.target.value, false);
-          },
-          error: !!(errorFields?.email),
-          helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
-        }, sharedLabels.email)}
-        {' '}
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-password',
-          type: 'password',
-          value: fieldsValues.password,
-          inputProps,
-          onChange: (e) => onChangeFields('password', e.target.value),
-        }, sharedLabels.password)}
-      </Box>
+          return onChangeFields('email', e.target.value, false);
+        },
+        error: !!(errorFields?.email),
+        helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
+      }, sharedLabels.email))
     ) : null;
+
+    const passwordRow = 'password' in fieldsValues ? (TextFieldWithLabel(showInlineLabels, {
+      id: 'form-password',
+      type: 'password',
+      value: fieldsValues.password,
+      inputProps,
+      sx: { ...commonInputStyles },
+      onChange: (e) => onChangeFields('password', e.target.value),
+    }, sharedLabels.password)) : null;
 
     const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? baseBox(
       <>
@@ -279,8 +277,10 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
     const personalDataFields = [nameRow,
       surnameRow,
-      emailAndPasswordRow,
-      dniRow, birthDateRow,
+      emailRow,
+      passwordRow,
+      dniRow,
+      birthDateRow,
       phoneRow];
 
     return personalDataFields;

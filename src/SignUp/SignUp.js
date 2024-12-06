@@ -153,7 +153,7 @@ export default function UserSignUp({
     isOptional: false,
     component:
   <Box display="flex" flexDirection="column">
-    <Box display="flex" flexDirection="row" alignItems="center">
+    <Box display="flex" flexDirection="row">
       <Tooltip
         title={(
           <Typography variant="h6">
