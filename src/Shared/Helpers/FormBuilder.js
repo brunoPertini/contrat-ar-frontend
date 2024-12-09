@@ -277,11 +277,12 @@ export class PersonalDataFormBuilder extends FormBuilder {
 
     const personalDataFields = [nameRow,
       surnameRow,
+      birthDateRow,
+      phoneRow,
       emailRow,
       passwordRow,
       dniRow,
-      birthDateRow,
-      phoneRow];
+    ];
 
     return personalDataFields;
   }

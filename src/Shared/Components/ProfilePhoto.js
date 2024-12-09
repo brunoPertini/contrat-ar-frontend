@@ -58,6 +58,7 @@ export default function ProfilePhoto({
       <Button
         component="label"
         variant="contained"
+        sx={{ width: '30%' }}
         startIcon={<CloudUploadIcon />}
       >
         {sharedLabels.changeImage}
