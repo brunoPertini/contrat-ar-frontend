@@ -279,9 +279,9 @@ export class PersonalDataFormBuilder extends FormBuilder {
       surnameRow,
       birthDateRow,
       phoneRow,
+      dniRow,
       emailRow,
       passwordRow,
-      dniRow,
     ];
 
     return personalDataFields;

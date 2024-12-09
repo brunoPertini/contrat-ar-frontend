@@ -1,16 +1,13 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import pickBy from 'lodash/pickBy';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import SaveIcon from '@mui/icons-material/Save';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -105,15 +102,12 @@ function UserPersonalData({
     });
   };
 
-  const textFields = pickBy(fieldsValues, (value, key) => key !== 'location' && key !== 'fotoPerfilUrl');
-
-  const editableFields = personalDataFormBuilder.build({
+  const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
     usuarioType,
-    gridStyles: { mt: '2%' },
     fieldsValues,
     inputProps: {
-      readOnly: !isEditModeEnabled,
-      disabled: !isEditModeEnabled,
+      readOnly: true,
+      disabled: true,
     },
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
@@ -133,7 +127,7 @@ function UserPersonalData({
         ...getInputConfig(isAdmin),
       },
     },
-  });
+  })), [isEditModeEnabled]);
 
   const saveChangesSwitch = (
     <Box
@@ -197,16 +191,30 @@ function UserPersonalData({
       flex={1}
       gap={10}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-      >
-        { renderReadOnlyField('name')}
-        { renderReadOnlyField('surname')}
-        { renderReadOnlyField('birthDate')}
-        { renderReadOnlyField('phone')}
-        { usuarioType !== systemConstants.USER_TYPE_CLIENTE && renderReadOnlyField('dni')}
-      </Box>
+      {
+        isEditModeEnabled ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+          >
+            { editableFields }
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+          >
+            { renderReadOnlyField('name')}
+            { renderReadOnlyField('surname')}
+            { renderReadOnlyField('birthDate')}
+            { renderReadOnlyField('phone')}
+            { usuarioType !== systemConstants.USER_TYPE_CLIENTE && renderReadOnlyField('dni')}
+          </Box>
+        )
+      }
+
       <Box
         display="flex"
         flexDirection="column"
@@ -256,59 +264,6 @@ function UserPersonalData({
       { saveChangesSwitch }
     </Box>
   );
-
-  // const formFields = useMemo(() => (!isEditModeEnabled ? (
-  //   Object.keys(textFields).map((dataKey) => (
-  //     <Typography
-  //       variant="h6"
-  //       fontWeight="bold"
-  //       sx={{
-  //         mt: '3%',
-  //         border: '2px solid rgb(36, 134, 164)',
-  //         borderRadius: '10px',
-  //         padding: '10px',
-  //         backgroundColor: '#f5f5f5',
-  //       }}
-  //     >
-  //       {personalDataFormBuilder.fieldsLabels[dataKey]}
-  //       :
-  //       <Typography
-  //         variant="body1"
-  //         sx={{ ml: '10px', display: 'inline', color: '#666' }}
-  //       >
-  //         {fieldsValues[dataKey]}
-  //       </Typography>
-  //     </Typography>
-  //   ))
-  // ) : personalDataFormBuilder.build({
-  //   usuarioType,
-  //   gridStyles: { mt: '2%' },
-  //   fieldsValues,
-  //   inputProps: {
-  //     readOnly: !isEditModeEnabled,
-  //     disabled: !isEditModeEnabled,
-  //   },
-  //   onChangeFields: (fieldId, fieldValue) => {
-  //     changeUserInfo(fieldId, fieldValue);
-  //   },
-  //   showInlineLabels: true,
-  //   fieldsOwnConfig: {
-  //     name: {
-  //       ...getInputConfig(isAdmin),
-  //     },
-  //     surname: {
-  //       ...getInputConfig(isAdmin),
-  //     },
-  //     dni: {
-  //       ...getInputConfig(isAdmin),
-  //     },
-  //     birthDate: {
-  //       ...getInputConfig(isAdmin),
-  //     },
-  //   },
-  // })), [isEditModeEnabled, fieldsValues]);
-
-  const shouldResizeMap = useMediaQuery('(min-width:1800px)');
 
   useEffect(() => {
     setFieldsValues(userInfo);
