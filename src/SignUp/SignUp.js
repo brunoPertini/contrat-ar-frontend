@@ -120,6 +120,7 @@ export default function UserSignUp({
   const personalDataFields = personalDataFormBuilder.build({
     usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
+    gridStyles: { mt: '2%' },
     errorFields,
     onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
       setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));

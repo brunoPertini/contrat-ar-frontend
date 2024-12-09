@@ -19,7 +19,6 @@ function SecurityData({
     onChangeFields: (fieldId, fieldValue) => {
       setFieldsValues({ ...fieldsValues, [fieldId]: fieldValue });
     },
-    gridStyles: { display: 'flex', flexDirection: 'column', width: '60%' },
     showInlineLabels: true,
     inputProps: {
       readOnly: true,
@@ -43,7 +42,11 @@ function SecurityData({
   )), [requestChangeExists]);
 
   return (
-    <Box display="flex" flexDirection="column" sx={{ ...styles }}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      sx={{ ...styles }}
+    >
       {
       formFields.map((field) => field)
       }

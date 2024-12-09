@@ -204,14 +204,14 @@ export class PersonalDataFormBuilder extends FormBuilder {
       }, sharedLabels.email))
     ) : null;
 
-    const passwordRow = 'password' in fieldsValues ? (TextFieldWithLabel(showInlineLabels, {
+    const passwordRow = 'password' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
       id: 'form-password',
       type: 'password',
       value: fieldsValues.password,
       inputProps,
       sx: { ...commonInputStyles },
       onChange: (e) => onChangeFields('password', e.target.value),
-    }, sharedLabels.password)) : null;
+    }, sharedLabels.password))) : null;
 
     const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? baseBox(
       <>

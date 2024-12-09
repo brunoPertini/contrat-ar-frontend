@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -14,14 +14,13 @@ export default function Form({
   const showSmallerTitle = useMediaQuery('(max-width:768px)');
 
   return (
-    <Grid
+    <Box
       id={containerId}
-      container
+      display="flex"
+      flexDirection="column"
       sx={{
         marginTop: '5%',
         marginBottom: '5%',
-        flexDirection: 'column',
-        ml: 0,
         ...styles,
       }}
       spacing={2}
@@ -40,7 +39,7 @@ export default function Form({
 
       }
 
-    </Grid>
+    </Box>
   );
 }
 

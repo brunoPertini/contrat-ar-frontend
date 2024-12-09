@@ -260,6 +260,7 @@ function UserProfile({
       <SecurityData
         data={securityData}
         usuarioType={usuarioType}
+        styles={{ height: '100vh', minHeight: '100vh' }}
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
@@ -273,7 +274,7 @@ function UserProfile({
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
-        styles={{ height: '100vh' }}
+        styles={{ height: '100vh', pl: '1%', pr: '1%' }}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
@@ -337,7 +338,7 @@ function UserProfile({
         menuOptions={menuOptions}
       />
       <Box display="flex" flexDirection="column">
-        <GoBackLink />
+        <GoBackLink styles={{ pl: '1%' }} />
         <Tabs
           value={tabOption}
           onChange={handleTabOptionChange}
