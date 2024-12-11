@@ -15,7 +15,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import isEmpty from 'lodash/isEmpty';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { sharedLabels } from '../../StaticData/Shared';
+import { errorMessages, sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
@@ -29,7 +29,8 @@ function TextFieldWithLabel(showInlineLabels, componentProps, label) {
   return (
     <>
       { showInlineLabels ? (
-        <InputLabel>
+        // eslint-disable-next-line react/destructuring-assignment
+        <InputLabel htmlFor={componentProps.id}>
           {' '}
           { label }
         </InputLabel>
@@ -106,6 +107,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       surname: '',
       email: '',
       password: '',
+      confirmPassword: '',
       birthDate: '',
       phone: '',
     };
@@ -142,36 +144,39 @@ export class PersonalDataFormBuilder extends FormBuilder {
   /**
    * @param {Object} params
    * @param {UserFormModel} params.fieldsValues Holder object that controls fields values
-   * @param {Function} params.onChangeFields function that runs after some field changes
+   * @param {Function} params.onChangeFields Function that runs after some field changes
    * @param {String} params.usuarioType CLIENTE or SERVICIOS or PRODUCTOS
-   * @param {Object} params.inputProps props to pass to inputs, as readOnly, etc.
-   * @param {Object} params.gridStyles styles applied to each field container
-   * @param {Object} params.fieldsOwnConfig same purpose as inputProps but differentiating
+   * @param {Object} params.inputProps Props to pass to inputs, as readOnly, etc.
+   * @param {Object} params.gridStyles Styles applied to each field container
+   * @param {Object} params.fieldsOwnConfig Same purpose as inputProps but per each field
+   * @param {Boolean} params.showInlineLabels if should show labels inline with input
+   * * @param {Boolean} params.showConfirmPasswordInput if should show confirm password input
    * @param {Object<String, Boolean>} params.errorFields fields with error, that should show
-   * helper message
+helper message
    *  per field key
    * @returns JSX rendered elements for the fields in fieldsValues
    */
   build({
     fieldsValues, errorFields, onChangeFields, usuarioType, gridStyles = {},
-    inputProps, showInlineLabels = false, fieldsOwnConfig = {},
+    inputProps, showInlineLabels = false, fieldsOwnConfig = {}, showConfirmPasswordInput,
   }) {
     super.build({ usuarioType });
 
     const baseBox = (component) => <Box {...gridStyles}>{component}</Box>;
 
     const commonInputStyles = {
-      border: '2px solid rgb(36, 134, 164)',
       borderRadius: '10px',
       width: '100%',
     };
+
+    const borderStyles = (hasError) => (!hasError ? { border: '2px solid rgb(36, 134, 164)' } : { });
 
     const nameRow = 'name' in fieldsValues ? baseBox(TextFieldWithLabel(showInlineLabels, {
       id: 'form-name',
       type: 'text',
       value: fieldsValues.name,
       onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
-      sx: { ...commonInputStyles },
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.name)) },
       InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
     }, sharedLabels.name)) : null;
 
@@ -180,7 +185,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       type: 'text',
       value: fieldsValues.surname,
       onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
-      sx: { ...commonInputStyles },
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.surname)) },
       InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
     }, sharedLabels.surname)) : null;
 
@@ -190,7 +195,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
         type: 'email',
         value: fieldsValues.email,
         inputProps,
-        sx: { ...commonInputStyles },
+        sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.email)) },
         onChange: (e) => {
           if (this.shouldValidateField('email')) {
             const isEmailValid = this.validators.email(fieldsValues.email);
@@ -201,6 +206,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
         },
         error: !!(errorFields?.email),
         helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
+        InputProps: 'email' in fieldsOwnConfig ? { ...fieldsOwnConfig.email } : undefined,
       }, sharedLabels.email))
     ) : null;
 
@@ -209,25 +215,35 @@ export class PersonalDataFormBuilder extends FormBuilder {
       type: 'password',
       value: fieldsValues.password,
       inputProps,
-      sx: { ...commonInputStyles },
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.password)) },
       onChange: (e) => onChangeFields('password', e.target.value),
+      InputProps: 'password' in fieldsOwnConfig ? { ...fieldsOwnConfig.password } : undefined,
+      error: !!(errorFields?.password),
+      helperText: (errorFields?.password) ? errorMessages.passwordsNotMatching : undefined,
     }, sharedLabels.password))) : null;
 
-    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? baseBox(
-      <>
-        <Typography variant="subtitle1" align="left">
-          { sharedLabels.dni }
-        </Typography>
-        <TextField
-          id="form-dni"
-          value={fieldsValues.dni}
-          type="number"
-          sx={{ ...commonInputStyles }}
-          onChange={(e) => onChangeFields('dni', e.target.value)}
-          {...('dni' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.dni } } : {})}
-        />
-      </>,
-    ) : null;
+    const confirmPasswordInput = showConfirmPasswordInput ? (
+      baseBox(TextFieldWithLabel(showInlineLabels, {
+        id: 'form-confirm-password',
+        type: 'password',
+        value: fieldsValues.confirmPassword,
+        inputProps,
+        sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.confirmPassword)) },
+        onChange: (e) => onChangeFields('confirmPassword', e.target.value),
+        InputProps: 'confirmPassword' in fieldsOwnConfig ? { ...fieldsOwnConfig.confirmPassword } : undefined,
+        error: !!(errorFields?.confirmPassword),
+        helperText: (errorFields?.confirmPassword) ? errorMessages.passwordsNotMatching : undefined,
+      }, sharedLabels.confirmPassword))) : null;
+
+    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-dni',
+      type: 'number',
+      value: fieldsValues.dni,
+      inputProps,
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) },
+      onChange: (e) => onChangeFields('dni', e.target.value),
+      InputProps: 'dni' in fieldsOwnConfig ? { ...fieldsOwnConfig.dni } : undefined,
+    }, sharedLabels.dni))) : null;
 
     let birthDateRow = null;
 
@@ -251,7 +267,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
             id="form-birthDate"
             value={birthDateFinalValue}
             type="date"
-            sx={{ ...commonInputStyles }}
+            sx={{ ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) }}
             onChange={(e) => onChangeFields('birthDate', e.target.value)}
             {...('birthDate' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.birthDate } } : {})}
             {...inputProps}
@@ -260,20 +276,15 @@ export class PersonalDataFormBuilder extends FormBuilder {
       );
     }
 
-    const phoneRow = 'phone' in fieldsValues ? baseBox(
-      <>
-        <Typography variant="subtitle1" align="left">
-          {sharedLabels.phone}
-        </Typography>
-        <TextField
-          id="form-phone"
-          value={fieldsValues.phone}
-          type="number"
-          sx={{ ...commonInputStyles }}
-          onChange={(e) => onChangeFields('phone', e.target.value)}
-        />
-      </>,
-    ) : null;
+    const phoneRow = 'phone' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-phone',
+      type: 'number',
+      value: fieldsValues.phone,
+      inputProps,
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) },
+      onChange: (e) => onChangeFields('phone', e.target.value),
+      InputProps: 'phone' in fieldsOwnConfig ? { ...fieldsOwnConfig.phone } : undefined,
+    }, sharedLabels.phone))) : null;
 
     const personalDataFields = [nameRow,
       surnameRow,
@@ -282,6 +293,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       dniRow,
       emailRow,
       passwordRow,
+      confirmPasswordInput,
     ];
 
     return personalDataFields;

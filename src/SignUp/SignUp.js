@@ -38,7 +38,7 @@ export default function UserSignUp({
 }) {
   const { title } = signUpLabels;
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
 
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
@@ -55,7 +55,7 @@ export default function UserSignUp({
     getPlanId(planesInfo, systemConstants.PLAN_TYPE_FREE),
   );
 
-  const [profilePhoto, setProfilePhoto] = useState();
+  const [profilePhoto, setProfilePhoto] = useState("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80'");
 
   const [dialogLabels, setDialogLabels] = useState({
     title: locationMapLabels['dialog.permission.request.title'],
@@ -118,12 +118,23 @@ export default function UserSignUp({
   }, [handleGranted]);
 
   const personalDataFields = personalDataFormBuilder.build({
+    showConfirmPasswordInput: true,
+    showInlineLabels: true,
     usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
     gridStyles: { mt: '2%' },
     errorFields,
     onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
-      setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
+      if (fieldId === 'password' || fieldId === 'confirmPassword') {
+        const passwordsNotMatching = fieldId === 'password' ? fieldValue !== personalDataFieldsValues.confirmPassword : fieldValue !== personalDataFieldsValues.password;
+        setErrorFields((previous) => ({
+          ...previous,
+          password: fieldsHasError || passwordsNotMatching,
+          confirmPassword: fieldsHasError || passwordsNotMatching,
+        }));
+      } else {
+        setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
+      }
       setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
     },
   });
@@ -146,14 +157,21 @@ export default function UserSignUp({
 
       const someFieldWithError = Object.values(errorFields).some((key) => key);
 
-      return !someFieldWithError && allFieldsHaveValue;
+      const passwordsMatch = personalDataFieldsValues.password
+      === personalDataFieldsValues.confirmPassword;
+
+      return !someFieldWithError && allFieldsHaveValue && passwordsMatch;
     }, [personalDataFieldsValues, errorFields]),
   },
   {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component:
-  <Box display="flex" flexDirection="column">
+  <Box
+    display="flex"
+    flexDirection="column"
+    sx={{ mt: '5%' }}
+  >
     <Box display="flex" flexDirection="row">
       <Tooltip
         title={(
@@ -193,6 +211,7 @@ export default function UserSignUp({
       isOptional: false,
       component: <Form
         title={signUpLabels['profilePhoto.title']}
+        styles={{ alignItems: 'center ' }}
         fields={[<ProfilePhoto
           src={profilePhoto}
           alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}

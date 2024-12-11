@@ -105,10 +105,6 @@ function UserPersonalData({
   const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
     usuarioType,
     fieldsValues,
-    inputProps: {
-      readOnly: true,
-      disabled: true,
-    },
     onChangeFields: (fieldId, fieldValue) => {
       changeUserInfo(fieldId, fieldValue);
     },

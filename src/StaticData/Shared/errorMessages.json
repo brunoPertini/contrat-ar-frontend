@@ -1,3 +1,4 @@
 {
-    "sessionExpired": "¡Sesión expirada! por favor, ingresá nuevamente"
+    "sessionExpired": "¡Sesión expirada! por favor, ingresá nuevamente",
+    "passwordsNotMatching": "¡Las contraseñas no coinciden!"
 }

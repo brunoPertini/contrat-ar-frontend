@@ -23,7 +23,7 @@ export default function Form({
         marginBottom: '5%',
         ...styles,
       }}
-      spacing={2}
+      gap={2}
     >
       <Typography
         variant={!showSmallerTitle ? 'h5' : 'h6'}

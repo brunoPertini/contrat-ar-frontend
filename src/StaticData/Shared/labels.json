@@ -6,6 +6,7 @@
     "phone": "Teléfono",
     "email": "Email",
     "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
     "birthDate": "Fecha de nacimiento",
     "dni": "DNI",
     "plan": "Plan",

@@ -21,11 +21,12 @@ export default function LinearStepper({
       <Grid
         container
         sx={{
-          flexDirection: 'column',
-          alignItems: 'center',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'center',
+          alignContent: 'center',
         }}
       >
-        <Grid item sx={{ flexDirection: 'row' }}>
+        <Grid item sx={{ flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'center' }}>
           <Button
             onClick={() => onButtonClick(activeStep - 1)}
             disabled={!backButtonEnabled}
@@ -43,12 +44,16 @@ export default function LinearStepper({
       <Grid
         container
         sx={{
-          flexDirection: 'column',
+          flexDirection: { xs: 'column', md: 'row' },
           alignItems: 'center',
+          justifyContent: 'center',
           mt: '2%',
         }}
       >
-        <Stepper activeStep={activeStep}>
+        <Stepper
+          activeStep={activeStep}
+          sx={{ flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'center' }}
+        >
           {steps.map(({ label, isOptional }) => (
             <Step key={label}>
               <StepLabel optional={isOptional ? optionalLabel : undefined}>{label}</StepLabel>
