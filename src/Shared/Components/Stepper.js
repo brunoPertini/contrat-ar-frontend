@@ -16,6 +16,8 @@ export default function LinearStepper({
 
   const onButtonClick = useCallback((newStep) => onStepChange(newStep), [onStepChange]);
 
+  const buttonStyles = { color: '#c68e29' };
+
   return (
     <>
       <Grid
@@ -30,12 +32,14 @@ export default function LinearStepper({
           <Button
             onClick={() => onButtonClick(activeStep - 1)}
             disabled={!backButtonEnabled}
+            sx={buttonStyles}
           >
             { sharedLabels.back}
           </Button>
           <Button
             onClick={() => onButtonClick(activeStep + 1)}
             disabled={!nextButtonEnabled}
+            sx={buttonStyles}
           >
             { sharedLabels.next}
           </Button>

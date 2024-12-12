@@ -36,6 +36,8 @@ export default function ExpandableCard({
 
   const lessThanTabletSize = useMediaQuery('(max-width: 768px)');
 
+  const flexStyles = { display: 'flex', flexDirection: 'column' };
+
   return (
     <Box
       display="flex"
@@ -45,7 +47,7 @@ export default function ExpandableCard({
         ...boxStyles,
       }}
     >
-      <Card>
+      <Card sx={flexStyles}>
         <CardContent>
           {title}
         </CardContent>
@@ -59,7 +61,7 @@ export default function ExpandableCard({
             <ExpandMoreIcon />
           </ExpandMore>
         </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Collapse sx={{ ...flexStyles }} in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{
               display: 'flex',

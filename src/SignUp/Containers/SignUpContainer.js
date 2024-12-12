@@ -16,6 +16,7 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
+import { plansMock } from '../../Shared/Mocks/plansMock';
 
 const localStorageService = new LocalStorageService();
 
@@ -42,13 +43,13 @@ function SignUpContainer({ router }) {
       .finally(() => router.navigate(routes.index));
   };
 
-  const getAllPlanes = () => {
-    const client = HttpClientFactory.createProveedorHttpClient();
-    return client.getAllPlanes();
-  };
+  // const getAllPlanes = () => {
+  //   const client = HttpClientFactory.createProveedorHttpClient();
+  //   return client.getAllPlanes();
+  // };
 
   const fetchPlanesInfo = async () => {
-    const fetchedInfo = await getAllPlanes();
+    const fetchedInfo = plansMock;
     setPlanesInfo(fetchedInfo);
   };
 

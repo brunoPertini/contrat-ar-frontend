@@ -20,6 +20,8 @@ import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
+import { userInfoMock } from '../Shared/Mocks/userInfoMock';
+import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -38,7 +40,7 @@ export default function UserSignUp({
 }) {
   const { title } = signUpLabels;
 
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(3);
 
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
@@ -48,7 +50,7 @@ export default function UserSignUp({
     email: false,
   });
 
-  const [location, setLocation] = useState();
+  const [location, setLocation] = useState(parseLocationForMap(userInfoMock.location));
   const [readableAddress, setReadableAddress] = useState('');
 
   const [selectedPlan, setSelectedPlan] = useState(

@@ -74,3 +74,7 @@ export const getPlanType = (planesInfo, planId) => planesInfo.find(
 export const getPlanLabel = (planId) => (planId === 1
   ? sharedLabels.plansNames.FREE
   : sharedLabels.plansNames.PAID);
+
+export const getPlanValue = (planesInfo, planType) => planesInfo.find(
+  (planInfo) => planInfo.type === planType,
+)?.value ?? '';
