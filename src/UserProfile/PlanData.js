@@ -5,7 +5,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo, useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
-import { PLAN_TYPE_FREE } from '../Shared/Constants/System';
+import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
@@ -14,6 +14,7 @@ import InformativeAlert from '../Shared/Components/Alert';
 import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
 import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
+import Disclaimer from '../Shared/Components/Disclaimer';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -22,8 +23,20 @@ function PlanData({
 }) {
   const { plansNames } = sharedLabels;
 
-  const onPlanChange = (newPlan) => changeUserInfo(Object.keys(plansNames)
-    .find((key) => plansNames[key] === newPlan));
+  const [showPaidPlanDisclaimer, setShowPaidPlanDisclaimer] = useState(false);
+
+  const onPlanChange = (newPlan) => {
+    const newPlanKey = Object.keys(plansNames)
+      .find((key) => plansNames[key] === newPlan);
+
+    if (newPlanKey === PLAN_TYPE_PAID) {
+      setShowPaidPlanDisclaimer(true);
+    } else {
+      setShowPaidPlanDisclaimer(false);
+    }
+
+    changeUserInfo(newPlanKey);
+  };
 
   const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
@@ -57,12 +70,17 @@ function PlanData({
       <SelectComponent
         defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
         values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-        containerStyles={{ mt: !isLayourNearTabletSize ? '3%' : '10%', width: '20%' }}
+        containerStyles={{ mt: !isLayourNearTabletSize ? '3%' : '10%', width: !isLayourNearTabletSize ? '30%' : '100%' }}
         handleOnChange={onPlanChange}
         label={userProfileLabels['plan.label']}
         renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
         disabled={planRequestChangeExists || hasPendingRequest}
       />
+      {
+        showPaidPlanDisclaimer && (
+          <Disclaimer text={userProfileLabels['plan.change.paid.disclaimer']} />
+        )
+      }
       {
         !hasPendingRequest && (
           <Box

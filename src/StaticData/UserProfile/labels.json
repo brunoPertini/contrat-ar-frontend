@@ -9,8 +9,9 @@
     "security.warning": "Dado que estos datos son muy importantes para proteger tu cuenta, en caso de que necesites cambiarlos podés contactarnos <a href=\"#\">acá</a>",
     "security.requestExists": "Tenemos registrada una solicitud para cambiar alguno de estos datos. Si querés cancelarla, o tenés alguna duda, podés escribirnos <a href=\"#\">acá</a>",
     "plan.includes": "Tu plan incluye:",
-    "plan.change.disclaimer": "Si tenés un cambio de plan en curso, nos vamos a comunicar al mail o celular para acordar los pasos a seguir y así completar el proceso.",
+    "plan.change.disclaimer": "Si tenés un cambio de plan recientemente hecho, tené en cuenta que puede tardar unos minutos en verse reflejado.",
     "plan.change.finalMessage": "¡Recibimos tu solicitud de cambio de plan! Te contactaremos a la brevedad.",
     "plan.subscription.activeFrom": "Suscripción activa desde {createdAt}",
-    "plan.subscription.inactive": "Suscripción inactiva"
+    "plan.subscription.inactive": "Suscripción inactiva",
+    "plan.change.paid.disclaimer": "Si guardás los cambios, te vamos a redirigir a la página de pagos para que completes el cambio de plan."
 }

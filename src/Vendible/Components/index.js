@@ -55,6 +55,7 @@ const proveedoresVendiblesFiltersModel = {
 const footerOptions = [
   { label: indexLabels.helpAndQuestions, onClick: () => {} },
   { label: indexLabels.termsAndConditions, onClick: () => {} },
+  { label: indexLabels.contactUs, onClick: () => {} },
 ];
 
 function splitVendibleDescription(description) {
@@ -224,17 +225,7 @@ function VendiblePage({
 
   const isNearMobileSize = useMediaQuery('(max-width:565px)');
 
-  const isNearMobileLittleSize = useMediaQuery('(max-width:450px)');
-
-  let filtersResolvedWidth;
-
-  if (isNearMobileLittleSize) {
-    filtersResolvedWidth = '80%';
-  } else if (shouldChangeLayout) {
-    filtersResolvedWidth = '60%';
-  } else {
-    filtersResolvedWidth = '45%';
-  }
+  const filtersResolvedWidth = { xs: '100%', lg: '60%' };
 
   const filtersProps = {
     filtersApplied,

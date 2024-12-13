@@ -235,7 +235,6 @@ export default function UserSignUp({
         planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
-        paidPlanValue={200}
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,

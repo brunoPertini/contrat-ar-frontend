@@ -388,6 +388,7 @@ export class SignInFormBuilder extends FormBuilder {
       <Box
         display="flex"
         flexDirection="column"
+        alignSelf="center"
         width={{ xs: '80%', md: '60%', xl: '40%' }}
       >
         <TextField

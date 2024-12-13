@@ -3,10 +3,8 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
-import { Box } from '@mui/material';
 import ExpandableCard from './ExpandableCard';
 import { systemConstants } from '../Constants';
 import { signUpLabels } from '../../StaticData/SignUp';
@@ -19,6 +17,7 @@ import { ARGENTINA_LOCALE, PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/S
 import LocationMap from './LocationMap';
 import { locationShape } from '../PropTypes/Shared';
 import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
+import Disclaimer from './Disclaimer';
 
 const gridStyles = {
   marginTop: '5%',
@@ -120,20 +119,7 @@ export default function PlanSelection({
     </>
   );
 
-  const cardTitle = (
-    <Box>
-      <Typography variant="h5" fontWeight="bold">
-        {signUpLabels['planSelection.title']}
-      </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-        <InfoOutlinedIcon sx={{ color: '#f5c242', mr: 1 }} />
-        <Typography variant="body2" color="text.secondary">
-          Si elegís un plan pago, vamos a proceder con el pago del mismo en el próximo paso.
-          Tené en cuenta que tu cuenta no va a estar activa hasta que se haya registrado tu pago.
-        </Typography>
-      </Box>
-    </Box>
-  );
+  const cardTitle = <Disclaimer text={signUpLabels['planSelection.paid.disclaimer']} />;
 
   return (
     <ExpandableCard

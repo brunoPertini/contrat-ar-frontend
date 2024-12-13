@@ -188,7 +188,7 @@ function VendiblesFilters({
 
   const stateSection = (
     <Select
-      containerStyles={{ mt: '5%', width: '50%', ...stateContainerStyles }}
+      containerStyles={{ mt: '5%', ...stateContainerStyles }}
       defaultSelected={defaultStateSelected}
       label={sharedLabels.postState}
       values={statesValues}

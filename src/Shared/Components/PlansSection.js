@@ -17,6 +17,8 @@ function PlansSection({ plans, containerStyles }) {
   return (
     <Box
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
         py: 5,
         px: 2,
         backgroundColor: '#f4f4f9',
@@ -40,13 +42,11 @@ function PlansSection({ plans, containerStyles }) {
         {plans.map((plan, index) => (
           <Card
             key={index}
-            display="flex"
-            flexDirection="column"
             sx={{
-              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
               maxWidth: 345,
               borderRadius: 3,
-              flex: '1 1 300px',
               justifyContent: 'space-between',
             }}
           >
@@ -82,7 +82,7 @@ function PlansSection({ plans, containerStyles }) {
                   />
                 )
               }
-            <Box display="flex" flexDirection="column" alignSelf="flex-end">
+            <Box display="flex" flexDirection="column">
               <Button variant="contained" color="primary" fullWidth>
                 { plan.type === PLAN_TYPE_FREE ? indexLabels.suscribe : indexLabels.tryForFree }
               </Button>

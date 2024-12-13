@@ -477,6 +477,7 @@ function ProveedorPage({
   const footerOptions = [
     { label: indexLabels.helpAndQuestions, onClick: () => {} },
     { label: indexLabels.termsAndConditions, onClick: () => {} },
+    { label: indexLabels.contactUs, onClick: () => {} },
   ];
 
   const addVendibleLinkLayout = (
@@ -605,6 +606,7 @@ function ProveedorPage({
           justifyContent="space-between"
           flexDirection={{ xs: 'column', lg: 'row' }}
           flex={1}
+          gap={5}
         >
           <Box
             display="flex"
@@ -620,6 +622,7 @@ function ProveedorPage({
             flexDirection="column"
             width={!shouldChangeLayout ? '60%' : '100%'}
             sx={{ paddingRight: '1%' }}
+            flex={1}
           >
             { secondColumn }
           </Box>

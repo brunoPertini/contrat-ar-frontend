@@ -85,6 +85,7 @@ const accountActiveModalDefaultValues = {
 const footerOptions = [
   { label: indexLabels.helpAndQuestions, onClick: () => {} },
   { label: indexLabels.termsAndConditions, onClick: () => {} },
+  { label: indexLabels.contactUs, onClick: () => {} },
 ];
 
 function UserProfile({

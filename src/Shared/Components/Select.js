@@ -24,7 +24,7 @@ function SelectComponent({
 
   return (
     <Box sx={{ ...containerStyles }}>
-      <FormControl disabled={disabled}>
+      <FormControl sx={{ width: '100%' }} disabled={disabled}>
         <InputLabel sx={{
           color: 'rgb(36, 134, 164)',
           opacity: 1,
