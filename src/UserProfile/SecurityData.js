@@ -5,6 +5,7 @@ import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { StaticAlert } from '../Shared/Components';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { CLIENTE, PROVEEDOR } from '../Shared/Constants/System';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -43,8 +44,7 @@ function SecurityData({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{ ...styles }}
     >
       {

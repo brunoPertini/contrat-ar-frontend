@@ -19,6 +19,7 @@ import { planShape } from '../Shared/PropTypes/Proveedor';
 import { menuOptionsShape } from '../Shared/PropTypes/Header';
 import VendiblesTable from './VendiblesTable';
 import ChangeRequestsTable from './ChangeRequestsTable';
+import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 
 const TAB_VALUES = ['usuarios', 'productos', 'servicios', 'changeRequests'];
 
@@ -202,7 +203,7 @@ function AdminPage({
         userInfo={userInfo}
       />
       <Box>
-        <Box display="flex" flexDirection="row" justifyContent="space-between">
+        <Box {...flexRow} justifyContent="space-between">
           <Tabs value={tabOption} onChange={handleTabOptionChange}>
             {
           TABS_LABELS.map((label, index) => (
@@ -224,7 +225,7 @@ function AdminPage({
             )
           }
         </Box>
-        <Box display="flex" flexDirection="column" sx={{ marginTop: '2%' }}>
+        <Box {...flexColumn} sx={{ marginTop: '2%' }}>
           <AdminFilters
             filtersType={tabOption}
             isShowingVendiblePosts={isShowingVendiblePosts}

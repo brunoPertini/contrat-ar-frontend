@@ -17,6 +17,7 @@ import InformativeAlert from '../Shared/Components/Alert';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 import { systemConstants } from '../Shared/Constants';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -236,8 +237,7 @@ function UserPersonalData({
 
   const secondLayout = (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       flex={1}
       sx={{ mt: '15px' }}
     >
@@ -267,8 +267,7 @@ function UserPersonalData({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{ ...styles }}
       flex={1}
       gap={5}

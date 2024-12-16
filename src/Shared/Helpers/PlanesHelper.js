@@ -5,12 +5,13 @@ import Box from '@mui/material/Box';
 import { userProfileLabels } from '../../StaticData/UserProfile';
 import { sharedLabels } from '../../StaticData/Shared';
 import { PLAN_TYPE_PAID, PLAN_TYPE_FREE } from '../Constants/System';
+import { flexRow } from '../Constants/Styles';
 
 export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
 
   const renderDescripctionLine = (innerContent) => (
-    <Box display="flex" flexDirection="row">
+    <Box {...flexRow}>
       { innerContent}
     </Box>
   );
@@ -18,7 +19,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   const renderPlanDescription = () => currentPlanInfo.descripcion.split('.')
     .filter((line) => !!(line))
     .map((line) => renderDescripctionLine(
-      <Box display="flex" flexDirection="row" textAlign="left" justifyContent="space-between">
+      <Box {...flexRow} textAlign="left" justifyContent="space-between">
         <CheckIcon sx={{ mr: '1px' }} />
         { line }
         <br />

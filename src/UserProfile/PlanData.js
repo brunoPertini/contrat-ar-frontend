@@ -15,6 +15,7 @@ import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
 import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import Disclaimer from '../Shared/Components/Disclaimer';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -55,8 +56,7 @@ function PlanData({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{ ...styles }}
     >
       <StaticAlert

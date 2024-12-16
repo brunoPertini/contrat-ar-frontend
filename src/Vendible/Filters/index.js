@@ -16,6 +16,7 @@ import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
 import Select from '../../Shared/Components/Select';
 import { sharedLabels } from '../../StaticData/Shared';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
@@ -126,8 +127,7 @@ function VendiblesFilters({
 
   const locationsDistanceSection = (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{
         mt: 3,
         p: 2,
@@ -198,8 +198,7 @@ function VendiblesFilters({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       maxWidth="100%"
       sx={{
         ...containerStyles,

@@ -13,6 +13,7 @@ import { SearcherInput } from '../../Shared/Components';
 import { sharedLabels } from '../../StaticData/Shared';
 import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
 import { splitArrayIntoChunks } from '../../Shared/Helpers/UtilsHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function processChild(childRoot, handleCategorySelected) {
   const { root, rootId, children } = childRoot;
@@ -219,7 +220,7 @@ function CategoryModal({
 
         <Box display="flex" flexWrap="wrap" gap={3}>
           {filteredCategories.map((column, index) => (
-            <Box key={index} display="flex" flexDirection="column" gap={2}>
+            <Box key={index} {...flexColumn} gap={2}>
               {column.map((category, idx) => (
                 <Box key={idx}>
                   {category.render()}

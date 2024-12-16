@@ -32,9 +32,9 @@ import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import { buildFooterOptions, getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import Footer from '../../Shared/Components/Footer';
-import { indexLabels } from '../../StaticData/Index';
 import BasicMenu from '../../Shared/Components/Menu';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -285,8 +285,7 @@ function VendiblePage({
   return (
     <Box
       flex={{ xs: 1, md: 9, lg: 10 }}
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       width="100%"
       height="100%"
     >

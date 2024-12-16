@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import EmailIcon from '@mui/icons-material/Email';
 import Link from '@mui/material/Link';
+import { flexRow } from '../Constants/Styles';
 
 export default function Footer({ options }) {
   const textProps = {
@@ -45,7 +46,7 @@ export default function Footer({ options }) {
         justifyContent="space-evenly"
         sx={{ paddingRight: '20px' }}
       >
-        <Box display="flex" flexDirection="row">
+        <Box {...flexRow}>
           <EmailIcon fontSize="small" sx={{ fill: '#f5c242' }} />
           <Link
             variant="body2"

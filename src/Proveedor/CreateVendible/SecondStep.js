@@ -11,6 +11,7 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function SecondStep({
   vendibleType, handleUploadImage, imageUrl, setImageUrl, description,
@@ -61,8 +62,7 @@ function SecondStep({
       height={!shouldChangeLayout ? '100vh' : 'auto'}
     >
       <Box
-        display="flex"
-        flexDirection="column"
+        {...flexColumn}
         flex={1}
         sx={{ paddingLeft: '1%' }}
       >
@@ -75,7 +75,7 @@ function SecondStep({
           textAlign="justify"
           sx={{ width: { xs: '80%', md: '50%' }, mt: '2%' }}
         />
-        <Box display="flex" flexDirection="column">
+        <Box {...flexColumn}>
           <ImageListItem
             sx={{
               display: 'flex',
@@ -105,7 +105,7 @@ function SecondStep({
               )
             }
           </ImageListItem>
-          <Box display="flex" flexDirection="column" sx={{ width: { xs: '100%', md: '20%' } }}>
+          <Box {...flexColumn} sx={{ width: { xs: '100%', md: '20%' } }}>
             <Button
               component="label"
               variant="contained"

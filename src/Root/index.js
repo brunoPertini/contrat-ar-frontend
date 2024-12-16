@@ -21,9 +21,9 @@ import FAQSection from '../Shared/Components/FAQSection';
 import ContactForm from '../Shared/Components/ContactForm';
 import { plansMock } from '../Shared/Mocks/plansMock';
 import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
+import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 
 const localStorageService = new LocalStorageService();
-
 
 const footerOptions = buildFooterOptions(routes.index);
 
@@ -108,8 +108,7 @@ const RootPage = withRouter(({ router }) => {
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       height="100%"
     >
       <InformativeAlert
@@ -175,8 +174,8 @@ const RootPage = withRouter(({ router }) => {
               <Typography variant="h5">
                 { indexLabels['benefits.title'] }
               </Typography>
-              <Box display="flex" flexDirection="row">
-                <Box display="flex" flexDirection="column" sx={{ mt: '5%' }}>
+              <Box {...flexRow}>
+                <Box {...flexColumn} sx={{ mt: '5%' }}>
                   <Typography variant="h6">
                     { indexLabels['benefits.forProviders.title'] }
                   </Typography>
@@ -196,7 +195,7 @@ const RootPage = withRouter(({ router }) => {
                   </ul>
 
                 </Box>
-                <Box display="flex" flexDirection="column" sx={{ mt: '5%', ml: '10%' }}>
+                <Box {...flexColumn} sx={{ mt: '5%', ml: '10%' }}>
                   <Typography variant="h6">
                     { indexLabels['benefits.forClients.title'] }
                   </Typography>

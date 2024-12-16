@@ -10,6 +10,7 @@ import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { routes, systemConstants } from '../../Shared/Constants';
 import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
 import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function LinkSection({ linkLabel, onClick, vendibleId }) {
   return (
@@ -53,7 +54,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
   }, [navigate]);
 
   return (
-    <List sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <List sx={{ ...flexColumn, gap: 4 }}>
       {vendiblesNames.map((vendibleName) => {
         const images = [];
         for (let i = 0; i < vendiblesObject.vendibles[vendibleName].length

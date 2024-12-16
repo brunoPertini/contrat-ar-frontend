@@ -25,6 +25,7 @@ import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
 import Footer from '../../Shared/Components/Footer';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import { buildFooterOptions } from '../../Shared/Helpers/UtilsHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
@@ -173,8 +174,7 @@ function Cliente({
   return (
 
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       height="100vh"
       minHeight="100vh"
     >

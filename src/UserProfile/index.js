@@ -30,7 +30,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
 import Footer from '../Shared/Components/Footer';
-import { indexLabels } from '../StaticData/Index';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -313,8 +313,7 @@ function UserProfile({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       height="100vh"
       minHeight="100vh"
     >
@@ -334,7 +333,7 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Box display="flex" flexDirection="column">
+      <Box {...flexColumn}>
         <GoBackLink styles={{ pl: '1%' }} />
         <Tabs
           value={tabOption}
@@ -349,7 +348,7 @@ function UserProfile({
       </Box>
       {
         isAdmin && (
-          <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
+          <Box {...flexColumn} sx={{ mt: '3%', ml: '3%' }}>
             { activeAlert }
             <FormControlLabel
               control={(

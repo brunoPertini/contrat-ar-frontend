@@ -13,6 +13,7 @@ import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
 import { sharedLabels } from '../../StaticData/Shared';
 import CategoryModal from './CategoryModal';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 /**
  * @param {AccordionElement} categoryTree
@@ -133,7 +134,7 @@ function CategoryAccordion({
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
 
     return (
-      <Box display="flex" flexDirection="column">
+      <Box {...flexColumn}>
         {isModalOpen && (
           <CategoryModal
             open={isModalOpen}

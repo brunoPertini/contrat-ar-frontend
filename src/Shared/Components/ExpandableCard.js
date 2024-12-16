@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { flexColumn } from '../Constants/Styles';
 
 const ExpandMore = styled((props) => {
   const { ...other } = props;
@@ -36,8 +37,6 @@ export default function ExpandableCard({
 
   const lessThanTabletSize = useMediaQuery('(max-width: 768px)');
 
-  const flexStyles = { display: 'flex', flexDirection: 'column' };
-
   return (
     <Box
       display="flex"
@@ -47,7 +46,7 @@ export default function ExpandableCard({
         ...boxStyles,
       }}
     >
-      <Card sx={flexStyles}>
+      <Card sx={{ ...flexColumn }}>
         <CardContent>
           {title}
         </CardContent>
@@ -61,7 +60,7 @@ export default function ExpandableCard({
             <ExpandMoreIcon />
           </ExpandMore>
         </CardActions>
-        <Collapse sx={{ ...flexStyles }} in={expanded} timeout="auto" unmountOnExit>
+        <Collapse sx={{ ...flexColumn }} in={expanded} timeout="auto" unmountOnExit>
           <Box
             sx={{
               display: 'flex',

@@ -13,6 +13,7 @@ import { parseLocationForMap } from '../Helpers/UtilsHelper';
 import LocationMap from './LocationMap';
 import { indexLabels } from '../../StaticData/Index';
 import { planShape } from '../PropTypes/Proveedor';
+import { flexColumn } from '../Constants/Styles';
 
 function PlansSection({ plans, containerStyles }) {
   return (
@@ -24,8 +25,7 @@ function PlansSection({ plans, containerStyles }) {
         textAlign: 'center',
         ...containerStyles,
       }}
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       className="plansDescriptions"
     >
       <Typography variant="h4" gutterBottom>
@@ -81,7 +81,7 @@ function PlansSection({ plans, containerStyles }) {
                   />
                 )
               }
-            <Box display="flex" flexDirection="column">
+            <Box {...flexColumn}>
               <Button variant="contained" color="primary" fullWidth>
                 { plan.type === PLAN_TYPE_FREE ? indexLabels.suscribe : indexLabels.tryForFree }
               </Button>

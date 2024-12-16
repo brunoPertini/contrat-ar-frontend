@@ -28,6 +28,7 @@ import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import { formatNumberWithLocale, getLocaleCurrencySymbol, replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -242,7 +243,7 @@ function FirstStep({
           )
         }
       </Box>
-      <Box display="flex" flexDirection="column" gap={5}>
+      <Box {...flexColumn} gap={5}>
         {
           !isEditionEnabled && priceSection
         }
@@ -259,7 +260,7 @@ function FirstStep({
           {
             gridConfig[vendibleType].showMap && (
 
-            <Box display="flex" flexDirection="column">
+            <Box {...flexColumn}>
               <Typography
                 dangerouslySetInnerHTML={{
                   __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],

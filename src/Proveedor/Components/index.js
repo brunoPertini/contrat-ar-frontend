@@ -41,6 +41,7 @@ import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import Footer from '../../Shared/Components/Footer';
 import BasicMenu from '../../Shared/Components/Menu';
 import { routes } from '../../Shared/Constants';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 const localStorageService = new LocalStorageService();
 
@@ -542,7 +543,7 @@ function ProveedorPage({
       justifyContent="space-between"
       gap={10}
     >
-      <Box display="flex" flexDirection="column">
+      <Box {...flexColumn}>
         <GoBackLink />
         <ResolvedFiltersSection />
       </Box>
@@ -640,8 +641,7 @@ function ProveedorPage({
 
   return (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       height="100vh"
       minHeight="100vh"
     >

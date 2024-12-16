@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { flexColumn } from '../Constants/Styles';
 
 export default function Form({
   fields, title, onLoad, styles, containerId,
@@ -16,8 +17,7 @@ export default function Form({
   return (
     <Box
       id={containerId}
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{
         marginTop: '5%',
         marginBottom: '5%',

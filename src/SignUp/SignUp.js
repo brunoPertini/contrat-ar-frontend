@@ -20,7 +20,7 @@ import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
-import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
+import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -173,7 +173,7 @@ export default function UserSignUp({
     flexDirection="column"
     sx={{ mt: '5%' }}
   >
-    <Box display="flex" flexDirection="row">
+    <Box {...flexRow}>
       <Tooltip
         title={(
           <Typography variant="h6">
@@ -285,7 +285,7 @@ export default function UserSignUp({
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box {...flexColumn}>
       { isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
