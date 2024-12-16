@@ -43,7 +43,7 @@ function VendibleCreateForm({
 
   const [categories, setCategories] = useState([]);
 
-  const [imagenUrl, setImagenUrl] = useState('https://www.lg.com/ar/images/lavarropas/MD05962336/gallery/medium01.jpg');
+  const [imagenUrl, setImagenUrl] = useState('+');
   const [descripcion, setDescripcion] = useState('');
 
   const [activeStep, setActiveStep] = useState(0);

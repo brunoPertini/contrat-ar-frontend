@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -60,5 +60,13 @@ function FAQSection({ containerStyles }) {
     </Box>
   );
 }
+
+FAQSection.defaultProps = {
+  containerStyles: {},
+};
+
+FAQSection.propTypes = {
+  containerStyles: PropTypes.object,
+};
 
 export default FAQSection;

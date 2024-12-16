@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,9 +8,6 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
 import { replaceUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
-import { userInfoMock } from '../../Shared/Mocks/userInfoMock';
-import { plansMock } from '../../Shared/Mocks/plansMock';
-import { proveedorUserInfoMock } from '../../Shared/Mocks/proveedorUserInfoMock';
 
 const stateSelector = (state) => state;
 
@@ -23,7 +19,7 @@ const userInfoSelector = createSelector(
 const localStorageService = new LocalStorageService();
 
 function UserProfileContainer({ handleLogout, isAdmin }) {
-  const userInfo = proveedorUserInfoMock;
+  const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
   const editClienteInfo = (info) => {
@@ -102,12 +98,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.requestChangeExists(ids, attributes);
   };
 
-  const getAllPlanes = () => plansMock;
-  // const client = HttpClientFactory.createProveedorHttpClient({
-  //   token: userInfo.token,
-  //   handleLogout,
-  // });
-  // return client.getAllPlanes();
+  const getAllPlanes = () => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
+    return client.getAllPlanes();
+  };
 
   return (
     <NavigationContextProvider>

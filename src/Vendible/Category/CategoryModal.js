@@ -122,7 +122,9 @@ const buildCategoriesToRender = ({
   };
 
   Object.values(sourceObject).forEach((hierarchiesList) => {
-    processHierarchy(hierarchiesList);
+    hierarchiesList.forEach((hierarchy) => {
+      processHierarchy(hierarchy);
+    });
   });
 
   const chunkedCategories = splitArrayIntoChunks(firstCategoriesSections, columnLimit);

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -110,5 +110,13 @@ function ContactForm({ containerStyles }) {
     </Box>
   );
 }
+
+ContactForm.defaultProps = {
+  containerStyles: {},
+};
+
+ContactForm.propTypes = {
+  containerStyles: PropTypes.object,
+};
 
 export default ContactForm;

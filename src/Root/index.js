@@ -20,22 +20,12 @@ import PlansSection from '../Shared/Components/PlansSection';
 import FAQSection from '../Shared/Components/FAQSection';
 import ContactForm from '../Shared/Components/ContactForm';
 import { plansMock } from '../Shared/Mocks/plansMock';
+import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
 
 const localStorageService = new LocalStorageService();
 
-const scrollToElement = (element) => element.scrollIntoView({
-  behavior: 'smooth',
-  block: 'start',
-});
 
-const footerOptions = [{
-  label: indexLabels.aboutUs,
-  onClick: () => scrollToElement(document.querySelector('.companyDescription')),
-},
-{ label: indexLabels.ourPlans, onClick: () => scrollToElement(document.querySelector('.plansDescriptions')) },
-{ label: indexLabels.helpAndQuestions, onClick: () => scrollToElement(document.querySelector('.faqSection')) },
-{ label: indexLabels.termsAndConditions, onClick: () => {} },
-];
+const footerOptions = buildFooterOptions(routes.index);
 
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({

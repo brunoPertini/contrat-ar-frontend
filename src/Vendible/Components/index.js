@@ -29,7 +29,7 @@ import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/He
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
-import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import Footer from '../../Shared/Components/Footer';
 import { indexLabels } from '../../StaticData/Index';
@@ -52,11 +52,7 @@ const proveedoresVendiblesFiltersModel = {
   prices: [],
 };
 
-const footerOptions = [
-  { label: indexLabels.helpAndQuestions, onClick: () => {} },
-  { label: indexLabels.termsAndConditions, onClick: () => {} },
-  { label: indexLabels.contactUs, onClick: () => {} },
-];
+const footerOptions = buildFooterOptions(routes.servicioIndex);
 
 function splitVendibleDescription(description) {
   const canSplitByDot = description.includes('.');
@@ -328,7 +324,7 @@ function VendiblePage({
           <List>
             {proveedoresInfo.vendibles.content.map((info) => {
               const {
-                precio, proveedorId, imagenUrl, distance = 0.1, tipoPrecio, descripcion,
+                precio, proveedorId, imagenUrl, distance, tipoPrecio, descripcion,
               } = info;
 
               const proveedorInfo = proveedoresInfo.proveedores

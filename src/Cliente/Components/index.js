@@ -13,7 +13,7 @@ import {
 } from '../../Shared/Components';
 import List from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
-import { systemConstants } from '../../Shared/Constants';
+import { routes, systemConstants } from '../../Shared/Constants';
 import { sharedLabels } from '../../StaticData/Shared';
 import { labels } from '../../StaticData/Cliente';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
@@ -23,9 +23,8 @@ import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import { getUserInfoResponseShape } from '../../Shared/PropTypes/Vendibles';
 import Footer from '../../Shared/Components/Footer';
-import { indexLabels } from '../../StaticData/Index';
-import { mockVendiblesObject } from '../../Shared/Mocks/clienteServiciosMock';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
+import { buildFooterOptions } from '../../Shared/Helpers/UtilsHelper';
 
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
@@ -36,7 +35,7 @@ function Cliente({
   const [previousSearchInputValue, setPreviousSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
-  const [vendiblesResponse, setVendiblesResponse] = useState(mockVendiblesObject);
+  const [vendiblesResponse, setVendiblesResponse] = useState();
 
   const [lastFiltersApplied, setLastFiltersApplied] = useState({});
 
@@ -44,7 +43,7 @@ function Cliente({
   const [isLoading, setIsLoading] = useState(false);
   const [thereIsNoResults, setThereIsNoResults] = useState(false);
 
-  const [filtersEnabled, setFiltersEnabled] = useState(true);
+  const [filtersEnabled, setFiltersEnabled] = useState(false);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
 
@@ -169,11 +168,7 @@ function Cliente({
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
-  const footerOptions = [
-    { label: indexLabels.helpAndQuestions, onClick: () => {} },
-    { label: indexLabels.termsAndConditions, onClick: () => {} },
-    { label: indexLabels.contactUs, onClick: () => {} },
-  ];
+  const footerOptions = buildFooterOptions(routes.ROLE_CLIENTE);
 
   return (
 

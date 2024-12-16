@@ -11,7 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../Header';
-import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import {
@@ -20,7 +20,7 @@ import {
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
-import { systemConstants } from '../Shared/Constants';
+import { routes, systemConstants } from '../Shared/Constants';
 import PlanData from './PlanData';
 import { NavigationContext } from '../State/Contexts/NavigationContext';
 import GoBackLink from '../Shared/Components/GoBackLink';
@@ -82,11 +82,7 @@ const accountActiveModalDefaultValues = {
   checked: undefined,
 };
 
-const footerOptions = [
-  { label: indexLabels.helpAndQuestions, onClick: () => {} },
-  { label: indexLabels.termsAndConditions, onClick: () => {} },
-  { label: indexLabels.contactUs, onClick: () => {} },
-];
+const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,

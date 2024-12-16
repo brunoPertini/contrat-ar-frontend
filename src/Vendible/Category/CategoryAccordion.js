@@ -102,7 +102,7 @@ function CategoryAccordion({
   useEffect(() => {
     const firstCategoriesSections = [];
     const allHierarchies = Object.values(categories);
-    // allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
+    allHierarchies.splice(FIRST_CATEGORIES_LIMIT, allHierarchies.length);
 
     allHierarchies.forEach((hierarchy) => {
       const { root, rootId, children } = hierarchy;

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { useContext } from 'react';
@@ -28,5 +28,13 @@ function GoBackLink({ styles }) {
     </Box>
   );
 }
+
+GoBackLink.defaultProps = {
+  styles: {},
+};
+
+GoBackLink.propTypes = {
+  styles: PropTypes.object,
+};
 
 export default GoBackLink;

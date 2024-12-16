@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
 /* eslint-disable class-methods-use-this */
@@ -12,9 +11,7 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
-import isEmpty from 'lodash/isEmpty';
 import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { errorMessages, sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
@@ -281,7 +278,7 @@ helper message
       type: 'number',
       value: fieldsValues.phone,
       inputProps,
-      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) },
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.phone)) },
       onChange: (e) => onChangeFields('phone', e.target.value),
       InputProps: 'phone' in fieldsOwnConfig ? { ...fieldsOwnConfig.phone } : undefined,
     }, sharedLabels.phone))) : null;

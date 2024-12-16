@@ -20,7 +20,6 @@ import { routes, systemConstants } from '../Shared/Constants';
 import { getPlanId } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
-import { userInfoMock } from '../Shared/Mocks/userInfoMock';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
@@ -40,7 +39,7 @@ export default function UserSignUp({
 }) {
   const { title } = signUpLabels;
 
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
 
   const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
     personalDataFormBuilder.fields,
@@ -50,14 +49,14 @@ export default function UserSignUp({
     email: false,
   });
 
-  const [location, setLocation] = useState(parseLocationForMap(userInfoMock.location));
+  const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
 
   const [selectedPlan, setSelectedPlan] = useState(
     getPlanId(planesInfo, systemConstants.PLAN_TYPE_FREE),
   );
 
-  const [profilePhoto, setProfilePhoto] = useState("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80'");
+  const [profilePhoto, setProfilePhoto] = useState();
 
   const [dialogLabels, setDialogLabels] = useState({
     title: locationMapLabels['dialog.permission.request.title'],

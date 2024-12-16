@@ -18,7 +18,6 @@ import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
 import { errorMessages } from '../../../StaticData/Shared';
-import { userInfoMock } from '../../Mocks/userInfoMock';
 
 const store = createStore();
 const cookiesService = new CookiesService();
@@ -64,7 +63,7 @@ export default function withRouter(Component) {
     // eslint-disable-next-line consistent-return
     const verifyToken = useCallback(async () => {
       try {
-        const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+        const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
         const savedUserInfo = JSON.parse(localStorageService.getItem(
           LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
         ));
@@ -73,13 +72,13 @@ export default function withRouter(Component) {
           setIsAdmin(true);
         }
 
-        const userInfo = userInfoMock;
+        const userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
 
         if (userInfo.status === 401) {
           return handleLogout({ errorMessage: errorMessages.sessionExpired });
         }
 
-        userInfo.indexPage = '/cliente';
+        userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
 
         if (isEmpty(userInfo)) {
           setTokenVerified(false);

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -12,13 +12,12 @@ import { ARGENTINA_LOCALE, PLAN_TYPE_FREE } from '../Constants/System';
 import { parseLocationForMap } from '../Helpers/UtilsHelper';
 import LocationMap from './LocationMap';
 import { indexLabels } from '../../StaticData/Index';
+import { planShape } from '../PropTypes/Proveedor';
 
 function PlansSection({ plans, containerStyles }) {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
         py: 5,
         px: 2,
         backgroundColor: '#f4f4f9',
@@ -94,5 +93,14 @@ function PlansSection({ plans, containerStyles }) {
     </Box>
   );
 }
+
+PlansSection.defaultProps = {
+  containerStyles: {},
+};
+
+PlansSection.propTypes = {
+  plans: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
+  containerStyles: PropTypes.object,
+};
 
 export default PlansSection;

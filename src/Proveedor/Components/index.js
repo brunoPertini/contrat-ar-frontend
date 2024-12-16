@@ -36,11 +36,11 @@ import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import ModifyVendibleForm from '../ModifyVendible';
-import { parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import Footer from '../../Shared/Components/Footer';
-import { indexLabels } from '../../StaticData/Index';
 import BasicMenu from '../../Shared/Components/Menu';
+import { routes } from '../../Shared/Constants';
 
 const localStorageService = new LocalStorageService();
 
@@ -440,15 +440,14 @@ function ProveedorPage({
 
   let mainContent;
 
-  // eslint-disable-next-line no-unused-vars
   const handleOnOptionClicked = (option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
         handlePutVendible: managePutVendibleResults,
         handleUploadImage,
-        vendibleInfo: vendibles[0],
+        vendibleInfo,
         option,
-        vendibleType: 'servicios',
+        vendibleType,
         userToken: userInfo.token,
         userId: userInfo.id,
         onCloseInnerComponent: cleanOperationsComponents,
@@ -468,17 +467,13 @@ function ProveedorPage({
     const InnerComponent = innerScreens[currentInnerScreen].component;
     const innerProps = innerScreens[currentInnerScreen].props;
 
-    // TODO: mainContent esta de mas
+    // TODO: mainContent esta de mas. Ver si se puede sacar.
     mainContent = <InnerComponent {...innerProps} />;
   }
 
   useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
-  const footerOptions = [
-    { label: indexLabels.helpAndQuestions, onClick: () => {} },
-    { label: indexLabels.termsAndConditions, onClick: () => {} },
-    { label: indexLabels.contactUs, onClick: () => {} },
-  ];
+  const footerOptions = buildFooterOptions(routes.ROLE_PROVEEDOR_PRODUCTOS);
 
   const addVendibleLinkLayout = (
     <Box sx={{

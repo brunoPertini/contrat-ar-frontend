@@ -16,9 +16,21 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
-import { plansMock } from '../../Shared/Mocks/plansMock';
 
 const localStorageService = new LocalStorageService();
+
+const iconStyles = { fontSize: '2.5rem' };
+
+const titleStyles = { fontSize: '1.5rem' };
+
+const cardStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 1 30%',
+  cursor: 'pointer',
+  '&:hover': { boxShadow: 6 },
+  border: '1px solid rgb(36, 134, 164)',
+};
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
@@ -43,13 +55,13 @@ function SignUpContainer({ router }) {
       .finally(() => router.navigate(routes.index));
   };
 
-  // const getAllPlanes = () => {
-  //   const client = HttpClientFactory.createProveedorHttpClient();
-  //   return client.getAllPlanes();
-  // };
+  const getAllPlanes = () => {
+    const client = HttpClientFactory.createProveedorHttpClient();
+    return client.getAllPlanes();
+  };
 
   const fetchPlanesInfo = async () => {
-    const fetchedInfo = plansMock;
+    const fetchedInfo = await getAllPlanes();
     setPlanesInfo(fetchedInfo);
   };
 
@@ -57,19 +69,6 @@ function SignUpContainer({ router }) {
     const client = HttpClientFactory.createProveedorHttpClient();
 
     return client.uploadTemporalProfilePhoto(dni, file);
-  };
-
-  const iconStyles = { fontSize: '2.5rem' };
-
-  const titleStyles = { fontSize: '1.5rem' };
-
-  const cardStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 1 30%',
-    cursor: 'pointer',
-    '&:hover': { boxShadow: 6 },
-    border: '1px solid rgb(36, 134, 164)',
   };
 
   const signupTypeColumns = (
