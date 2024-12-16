@@ -371,17 +371,16 @@ function ProveedorPage({
 
   const isNearMobileLittleSize = useMediaQuery('(max-width:450px)');
 
-  let filtersResolvedWidth;
+  const filtersResolvedWidth = useMemo(() => {
+    if (isNearMobileLittleSize) {
+      return '80%';
+    } if (shouldChangeLayout) {
+      return '60%';
+    }
+    return '45%';
+  }, [isNearMobileLittleSize, shouldChangeLayout]);
 
-  if (isNearMobileLittleSize) {
-    filtersResolvedWidth = '80%';
-  } else if (shouldChangeLayout) {
-    filtersResolvedWidth = '60%';
-  } else {
-    filtersResolvedWidth = '45%';
-  }
-
-  const filtersProps = {
+  const filtersProps = useMemo(() => ({
     categories: categorias,
     vendibleType,
     filtersApplied,
@@ -395,9 +394,9 @@ function ProveedorPage({
       category: categoriesFiltersEnabled,
       state: true,
     },
-  };
+  }), [categorias, vendibleType, filtersApplied, categoriesFiltersEnabled]);
 
-  const searcherProps = {
+  const searcherProps = useMemo(() => ({
     titleConfig: {
       variant: 'h3',
     },
@@ -420,7 +419,7 @@ function ProveedorPage({
         opacity: 1,
       },
     },
-  };
+  }), [filtersApplied]);
 
   const innerScreens = {
     addNewVendible: {

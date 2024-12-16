@@ -7,56 +7,29 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { indexLabels } from '../../StaticData/Index';
 
+const questionsIndexes = [1, 2, 3, 4, 5, 6];
+
 function FAQSection({ containerStyles }) {
   return (
     <Box className="faqSection" sx={{ margin: '2%', ...containerStyles }}>
       <Typography variant="h4" align="center" gutterBottom>
         { indexLabels.faqTitle }
       </Typography>
+      {
+        questionsIndexes.map((index) => (
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">{ indexLabels[`faq.q.${index}`]}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                { indexLabels[`faq.a.${index}`]}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))
+      }
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{ indexLabels['faq.q.1']}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2">
-            { indexLabels['faq.a.1']}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{ indexLabels['faq.q.2']}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2">
-            <span dangerouslySetInnerHTML={{ __html: indexLabels['faq.a.2'] }} />
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{ indexLabels['faq.q.3']}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2">
-            { indexLabels['faq.a.3']}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">{ indexLabels['faq.q.4']}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body2">
-            { indexLabels['faq.a.4']}
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
     </Box>
   );
 }

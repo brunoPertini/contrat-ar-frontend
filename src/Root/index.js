@@ -19,13 +19,48 @@ import Footer from '../Shared/Components/Footer';
 import PlansSection from '../Shared/Components/PlansSection';
 import FAQSection from '../Shared/Components/FAQSection';
 import ContactForm from '../Shared/Components/ContactForm';
-import { plansMock } from '../Shared/Mocks/plansMock';
 import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
+
+const renderBenefits = (benefits) => benefits.split('.')
+  .filter((line) => !!(line))
+  .map((line) => (
+    <li style={{ display: 'flex' }}>
+      <CheckIcon sx={{ mr: '2%' }} />
+      <span>{ line }</span>
+    </li>
+
+  ));
+
+const indent = { marginLeft: '1%' };
+
+const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
+
+const sectionStyles = {
+  border: '1px solid #d1d1d1',
+  borderRadius: '8px',
+  padding: '20px',
+  marginBottom: '20px',
+};
+
+const benefitsStyles = {
+  ...flexColumn,
+  gap: '10px',
+  listStyleType: 'none',
+  listStylePosition: 'inside',
+  padding: 0,
+  margin: 0,
+};
 
 const localStorageService = new LocalStorageService();
 
 const footerOptions = buildFooterOptions(routes.index);
+
+const getAllPlanes = () => {
+  const client = HttpClientFactory.createProveedorHttpClient();
+  return client.getAllPlanes();
+};
 
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({
@@ -33,6 +68,8 @@ const RootPage = withRouter(({ router }) => {
     alertLabel: '',
     alertSeverity: '',
   });
+
+  const [plansData, setPlansData] = useState([]);
 
   const menuOptions = [{
     label: rootPageLabels.signup,
@@ -55,7 +92,13 @@ const RootPage = withRouter(({ router }) => {
     });
   };
 
+  const fetchPlanes = async () => {
+    const plans = await getAllPlanes();
+    setPlansData(plans);
+  };
+
   useEffect(() => {
+    fetchPlanes();
     const comesFromSignup = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP,
     ) === 'true';
@@ -84,27 +127,6 @@ const RootPage = withRouter(({ router }) => {
 
     return handleAlertClose();
   }, []);
-
-  const renderBenefits = (benefits) => benefits.split('.')
-    .filter((line) => !!(line))
-    .map((line) => (
-      <li style={{ display: 'flex' }}>
-        <CheckIcon sx={{ mr: '2%' }} />
-        <span>{ line }</span>
-      </li>
-
-    ));
-
-  const indent = { marginLeft: '1%' };
-
-  const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
-
-  const sectionStyles = {
-    border: '1px solid #d1d1d1',
-    borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '20px',
-  };
 
   return (
     <Box
@@ -179,16 +201,7 @@ const RootPage = withRouter(({ router }) => {
                   <Typography variant="h6">
                     { indexLabels['benefits.forProviders.title'] }
                   </Typography>
-                  <ul style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    listStyleType: 'none',
-                    listStylePosition: 'inside',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                  >
+                  <ul style={benefitsStyles}>
                     {
                         renderBenefits(indexLabels['benefits.forProviders.description'])
                   }
@@ -199,16 +212,7 @@ const RootPage = withRouter(({ router }) => {
                   <Typography variant="h6">
                     { indexLabels['benefits.forClients.title'] }
                   </Typography>
-                  <ul style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    listStyleType: 'none',
-                    listStylePosition: 'inside',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                  >
+                  <ul style={benefitsStyles}>
                     {
             renderBenefits(indexLabels['benefits.forClients.description'])
           }
@@ -222,7 +226,7 @@ const RootPage = withRouter(({ router }) => {
         </Card>
 
       </Stack>
-      <PlansSection plans={plansMock} containerStyles={sectionStyles} />
+      <PlansSection plans={plansData} containerStyles={sectionStyles} />
       <FAQSection containerStyles={sectionStyles} />
       <ContactForm containerStyles={sectionStyles} />
       <Footer options={footerOptions} />
