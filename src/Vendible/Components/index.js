@@ -459,6 +459,9 @@ function VendiblePage({
                           textTransform: 'none',
                           fontWeight: 'bold',
                           backgroundColor: 'rgb(36, 134, 164)',
+                          '&:hover': {
+                            backgroundColor: 'rgb(36, 134, 164)',
+                          },
                         }}
                       >
                         {sharedLabels.sendMessage}

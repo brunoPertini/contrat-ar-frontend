@@ -132,9 +132,6 @@ class CategoryRenderer {
           borderRadius: '8px !important',
           '&:before': { display: 'none' },
           bgcolor: '#f9f9f9',
-          '&.Mui-expanded': {
-            bgcolor: '#e3f2fd',
-          },
         }}
       >
         {

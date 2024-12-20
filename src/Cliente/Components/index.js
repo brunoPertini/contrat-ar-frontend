@@ -267,15 +267,6 @@ function Cliente({
             </Box>
             )
           }
-        </Box>
-        <Layout gridProps={gridProps} isLoading={isLoading}>
-          {searchDone && !thereIsNoResults && (
-          <Typography variant="h3">
-            { searchType === systemConstants.SERVICES && labels.foundServices}
-            { searchType === systemConstants.PRODUCTS && labels.foundProducts}
-          </Typography>
-          )}
-          <VendiblesList />
           {
             thereIsNoResults && (
               <StaticAlert
@@ -290,7 +281,21 @@ function Cliente({
               />
             )
           }
-        </Layout>
+        </Box>
+        {
+          searchDone && !thereIsNoResults
+          && (
+          <Layout gridProps={gridProps} isLoading={isLoading}>
+            {searchDone && !thereIsNoResults && (
+            <Typography variant="h3">
+              { searchType === systemConstants.SERVICES && labels.foundServices}
+              { searchType === systemConstants.PRODUCTS && labels.foundProducts}
+            </Typography>
+            )}
+            <VendiblesList />
+          </Layout>
+          )
+        }
       </Box>
       <ScrollUpIcon />
       <Footer options={footerOptions} />
