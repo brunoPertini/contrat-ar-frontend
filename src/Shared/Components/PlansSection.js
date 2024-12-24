@@ -60,7 +60,7 @@ function PlansSection({ plans, containerStyles }) {
               <Typography variant="h6" color="primary" sx={{ my: 2 }}>
                 { sharedLabels.finalMonthlyPrice.replace(
                   '{price}',
-                  getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.value,
+                  getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.price,
                 )}
               </Typography>
               <Divider sx={{ my: 2 }} />
@@ -82,7 +82,7 @@ function PlansSection({ plans, containerStyles }) {
                 )
               }
             <Box {...flexColumn}>
-              <Button variant="contained" color="primary" fullWidth>
+              <Button variant="contained" color="primary" fullWidth href={plan.type === PLAN_TYPE_FREE ? '/signup' : '/signup?plan=PAID'}>
                 { plan.type === PLAN_TYPE_FREE ? indexLabels.suscribe : indexLabels.tryForFree }
               </Button>
             </Box>

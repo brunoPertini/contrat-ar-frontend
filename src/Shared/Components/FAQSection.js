@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { indexLabels } from '../../StaticData/Index';
 
-const questionsIndexes = [1, 2, 3, 4, 5, 6];
+const questionsIndexes = [1, 2, 3, 4];
 
 function FAQSection({ containerStyles }) {
   return (

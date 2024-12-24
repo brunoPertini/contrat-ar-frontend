@@ -96,14 +96,17 @@ function VendiblesFilters({
   }, [vendibleType]);
 
   const categoriesSection = (
-    <>
-      {(isEmpty(filtersLabels)) && (
-      <Box sx={{
-        mt: 3, p: 2, borderRadius: 1, bgcolor: 'background.paper',
-      }}
+    isEmpty(filtersLabels) && (
+      <Box
+        sx={{
+          mt: 3,
+          p: 2,
+          borderRadius: 1,
+          bgcolor: 'background.paper',
+        }}
       >
         <Typography variant="h6" color="primary">
-          { !enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle }
+          {!enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle}
         </Typography>
         <CategoryAccordion
           categories={categories}
@@ -112,17 +115,7 @@ function VendiblesFilters({
           showTitle={showAccordionTitle}
         />
       </Box>
-      )}
-      {
-      !(isEmpty(filtersLabels)) && (
-        <SelectedFilters
-          labels={filtersLabels}
-          onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
-          showTitle
-        />
-      )
-    }
-    </>
+    )
   );
 
   const locationsDistanceSection = (
@@ -206,6 +199,15 @@ function VendiblesFilters({
       }}
     >
       {enabledFilters.category && categoriesSection}
+      {
+      !(isEmpty(filtersLabels)) && (
+        <SelectedFilters
+          labels={filtersLabels}
+          onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
+          showTitle
+        />
+      )
+    }
       {
        (enabledFilters.distance || enabledFilters.price) && (
        <Box

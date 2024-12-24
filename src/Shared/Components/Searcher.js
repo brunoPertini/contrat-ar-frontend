@@ -94,7 +94,7 @@ Searcher.defaultProps = {
   title: '',
   placeholder: '',
   isSearchDisabled: false,
-  autoFocus: false,
+  autoFocus: true,
   searchLabel: '',
   hasError: false,
   errorMessage: '',

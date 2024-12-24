@@ -440,7 +440,7 @@ function ProveedorPage({
 
   let mainContent;
 
-  const handleOnOptionClicked = (option, vendibleInfo) => {
+  const handleOnOptionClicked = useCallback((option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
         handlePutVendible: managePutVendibleResults,
@@ -459,9 +459,12 @@ function ProveedorPage({
       });
       setVendibleOperationsComponent(OperationsComponent);
     }
-  };
+  }, [setVendibleOperationsComponent, optionsMenuHandlers]);
 
-  const resetFiltersApplied = () => setFiltersApplied(filtersDefaultValues);
+  const resetFiltersApplied = useCallback(
+    () => setFiltersApplied(filtersDefaultValues),
+    [setFiltersApplied],
+  );
 
   if (currentInnerScreen) {
     const InnerComponent = innerScreens[currentInnerScreen].component;
@@ -528,7 +531,7 @@ function ProveedorPage({
         },
       }}
     />
-  )), [shouldChangeLayout]);
+  )), [shouldChangeLayout, filtersProps, searcherProps]);
 
   const FirstColumn = useCallback(() => (!shouldChangeLayout ? (
     <>
@@ -548,13 +551,13 @@ function ProveedorPage({
       </Box>
       { addVendibleLinkLayout }
     </Box>
-  )), [shouldChangeLayout]);
+  )), [shouldChangeLayout, ResolvedFiltersSection]);
 
-  const secondColumn = (
+  const SecondColumn = useCallback(() => (
     <>
       {
-        !shouldChangeLayout ? addVendibleLinkLayout : null
-      }
+      !shouldChangeLayout ? addVendibleLinkLayout : null
+    }
       <Box
         display="flex"
         flexDirection="column"
@@ -575,7 +578,7 @@ function ProveedorPage({
               <Typography variant="h6">
                 {proveedorLabels.tooltipLabel}
               </Typography>
-          )}
+        )}
           >
             <HelpOutline />
           </Tooltip>
@@ -592,7 +595,8 @@ function ProveedorPage({
       </Box>
 
     </>
-  );
+  ), [shouldChangeLayout, filteredVendibles]);
+
   const ResponsiveLayout = useCallback(() => {
     if (!shouldChangeLayout) {
       return (
@@ -619,7 +623,7 @@ function ProveedorPage({
             sx={{ paddingRight: '1%' }}
             flex={1}
           >
-            { secondColumn }
+            <SecondColumn />
           </Box>
         </Box>
       );
@@ -633,10 +637,10 @@ function ProveedorPage({
         width="100%"
       >
         <FirstColumn />
-        {secondColumn}
+        <SecondColumn />
       </Box>
     );
-  }, [shouldChangeLayout, secondColumn]);
+  }, [shouldChangeLayout, FirstColumn, SecondColumn]);
 
   return (
     <Box
