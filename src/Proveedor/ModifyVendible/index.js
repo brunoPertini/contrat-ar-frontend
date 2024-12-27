@@ -141,8 +141,10 @@ function ModifyVendibleForm({
     display: 'flex',
     flexDirection: 'column',
     gap: { xs: 2, sm: 7 },
+    sx: {
+      alignItems: 'center',
+    },
   };
-
   const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
 

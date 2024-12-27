@@ -280,7 +280,7 @@ function FirstStep({
                 setLocation={handleSetLoation}
                 containerStyles={{
                   height: '15rem',
-                  width: '15rem',
+                  width: '100%',
                 }}
                 token={token}
               />

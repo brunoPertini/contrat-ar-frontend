@@ -11,7 +11,6 @@ import OptionsMenu from '../../Shared/Components/OptionsMenu';
 import DialogModal from '../../Shared/Components/DialogModal';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
-import InformativeAlert from '../../Shared/Components/Alert';
 import { POST_STATES } from '../../Shared/Constants/System';
 
 const MODIFIABLE_STATES = [POST_STATES.ACTIVE, POST_STATES.REJECTED, POST_STATES.PAUSED];
@@ -35,7 +34,6 @@ export default function VendiblesList({
   vendibles, proveedorId, handleOnOptionClicked, handlePutVendible, resetFiltersApplied,
 }) {
   const [modifyStateData, setModifyStateData] = useState({ state: '', vendibleId: '' });
-  const [operationResult, setOperationResult] = useState(null);
 
   const [modalContent, setModalContent] = useState({
     title: '',
@@ -52,8 +50,6 @@ export default function VendiblesList({
     vendibleId: modifyStateData.vendibleId,
     body: { state: modifyStateData.state },
   })
-    .then(() => setOperationResult(true))
-    .catch(() => setOperationResult(false))
     .finally(() => {
       cleanModalContent();
       resetFiltersApplied();
@@ -84,13 +80,6 @@ export default function VendiblesList({
 
   return (
     <>
-      <InformativeAlert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={operationResult !== null}
-        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
-        severity={operationResult ? 'success' : 'error'}
-        onClose={() => setOperationResult(null)}
-      />
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}
