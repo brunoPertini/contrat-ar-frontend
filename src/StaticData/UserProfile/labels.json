@@ -6,7 +6,7 @@
     "myMessagesProvider": "Consultas recibidas",
     "modifyData": "Modificar datos",
     "plan.label": "Si querés cambiar tu plan actual, podés elegir otro acá",
-    "security.warning": "Dado que estos datos son muy importantes para proteger tu cuenta, en caso de que necesites cambiarlos podés contactarnos <a href=\"#\">acá</a>",
+    "security.warning": "En caso de que necesites cambiar algunos de estos datos podés hacerlo <a href=\"#\">acá</a>",
     "security.requestExists": "Tenemos registrada una solicitud para cambiar alguno de estos datos. Si querés cancelarla, o tenés alguna duda, podés escribirnos <a href=\"#\">acá</a>",
     "plan.includes": "Tu plan incluye:",
     "plan.change.disclaimer": "Si tenés un cambio de plan recientemente hecho, tené en cuenta que puede tardar unos minutos en verse reflejado.",

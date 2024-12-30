@@ -54,7 +54,29 @@ function Cliente({
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
+  const handleFetchVendiblesCall = useCallback((params) => {
+    dispatchHandleSearch(params ?? { searchType }).then((response) => {
+      setVendiblesResponse(response);
+      setFiltersEnabled(!!response.categorias);
+      // If no params, means its the first fetch, that only includes available filters
+      // (like categories) so vendibles are discarded. TODO: a cross refactor is necessary
+      // to improve this behavior.
+      if (params?.searchInput || params?.filters) {
+        setPreviousSearchInputValue(searchInputValue);
+        setSearchDone(true);
+        setThereIsNoResults(isEmpty(response.vendibles));
+      }
+    })
+      .catch((errorMessage) => {
+        setErrorMessage(errorMessage);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [dispatchHandleSearch]);
+
   const handleSetSearchType = (event) => {
+    setSearchType(event.target.value);
     setErrorMessage('');
     setSearchInputValue('');
     setPreviousSearchInputValue('');
@@ -62,11 +84,13 @@ function Cliente({
     setLastFiltersApplied({});
     setSearchDone(false);
     setThereIsNoResults(false);
-    setSearchType(event.target.value);
+    handleFetchVendiblesCall({ searchType: event.target.value });
   };
 
-  const handleStartSearch = (filters) => {
-    if (searchInputValue) {
+  const handleStartSearch = (filters, comesFromSearcher) => {
+    if (comesFromSearcher && !searchInputValue) {
+      setErrorMessage(labels.searchErrorMessage);
+    } else {
       setIsLoading(true);
       setErrorMessage('');
       if (filters) {
@@ -79,30 +103,16 @@ function Cliente({
           searchInput: searchInputValue,
           filters: finalAppliedFilters,
         };
-        dispatchHandleSearch(params).then((response) => {
-          setPreviousSearchInputValue(searchInputValue);
-          setSearchDone(true);
-          setVendiblesResponse(response);
-          setFiltersEnabled(!!response.categorias);
-          setThereIsNoResults(isEmpty(response.vendibles));
-        })
-          .catch((errorMessage) => {
-            setErrorMessage(errorMessage);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+        handleFetchVendiblesCall(params);
 
         return updatedLastFiltersApplied;
       });
-    } else {
-      setErrorMessage(labels.searchErrorMessage);
     }
   };
 
-  const handleKeyUp = (newValue) => {
+  const handleSetSearcherSearch = useCallback((newValue) => {
     setSearchInputValue(newValue);
-  };
+  }, [setSearchInputValue]);
 
   const radioGroupConfig = {
     onChange: handleSetSearchType,
@@ -164,6 +174,7 @@ function Cliente({
   );
 
   useEffect(() => {
+    handleFetchVendiblesCall();
     setHandleGoBack(() => showlExitAppModal);
   }, []);
 
@@ -218,7 +229,7 @@ function Cliente({
             </FormControl>
             <SearcherInput
               title={labels.title}
-              onSearchClick={handleStartSearch}
+              onSearchClick={() => handleStartSearch(null, true)}
               isSearchDisabled={isSearchDisabled}
               searchLabel={!searchInputValue ? sharedLabels.search : ''}
               hasError={!!searchErrorMessage}
@@ -232,7 +243,6 @@ function Cliente({
                 variant: 'outlined',
                 sx: {
                   width: '100%',
-                  boxShadow: 1,
                   borderRadius: 2,
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -248,8 +258,8 @@ function Cliente({
                 },
               }}
               keyEvents={{
-                onKeyUp: handleKeyUp,
-                onEnterPressed: handleStartSearch,
+                onKeyUp: handleSetSearcherSearch,
+                onEnterPressed: () => handleStartSearch(null, true),
               }}
             />
           </Box>
@@ -273,6 +283,7 @@ function Cliente({
                 label={vendiblesLabels.noResultsFound}
                 styles={{
                   mt: '2%',
+                  backgroundColor: 'rgb(36, 134, 164)',
                   fontSize: 'h4.fontSize',
                   '.MuiAlert-icon': {
                     fontSize: '50px;',

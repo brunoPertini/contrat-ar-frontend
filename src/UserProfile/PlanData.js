@@ -10,7 +10,6 @@ import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
-import InformativeAlert from '../Shared/Components/Alert';
 import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
 import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
@@ -30,7 +29,7 @@ function PlanData({
     const newPlanKey = Object.keys(plansNames)
       .find((key) => plansNames[key] === newPlan);
 
-    if (newPlanKey === PLAN_TYPE_PAID) {
+    if (actualPlan !== PLAN_TYPE_PAID && newPlanKey === PLAN_TYPE_PAID) {
       setShowPaidPlanDisclaimer(true);
     } else {
       setShowPaidPlanDisclaimer(false);
@@ -100,6 +99,11 @@ function PlanData({
           </Box>
         )
       }
+      {
+        (hasPendingRequest || planRequestChangeExists) && (
+          <Disclaimer text={userProfileLabels['plan.change.finalMessage']} />
+        )
+      }
       { getPlanDescription(plan, planesInfo, true) }
       {
         plan === PLAN_TYPE_FREE && (
@@ -113,12 +117,6 @@ function PlanData({
           />
         )
       }
-      <InformativeAlert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={hasPendingRequest || planRequestChangeExists}
-        label={userProfileLabels['plan.change.finalMessage']}
-        severity="info"
-      />
     </Box>
   );
 }

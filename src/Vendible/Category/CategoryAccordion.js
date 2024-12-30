@@ -156,6 +156,7 @@ function CategoryAccordion({
         </div>
         <Link
           sx={{
+            cursor: 'pointer',
             display: 'inline-block',
             mt: 2,
             textAlign: 'center',

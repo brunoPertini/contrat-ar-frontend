@@ -124,7 +124,7 @@ function UserPersonalData({
         ...getInputConfig(isAdmin),
       },
     },
-  })), [isEditModeEnabled, userInfo]);
+  })), [fieldsValues, isEditModeEnabled, userInfo]);
 
   const saveChangesSwitch = (
     <Box
