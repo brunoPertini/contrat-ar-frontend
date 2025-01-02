@@ -144,7 +144,8 @@ function VendiblesFilters({
       </Typography>
       <RangeSlider
         shouldShowBottomInputs
-        values={filtersApplied.toFilterDistances}
+        values={filtersApplied.toFilterDistances?.length ? filtersApplied.toFilterDistances
+          : [distanceSliderAdditionalProps.min, distanceSliderAdditionalProps.max]}
         handleOnChange={handleOnDistancesChanged}
         inputTextsHelpers={locationSliderInputHelperTexts}
         getInputTextFunction={getTextForDistanceSliderInput}
@@ -167,7 +168,8 @@ function VendiblesFilters({
       <RangeSlider
         showInputsIcon
         shouldShowBottomInputs
-        values={filtersApplied.prices}
+        values={filtersApplied.prices?.length ? filtersApplied.prices
+          : [priceSliderAdditionalProps.min, priceSliderAdditionalProps.max]}
         inputTextsHelpers={locationSliderInputHelperTexts}
         handleOnChange={onChangePricesWrapper}
         getInputTextFunction={getTextForPricesSliderInput}

@@ -1,4 +1,3 @@
-/* eslint-disable no-new-wrappers */
 import { ARGENTINA_LOCALE } from '../Constants/System';
 import { deleteNonNumericCharacters } from '../Utils/InputUtils';
 
@@ -47,11 +46,11 @@ export const handleSliderValuesChanged = (
 
   // Handling the case where it may be changed from input
   if (shouldParseValuesForSlider[0]) {
-    newValue[0] = new Number(newValue[0]);
+    newValue[0] = +newValue[0];
   }
 
   if (shouldParseValuesForSlider[1]) {
-    newValue[1] = new Number(newValue[1]);
+    newValue[1] = +newValue[1];
   }
 
   let newAppliedFilters = {};

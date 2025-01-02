@@ -140,7 +140,11 @@ function VendiblePage({
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
   const onPageChange = (_, newPage) => {
-    setFiltersApplied({ ...proveedoresVendiblesFiltersModel });
+    setFiltersApplied({
+      ...proveedoresVendiblesFiltersModel,
+      toFilterDistances: [],
+      prices: [],
+    });
     getVendibles(null, newPage - 1).then(() => setNoResultsFound(false));
   };
 
@@ -280,7 +284,7 @@ function VendiblePage({
 
       />
     );
-  }, [shouldChangeLayout, filtersEnabled]);
+  }, [shouldChangeLayout, filtersProps, filtersEnabled]);
 
   return (
     <Box
@@ -485,9 +489,10 @@ function VendiblePage({
             onChange={onPageChange}
             sx={{
               mt: 2,
+              justifyItems: 'center',
               '& .Mui-selected': {
                 fontWeight: 900,
-                bgcolor: 'primary.light',
+                backgroundColor: 'rgb(36, 134, 164)!important',
               },
             }}
           />
@@ -497,6 +502,7 @@ function VendiblePage({
           <StaticAlert
             label={vendiblesLabels.noResultsFound}
             styles={{
+              backgroundColor: 'rgb(36, 134, 164)',
               mt: '2%',
               fontSize: 'h4.fontSize',
               '.MuiAlert-icon': {

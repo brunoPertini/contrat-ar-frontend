@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { deleteNonNumericCharacters } from '../Utils/InputUtils';
 import { replaceArgentinianCurrencySymbol } from '../Helpers/PricesHelper';
 import { INTEGER_MAXIMUM } from '../Constants/System';
@@ -16,6 +16,9 @@ function RangeSlider({
   const [stateValues, setStateValues] = useState(values);
   const [iconDisabled, setIconDisabled] = useState(false);
   const [isSliderDisabled, setIsSliderDisabled] = useState(false);
+
+  const firstInputRef = useRef(null);
+  const secondInputRef = useRef(null);
 
   const onChangeCommitted = (event, newValues) => {
     setStateValues(newValues);
@@ -32,6 +35,12 @@ function RangeSlider({
   const onInputChange = (event, inputType) => {
     if (bottomInputsProps.readOnly) {
       return () => {};
+    }
+
+    if (inputType === 'min') {
+      firstInputRef.current.focus();
+    } else {
+      secondInputRef.current.focus();
     }
 
     const { value } = event.target;
@@ -71,8 +80,8 @@ function RangeSlider({
   };
 
   useEffect(() => {
-    setStateValues([min, max]);
-  }, [min, max]);
+    setStateValues([...values]);
+  }, [values]);
 
   return (
     <>
@@ -110,6 +119,7 @@ function RangeSlider({
           gap={2}
         >
           <TextField
+            ref={firstInputRef}
             value={getInputTextFunction(stateValues[0])}
             helperText={inputTextsHelpers[0]}
             inputProps={{
@@ -122,6 +132,7 @@ function RangeSlider({
 
           />
           <TextField
+            ref={secondInputRef}
             value={getInputTextFunction(stateValues[1])}
             helperText={inputTextsHelpers[1]}
             inputProps={{
