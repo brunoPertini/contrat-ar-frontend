@@ -15,6 +15,9 @@ function MapModal({
     >
       <Box
         sx={{
+          height: '80%',
+          width: '100%',
+          justifyItems: 'center',
           position: 'absolute',
           top: '50%',
           left: '50%',
@@ -22,7 +25,7 @@ function MapModal({
           background: 'white',
         }}
       >
-        <Typography variant="h3" sx={{ mb: '2%' }}>
+        <Typography variant="h4" sx={{ mb: '2%' }}>
           { title }
         </Typography>
 
@@ -30,7 +33,7 @@ function MapModal({
           enableDragEvents={false}
           location={parseLocationForMap(location)}
           containerStyles={{
-            height: '40rem',
+            height: '30rem',
             width: '100%',
           }}
         />

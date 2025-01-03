@@ -78,4 +78,4 @@ export const getPlanLabel = (planId) => (planId === 1
 
 export const getPlanValue = (planesInfo, planType) => planesInfo.find(
   (planInfo) => planInfo.type === planType,
-)?.value ?? '';
+)?.price ?? '';

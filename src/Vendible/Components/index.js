@@ -35,6 +35,7 @@ import Footer from '../../Shared/Components/Footer';
 import BasicMenu from '../../Shared/Components/Menu';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import { flexColumn } from '../../Shared/Constants/Styles';
+import MapModal from '../../Shared/Components/MapModal';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -68,6 +69,17 @@ function VendiblePage({
   handleLogout, paginationInfo,
 }) {
   const [firstSearchDone, setFirstSearchDone] = useState(false);
+  const [mapModalProps, setMapModalProps] = useState({
+    open: false,
+    title: '',
+    location: null,
+    handleClose: () => setMapModalProps((previous) => ({
+      ...previous,
+      open: false,
+      location: null,
+      title: '',
+    })),
+  });
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
     let distances; let prices;
@@ -209,6 +221,15 @@ function VendiblePage({
     window.open(contactLink, '_blank');
   }, [setButtonsEnabled]);
 
+  const handleOpenMap = useCallback((proveedor) => {
+    setMapModalProps((previous) => ({
+      ...previous,
+      open: true,
+      title: `Ubicación de ${proveedor.name} ${proveedor.surname}`,
+      location: proveedor.location,
+    }));
+  }, [setMapModalProps]);
+
   const handleOnFiltersApplied = (filters) => {
     setFirstSearchDone(true);
     setIsLoadingVendibles(true);
@@ -306,6 +327,7 @@ function VendiblePage({
         flex={1}
         gap="5%"
       >
+        <MapModal {...mapModalProps} />
         <Box
           display="flex"
           flexDirection="column"
@@ -389,7 +411,7 @@ function VendiblePage({
                         </Typography>
                         )}
                         {!!distance && (
-                        <Link href="#" sx={{ fontSize: '0.875rem' }}>
+                        <Link onClick={() => handleOpenMap(proveedorInfo)} sx={{ fontSize: '0.875rem' }}>
                           {vendiblesLabels.seeInMap}
                         </Link>
                         )}

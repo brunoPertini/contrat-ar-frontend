@@ -12,5 +12,5 @@
     "filterByDistanceExplanation": "Seleccioná a cuántos km de distancia como mínimo y máximo querés que se encuentren tus vendedores",
     "filterByPriceTitle": "¡Filtrá por precio!",
     "filterByStockTitle": "¡Filtrá por unidades en stock!",
-    "filterByPriceExplanation": "Elegí un rango o escribilo abajo si necesitás que sea más exacto"
+    "filterByPriceExplanation": "Elegí un precio mínimo y uno máximo para establecer el rango"
 }
