@@ -166,7 +166,6 @@ function VendiblesFilters({
         {labels.filterByPriceExplanation}
       </Typography>
       <RangeSlider
-        showInputsIcon
         shouldShowBottomInputs
         values={filtersApplied.prices?.length ? filtersApplied.prices
           : [priceSliderAdditionalProps.min, priceSliderAdditionalProps.max]}

@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { sharedLabels } from '../../StaticData/Shared';
+import { flexColumn } from '../Constants/Styles';
 
 /**
  * @component
@@ -19,7 +20,7 @@ function Layout({ gridProps, children, isLoading }) {
       {...gridProps}
     >
       { isLoading && (
-      <>
+      <Box {...flexColumn} alignItems="center">
         <CircularProgress sx={{
           mt: '2%',
         }}
@@ -27,7 +28,7 @@ function Layout({ gridProps, children, isLoading }) {
         <Typography variant="h6">
           { sharedLabels.loading }
         </Typography>
-      </>
+      </Box>
       ) }
       {!isLoading && children }
     </Box>
