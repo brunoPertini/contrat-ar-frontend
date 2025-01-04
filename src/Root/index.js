@@ -53,6 +53,8 @@ const benefitsStyles = {
   margin: 0,
 };
 
+const actionAreaStyles = { cursor: 'default' };
+
 const localStorageService = new LocalStorageService();
 
 const footerOptions = buildFooterOptions(routes.index);
@@ -146,10 +148,11 @@ const RootPage = withRouter(({ router }) => {
         direction={{ xs: 'column', md: 'row' }}
         spacing={5}
         sx={{ ...indent, ...sectionStyles }}
+        alignItems={{ xs: 'center', md: 'unset' }}
         justifyContent="center"
       >
         <Card sx={cardStyles}>
-          <CardActionArea>
+          <CardActionArea sx={actionAreaStyles}>
             <CardMedia
               component="img"
               sx={{ objectFit: 'cover', height: '100%' }}
@@ -167,7 +170,7 @@ const RootPage = withRouter(({ router }) => {
           </CardActionArea>
         </Card>
         <Card sx={cardStyles}>
-          <CardActionArea>
+          <CardActionArea sx={actionAreaStyles}>
             <CardMedia
               component="img"
               image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_89AZTB8E5H.jpg"
@@ -185,7 +188,7 @@ const RootPage = withRouter(({ router }) => {
           </CardActionArea>
         </Card>
         <Card sx={cardStyles}>
-          <CardActionArea>
+          <CardActionArea sx={actionAreaStyles}>
             <CardMedia
               component="img"
               image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_IHBPBLYUFE.jpg"

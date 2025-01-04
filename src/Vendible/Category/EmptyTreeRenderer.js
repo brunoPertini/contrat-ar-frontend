@@ -6,6 +6,7 @@ const linkStyles = {
   cursor: 'pointer',
   fontSize: '1rem',
   color: '#f5c242',
+  textDecoration: 0,
 };
 
 class EmptyTreeRenderer extends CategoryRenderer {

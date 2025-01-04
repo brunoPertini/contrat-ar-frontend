@@ -35,6 +35,7 @@ function PlansSection({ plans, containerStyles }) {
         display="flex"
         flexDirection={{ xs: 'column', sm: 'row' }}
         justifyContent="center"
+        alignItems={{ xs: 'center', sm: 'unset' }}
         gap={4}
         mt={4}
       >
@@ -71,6 +72,7 @@ function PlansSection({ plans, containerStyles }) {
             {
                 plan.type === PLAN_TYPE_FREE && (
                   <LocationMap
+                    translateAddress={false}
                     enableDragEvents={false}
                     circleRadius={1000}
                     location={parseLocationForMap({ coordinates: [-34.919056, -57.9503485] })}
