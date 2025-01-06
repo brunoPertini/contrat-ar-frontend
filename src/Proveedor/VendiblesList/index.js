@@ -123,12 +123,12 @@ export default function VendiblesList({
           <StaticAlert
             label={vendiblesLabels.noResultsFound}
             styles={{
+              backgroundColor: 'rgb(36, 134, 164)',
               mt: '2%',
               fontSize: 'h4.fontSize',
               '.MuiAlert-icon': {
                 fontSize: '50px;',
               },
-              width: '50%',
             }}
           />
         )

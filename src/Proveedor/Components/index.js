@@ -258,10 +258,6 @@ function ProveedorPage({
     }
   }, [currentInnerScreen]);
 
-  const handleSetSearchValue = (value) => {
-    setFiltersApplied((previous) => ({ ...previous, vendibleNombre: value }));
-  };
-
   const { openSnackbar, alertSeverity, alertLabel } = useMemo(() => {
     let alertForLabel = null;
     let severityForAlert;
@@ -290,12 +286,13 @@ function ProveedorPage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1200px)');
 
-  const handleStartSearch = () => {
+  const handleStartSearch = useCallback((vendibleNombre) => {
     setFiltersApplied((current) => {
-      handleGetVendibles(current);
-      return current;
+      const newApplied = vendibleNombre ? { ...current, vendibleNombre } : { ...current };
+      handleGetVendibles(newApplied);
+      return newApplied;
     });
-  };
+  }, [handleGetVendibles]);
 
   const handlePostServiceCall = () => {
     localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
@@ -390,6 +387,10 @@ function ProveedorPage({
     containerStyles: {
       mt: '5%',
     },
+    stateContainerStyles: {
+      pl: '3%',
+      pr: '3%',
+    },
     enabledFilters: {
       category: categoriesFiltersEnabled,
       state: true,
@@ -402,24 +403,25 @@ function ProveedorPage({
     },
     searcherConfig: {
       sx: {
+        width: '95%',
         mt: '5%',
-        paddingLeft: '10px',
+        mb: '5%',
+        pl: '1%',
+        pr: '1%',
       },
     },
     onSearchClick: handleStartSearch,
     keyEvents: {
-      onKeyUp: handleSetSearchValue,
       onEnterPressed: handleStartSearch,
     },
     placeholder: proveedorLabels.filterByName,
-    inputValue: filtersApplied.vendibleNombre,
     inputStyles: {
       '& .MuiInputBase-input::placeholder': {
         color: 'rgb(36, 134, 164)',
         opacity: 1,
       },
     },
-  }), [filtersApplied]);
+  }), [handleStartSearch, shouldChangeLayout]);
 
   const innerScreens = {
     addNewVendible: {
@@ -497,6 +499,14 @@ function ProveedorPage({
     </Box>
   );
 
+  const MemoizedSearcher = useCallback(() => (filtersApplied.vendibleNombre ? undefined
+    : <SearcherInput {...searcherProps} />), [searcherProps, filtersApplied.vendibleNombre]);
+
+  const MemoizedFilters = useCallback(
+    (additionalProps) => <VendiblesFilters {...filtersProps} {...additionalProps} />,
+    [filtersProps],
+  );
+
   const ResolvedFiltersSection = useCallback(() => (!shouldChangeLayout ? (
     <Box sx={{
       borderRadius: 2,
@@ -504,22 +514,34 @@ function ProveedorPage({
       borderColor: 'rgb(36, 134, 164)',
     }}
     >
-      <SearcherInput {...searcherProps} />
-      <VendiblesFilters stateContainerStyles={{ paddingBottom: '10px', paddingLeft: '10px' }} {...filtersProps} />
+      { MemoizedFilters(
+        {
+          stateContainerStyles: {
+            paddingBottom: '10px',
+            paddingLeft: '10px',
+          },
+
+        },
+      )}
+      ,
+      <MemoizedSearcher />
     </Box>
 
   ) : (
     <BasicMenu
       showButtonIcon
       options={[
-        {
-          component: SearcherInput,
-          props: searcherProps,
-        },
-        {
-          component: VendiblesFilters,
-          props: filtersProps,
-        }]}
+        MemoizedFilters(
+          {
+            stateContainerStyles: {
+              paddingBottom: '10px',
+              paddingLeft: '10px',
+            },
+
+          },
+        ),
+        <MemoizedSearcher />,
+      ]}
       slotProps={{
         paper: {
           style: {
@@ -531,7 +553,7 @@ function ProveedorPage({
         },
       }}
     />
-  )), [shouldChangeLayout, filtersProps, searcherProps]);
+  )), [shouldChangeLayout, MemoizedSearcher, MemoizedFilters]);
 
   const FirstColumn = useCallback(() => (!shouldChangeLayout ? (
     <>

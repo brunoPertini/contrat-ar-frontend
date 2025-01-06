@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import {
-  useCallback, useContext, useEffect, useMemo, useState,
+  useCallback, useContext, useEffect, useState,
 } from 'react';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
@@ -32,13 +32,11 @@ function Cliente({
 }) {
   const [searchErrorMessage, setErrorMessage] = useState('');
 
-  const [searchInputValue, setSearchInputValue] = useState('');
-  const [previousSearchInputValue, setPreviousSearchInputValue] = useState('');
   const [searchType, setSearchType] = useState(systemConstants.PRODUCTS);
 
   const [vendiblesResponse, setVendiblesResponse] = useState();
 
-  const [lastFiltersApplied, setLastFiltersApplied] = useState({});
+  const [lastFiltersApplied, setLastFiltersApplied] = useState({ category: undefined, categoryName: undefined, vendibleNombre: '' });
 
   const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,14 +53,14 @@ function Cliente({
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
   const handleFetchVendiblesCall = useCallback((params) => {
-    dispatchHandleSearch(params ?? { searchType }).then((response) => {
+    dispatchHandleSearch(params ? { ...params, searchType }
+      : { searchType }).then((response) => {
       setVendiblesResponse(response);
       setFiltersEnabled(!!response.categorias);
       // If no params, means its the first fetch, that only includes available filters
       // (like categories) so vendibles are discarded. TODO: a cross refactor is necessary
       // to improve this behavior.
-      if (params?.searchInput || params?.filters) {
-        setPreviousSearchInputValue(searchInputValue);
+      if (params?.vendibleNombre || params?.filters) {
         setSearchDone(true);
         setThereIsNoResults(isEmpty(response.vendibles));
       }
@@ -75,44 +73,26 @@ function Cliente({
       });
   }, [dispatchHandleSearch]);
 
+  const handleFiltersApplied = useCallback((vendibleNombre, comesFromSearcher) => {
+    if (comesFromSearcher && !vendibleNombre) {
+      return setErrorMessage(labels.searchErrorMessage);
+    }
+    return setLastFiltersApplied((current) => {
+      const newApplied = vendibleNombre ? { ...current, vendibleNombre } : { ...current };
+      handleFetchVendiblesCall(newApplied);
+      return newApplied;
+    });
+  }, [handleFetchVendiblesCall]);
+
   const handleSetSearchType = (event) => {
     setSearchType(event.target.value);
     setErrorMessage('');
-    setSearchInputValue('');
-    setPreviousSearchInputValue('');
     setVendiblesResponse({});
     setLastFiltersApplied({});
     setSearchDone(false);
     setThereIsNoResults(false);
     handleFetchVendiblesCall({ searchType: event.target.value });
   };
-
-  const handleStartSearch = (filters, comesFromSearcher) => {
-    if (comesFromSearcher && !searchInputValue) {
-      setErrorMessage(labels.searchErrorMessage);
-    } else {
-      setIsLoading(true);
-      setErrorMessage('');
-      if (filters) {
-        setLastFiltersApplied(filters);
-      }
-      setLastFiltersApplied((updatedLastFiltersApplied) => {
-        const finalAppliedFilters = filters ?? updatedLastFiltersApplied;
-        const params = {
-          searchType,
-          searchInput: searchInputValue,
-          filters: finalAppliedFilters,
-        };
-        handleFetchVendiblesCall(params);
-
-        return updatedLastFiltersApplied;
-      });
-    }
-  };
-
-  const handleSetSearcherSearch = useCallback((newValue) => {
-    setSearchInputValue(newValue);
-  }, [setSearchInputValue]);
 
   const radioGroupConfig = {
     onChange: handleSetSearchType,
@@ -165,12 +145,6 @@ function Cliente({
         />
       ) : null),
     [vendiblesResponse],
-  );
-
-  const isSearchDisabled = useMemo(
-    () => (!!previousSearchInputValue
-    && previousSearchInputValue === searchInputValue),
-    [previousSearchInputValue, searchInputValue],
   );
 
   useEffect(() => {
@@ -229,12 +203,11 @@ function Cliente({
             </FormControl>
             <SearcherInput
               title={labels.title}
-              onSearchClick={() => handleStartSearch(null, true)}
-              isSearchDisabled={isSearchDisabled}
-              searchLabel={!searchInputValue ? sharedLabels.search : ''}
+              onSearchClick={(vendibleNombre) => handleFiltersApplied(vendibleNombre, true)}
+              searchLabel={!lastFiltersApplied.vendibleNombre ? sharedLabels.search : ''}
               hasError={!!searchErrorMessage}
               errorMessage={searchErrorMessage}
-              inputValue={searchInputValue}
+              inputValue={lastFiltersApplied.vendibleNombre}
               titleConfig={{
                 variant: 'h5',
                 sx: { mb: 2 },
@@ -258,8 +231,7 @@ function Cliente({
                 },
               }}
               keyEvents={{
-                onKeyUp: handleSetSearcherSearch,
-                onEnterPressed: () => handleStartSearch(null, true),
+                onEnterPressed: (vendibleNombre) => handleFiltersApplied(vendibleNombre, true),
               }}
             />
           </Box>
@@ -271,7 +243,7 @@ function Cliente({
                 setFiltersApplied={setLastFiltersApplied}
                 categories={vendiblesResponse.categorias}
                 vendibleType={searchType}
-                onFiltersApplied={handleStartSearch}
+                onFiltersApplied={handleFiltersApplied}
                 enabledFilters={{ category: true, state: false }}
               />
             </Box>

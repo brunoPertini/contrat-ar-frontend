@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import pickBy from 'lodash/pickBy';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
 import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
@@ -50,17 +51,14 @@ function VendiblesFilters({
   };
 
   const handleFilterDeleted = (filtersKeys = []) => {
-    let newAppliedFilters = {};
     setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous };
+      const newAppliedFilters = { ...previous };
+      filtersKeys.forEach((key) => {
+        newAppliedFilters[key] = null;
+      });
+      return newAppliedFilters;
     });
-
-    filtersKeys.forEach((key) => {
-      newAppliedFilters[key] = null;
-    });
-
-    setFiltersApplied(newAppliedFilters);
-    onFiltersApplied(newAppliedFilters);
+    onFiltersApplied();
   };
 
   const onChangePricesWrapper = (
@@ -76,9 +74,9 @@ function VendiblesFilters({
     onFiltersApplied,
   );
 
-  const filtersLabels = useMemo(() => {
-    const filtersOfInterest = pick(filtersApplied, ['categoryName']);
-    return Object.values(filtersOfInterest).filter((label) => label);
+  const filtersLabelsObject = useMemo(() => {
+    const filtersOfInterest = pick(filtersApplied, ['categoryName', 'vendibleNombre']);
+    return pickBy(filtersOfInterest, (value) => !!value);
   }, [filtersApplied]);
 
   const defaultStateSelected = useMemo(() => {
@@ -95,27 +93,25 @@ function VendiblesFilters({
     }
   }, [vendibleType]);
 
-  const categoriesSection = (
-    isEmpty(filtersLabels) && (
-      <Box
-        sx={{
-          mt: 3,
-          p: 2,
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-        }}
-      >
-        <Typography variant="h6" color="primary">
-          {!enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle}
-        </Typography>
-        <CategoryAccordion
-          categories={categories}
-          vendibleType={vendibleType}
-          onCategorySelected={handleOnCategorySelected}
-          showTitle={showAccordionTitle}
-        />
-      </Box>
-    )
+  const categoriesSection = !filtersApplied.category && (
+  <Box
+    sx={{
+      mt: 3,
+      p: 2,
+      borderRadius: 1,
+      bgcolor: 'background.paper',
+    }}
+  >
+    <Typography variant="h6" color="primary">
+      {!enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle}
+    </Typography>
+    <CategoryAccordion
+      categories={categories}
+      vendibleType={vendibleType}
+      onCategorySelected={handleOnCategorySelected}
+      showTitle={showAccordionTitle}
+    />
+  </Box>
   );
 
   const locationsDistanceSection = (
@@ -190,6 +186,13 @@ function VendiblesFilters({
     />
   );
 
+  const handleDeleteFilter = useCallback((key) => {
+    const categoriesKeys = ['category', 'categoryName'];
+    return categoriesKeys.includes(key)
+      ? handleFilterDeleted(categoriesKeys)
+      : handleFilterDeleted([key]);
+  }, [handleFilterDeleted]);
+
   return (
     <Box
       {...flexColumn}
@@ -199,16 +202,16 @@ function VendiblesFilters({
         mt: 2,
       }}
     >
-      {enabledFilters.category && categoriesSection}
       {
-      !(isEmpty(filtersLabels)) && (
+      !(isEmpty(filtersLabelsObject)) && (
         <SelectedFilters
-          labels={filtersLabels}
-          onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
+          labels={filtersLabelsObject}
+          onDelete={handleDeleteFilter}
           showTitle
         />
       )
     }
+      {enabledFilters.category && categoriesSection}
       {
        (enabledFilters.distance || enabledFilters.price) && (
        <Box
