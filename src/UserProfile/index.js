@@ -4,7 +4,6 @@ import {
   useCallback,
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
@@ -12,7 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../Header';
-import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import {
@@ -21,7 +20,7 @@ import {
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
-import { systemConstants } from '../Shared/Constants';
+import { routes, systemConstants } from '../Shared/Constants';
 import PlanData from './PlanData';
 import { NavigationContext } from '../State/Contexts/NavigationContext';
 import GoBackLink from '../Shared/Components/GoBackLink';
@@ -30,6 +29,8 @@ import { DialogModal, StaticAlert } from '../Shared/Components';
 import { sharedLabels } from '../StaticData/Shared';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
+import Footer from '../Shared/Components/Footer';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -80,6 +81,8 @@ const accountActiveModalDefaultValues = {
   handleAccept: () => {},
   checked: undefined,
 };
+
+const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
@@ -246,7 +249,7 @@ function UserProfile({
         editCommonInfo={editCommonInfo}
         uploadProfilePhoto={uploadProfilePhoto}
         usuarioType={usuarioType}
-        styles={{ mt: '10%', ml: '5%' }}
+        styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
       />
     ), [personalData, userInfo.token]),
@@ -254,6 +257,7 @@ function UserProfile({
       <SecurityData
         data={securityData}
         usuarioType={usuarioType}
+        styles={{ height: '100vh', minHeight: '100vh' }}
         requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
       />
     ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
@@ -267,6 +271,7 @@ function UserProfile({
         planRequestChangeExists={changeRequestsMade.plan}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
+        styles={{ height: '100vh', pl: '1%', pr: '1%' }}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
@@ -307,7 +312,12 @@ function UserProfile({
   }
 
   return (
-    <Grid container display="flex">
+    <Box
+      {...flexColumn}
+      height="100vh"
+      minHeight="100vh"
+    >
+
       <UserActiveModal />
       <InformativeAlert
         open={alertConfig.open}
@@ -323,16 +333,22 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Grid item>
-        <GoBackLink />
-        <Tabs value={tabOption} onChange={handleTabOptionChange}>
+      <Box {...flexColumn}>
+        <GoBackLink styles={{ pl: '1%' }} />
+        <Tabs
+          value={tabOption}
+          onChange={handleTabOptionChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+        >
           { rolesTabs[userInfo.role].map((tab) => tab) }
         </Tabs>
         { tabsComponents[tabOption] }
-      </Grid>
+      </Box>
       {
         isAdmin && (
-          <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
+          <Box {...flexColumn} sx={{ mt: '3%', ml: '3%' }}>
             { activeAlert }
             <FormControlLabel
               control={(
@@ -346,7 +362,8 @@ function UserProfile({
           </Box>
         )
       }
-    </Grid>
+      <Footer options={footerOptions} />
+    </Box>
 
   );
 }

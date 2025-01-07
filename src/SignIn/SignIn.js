@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Header from '../Header';
 import { SignInFormBuilder } from '../Shared/Helpers/FormBuilder';
-import { Form } from '../Shared/Components';
+import Form from '../Shared/Components/Form';
 import { signinLabels } from '../StaticData/SignIn';
 
 function SignIn({ dispatchSignIn, errorMessage }) {

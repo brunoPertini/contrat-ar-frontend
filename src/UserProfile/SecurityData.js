@@ -5,6 +5,7 @@ import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { StaticAlert } from '../Shared/Components';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { CLIENTE, PROVEEDOR } from '../Shared/Constants/System';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -19,7 +20,6 @@ function SecurityData({
     onChangeFields: (fieldId, fieldValue) => {
       setFieldsValues({ ...fieldsValues, [fieldId]: fieldValue });
     },
-    gridStyles: { display: 'flex', flexDirection: 'column', width: '60%' },
     showInlineLabels: true,
     inputProps: {
       readOnly: true,
@@ -43,7 +43,10 @@ function SecurityData({
   )), [requestChangeExists]);
 
   return (
-    <Box display="flex" flexDirection="column" sx={{ ...styles }}>
+    <Box
+      {...flexColumn}
+      sx={{ ...styles }}
+    >
       {
       formFields.map((field) => field)
       }

@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import { sharedLabels } from '../../StaticData/Shared';
+import { flexColumn } from '../Constants/Styles';
 
 /**
  * @component
@@ -15,11 +16,11 @@ import { sharedLabels } from '../../StaticData/Shared';
  */
 function Layout({ gridProps, children, isLoading }) {
   return (
-    <Grid
+    <Box
       {...gridProps}
     >
       { isLoading && (
-      <>
+      <Box {...flexColumn} alignItems="center">
         <CircularProgress sx={{
           mt: '2%',
         }}
@@ -27,10 +28,10 @@ function Layout({ gridProps, children, isLoading }) {
         <Typography variant="h6">
           { sharedLabels.loading }
         </Typography>
-      </>
+      </Box>
       ) }
       {!isLoading && children }
-    </Grid>
+    </Box>
   );
 }
 

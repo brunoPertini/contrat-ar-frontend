@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { useEffect, useState } from 'react';
 import { isDeletePressed, isEnterPressed } from '../Utils/DomUtils';
 import { EMPTY_FUNCTION } from '../Constants/System';
 /**
@@ -22,13 +23,15 @@ function Searcher({
     onDeletePressed = EMPTY_FUNCTION,
   } = keyEvents;
 
+  const [stateValue, setStateValue] = useState(inputValue);
+
   const handleKeyEvents = (event) => {
     if (isSearchDisabled) {
       return;
     }
 
     if (isEnterPressed(event)) {
-      onEnterPressed();
+      onEnterPressed(event.target.value);
     }
 
     if (isDeletePressed(event)) {
@@ -37,16 +40,26 @@ function Searcher({
   };
 
   const handleOnChange = (event) => {
+    setStateValue(event.target.value);
     onKeyUp(event.target.value);
   };
 
-  const handleOnClick = () => onSearchClick();
+  const handleOnClick = () => onSearchClick(stateValue);
+
+  useEffect(() => {
+    if (!inputValue) setStateValue(inputValue);
+  }, [inputValue]);
 
   return (
     <>
-      <Typography {...titleConfig}>
-        {title}
-      </Typography>
+      {
+      !!title && (
+        <Typography {...titleConfig}>
+          {title}
+        </Typography>
+      )
+    }
+
       <FormControl {...searcherConfig}>
         <TextField
           required={required}
@@ -76,12 +89,11 @@ function Searcher({
           onChange={handleOnChange}
           error={hasError}
           helperText={errorMessage}
-          value={inputValue}
           placeholder={placeholder}
           sx={{ ...inputStyles }}
+          value={stateValue}
         />
       </FormControl>
-
     </>
   );
 }
@@ -90,11 +102,11 @@ Searcher.defaultProps = {
   title: '',
   placeholder: '',
   isSearchDisabled: false,
-  autoFocus: false,
+  autoFocus: true,
   searchLabel: '',
   hasError: false,
   errorMessage: '',
-  inputValue: '',
+  inputValue: undefined,
   titleConfig: {},
   searcherConfig: {},
   inputStyles: {},

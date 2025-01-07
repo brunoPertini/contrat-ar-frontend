@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 
 import {
   PRODUCTS, SERVICES,
@@ -15,11 +15,9 @@ function ConfirmationPage({
 }) {
   const vendibleUnit = parseVendibleUnit(vendibleType);
   return (
-    <Grid
-      item
+    <Box
       display="flex"
       flexDirection="row"
-      xs={10}
       sx={{ alignSelf: 'center' }}
       justifyContent="center"
     >
@@ -29,11 +27,17 @@ function ConfirmationPage({
         vendibleInfo={vendibleInfo}
         vendibleType={vendibleType}
         title={proveedorLabels['addVendible.confirmation.title'].replace('{vendible}', vendibleUnit)}
+        cardStyles={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '85%',
+          overflow: 'scroll',
+        }}
         cardRowStyles={{
           width: '40%',
         }}
       />
-    </Grid>
+    </Box>
   );
 }
 

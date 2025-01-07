@@ -7,6 +7,7 @@ import {
   useRouteError,
 } from 'react-router-dom';
 import './index.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import reportWebVitals from './reportWebVitals';
 import RootPage from './Root';
 import { UserSignUp } from './SignUp';
@@ -86,8 +87,6 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <UserProfile />,
-    errorElement: <ErrorComponent />,
-    hasErrorBoundary: true,
   },
   {
     path: '/admin',
@@ -99,8 +98,28 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: 'rgb(36, 134, 164)',
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: '#f5c242',
+        },
+      },
+    },
+  },
+});
+
 root.render(
-  <RouterProvider router={router} />,
+  <ThemeProvider theme={theme}>
+    <RouterProvider router={router} />
+    ,
+  </ThemeProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

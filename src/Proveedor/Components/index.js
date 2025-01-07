@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import Modal from '@mui/material/Modal';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
@@ -36,7 +36,12 @@ import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import ModifyVendibleForm from '../ModifyVendible';
-import { parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
+import Footer from '../../Shared/Components/Footer';
+import BasicMenu from '../../Shared/Components/Menu';
+import { routes } from '../../Shared/Constants';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 const localStorageService = new LocalStorageService();
 
@@ -64,7 +69,7 @@ const optionsMenuHandlers = ({
           cardStyles={{
             display: 'flex',
             flexDirection: 'column',
-            width: '60%',
+            width: '85%',
             overflow: 'scroll',
           }}
           userToken={userToken}
@@ -237,7 +242,7 @@ function ProveedorPage({
   }, [isGoingBack, currentInnerScreen]);
 
   useEffect(() => {
-    setFilteredVendibles(vendibles);
+    setFilteredVendibles([...vendibles]);
   }, [vendibles]);
 
   useEffect(() => {
@@ -252,10 +257,6 @@ function ProveedorPage({
       setHandleGoBack(() => showExitAppAlertModal);
     }
   }, [currentInnerScreen]);
-
-  const handleSetSearchValue = (value) => {
-    setFiltersApplied((previous) => ({ ...previous, vendibleNombre: value }));
-  };
 
   const { openSnackbar, alertSeverity, alertLabel } = useMemo(() => {
     let alertForLabel = null;
@@ -283,12 +284,15 @@ function ProveedorPage({
     });
   }, [crudOperationResult]);
 
-  const handleStartSearch = () => {
+  const shouldChangeLayout = useMediaQuery('(max-width:1200px)');
+
+  const handleStartSearch = useCallback((vendibleNombre) => {
     setFiltersApplied((current) => {
-      handleGetVendibles(current);
-      return current;
+      const newApplied = vendibleNombre ? { ...current, vendibleNombre } : { ...current };
+      handleGetVendibles(newApplied);
+      return newApplied;
     });
-  };
+  }, [handleGetVendibles]);
 
   const handlePostServiceCall = () => {
     localStorageService.removeItem(LocalStorageService.PAGES_KEYS.PROVEEDOR.PAGE_SCREEN);
@@ -362,6 +366,63 @@ function ProveedorPage({
     });
   }, [setModalContent]);
 
+  const isNearMobileLittleSize = useMediaQuery('(max-width:450px)');
+
+  const filtersResolvedWidth = useMemo(() => {
+    if (isNearMobileLittleSize) {
+      return '80%';
+    } if (shouldChangeLayout) {
+      return '60%';
+    }
+    return '45%';
+  }, [isNearMobileLittleSize, shouldChangeLayout]);
+
+  const filtersProps = useMemo(() => ({
+    categories: categorias,
+    vendibleType,
+    filtersApplied,
+    setFiltersApplied,
+    showAccordionTitle: true,
+    onFiltersApplied: handleStartSearch,
+    containerStyles: {
+      mt: '5%',
+    },
+    stateContainerStyles: {
+      pl: '3%',
+      pr: '3%',
+    },
+    enabledFilters: {
+      category: categoriesFiltersEnabled,
+      state: true,
+    },
+  }), [categorias, vendibleType, filtersApplied, categoriesFiltersEnabled]);
+
+  const searcherProps = useMemo(() => ({
+    titleConfig: {
+      variant: 'h3',
+    },
+    searcherConfig: {
+      sx: {
+        width: '95%',
+        mt: '5%',
+        mb: '5%',
+        pl: '1%',
+        pr: '1%',
+      },
+    },
+    onSearchClick: handleStartSearch,
+    keyEvents: {
+      onEnterPressed: handleStartSearch,
+    },
+    placeholder: proveedorLabels.filterByName,
+    inputStyles: {
+      '& .MuiInputBase-input::placeholder': {
+        color: 'rgb(36, 134, 164)',
+        opacity: 1,
+      },
+    },
+  }), [handleStartSearch, shouldChangeLayout]);
+
   const innerScreens = {
     addNewVendible: {
       component: VendibleCreateForm,
@@ -381,7 +442,7 @@ function ProveedorPage({
 
   let mainContent;
 
-  const handleOnOptionClicked = (option, vendibleInfo) => {
+  const handleOnOptionClicked = useCallback((option, vendibleInfo) => {
     if (option) {
       const OperationsComponent = optionsMenuHandlers({
         handlePutVendible: managePutVendibleResults,
@@ -400,135 +461,222 @@ function ProveedorPage({
       });
       setVendibleOperationsComponent(OperationsComponent);
     }
-  };
+  }, [setVendibleOperationsComponent, optionsMenuHandlers]);
 
-  const resetFiltersApplied = () => setFiltersApplied(filtersDefaultValues);
+  const resetFiltersApplied = useCallback(
+    () => setFiltersApplied(filtersDefaultValues),
+    [setFiltersApplied],
+  );
 
   if (currentInnerScreen) {
     const InnerComponent = innerScreens[currentInnerScreen].component;
     const innerProps = innerScreens[currentInnerScreen].props;
 
+    // TODO: mainContent esta de mas. Ver si se puede sacar.
     mainContent = <InnerComponent {...innerProps} />;
-  } else {
-    mainContent = (
-      <Grid
-        container
-        sx={{
-          flexDirection: 'row',
-        }}
-        justifyContent="center"
-      >
-        <Grid item xs={4}>
-          <SearcherInput
-            title={sharedLabels.filters}
-            titleConfig={{
-              variant: 'h3',
-            }}
-            searcherConfig={{
-              sx: {
-                mt: '5%',
-              },
-            }}
-            onSearchClick={handleStartSearch}
-            keyEvents={{
-              onKeyUp: handleSetSearchValue,
-              onEnterPressed: handleStartSearch,
-            }}
-            placeholder={proveedorLabels.filterByName}
-            inputValue={filtersApplied.vendibleNombre}
-          />
-          <VendiblesFilters
-            categories={categorias}
-            vendibleType={vendibleType}
-            filtersApplied={filtersApplied}
-            setFiltersApplied={setFiltersApplied}
-            onFiltersApplied={handleStartSearch}
-            containerStyles={{
-              mt: '5%',
-            }}
-            showAccordionTitle={false}
-            alternativeAccordionTitle={(
-              <Typography variant="h6">
-                {proveedorLabels.filterByCategory}
-              </Typography>
-            )}
-            enabledFilters={{
-              category: categoriesFiltersEnabled,
-              state: true,
-            }}
-          />
-        </Grid>
-        <Grid
-          item
-          display="flex"
-          xs={8}
-          flexDirection="column"
-        >
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="space-between"
-          >
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <Typography variant="h4">
-                { proveedorLabels.yourPosts }
-              </Typography>
-              <Tooltip
-                placement="right-start"
-                title={(
-                  <Typography variant="h6">
-                    {proveedorLabels.tooltipLabel}
-                  </Typography>
-            )}
-              >
-                <HelpOutline />
-              </Tooltip>
-            </div>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-            >
-              <Typography variant="h6">
-                {addVendibleLabel}
-              </Typography>
-              <Link
-                sx={{ mt: '10px', cursor: 'pointer' }}
-                onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
-              >
-                {addVendibleLink}
-              </Link>
-            </div>
-          </Box>
-          <Box>
-            <VendiblesList
-              proveedorId={userInfo.id}
-              vendibles={filteredVendibles}
-              vendibleType={vendibleType}
-              userToken={userInfo.token}
-              handleOnOptionClicked={handleOnOptionClicked}
-              handlePutVendible={handlePutVendible}
-              resetFiltersApplied={resetFiltersApplied}
-            />
-          </Box>
-        </Grid>
-      </Grid>
-    );
   }
 
   useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
-  return (
+  const footerOptions = buildFooterOptions(routes.ROLE_PROVEEDOR_PRODUCTOS);
+
+  const addVendibleLinkLayout = (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignSelf: shouldChangeLayout ? 'flex-start' : 'flex-end',
+    }}
+    >
+      <Typography variant="h6">
+        {addVendibleLabel}
+      </Typography>
+      <Link
+        sx={{ mt: '10px', cursor: 'pointer' }}
+        onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+      >
+        {addVendibleLink}
+      </Link>
+    </Box>
+  );
+
+  const MemoizedSearcher = useCallback(() => (filtersApplied.vendibleNombre ? undefined
+    : <SearcherInput {...searcherProps} />), [searcherProps, filtersApplied.vendibleNombre]);
+
+  const MemoizedFilters = useCallback(
+    (additionalProps) => <VendiblesFilters {...filtersProps} {...additionalProps} />,
+    [filtersProps],
+  );
+
+  const ResolvedFiltersSection = useCallback(() => (!shouldChangeLayout ? (
+    <Box sx={{
+      borderRadius: 2,
+      border: '1px solid',
+      borderColor: 'rgb(36, 134, 164)',
+    }}
+    >
+      { MemoizedFilters(
+        {
+          stateContainerStyles: {
+            paddingBottom: '10px',
+            paddingLeft: '10px',
+          },
+
+        },
+      )}
+      ,
+      <MemoizedSearcher />
+    </Box>
+
+  ) : (
+    <BasicMenu
+      showButtonIcon
+      options={[
+        MemoizedFilters(
+          {
+            stateContainerStyles: {
+              paddingBottom: '10px',
+              paddingLeft: '10px',
+            },
+
+          },
+        ),
+        <MemoizedSearcher />,
+      ]}
+      slotProps={{
+        paper: {
+          style: {
+            display: 'flex',
+            flexDirection: 'column',
+            width: filtersResolvedWidth,
+            maxHeight: 500,
+          },
+        },
+      }}
+    />
+  )), [shouldChangeLayout, MemoizedSearcher, MemoizedFilters]);
+
+  const FirstColumn = useCallback(() => (!shouldChangeLayout ? (
     <>
+      <GoBackLink />
+      <ResolvedFiltersSection />
+    </>
+  ) : (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="space-between"
+      gap={10}
+    >
+      <Box {...flexColumn}>
+        <GoBackLink />
+        <ResolvedFiltersSection />
+      </Box>
+      { addVendibleLinkLayout }
+    </Box>
+  )), [shouldChangeLayout, ResolvedFiltersSection]);
+
+  const SecondColumn = useCallback(() => (
+    <>
+      {
+      !shouldChangeLayout ? addVendibleLinkLayout : null
+    }
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <Typography variant="h4">
+            {proveedorLabels.yourPosts}
+          </Typography>
+          <Tooltip
+            placement="right-start"
+            title={(
+              <Typography variant="h6">
+                {proveedorLabels.tooltipLabel}
+              </Typography>
+        )}
+          >
+            <HelpOutline />
+          </Tooltip>
+        </Box>
+        <VendiblesList
+          proveedorId={userInfo.id}
+          vendibles={filteredVendibles}
+          vendibleType={vendibleType}
+          userToken={userInfo.token}
+          handleOnOptionClicked={handleOnOptionClicked}
+          handlePutVendible={handlePutVendible}
+          resetFiltersApplied={resetFiltersApplied}
+        />
+      </Box>
+
+    </>
+  ), [shouldChangeLayout, filteredVendibles]);
+
+  const ResponsiveLayout = useCallback(() => {
+    if (!shouldChangeLayout) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexDirection={{ xs: 'column', lg: 'row' }}
+          flex={1}
+          gap={5}
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="30%"
+            sx={{ paddingLeft: '1%' }}
+          >
+            <FirstColumn />
+          </Box>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            width={!shouldChangeLayout ? '60%' : '100%'}
+            sx={{ paddingRight: '1%' }}
+            flex={1}
+          >
+            <SecondColumn />
+          </Box>
+        </Box>
+      );
+    }
+
+    return (
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        width="100%"
+      >
+        <FirstColumn />
+        <SecondColumn />
+      </Box>
+    );
+  }, [shouldChangeLayout, FirstColumn, SecondColumn]);
+
+  return (
+    <Box
+      {...flexColumn}
+      height="100vh"
+      minHeight="100vh"
+    >
       <Header
         withMenuComponent
         renderNavigationLinks
         menuOptions={menuOptions}
         userInfo={userInfo}
       />
-      <GoBackLink />
-      { mainContent }
+      {!mainContent ? <ResponsiveLayout /> : mainContent}
       { vendibleOperationsComponent }
       <InformativeAlert
         open={openSnackbar}
@@ -545,7 +693,9 @@ function ProveedorPage({
         handleAccept={modalContent.handleAccept}
         handleDeny={onCancelLeavingPage}
       />
-    </>
+      {!mainContent && <ScrollUpIcon />}
+      <Footer options={footerOptions} />
+    </Box>
   );
 }
 

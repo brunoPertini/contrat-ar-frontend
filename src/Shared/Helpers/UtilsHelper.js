@@ -6,6 +6,7 @@ import { PRODUCT, PRODUCTS, SERVICE } from '../Constants/System';
 import CookiesService from '../../Infrastructure/Services/CookiesService';
 import { sharedLabels } from '../../StaticData/Shared';
 import { routes } from '../Constants';
+import { indexLabels } from '../../StaticData/Index';
 
 export const parseVendibleUnit = (vendibleType) => (vendibleType === PRODUCTS
   ? PRODUCT : SERVICE).toLowerCase();
@@ -91,4 +92,28 @@ export function splitArrayIntoChunks(array, chunkSize) {
     result.push(chunk);
   }
   return result;
+}
+
+const scrollToElement = (element) => element.scrollIntoView({
+  behavior: 'smooth',
+  block: 'start',
+});
+
+export function buildFooterOptions(page = routes.index) {
+  const loggedUserOptions = [
+    { label: indexLabels.helpAndQuestions, onClick: () => {} },
+    { label: indexLabels.termsAndConditions, onClick: () => {} },
+    { label: indexLabels.contactUs, onClick: () => {} },
+  ];
+
+  const indexOptions = [{
+    label: indexLabels.aboutUs,
+    onClick: () => scrollToElement(document.querySelector('.companyDescription')),
+  },
+  { label: indexLabels.ourPlans, onClick: () => scrollToElement(document.querySelector('.plansDescriptions')) },
+  { label: indexLabels.helpAndQuestions, onClick: () => scrollToElement(document.querySelector('.faqSection')) },
+  { label: indexLabels.termsAndConditions, onClick: () => {} },
+  ];
+
+  return page === routes.index ? indexOptions : loggedUserOptions;
 }

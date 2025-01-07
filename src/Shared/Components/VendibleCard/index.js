@@ -20,32 +20,47 @@ const STATE_SEVERITY = {
   [POST_STATES.REJECTED]: 'error',
   [POST_STATES.PAUSED]: 'info',
 };
+
 export default function VendibleCard({
   vendibleTitle, images, LinkSection,
-  imageListProps: { cols, gap, sx },
+  imageListProps,
   cardStyles, linkCardStyles, ChildrenComponent,
   state, manageStateChange,
 }) {
-  const imageSection = !!images.length && (
-    <ImageList cols={cols} gap={gap} sx={sx}>
-      {images.map((imageUrl, i) => (
-        <ImageListItem key={`image_${vendibleTitle}_${i}`}>
-          <img
-            src={imageUrl}
-            srcSet={imageUrl}
-            alt={vendibleTitle}
-            loading="lazy"
-          />
-        </ImageListItem>
-      ))}
-    </ImageList>
+  const contentStyles = {
+    display: 'flex', flex: 1, flexDirection: 'column',
+  };
+
+  const imageSection = images.length > 0 && (
+    <CardContent sx={{ ...contentStyles }}>
+      <ImageList {...imageListProps}>
+        {images.map((imageUrl, i) => (
+          <ImageListItem key={`image_${vendibleTitle}_${i}`} sx={{ height: '100%' }}>
+            <img
+              src={imageUrl}
+              alt={vendibleTitle}
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                maxWidth: '100%',
+                overflowY: 'auto',
+              }}
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </CardContent>
   );
 
   const { shouldShowStateSwitch, switchLabel } = useMemo(() => ({
     shouldShowStateSwitch: !!state && (
       state === POST_STATES.ACTIVE || state === POST_STATES.PAUSED
     ),
-    switchLabel: state === POST_STATES.ACTIVE ? proveedorLabels['vendible.state.pause']
+    switchLabel: state === POST_STATES.ACTIVE
+      ? proveedorLabels['vendible.state.pause']
       : proveedorLabels['vendible.state.resume'],
   }), [state]);
 
@@ -55,48 +70,39 @@ export default function VendibleCard({
   };
 
   const titleSection = (
-    <CardContent>
-      <Typography gutterBottom variant="h5" component="div">
-        { vendibleTitle }
+    <CardContent sx={{ ...contentStyles }}>
+      <Typography variant="h5" component="div" fontWeight="bold">
+        {vendibleTitle}
       </Typography>
-      {
-        state && (
-          <StaticAlert
-            styles={{
-              width: '125px',
-              marginTop: '2%',
-            }}
-            severity={STATE_SEVERITY[state]}
-            label={postStateLabelResolver[state]}
+      {state && (
+        <StaticAlert
+          styles={{ width: '125px', marginTop: '8px' }}
+          severity={STATE_SEVERITY[state]}
+          label={postStateLabelResolver[state]}
+        />
+      )}
+      {shouldShowStateSwitch && (
+        <Box sx={{ mt: 2 }}>
+          <FormControlLabel
+            control={<Switch checked={state === POST_STATES.ACTIVE} onChange={handleChangeState} />}
+            label={switchLabel}
           />
-        )
-      }
-      {
-         shouldShowStateSwitch && (
-         <Box display="flex" flexDirection="column" sx={{ mt: '3%', ml: '3%' }}>
-           <FormControlLabel
-             control={(
-               <Switch
-                 checked={state === POST_STATES.ACTIVE}
-                 onChange={handleChangeState}
-               />
-)}
-             label={switchLabel}
-           />
-         </Box>
-         )
-      }
+        </Box>
+      )}
     </CardContent>
   );
 
   const linkContent = (
-    <CardContent sx={{ ...linkCardStyles }}>
-      { LinkSection }
+    <CardContent sx={{
+      ...linkCardStyles, ...contentStyles, borderTop: '1px solid #ddd', mt: 1,
+    }}
+    >
+      {LinkSection}
     </CardContent>
   );
 
   return (
-    <Card sx={{ ...cardStyles }}>
+    <Card sx={{ ...cardStyles, p: 2, bgcolor: 'background.paper' }}>
       <ChildrenComponent
         vendibleTitle={vendibleTitle}
         linkSection={linkContent}

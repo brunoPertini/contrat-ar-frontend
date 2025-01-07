@@ -16,12 +16,12 @@ function SelectedFilters({ showTitle, labels, onDelete }) {
         )
     }
       {
-        labels.map((label) => (
+        Object.entries(labels).map(([key, value]) => (
           <Chip
-            key={`selected_filter_${label}`}
-            label={label}
+            key={`selected_filter_${key}`}
+            label={value}
             variant="outlined"
-            onDelete={() => onDelete(label)}
+            onDelete={() => onDelete(key)}
           />
         ))
     }
@@ -36,7 +36,7 @@ SelectedFilters.defaultProps = {
 
 SelectedFilters.propTypes = {
   showTitle: PropTypes.bool,
-  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  labels: PropTypes.objectOf(PropTypes.string).isRequired,
   onDelete: PropTypes.func,
 };
 

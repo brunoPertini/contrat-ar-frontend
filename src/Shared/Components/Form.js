@@ -1,8 +1,9 @@
 import { PropTypes } from 'prop-types';
-import {
-  Grid, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { flexColumn } from '../Constants/Styles';
 
 export default function Form({
   fields, title, onLoad, styles, containerId,
@@ -10,20 +11,27 @@ export default function Form({
   useEffect(() => {
     onLoad();
   }, [fields]);
+
+  const showSmallerTitle = useMediaQuery('(max-width:768px)');
+
   return (
-    <Grid
+    <Box
       id={containerId}
-      container
+      {...flexColumn}
       sx={{
         marginTop: '5%',
         marginBottom: '5%',
-        flexDirection: 'column',
-        alignItems: 'center',
         ...styles,
       }}
-      spacing={2}
+      gap={2}
     >
-      <Typography variant="h6" align="left">
+      <Typography
+        variant={!showSmallerTitle ? 'h5' : 'h6'}
+        align="center"
+        sx={{
+          whiteSpace: 'break-spaces',
+        }}
+      >
         { title }
       </Typography>
       {
@@ -31,7 +39,7 @@ export default function Form({
 
       }
 
-    </Grid>
+    </Box>
   );
 }
 

@@ -29,6 +29,7 @@ const LocationMap = memo(function LocationMap({
   enableDragEvents,
   handleError,
   circleRadius,
+  translateAddress: shouldTranslateAddress,
 }) {
   const previousLocation = usePreviousPropValue(location);
 
@@ -65,10 +66,13 @@ const LocationMap = memo(function LocationMap({
      && (location.coords.latitude !== previousLocation.coords.latitude
       && location.coords.longitude !== previousLocation.coords.longitude);
 
-    if (!(previousLocation) || locationHasChanged) {
+    if (shouldTranslateAddress && (!(previousLocation) || locationHasChanged)) {
       translateAddress(location);
     }
-  }, [location.coords.latitude, location.coords.longitude, previousLocation]);
+  }, [shouldTranslateAddress,
+    location.coords.latitude,
+    location.coords.longitude,
+    previousLocation]);
 
   const LocationMarker = useCallback(() => {
     const eventHandlers = useMemo(() => ({
@@ -134,6 +138,7 @@ LocationMap.defaultProps = {
   containerStyles: {},
   setLocation: EMPTY_FUNCTION,
   enableDragEvents: true,
+  translateAddress: true,
   circleRadius: 0,
 };
 
@@ -143,6 +148,7 @@ LocationMap.propTypes = {
   handleError: PropTypes.func.isRequired,
   containerStyles: PropTypes.objectOf(PropTypes.any),
   enableDragEvents: PropTypes.bool,
+  translateAddress: PropTypes.bool,
   circleRadius: PropTypes.number,
 };
 

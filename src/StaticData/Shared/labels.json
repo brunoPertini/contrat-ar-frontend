@@ -6,13 +6,14 @@
     "phone": "Teléfono",
     "email": "Email",
     "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
     "birthDate": "Fecha de nacimiento",
     "dni": "DNI",
     "plan": "Plan",
     "profilePhoto": "Foto de perfil",
     "active": "Activo",
     "createdAt": "Fecha de alta",
-    "siteName": "Contract.ar" ,
+    "siteName": "Contrat.ar" ,
     "optional": "Opcional",
     "back": "Atrás",
     "next": "Siguiente",
@@ -114,5 +115,7 @@
     "users": "Usuarios",
     "products": "Productos",
     "services": "Servicios",
-    "changeRequests": "Pedidos de cambio"
+    "changeRequests": "Pedidos de cambio",
+    "mandatoryField": "* Campo obligatorio",
+    "message": "Mensaje"
 }
