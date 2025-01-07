@@ -11,7 +11,6 @@ import OptionsMenu from '../../Shared/Components/OptionsMenu';
 import DialogModal from '../../Shared/Components/DialogModal';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
-import InformativeAlert from '../../Shared/Components/Alert';
 import { POST_STATES } from '../../Shared/Constants/System';
 
 const MODIFIABLE_STATES = [POST_STATES.ACTIVE, POST_STATES.REJECTED, POST_STATES.PAUSED];
@@ -35,7 +34,6 @@ export default function VendiblesList({
   vendibles, proveedorId, handleOnOptionClicked, handlePutVendible, resetFiltersApplied,
 }) {
   const [modifyStateData, setModifyStateData] = useState({ state: '', vendibleId: '' });
-  const [operationResult, setOperationResult] = useState(null);
 
   const [modalContent, setModalContent] = useState({
     title: '',
@@ -52,15 +50,15 @@ export default function VendiblesList({
     vendibleId: modifyStateData.vendibleId,
     body: { state: modifyStateData.state },
   })
-    .then(() => setOperationResult(true))
-    .catch(() => setOperationResult(false))
     .finally(() => {
       cleanModalContent();
       resetFiltersApplied();
     });
 
   const cardStyles = {
-    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+    display: 'flex',
+    flexDirection: { xs: 'column', sm: 'row' },
+    justifyContent: 'space-between',
   };
 
   const linkSection = useCallback((vendible) => (
@@ -82,13 +80,6 @@ export default function VendiblesList({
 
   return (
     <>
-      <InformativeAlert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={operationResult !== null}
-        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
-        severity={operationResult ? 'success' : 'error'}
-        onClose={() => setOperationResult(null)}
-      />
       <DialogModal
         title={modalContent.title}
         contextText={modalContent.text}
@@ -108,11 +99,22 @@ export default function VendiblesList({
             LinkSection={linkSection(vendible)}
             imageListProps={{
               cols: 1,
-              sx: { width: '40%' },
+              rowHeight: 164,
+              sx: {
+                cols: 1,
+                gap: 8,
+                sx: {
+                  width: '100%',
+                  maxWidth: '100%',
+                  height: 'auto',
+                  margin: '0 auto',
+                },
+              },
             }}
             ChildrenComponent={ProveedorVendibleCard}
             state={vendible.state}
             manageStateChange={(state) => manageStateChange(state, vendible.vendibleId)}
+            linkCardStyles={{ display: 'flex', alignItems: 'center', gap: 1 }}
           />
         ))}
       </List>
@@ -121,12 +123,12 @@ export default function VendiblesList({
           <StaticAlert
             label={vendiblesLabels.noResultsFound}
             styles={{
+              backgroundColor: 'rgb(36, 134, 164)',
               mt: '2%',
               fontSize: 'h4.fontSize',
               '.MuiAlert-icon': {
                 fontSize: '50px;',
               },
-              width: '50%',
             }}
           />
         )

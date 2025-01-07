@@ -17,6 +17,7 @@ import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 const stateSelector = (state) => state;
 
@@ -44,6 +45,8 @@ function ProveedorContainer({ router, handleLogout }) {
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
+
+  const [operationResult, setOperationResult] = useState(null);
 
   const { role, token, id } = userInfo;
 
@@ -118,12 +121,23 @@ function ProveedorContainer({ router, handleLogout }) {
       handleLogout,
     });
 
+    const isUpdatingState = 'state' in body;
+
     return client.putVendible({
       proveedorId, vendibleId, body,
     }).then((postVendibleResponse) => {
+      if (isUpdatingState) {
+        setOperationResult(true);
+      }
+
       handleGetVendibles();
       return postVendibleResponse;
-    }).catch((error) => Promise.reject(error));
+    }).catch((error) => {
+      if (isUpdatingState) {
+        setOperationResult(false);
+      }
+      return Promise.reject(error);
+    });
   };
 
   const handleDeleteVendible = async ({ proveedorId, vendibleId }) => {
@@ -146,6 +160,13 @@ function ProveedorContainer({ router, handleLogout }) {
 
   return (
     <NavigationContextProvider>
+      <InformativeAlert
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        open={operationResult !== null}
+        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
+        severity={operationResult ? 'success' : 'error'}
+        onClose={() => setOperationResult(null)}
+      />
       { ExitAppDialog }
       <ProveedorPage
         vendibles={response.vendibles}

@@ -5,9 +5,6 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useEffect, useState } from 'react';
-import { deleteNonNumericCharacters } from '../Utils/InputUtils';
-import { replaceArgentinianCurrencySymbol } from '../Helpers/PricesHelper';
-import { INTEGER_MAXIMUM } from '../Constants/System';
 
 function RangeSlider({
   values, handleOnChange, getInputTextFunction, inputTextsHelpers, getAriaValueText,
@@ -29,27 +26,6 @@ function RangeSlider({
     }, 1300);
   };
 
-  const onInputChange = (event, inputType) => {
-    if (bottomInputsProps.readOnly) {
-      return () => {};
-    }
-
-    const { value } = event.target;
-
-    let preFormattedValue = deleteNonNumericCharacters(
-      replaceArgentinianCurrencySymbol(value),
-    );
-
-    if (preFormattedValue > INTEGER_MAXIMUM) {
-      preFormattedValue = INTEGER_MAXIMUM.toString();
-    }
-
-    const newValues = inputType === 'min' ? handleOnChange([preFormattedValue, stateValues[1]], true)
-      : handleOnChange([stateValues[0], preFormattedValue], true);
-
-    return setStateValues(newValues);
-  };
-
   const onIconClick = () => {
     if (!showInputsIcon) {
       return () => {};
@@ -67,12 +43,13 @@ function RangeSlider({
 
   const inputCommonProps = {
     size: 'small',
-    sx: { width: '30%' },
+    width: '30%',
+    readOnly: true,
   };
 
   useEffect(() => {
-    setStateValues([min, max]);
-  }, [min, max]);
+    setStateValues([...values]);
+  }, [values]);
 
   return (
     <>
@@ -88,17 +65,33 @@ function RangeSlider({
         max={max}
         getAriaValueText={getAriaValueText}
         valueLabelFormat={valueLabelFormat}
+        sx={{
+          '& .MuiSlider-track': {
+            backgroundColor: 'primary.main',
+          },
+          '& .MuiSlider-thumb': {
+            backgroundColor: 'primary.main',
+          },
+          '& .MuiSlider-rail': {
+            backgroundColor: 'text.disabled',
+          },
+        }}
       />
       {
         shouldShowBottomInputs && (
-        <Box display="flex" flexDirection="row" justifyContent="space-evenly">
+        <Box
+          display="flex"
+          flexDirection={{
+            xs: 'column', sm: 'column', md: 'column', lg: 'row',
+          }}
+          gap={2}
+        >
           <TextField
             value={getInputTextFunction(stateValues[0])}
             helperText={inputTextsHelpers[0]}
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={(e) => onInputChange(e, 'min')}
             id={bottomInputsProps.firstInputId}
             {...inputCommonProps}
             {...bottomInputsProps}
@@ -110,7 +103,6 @@ function RangeSlider({
             inputProps={{
               'aria-labelledby': 'input-slider',
             }}
-            onChange={(e) => onInputChange(e, 'max')}
             id={bottomInputsProps.secondInputId}
             {...inputCommonProps}
             {...bottomInputsProps}
@@ -118,9 +110,9 @@ function RangeSlider({
           />
           {
             showInputsIcon && (
-              <IconButton disabled={iconDisabled}>
+              <IconButton disabled={iconDisabled} sx={{ padding: 0 }}>
                 <SearchOutlinedIcon
-                  style={{ fontSize: '2.5rem', cursor: 'pointer' }}
+                  style={{ fontSize: '1.5rem', cursor: 'pointer' }}
                   onClick={onIconClick}
                 />
               </IconButton>

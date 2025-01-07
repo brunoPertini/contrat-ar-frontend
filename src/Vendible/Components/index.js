@@ -2,21 +2,17 @@ import {
   Fragment, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
-import ImageListItem from '@mui/material/ImageListItem';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import PlaceIcon from '@mui/icons-material/Place';
-import { Link } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
+import Link from '@mui/material/Link';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { vendiblesLabels } from '../../StaticData/Vendibles';
@@ -24,7 +20,8 @@ import { routes, thirdPartyRoutes } from '../../Shared/Constants';
 import { labels as clientLabels } from '../../StaticData/Cliente';
 import { getUserInfoResponseShape, proveedorDTOShape, proveedorVendibleShape } from '../../Shared/PropTypes/Vendibles';
 import VendiblesFilters from '../Filters';
-import { Layout, StaticAlert } from '../../Shared/Components';
+import Layout from '../../Shared/Components/Layout';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
 } from '../../Shared/Constants/System';
@@ -32,17 +29,13 @@ import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/He
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
-import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
-
-const vendiblesGridProps = {
-  item: true,
-  xs: 9,
-  display: 'flex',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  alignContent: 'center',
-};
+import Footer from '../../Shared/Components/Footer';
+import BasicMenu from '../../Shared/Components/Menu';
+import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
+import { flexColumn } from '../../Shared/Constants/Styles';
+import MapModal from '../../Shared/Components/MapModal';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -60,11 +53,33 @@ const proveedoresVendiblesFiltersModel = {
   prices: [],
 };
 
+const footerOptions = buildFooterOptions(routes.servicioIndex);
+
+function splitVendibleDescription(description) {
+  const canSplitByDot = description.includes('.');
+
+  return `${(canSplitByDot ? description.split('.')
+    : description.split(' '))[0]}...`;
+}
+
+const DESCRIPTION_MAX_LENGTH = 200;
+
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router,
   handleLogout, paginationInfo,
 }) {
   const [firstSearchDone, setFirstSearchDone] = useState(false);
+  const [mapModalProps, setMapModalProps] = useState({
+    open: false,
+    title: '',
+    location: null,
+    handleClose: () => setMapModalProps((previous) => ({
+      ...previous,
+      open: false,
+      location: null,
+      title: '',
+    })),
+  });
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
     let distances; let prices;
@@ -137,7 +152,11 @@ function VendiblePage({
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
   const onPageChange = (_, newPage) => {
-    setFiltersApplied({ ...proveedoresVendiblesFiltersModel });
+    setFiltersApplied({
+      ...proveedoresVendiblesFiltersModel,
+      toFilterDistances: [],
+      prices: [],
+    });
     getVendibles(null, newPage - 1).then(() => setNoResultsFound(false));
   };
 
@@ -162,6 +181,10 @@ function VendiblePage({
     setHandleGoBack(() => router.navigate);
     setParams([routes.ROLE_CLIENTE]);
   }, []);
+
+  useEffect(() => {
+    document.title = vendibleNombre;
+  }, [vendibleNombre]);
 
   const getPriceLabel = useCallback((price, tipoPrecio) => {
     const localeFormattedPrice = formatNumberWithLocale(price);
@@ -198,6 +221,15 @@ function VendiblePage({
     window.open(contactLink, '_blank');
   }, [setButtonsEnabled]);
 
+  const handleOpenMap = useCallback((proveedor) => {
+    setMapModalProps((previous) => ({
+      ...previous,
+      open: true,
+      title: `Ubicación de ${proveedor.name} ${proveedor.surname}`,
+      location: proveedor.location,
+    }));
+  }, [setMapModalProps]);
+
   const handleOnFiltersApplied = (filters) => {
     setFirstSearchDone(true);
     setIsLoadingVendibles(true);
@@ -210,205 +242,302 @@ function VendiblePage({
     }, 1000);
   };
 
-  const firstColumnBreakpoint = filtersEnabled ? 3 : 'auto';
+  const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
 
-  const filtersSection = filtersEnabled ? (
-    <Grid item xs={firstColumnBreakpoint}>
-      <Typography variant="h3" sx={{ ml: '5%' }}>
-        { vendibleNombre }
-      </Typography>
-      <VendiblesFilters
-        filtersApplied={filtersApplied}
-        setFiltersApplied={setFiltersApplied}
-        enabledFilters={{
-          category: false,
-          distance: isDistancesSliderEnabled,
-          price: isPricesSliderEnabled,
+  const isNearMobileSize = useMediaQuery('(max-width:565px)');
+
+  const filtersResolvedWidth = { xs: '100%', lg: '60%' };
+
+  const filtersProps = {
+    filtersApplied,
+    setFiltersApplied,
+    enabledFilters: {
+      category: false,
+      distance: isDistancesSliderEnabled,
+      price: isPricesSliderEnabled,
+    },
+    distances: distancesForSlider,
+    prices: pricesForSlider,
+    onFiltersApplied: handleOnFiltersApplied,
+    distanceSliderAdditionalProps: {
+      step: 0.01,
+      min: proveedoresInfo.minDistance,
+      max: proveedoresInfo.maxDistance,
+    },
+    priceSliderAdditionalProps: {
+      step: 10,
+      min: proveedoresInfo.minPrice,
+      max: proveedoresInfo.maxPrice,
+    },
+    containerStyles: {
+      width: filtersResolvedWidth,
+    },
+    sliderContainerStyles: shouldChangeLayout ? {
+      position: 'sticky',
+      top: '175px',
+      'z-index': 1100,
+    } : undefined,
+  };
+
+  const ResolvedFiltersSection = useCallback(() => {
+    if (!filtersEnabled) {
+      return null;
+    }
+    return !shouldChangeLayout ? (
+      <VendiblesFilters {...filtersProps} />
+    ) : (
+      <BasicMenu
+        showButtonIcon
+        options={[{
+          component: VendiblesFilters,
+          props: filtersProps,
+        }]}
+        slotProps={{
+          paper: {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              width: filtersResolvedWidth,
+              maxHeight: 500,
+            },
+          },
         }}
-        distances={distancesForSlider}
-        prices={pricesForSlider}
-        onFiltersApplied={handleOnFiltersApplied}
-        distanceSliderAdditionalProps={{
-          step: 0.01,
-          min: proveedoresInfo.minDistance,
-          max: proveedoresInfo.maxDistance,
-        }}
-        priceSliderAdditionalProps={{
-          step: 10,
-          min: proveedoresInfo.minPrice,
-          max: proveedoresInfo.maxPrice,
-        }}
+
       />
-    </Grid>
-  ) : null;
+    );
+  }, [shouldChangeLayout, filtersProps, filtersEnabled]);
 
   return (
-    <>
-      { ExitAppDialog }
+    <Box
+      flex={{ xs: 1, md: 9, lg: 10 }}
+      {...flexColumn}
+      width="100%"
+      height="100%"
+    >
+      {ExitAppDialog}
       <Header
         withMenuComponent
         menuOptions={menuOptions}
         userInfo={userInfo}
         renderNavigationLinks
       />
-      <GoBackLink />
-      <Grid
-        container
-        sx={{
-          flexDirection: 'row',
-        }}
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', md: 'row' }}
+        flex={1}
+        gap="5%"
       >
-        { filtersSection }
-        <Layout gridProps={vendiblesGridProps} isLoading={isLoadingVendibles}>
-          <List sx={{ width: '80%', alignSelf: 'flex-end' }}>
-            {
-                proveedoresInfo.vendibles.content.map((info) => {
-                  const {
-                    precio, proveedorId, imagenUrl, distance, tipoPrecio,
-                  } = info;
+        <MapModal {...mapModalProps} />
+        <Box
+          display="flex"
+          flexDirection="column"
+        >
+          <GoBackLink styles={{ pl: '2%' }} />
+          <ResolvedFiltersSection />
+        </Box>
 
-                  const proveedorInfo = proveedoresInfo.proveedores
-                    .find((proveedor) => proveedor.id === proveedorId);
-
-                  const {
-                    name, surname, fotoPerfilUrl, phone,
-                  } = proveedorInfo;
-
-                  const fullName = `${name} ${surname}`;
-
-                  const textAreaId = `contact_proveedor_${proveedorId}`;
-
-                  const isSendMessageButtonEnabled = buttonsEnabled[textAreaId];
-
-                  return (
-                    <Fragment key={`${vendibleNombre}_${fullName}`}>
-                      <ListItem
-                        alignItems="flex-start"
-                      >
-                        <ListItemAvatar>
-                          <Avatar
-                            alt={fullName}
-                            src={fotoPerfilUrl}
-                            sx={{
-                              height: 100,
-                              width: 100,
-                            }}
-                          />
-                          <ListItemText primary={fullName} />
-                          {!!distance && (
-                          <>
-                            <Typography variant="body2" color="text.secondary">
-                              {sharedLabels.to}
-                              {' '}
-                              {distance}
-                              {' '}
-                              {sharedLabels.kilometersAway}
-                              <PlaceIcon fontSize="medium" />
-                            </Typography>
-                            <Link href="#">
-                              {vendiblesLabels.seeInMap}
-                            </Link>
-                          </>
-                          )}
-                        </ListItemAvatar>
-                        <ImageListItem
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            width: '100%',
-                          }}
-                        >
-                          {!!imagenUrl && (
-                          <img
-                            src={imagenUrl}
-                            srcSet={imagenUrl}
-                            alt={vendibleNombre}
-                            loading="lazy"
-                          />
-                          )}
-                          <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            width: '100%',
-                          }}
-                          >
-                            <Typography
-                              paragraph
-                              sx={{
-                                wordBreak: 'break-word',
-                              }}
-                            >
-                              {info.descripcion}
-                            </Typography>
-                          </Box>
-                        </ImageListItem>
-                        <ListItem sx={{ display: 'flex', flexDirection: 'column' }}>
-                          <Typography variant="h5">
-                            {getPriceLabel(precio, tipoPrecio)}
-                          </Typography>
-                          <Typography variant="h5" sx={{ mt: '50px' }}>
-                            {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
-                          </Typography>
-                          <TextareaAutosize
-                            id={textAreaId}
-                            minRows={15}
-                            style={{ width: '100%' }}
-                            onChange={handleEnableButton}
-                          />
-                          <Button
-                            onClick={() => handleSendMessageClick(textAreaId, phone, name)}
-                            target="_blank"
-                            variant="contained"
-                            sx={{ mt: '5px', alignSelf: 'flex-start' }}
-                            disabled={!isSendMessageButtonEnabled}
-                          >
-                            { sharedLabels.sendMessage }
-                          </Button>
-                        </ListItem>
-                      </ListItem>
-                      <Divider variant="outlined" sx={{ borderColor: 'black' }} />
-
-                    </Fragment>
-                  );
-                })
-              }
-          </List>
-          {
-      paginationEnabled && (
-        <Pagination
-          variant="outlined"
-          page={paginationInfo.pageable.pageNumber + 1}
-          count={pagesCount}
-          hideNextButton={!canGoForward}
-          hidePrevButton={!canGoBack}
-          onChange={onPageChange}
-          sx={{
-            mt: '1%',
-            '& .Mui-selected': {
-              fontWeight: 900,
+        <Layout
+          isLoading={isLoadingVendibles}
+          gridProps={{
+            sx: {
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
             },
           }}
-        />
-      )
-    }
-          {
-            !isLoadingVendibles && noResultsFound && (
-              <StaticAlert
-                label={vendiblesLabels.noResultsFound}
-                styles={{
-                  mt: '2%',
-                  fontSize: 'h4.fontSize',
-                  '.MuiAlert-icon': {
-                    fontSize: '50px;',
-                  },
-                }}
-              />
-            )
-          }
+        >
+          <List>
+            {proveedoresInfo.vendibles.content.map((info) => {
+              const {
+                precio, proveedorId, imagenUrl, distance, tipoPrecio, descripcion,
+              } = info;
+
+              const proveedorInfo = proveedoresInfo.proveedores
+                .find((proveedor) => proveedor.id === proveedorId);
+
+              const {
+                name, surname, fotoPerfilUrl, phone,
+              } = proveedorInfo;
+
+              const fullName = `${name} ${surname}`;
+              const textAreaId = `contact_proveedor_${proveedorId}`;
+              const isSendMessageButtonEnabled = buttonsEnabled[textAreaId];
+
+              const descriptionExceedsLimit = descripcion.length > DESCRIPTION_MAX_LENGTH;
+
+              const parsedDescripcion = descriptionExceedsLimit
+                ? splitVendibleDescription(descripcion)
+                : descripcion;
+
+              return (
+                <Fragment key={`${vendibleNombre}_${fullName}`}>
+                  <Box
+                    display="flex"
+                    alignItems={{ xs: 'center', md: '"flex-start"' }}
+                    flexDirection={shouldChangeLayout ? 'column' : 'row'}
+                    gap={3}
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      boxShadow: 3,
+                      mb: 3,
+                      bgcolor: 'background.paper',
+                    }}
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="flex-start"
+                      gap={2}
+                    >
+                      <Avatar
+                        alt={fullName}
+                        src={fotoPerfilUrl}
+                        sx={{
+                          height: 80,
+                          width: 80,
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        }}
+                      />
+                      <Box>
+                        <Typography variant="h6" fontWeight="bold">
+                          {fullName}
+                        </Typography>
+                        {!!distance && (
+                        <Typography variant="body2" color="text.secondary">
+                          {`${sharedLabels.to} ${distance} ${sharedLabels.kilometersAway}`}
+                          <PlaceIcon fontSize="small" sx={{ ml: 1, verticalAlign: 'middle' }} />
+                        </Typography>
+                        )}
+                        {!!distance && (
+                        <Link onClick={() => handleOpenMap(proveedorInfo)} sx={{ fontSize: '0.875rem' }}>
+                          {vendiblesLabels.seeInMap}
+                        </Link>
+                        )}
+                      </Box>
+                      {!!imagenUrl && (
+                      <Box
+                        component="img"
+                        src={imagenUrl}
+                        alt={vendibleNombre}
+                        loading="lazy"
+                        sx={{
+                          maxWidth: '100%',
+                          height: 'auto',
+                          borderRadius: 2,
+                          boxShadow: 1,
+                          maxHeight: '300px',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      )}
+                      <Typography
+                        paragraph
+                        sx={{
+                          wordBreak: 'break-word',
+                          fontSize: '1rem',
+                          color: 'text.primary',
+                        }}
+                      >
+                        {parsedDescripcion}
+                      </Typography>
+                      {!!descriptionExceedsLimit && (
+                        <Link href="#" sx={{ fontSize: '0.875rem' }}>
+                          {sharedLabels.seeMore}
+                        </Link>
+                      )}
+                    </Box>
+
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="stretch"
+                      width={!isNearMobileSize ? '50%' : '100%'}
+                      gap={2}
+                    >
+                      <Typography variant="h5" color="primary" fontWeight="bold">
+                        {getPriceLabel(precio, tipoPrecio)}
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                        {clientLabels.contactProvider.replace('{nombreProveedor}', name)}
+                      </Typography>
+                      <TextareaAutosize
+                        id={textAreaId}
+                        minRows={15}
+                        placeholder={sharedLabels.sendMessage}
+                        style={{
+                          padding: '8px',
+                          borderRadius: '8px',
+                          border: '1px solid #ccc',
+                          resize: 'none',
+                        }}
+                        onChange={handleEnableButton}
+                      />
+                      <Button
+                        onClick={() => handleSendMessageClick(textAreaId, phone, name)}
+                        target="_blank"
+                        variant="contained"
+                        color="secondary"
+                        disabled={!isSendMessageButtonEnabled}
+                        sx={{
+                          mt: 1,
+                          textTransform: 'none',
+                          fontWeight: 'bold',
+                          backgroundColor: 'rgb(36, 134, 164)',
+                          '&:hover': {
+                            backgroundColor: 'rgb(36, 134, 164)',
+                          },
+                        }}
+                      >
+                        {sharedLabels.sendMessage}
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  <Divider sx={{ borderColor: 'grey.300', my: 2 }} />
+                </Fragment>
+              );
+            })}
+          </List>
+
+          {paginationEnabled && (
+          <Pagination
+            variant="outlined"
+            page={paginationInfo.pageable.pageNumber + 1}
+            count={pagesCount}
+            hideNextButton={!canGoForward}
+            hidePrevButton={!canGoBack}
+            onChange={onPageChange}
+            sx={{
+              mt: 2,
+              justifyItems: 'center',
+              '& .Mui-selected': {
+                fontWeight: 900,
+                backgroundColor: 'rgb(36, 134, 164)!important',
+              },
+            }}
+          />
+          )}
+
+          {!isLoadingVendibles && noResultsFound && (
+          <StaticAlert
+            label={vendiblesLabels.noResultsFound}
+            styles={{
+              backgroundColor: 'rgb(36, 134, 164)',
+              mt: '2%',
+              fontSize: 'h4.fontSize',
+              '.MuiAlert-icon': {
+                fontSize: '50px;',
+              },
+            }}
+          />
+          )}
         </Layout>
-      </Grid>
-    </>
+      </Box>
+      <ScrollUpIcon />
+      <Footer options={footerOptions} />
+    </Box>
   );
 }
 

@@ -13,6 +13,7 @@ import EmptyTreeRenderer from './EmptyTreeRenderer';
 import LeafRenderer from './LeafRenderer';
 import { sharedLabels } from '../../StaticData/Shared';
 import CategoryModal from './CategoryModal';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 /**
  * @param {AccordionElement} categoryTree
@@ -108,7 +109,7 @@ function CategoryAccordion({
       hierarchiesList.forEach((hierarchy) => {
         const { root, rootId, children } = hierarchy;
 
-        const isSuperCategory = !!(children.length);
+        const isSuperCategory = !!(children?.length);
 
         const childrenJsx = [];
 
@@ -135,7 +136,7 @@ function CategoryAccordion({
     const categoriesTitle = vendiblesLabels.categoryOfVendible.replace('{vendibleType}', vendibleType);
 
     return (
-      <Box display="flex" flexDirection="column">
+      <Box {...flexColumn}>
         {isModalOpen && (
           <CategoryModal
             open={isModalOpen}
@@ -153,7 +154,23 @@ function CategoryAccordion({
           )}
           {categoriesSubSection.map((accordionElement) => accordionElement.render())}
         </div>
-        <Link sx={{ mt: '10%' }} onClick={() => setIsModalOpen(true)}>
+        <Link
+          sx={{
+            cursor: 'pointer',
+            display: 'inline-block',
+            mt: 2,
+            textAlign: 'center',
+            color: '#1976d2',
+            border: '1px solid #1976d2',
+            borderRadius: '16px',
+            padding: '8px 16px',
+            '&:hover': {
+              bgcolor: '#e3f2fd',
+              textDecoration: 'none',
+            },
+          }}
+          onClick={() => setIsModalOpen(true)}
+        >
           {sharedLabels.seeMore}
         </Link>
       </Box>

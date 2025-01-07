@@ -1,14 +1,14 @@
 /* eslint-disable no-new-wrappers */
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-import {
-  CheckBoxGroup, LocationMap, Select,
-} from '../../Shared/Components';
+import CheckBoxGroup from '../../Shared/Components/CheckboxGroup';
+import LocationMap from '../../Shared/Components/LocationMap';
+import Select from '../../Shared/Components/Select';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import Searcher from '../../Shared/Components/Searcher';
 import CategoryInput from './CategoryInput';
@@ -28,6 +28,7 @@ import { deleteNonNumericCharacters } from '../../Shared/Utils/InputUtils';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import { formatNumberWithLocale, getLocaleCurrencySymbol, replaceArgentinianCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function FirstStep({
   nombre, setNombre, locationTypes, setLocationTypes, categories,
@@ -56,6 +57,8 @@ function FirstStep({
   } = useMemo(() => (vendibleType === PRODUCTS.toLowerCase()
     ? { shouldRenderStock: true, locationTypesMock: productLocationsMock }
     : { shouldRenderStock: false, locationTypesMock: serviceLocationsMock }), [vendibleType]);
+
+  const shouldChangeLayout = useMediaQuery('(max-width: 768px');
 
   const handleSetLoation = ({ coords }) => {
     const newCoordinates = {
@@ -129,7 +132,7 @@ function FirstStep({
   }), [isEditionEnabled]);
 
   const categoriesSection = (
-    <Grid item sx={{ mt: '5%' }}>
+    <Box sx={{ mt: '5%' }}>
       <Typography variant="h4">
         {proveedorLabels['addVendible.category.title'].replace('{vendible}', vendibleUnit)}
       </Typography>
@@ -150,11 +153,11 @@ function FirstStep({
           required: true,
         }}
       />
-    </Grid>
+    </Box>
   );
 
   const priceSection = (
-    <>
+    <Box>
       <Typography variant="h4">
         {sharedLabels.price}
       </Typography>
@@ -166,7 +169,7 @@ function FirstStep({
         sx={{ paddingRight: '5px', width: '70%' }}
       />
       <Select
-        containerStyles={{ mt: '2%', width: '50%' }}
+        containerStyles={{ mt: '2%', width: !shouldChangeLayout ? '30%' : '50%' }}
         label={sharedLabels.priceType}
         values={pricesTypeMock}
         defaultSelected={defaultPriceTypeSelected}
@@ -174,7 +177,7 @@ function FirstStep({
       />
       {showPriceInput && (
       <TextField
-        sx={{ mt: '2%' }}
+        sx={{ mt: '2%', width: !shouldChangeLayout ? '30%' : '50%' }}
         type="text"
         label={sharedLabels.price}
         onChange={onChangePriceAmount}
@@ -187,12 +190,21 @@ function FirstStep({
         helperText={inputHelperLabels.onlyIntNumbers}
       />
       )}
-    </>
+    </Box>
   );
 
   return (
-    <Grid item display="flex" flexDirection="row" xs={10}>
-      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[0]}>
+    <Box
+      display="flex"
+      flexDirection={!shouldChangeLayout ? 'row' : 'column'}
+      gap={!shouldChangeLayout ? 0 : 10}
+      height={!shouldChangeLayout ? '100vh' : 'auto'}
+    >
+      <Box
+        display="flex"
+        flexDirection="column"
+        sx={{ paddingLeft: '1%' }}
+      >
         <Searcher
           title={nameFieldTitle}
           placeholder={nameFieldPlaceholder}
@@ -200,6 +212,7 @@ function FirstStep({
           searcherConfig={{
             sx: {
               width: '70%',
+              marginTop: !isEditionEnabled ? 0 : '3%',
             },
           }}
           inputValue={nombre}
@@ -229,13 +242,13 @@ function FirstStep({
             </Box>
           )
         }
-      </Grid>
-      <Grid item flexDirection="column" xs={gridConfig[vendibleType].xs[1]}>
+      </Box>
+      <Box {...flexColumn} gap={5}>
         {
           !isEditionEnabled && priceSection
         }
         {gridConfig[vendibleType].showLocationColumn && (
-        <>
+        <Box>
           <Typography sx={{ mt: '5%' }}>
             {proveedorLabels['addVendible.location.text'][vendibleType]}
           </Typography>
@@ -246,39 +259,40 @@ function FirstStep({
           />
           {
             gridConfig[vendibleType].showMap && (
-              <>
-                <Box display="flex" flexDirection="column">
-                  <Typography
-                    dangerouslySetInnerHTML={{
-                      __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],
-                    }}
-                    textAlign="justify"
-                    sx={{ paddingRight: '5px', width: '70%' }}
-                  />
-                </Box>
-                <LocationMap
-                  showTranslatedAddress
-                  location={{
-                    coords: {
-                      latitude: vendibleLocation.coordinates[0],
-                      longitude: vendibleLocation.coordinates[1],
-                    },
-                  }}
-                  setLocation={handleSetLoation}
-                  containerStyles={{
-                    width: '50%',
-                    height: '50%',
-                  }}
-                  token={token}
-                />
-              </>
+
+            <Box {...flexColumn}>
+              <Typography
+                dangerouslySetInnerHTML={{
+                  __html: proveedorLabels['addVendible.location.disclaimer'][vendibleType],
+                }}
+                textAlign="justify"
+                sx={{ paddingRight: '5px', width: '70%' }}
+              />
+
+              <LocationMap
+                showTranslatedAddress
+                location={{
+                  coords: {
+                    latitude: vendibleLocation.coordinates[0],
+                    longitude: vendibleLocation.coordinates[1],
+                  },
+                }}
+                setLocation={handleSetLoation}
+                containerStyles={{
+                  height: '15rem',
+                  width: '100%',
+                }}
+                token={token}
+              />
+            </Box>
+
             )
           }
 
-        </>
+        </Box>
         )}
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

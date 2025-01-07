@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  useTheme, useMediaQuery, Dialog,
+  Dialog,
   DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
 } from '@mui/material';
 
@@ -8,20 +8,22 @@ function DialogModal({
   open, handleAccept, handleDeny, title,
   contextText, cancelText, acceptText,
 }) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
   return (
     <Dialog
-      fullScreen={fullScreen}
       open={open}
-      aria-labelledby="responsive-dialog-title"
+      aria-labelledby="dialog-title"
+      PaperProps={{
+        sx: {
+          backgroundColor: 'rgb(36, 134, 164)',
+          color: '#fff',
+        },
+      }}
     >
-      <DialogTitle id="responsive-dialog-title">
+      <DialogTitle id="dialog-title">
         { title }
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText color="#fff">
           { contextText }
         </DialogContentText>
       </DialogContent>

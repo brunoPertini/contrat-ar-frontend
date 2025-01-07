@@ -5,7 +5,7 @@ import {
   useState,
 } from 'react';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import isEqual from 'lodash/isEqual';
 import { sharedLabels } from '../../StaticData/Shared';
 import {
@@ -31,6 +31,7 @@ import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../../Shared/Components/Alert';
+import GoBackLink from '../../Shared/Components/GoBackLink';
 
 const localStorageService = new LocalStorageService();
 
@@ -136,16 +137,14 @@ function ModifyVendibleForm({
     return setActiveStep(newStep);
   };
 
-  const containerProps = useMemo(() => ({
-    container: true,
+  const containerProps = {
+    display: 'flex',
     flexDirection: 'column',
+    gap: { xs: 2, sm: 7 },
     sx: {
-      minHeight: '100vh',
       alignItems: 'center',
     },
-    spacing: activeStep === 0 ? 35 : 10,
-  }), [activeStep]);
-
+  };
   const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
 
@@ -249,9 +248,10 @@ function ModifyVendibleForm({
   ));
 
   return (
-    <Grid
+    <Box
       {...containerProps}
     >
+      <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
       {
           activeStep === 2 && (
@@ -269,8 +269,7 @@ function ModifyVendibleForm({
         severity={operationResult ? 'success' : 'error'}
         onClose={resetMessageOperationData}
       />
-      <Grid
-        item
+      <Box
         sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -294,8 +293,8 @@ function ModifyVendibleForm({
         >
           {nexButtonLabel}
         </Button>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

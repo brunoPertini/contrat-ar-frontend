@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import pickBy from 'lodash/pickBy';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import SaveIcon from '@mui/icons-material/Save';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -14,6 +16,8 @@ import { sharedLabels } from '../StaticData/Shared';
 import InformativeAlert from '../Shared/Components/Alert';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
+import { systemConstants } from '../Shared/Constants';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -39,69 +43,6 @@ function UserPersonalData({
     alertSeverity: null,
     alertLabel: null,
   });
-
-  const textFields = pickBy(fieldsValues, (value, key) => key !== 'location' && key !== 'fotoPerfilUrl');
-
-  const formFields = useMemo(() => (!isEditModeEnabled ? (
-    Object.keys(textFields).map((dataKey) => (
-      <Typography variant="h6" fontWeight="bold" sx={{ mt: '5%' }}>
-        {personalDataFormBuilder.fieldsLabels[dataKey]}
-        :
-        {' '}
-        { fieldsValues[dataKey] }
-      </Typography>
-    ))
-  ) : personalDataFormBuilder.build({
-    usuarioType,
-    fieldsValues,
-    inputProps: { readOnly: !isEditModeEnabled, disabled: !isEditModeEnabled },
-    onChangeFields: (fieldId, fieldValue) => {
-      changeUserInfo(fieldId, fieldValue);
-    },
-    gridStyles: { display: 'flex', flexDirection: 'column', width: '31rem' },
-    showInlineLabels: true,
-    fieldsOwnConfig: {
-      name: {
-        ...getInputConfig(isAdmin),
-      },
-      surname: {
-        ...getInputConfig(isAdmin),
-      },
-      dni: {
-        ...getInputConfig(isAdmin),
-      },
-      birthDate: {
-        ...getInputConfig(isAdmin),
-      },
-    },
-  })), [isEditModeEnabled, fieldsValues]);
-
-  useEffect(() => {
-    setFieldsValues(userInfo);
-  }, [userInfo]);
-
-  /**
-   *
-   * @param {Object} newValue
-   * @param {Object} newValue.coords
-   * @param {number} newValue.coords.latitude
-   * @param {number} newValue.coords.longitude
-   */
-  const handleLocationChange = (newValue) => {
-    changeUserInfo('location', { coordinates: [newValue.coords.latitude, newValue.coords.longitude] });
-  };
-
-  const handleEditModeChange = (event) => {
-    setIsEditModeEnabled(event.target.checked);
-  };
-
-  const resetAlertData = () => {
-    setAlertConfig({
-      openSnackbar: false,
-      alertSeverity: '',
-      alertLabel: '',
-    });
-  };
 
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsEditModeEnabled(false);
@@ -135,12 +76,202 @@ function UserPersonalData({
     });
   };
 
+  /**
+   *
+   * @param {Object} newValue
+   * @param {Object} newValue.coords
+   * @param {number} newValue.coords.latitude
+   * @param {number} newValue.coords.longitude
+   */
+  const handleLocationChange = (newValue) => {
+    changeUserInfo('location', { coordinates: [newValue.coords.latitude, newValue.coords.longitude] });
+  };
+
   const callHandleUploadPhoto = (file) => uploadProfilePhoto(file);
 
   const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
+  const handleEditModeChange = (event) => {
+    setIsEditModeEnabled(event.target.checked);
+  };
+
+  const resetAlertData = () => {
+    setAlertConfig({
+      openSnackbar: false,
+      alertSeverity: '',
+      alertLabel: '',
+    });
+  };
+
+  const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
+    usuarioType,
+    fieldsValues,
+    onChangeFields: (fieldId, fieldValue) => {
+      changeUserInfo(fieldId, fieldValue);
+    },
+    showInlineLabels: true,
+    fieldsOwnConfig: {
+      name: {
+        ...getInputConfig(isAdmin),
+      },
+      surname: {
+        ...getInputConfig(isAdmin),
+      },
+      dni: {
+        ...getInputConfig(isAdmin),
+      },
+      birthDate: {
+        ...getInputConfig(isAdmin),
+      },
+    },
+  })), [fieldsValues, isEditModeEnabled, userInfo]);
+
+  const saveChangesSwitch = (
+    <Box
+      display="flex"
+      flexDirection="row"
+      sx={{ mt: '2%' }}
+    >
+      <FormControlLabel
+        control={(
+          <Switch
+            checked={isEditModeEnabled}
+            color="primary"
+          />
+      )}
+        label={userProfileLabels.modifyData}
+        onChange={handleEditModeChange}
+        sx={{ color: '#333', fontSize: '16px' }}
+      />
+      <Button
+        variant="contained"
+        startIcon={<SaveIcon />}
+        sx={{
+          backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
+          '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
+        }}
+        disabled={!isEditModeEnabled}
+        onClick={handleConfirmEdition}
+      >
+        { sharedLabels.saveChanges }
+      </Button>
+    </Box>
+  );
+
+  const renderReadOnlyField = useCallback((dataKey) => (
+    <Typography
+      variant="h6"
+      fontWeight="bold"
+      sx={{
+        mt: '3%',
+        border: '2px solid rgb(36, 134, 164)',
+        borderRadius: '10px',
+        padding: '10px',
+        backgroundColor: '#f5f5f5',
+      }}
+    >
+      {personalDataFormBuilder.fieldsLabels[dataKey]}
+      :
+      <Typography
+        variant="body1"
+        sx={{ ml: '10px', display: 'inline', color: '#666' }}
+      >
+        {fieldsValues[dataKey]}
+      </Typography>
+    </Typography>
+  ), [fieldsValues]);
+
+  const firstLayout = (
+    <Box
+      display="flex"
+      flexDirection={{ xs: 'column', md: 'row' }}
+      flex={1}
+      gap={10}
+    >
+      {
+        isEditModeEnabled ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+          >
+            { editableFields }
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+          >
+            { renderReadOnlyField('name')}
+            { renderReadOnlyField('surname')}
+            { renderReadOnlyField('birthDate')}
+            { renderReadOnlyField('phone')}
+            { usuarioType !== systemConstants.USER_TYPE_CLIENTE && renderReadOnlyField('dni')}
+          </Box>
+        )
+      }
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        flex={1}
+      >
+        <Typography variant="h6" fontWeight="bold">
+          {personalDataFormBuilder.fieldsLabels.location}
+          {' '}
+          :
+        </Typography>
+        <LocationMap
+          token={userToken}
+          containerStyles={{
+            height: '300px',
+          }}
+          enableDragEvents={isEditModeEnabled}
+          location={parseLocationForMap(fieldsValues.location)}
+          setLocation={handleLocationChange}
+        />
+      </Box>
+    </Box>
+  );
+
+  const secondLayout = (
+    <Box
+      {...flexColumn}
+      flex={1}
+      sx={{ mt: '15px' }}
+    >
+      {
+              !!fieldsValues.fotoPerfilUrl && (
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                >
+                  {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
+                  <ProfilePhoto
+                    src={fieldsValues.fotoPerfilUrl}
+                    alt={userInfo.name}
+                    onUpload={callHandleUploadPhoto}
+                    onSuccess={onSuccessUploadPhoto}
+                  />
+                </Box>
+              )
+            }
+      { saveChangesSwitch }
+    </Box>
+  );
+
+  useEffect(() => {
+    setFieldsValues(userInfo);
+  }, [userInfo]);
+
   return (
-    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
+    <Box
+      {...flexColumn}
+      sx={{ ...styles }}
+      flex={1}
+      gap={5}
+    >
       <InformativeAlert
         open={alertConfig.openSnackbar}
         onClose={() => resetAlertData()}
@@ -148,65 +279,8 @@ function UserPersonalData({
         severity={alertConfig.alertSeverity}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
-      <Box display="flex" flexDirection="column">
-        <Box display="flex" flexDirection="row">
-          <Box display="flex" flexDirection="column">
-            {
-                formFields.map((field) => field)
-            }
-          </Box>
-          <Box display="flex" flexDirection="column" sx={{ ml: '5%' }}>
-            <FormControlLabel
-              control={<Switch checked={isEditModeEnabled} />}
-              label={userProfileLabels.modifyData}
-              onChange={handleEditModeChange}
-            />
-            <Button
-              variant="contained"
-              sx={{ mt: '5%' }}
-              disabled={!isEditModeEnabled}
-              onClick={handleConfirmEdition}
-            >
-              { sharedLabels.saveChanges }
-            </Button>
-          </Box>
-        </Box>
-        <Box display="flex" flexDirection="column" sx={{ mt: '5%' }}>
-          <Typography variant="h6" fontWeight="bold">
-            {personalDataFormBuilder.fieldsLabels.location}
-            {' '}
-            :
-          </Typography>
-          <LocationMap
-            token={userToken}
-            containerStyles={{
-              height: '500px',
-              width: '500px',
-              marginTop: '5%',
-            }}
-            enableDragEvents={isEditModeEnabled}
-            location={parseLocationForMap(fieldsValues.location)}
-            setLocation={handleLocationChange}
-          />
-        </Box>
-      </Box>
-      {
-        !!(fieldsValues.fotoPerfilUrl) && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            sx={{ height: '30%', ml: '5%' }}
-          >
-            {personalDataFormBuilder.fieldsLabels.fotoPerfilUrl}
-            <ProfilePhoto
-              src={fieldsValues.fotoPerfilUrl}
-              alt={userInfo.name}
-              onUpload={callHandleUploadPhoto}
-              onSuccess={onSuccessUploadPhoto}
-            />
-          </Box>
-        )
-      }
+      { secondLayout }
+      { firstLayout }
     </Box>
   );
 }

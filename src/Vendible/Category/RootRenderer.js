@@ -50,7 +50,7 @@ class RootRenderer extends CategoryRenderer {
     this.root = this.renderAsList ? mainContent
       : (
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>{ rootName }</Typography>
+          <Typography sx={{ color: '#1976d2' }}>{ rootName }</Typography>
         </AccordionSummary>
       );
     this.#children = children;

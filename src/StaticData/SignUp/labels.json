@@ -1,5 +1,5 @@
 {
-    "title": "Registrate! Sólo llevará unos minutos",
+    "title": "Por favor completá estos datos para tu registro",
     "title.disclaimer": "¡No es necesario que pongas tu dirección exacta!",
     "location.proveedor.title": "Para que seas visible a tus clientes, necesitamos saber tu ubicación",
     "location.cliente.title": "Para brindarte las mejores opciones en tus búsquedas, necesitamos saber tu ubicación",
@@ -11,11 +11,12 @@
     "planSelection.title": "¡Tenemos estos planes para vos! Elegí el que mejor se adapte a tus necesidades.",
     "planSelection.free.description": "Con este plan podrás ser encontrado por tus clientes en un radio de X km",
     "planSelection.paid.description": "Con este plan podrás ser encontrado por tus clientes en toda la ciudad y alrededores",
+    "planSelection.paid.disclaimer": "Si elegís un plan pago, vamos a proceder con el pago del mismo en el próximo paso. Tené en cuenta que tu cuenta no va a estar activa hasta que se haya registrado tu pago.",
     "confirmation.title": "Confirmación de Registro",
     "confirmation.context": "Estás terminando la primer etapa del registro. Por cuestiones de seguridad, vamos a  revisar los datos que nos diste y te vamos a avisar el resultado al mail dado.",
     "confirmation.ok": "Terminar",
     "confirmation.cancel": "Tengo que modificar algún dato",
-    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros!",
+    "signup.selection.title": "¡Primero contanos qué querés hacer con nosotros! El registro es rápido y sencillo, y una vez hecho te permitirá empezar a aprovechar los beneficios de la plataforma.",
     "signup.CLIENTE.descripcion": "¿Buscás un producto",
     "signup.want.to.offer.services": "Quiero ofrecer mis servicios",
     "signup.want.to.offer.products": "Quiero ofrecer mis productos en el sitio",
@@ -26,5 +27,9 @@
     "signup.mail.send": "¡El mail fue enviado a {email}! Ahí vas a encontrar un enlace para activar tu cuenta",
     "account.confirmation.email": "Confirmacion de email",
     "account.confirmation.disclaimer": "Tené en cuenta que aunque tu cuenta sea confirmada, no va a estar activa hasta que revisemos tus datos.",
-    "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} "
+    "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} ",
+    "client.content.text": "Encontrá rápido lo que buscás, elegí al vendedor que mejor se adapte a tus necesidades y contactalo de forma fácil y rápida.",
+    "provider.service.context.text":"Creá tu perfil, publicá tus servicios y empezá a recibir solicitudes de clientes interesados en minutos.",
+    "provider.product.context.text": "Si vendés productos, nuestra plataforma es el lugar perfecto para vos. Creá tu perfil y empezá a conectar con tus clientes. No te preocupes por configuraciones complicadas: publicá tus productos de forma sencilla y hacelos visibles a miles de clientes al instante."
+
 }

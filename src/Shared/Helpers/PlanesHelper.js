@@ -2,16 +2,16 @@ import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
-import { getLocaleCurrencySymbol } from './PricesHelper';
 import { userProfileLabels } from '../../StaticData/UserProfile';
 import { sharedLabels } from '../../StaticData/Shared';
-import { ARGENTINA_LOCALE, PLAN_TYPE_PAID, PLAN_TYPE_FREE } from '../Constants/System';
+import { PLAN_TYPE_PAID, PLAN_TYPE_FREE } from '../Constants/System';
+import { flexRow } from '../Constants/Styles';
 
 export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
 
   const renderDescripctionLine = (innerContent) => (
-    <Box display="flex" flexDirection="row" alignItems="center">
+    <Box {...flexRow}>
       { innerContent}
     </Box>
   );
@@ -19,16 +19,17 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   const renderPlanDescription = () => currentPlanInfo.descripcion.split('.')
     .filter((line) => !!(line))
     .map((line) => renderDescripctionLine(
-      <>
-        <CheckIcon />
+      <Box {...flexRow} textAlign="left" justifyContent="space-between">
+        <CheckIcon sx={{ mr: '1px' }} />
         { line }
         <br />
-      </>,
+        <br />
+      </Box>,
     ));
 
   const PLAN_DESCRIPTIONS = {
     [PLAN_TYPE_FREE]: (
-      <Typography paragraph variant="body" sx={{ mt: '5%' }}>
+      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
         { userProfileLabels['plan.includes'] }
         <br />
         <br />
@@ -37,24 +38,14 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
           }
       </Typography>),
     [PLAN_TYPE_PAID]: (
-      <>
-        <Typography paragraph variant="body" sx={{ mt: '5%' }}>
-          { userProfileLabels['plan.includes'] }
-          <br />
-          <br />
-          {
+      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
+        { userProfileLabels['plan.includes'] }
+        <br />
+        <br />
+        {
               renderPlanDescription()
             }
-        </Typography>
-        <Typography variant="h5" sx={{ mt: '5%' }}>
-          { sharedLabels.finalMonthlyPrice.replace(
-            '{price}',
-            getLocaleCurrencySymbol(ARGENTINA_LOCALE) + currentPlanInfo.price,
-          )}
-          <br />
-          <br />
-        </Typography>
-      </>),
+      </Typography>),
   };
 
   const disclaimer = showDisclaimer ? (
@@ -84,3 +75,7 @@ export const getPlanType = (planesInfo, planId) => planesInfo.find(
 export const getPlanLabel = (planId) => (planId === 1
   ? sharedLabels.plansNames.FREE
   : sharedLabels.plansNames.PAID);
+
+export const getPlanValue = (planesInfo, planType) => planesInfo.find(
+  (planInfo) => planInfo.type === planType,
+)?.price ?? '';

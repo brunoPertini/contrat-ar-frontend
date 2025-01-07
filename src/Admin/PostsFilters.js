@@ -17,6 +17,7 @@ import {
 } from '../Shared/Constants/System';
 import { Select } from '../Shared/Components';
 import { postStateLabelResolver } from '../Shared/Helpers/ProveedorHelper';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 const DEFAULT_BASE_VALUES = {
   proveedorName: '',
@@ -187,8 +188,7 @@ function PostsFilters({
 
   const filterByPriceMenuOption = (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{ width: '80%', ml: '5%', mt: '5%' }}
     >
       <Typography gutterBottom>
@@ -215,8 +215,7 @@ function PostsFilters({
 
   const filterByStockMenuOption = (
     <Box
-      display="flex"
-      flexDirection="column"
+      {...flexColumn}
       sx={{ width: '80%', ml: '5%', mt: '5%' }}
     >
       <Typography gutterBottom>

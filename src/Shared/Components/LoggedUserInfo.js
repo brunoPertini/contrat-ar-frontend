@@ -20,7 +20,7 @@ export default function LoggedUserInfo({ userInfo, handleLogout }) {
   const handleSetLabels = useCallback(async () => {
     const tokenUserInfo = await securityService.readJwtPayload(userInfo.token);
 
-    if (tokenUserInfo.role === ROLE_ADMIN && userInfo.role !== ROLE_ADMIN) {
+    if (tokenUserInfo?.role === ROLE_ADMIN && userInfo.role !== ROLE_ADMIN) {
       return setLabels({
         name: tokenUserInfo.name,
         surname: tokenUserInfo.surname,

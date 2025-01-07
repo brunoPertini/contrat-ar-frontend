@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
-import { useEffect, useMemo } from 'react';
-import Grid from '@mui/material/Grid';
+import { useCallback, useMemo } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import pickBy from 'lodash/pickBy';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
-import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
 import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
@@ -17,17 +16,16 @@ import { EMPTY_FUNCTION } from '../../Shared/Constants/System';
 import Select from '../../Shared/Components/Select';
 import { sharedLabels } from '../../StaticData/Shared';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 const statesValues = ['-', ...Object.values(postStateLabelResolver)];
 
 function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
-  onFiltersApplied, containerStyles,
+  onFiltersApplied, containerStyles, sliderContainerStyles, stateContainerStyles,
   showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
-  alternativeAccordionTitle, distanceSliderAdditionalProps,
+  alternativeAccordionTitle, distanceSliderAdditionalProps, onFilterDeleted,
 }) {
-  const previousVendibleType = usePreviousPropValue(vendibleType);
-
   const handleOnCategorySelected = async (categoryId, categoryName) => {
     await setFiltersApplied((previous) => ({ ...previous, category: categoryId, categoryName }));
     onFiltersApplied();
@@ -50,17 +48,15 @@ function VendiblesFilters({
   };
 
   const handleFilterDeleted = (filtersKeys = []) => {
-    let newAppliedFilters = {};
     setFiltersApplied((previous) => {
-      newAppliedFilters = { ...previous };
+      const newAppliedFilters = { ...previous };
+      filtersKeys.forEach((key) => {
+        newAppliedFilters[key] = '';
+      });
+      return newAppliedFilters;
     });
-
-    filtersKeys.forEach((key) => {
-      newAppliedFilters[key] = null;
-    });
-
-    setFiltersApplied(newAppliedFilters);
-    onFiltersApplied(newAppliedFilters);
+    onFiltersApplied();
+    onFilterDeleted();
   };
 
   const onChangePricesWrapper = (
@@ -76,9 +72,9 @@ function VendiblesFilters({
     onFiltersApplied,
   );
 
-  const filtersLabels = useMemo(() => {
-    const filtersOfInterest = pick(filtersApplied, ['categoryName']);
-    return Object.values(filtersOfInterest).filter((label) => label);
+  const filtersLabelsObject = useMemo(() => {
+    const filtersOfInterest = pick(filtersApplied, ['categoryName', 'vendibleNombre']);
+    return pickBy(filtersOfInterest, (value) => !!value);
   }, [filtersApplied]);
 
   const defaultStateSelected = useMemo(() => {
@@ -89,103 +85,98 @@ function VendiblesFilters({
     return 0;
   }, [filtersApplied]);
 
-  useEffect(() => {
-    if (previousVendibleType && previousVendibleType !== vendibleType) {
-      setFiltersApplied({});
-    }
-  }, [vendibleType]);
+  // useEffect(() => {
+  //   if (previousVendibleType && previousVendibleType !== vendibleType) {
+  //     setFiltersApplied({});
+  //   }
+  // }, [vendibleType]);
 
-  const categoriesSection = (
-    <>
-      {(isEmpty(filtersLabels)) && (
-      <Grid item xs={4}>
-        {!showAccordionTitle && alternativeAccordionTitle}
-        <CategoryAccordion
-          categories={categories}
-          vendibleType={vendibleType}
-          onCategorySelected={handleOnCategorySelected}
-          showTitle={showAccordionTitle}
-        />
-      </Grid>
-      )}
-      {
-      !(isEmpty(filtersLabels)) && (
-        <SelectedFilters
-          labels={filtersLabels}
-          onDelete={() => handleFilterDeleted(['category', 'categoryName'])}
-          showTitle
-        />
-      )
-    }
-    </>
+  const categoriesSection = !filtersApplied.category && (
+  <Box
+    sx={{
+      mt: 3,
+      p: 2,
+      borderRadius: 1,
+      bgcolor: 'background.paper',
+    }}
+  >
+    <Typography variant="h6" color="primary">
+      {!enabledFilters.category ? sharedLabels.category : alternativeAccordionTitle}
+    </Typography>
+    <CategoryAccordion
+      categories={categories}
+      vendibleType={vendibleType}
+      onCategorySelected={handleOnCategorySelected}
+      showTitle={showAccordionTitle}
+    />
+  </Box>
   );
 
   const locationsDistanceSection = (
-    <Grid
-      item
-      sx={{ mt: '5%', ml: '5%' }}
-    >
-      <Typography variant="h4">
-        { labels.filterByDistanceTitle }
-      </Typography>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{ mt: '5%', ml: '5%' }}
-      >
-        <Typography id="input-slider" gutterBottom>
-          { labels.filterByDistanceExplanation }
-        </Typography>
-        <RangeSlider
-          shouldShowBottomInputs
-          values={filtersApplied.toFilterDistances}
-          handleOnChange={handleOnDistancesChanged}
-          inputTextsHelpers={locationSliderInputHelperTexts}
-          getInputTextFunction={getTextForDistanceSliderInput}
-          {...distanceSliderAdditionalProps}
-        />
-      </Box>
-    </Grid>
+    <Box
+      {...flexColumn}
+      sx={{
+        mt: 3,
+        p: 2,
+        borderRadius: 1,
+        boxShadow: 2,
+        bgcolor: 'background.paper',
 
+      }}
+    >
+      <Typography variant="h6" color="primary">
+        {labels.filterByDistanceTitle}
+      </Typography>
+      <Typography
+        color="textSecondary"
+        sx={{
+          mb: 2,
+        }}
+        paragraph
+      >
+        {labels.filterByDistanceExplanation}
+      </Typography>
+      <RangeSlider
+        shouldShowBottomInputs
+        values={filtersApplied.toFilterDistances?.length ? filtersApplied.toFilterDistances
+          : [distanceSliderAdditionalProps.min, distanceSliderAdditionalProps.max]}
+        handleOnChange={handleOnDistancesChanged}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        getInputTextFunction={getTextForDistanceSliderInput}
+        {...distanceSliderAdditionalProps}
+      />
+    </Box>
   );
 
   const priceSection = (
-    <Grid
-      item
-      sx={{ mt: '5%', ml: '5%' }}
+    <Box sx={{
+      mt: 3, p: 2, borderRadius: 1, boxShadow: 2, bgcolor: 'background.paper',
+    }}
     >
-      <Typography variant="h4">
-        { labels.filterByPriceTitle }
+      <Typography variant="h6" color="primary">
+        {labels.filterByPriceTitle}
       </Typography>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{ mt: '5%', ml: '5%' }}
-      >
-        <Typography gutterBottom>
-          { labels.filterByPriceExplanation }
-        </Typography>
-        <RangeSlider
-          showInputsIcon
-          shouldShowBottomInputs
-          values={filtersApplied.prices}
-          inputTextsHelpers={locationSliderInputHelperTexts}
-          handleOnChange={onChangePricesWrapper}
-          getInputTextFunction={getTextForPricesSliderInput}
-          getAriaValueText={getTextForPricesSliderInput}
-          valueLabelFormat={getTextForPricesSliderInput}
-          bottomInputsProps={{
-            readOnly: false,
-          }}
-          {...priceSliderAdditionalProps}
-        />
-      </Box>
-    </Grid>
+      <Typography paragraph color="textSecondary" sx={{ mb: 2 }}>
+        {labels.filterByPriceExplanation}
+      </Typography>
+      <RangeSlider
+        shouldShowBottomInputs
+        values={filtersApplied.prices?.length ? filtersApplied.prices
+          : [priceSliderAdditionalProps.min, priceSliderAdditionalProps.max]}
+        inputTextsHelpers={locationSliderInputHelperTexts}
+        handleOnChange={onChangePricesWrapper}
+        getInputTextFunction={getTextForPricesSliderInput}
+        getAriaValueText={getTextForPricesSliderInput}
+        valueLabelFormat={getTextForPricesSliderInput}
+        bottomInputsProps={{ readOnly: false }}
+        {...priceSliderAdditionalProps}
+      />
+    </Box>
   );
 
   const stateSection = (
     <Select
-      containerStyles={{ mt: '5%', width: '50%' }}
+      containerStyles={{ mt: '5%', ...stateContainerStyles }}
       defaultSelected={defaultStateSelected}
       label={sharedLabels.postState}
       values={statesValues}
@@ -193,13 +184,52 @@ function VendiblesFilters({
     />
   );
 
+  const handleDeleteFilter = useCallback((key) => {
+    const categoriesKeys = ['category', 'categoryName'];
+    return categoriesKeys.includes(key)
+      ? handleFilterDeleted(categoriesKeys)
+      : handleFilterDeleted([key]);
+  }, [handleFilterDeleted]);
+
   return (
-    <Grid container flexDirection="column" sx={{ ...containerStyles }}>
+    <Box
+      {...flexColumn}
+      maxWidth="100%"
+      sx={{
+        ...containerStyles,
+        mt: 2,
+      }}
+    >
+      {
+      !(isEmpty(filtersLabelsObject)) && (
+        <SelectedFilters
+          labels={filtersLabelsObject}
+          onDelete={handleDeleteFilter}
+          showTitle
+        />
+      )
+    }
       {enabledFilters.category && categoriesSection}
-      {enabledFilters.distance && locationsDistanceSection}
-      {enabledFilters.price && priceSection }
+      {
+       (enabledFilters.distance || enabledFilters.price) && (
+       <Box
+         sx={{
+           borderRadius: 2,
+           border: '1px solid',
+           borderColor: 'rgb(36, 134, 164)',
+           backgroundColor: 'background.paper',
+           boxShadow: 2,
+           ...sliderContainerStyles,
+         }}
+       >
+         {enabledFilters.distance && locationsDistanceSection}
+         {enabledFilters.price && priceSection }
+       </Box>
+       )
+      }
+
       {enabledFilters.state && stateSection }
-    </Grid>
+    </Box>
   );
 }
 
@@ -216,6 +246,8 @@ VendiblesFilters.defaultProps = {
   categories: {},
   distanceSliderAdditionalProps: {},
   priceSliderAdditionalProps: {},
+  sliderContainerStyles: {},
+  stateContainerStyles: {},
   filtersApplied: {
     category: null,
     categoryName: '',
@@ -224,6 +256,7 @@ VendiblesFilters.defaultProps = {
     state: '',
   },
   setFiltersApplied: EMPTY_FUNCTION,
+  onFilterDeleted: EMPTY_FUNCTION,
 };
 
 VendiblesFilters.propTypes = {
@@ -232,7 +265,10 @@ VendiblesFilters.propTypes = {
   categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
   vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   onFiltersApplied: PropTypes.func.isRequired,
+  onFilterDeleted: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.string),
+  stateContainerStyles: PropTypes.object,
+  sliderContainerStyles: PropTypes.object,
   showAccordionTitle: PropTypes.bool,
   alternativeAccordionTitle: PropTypes.node,
   enabledFilters: PropTypes.objectOf(PropTypes.bool),

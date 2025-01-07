@@ -2,6 +2,12 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Link from '@mui/material/Link';
 import CategoryRenderer from './CategoryRenderer';
 
+const linkStyles = {
+  cursor: 'pointer',
+  fontSize: '1rem',
+  textDecoration: 0,
+};
+
 class LeafRenderer extends CategoryRenderer {
   constructor({
     rootName,
@@ -22,9 +28,7 @@ class LeafRenderer extends CategoryRenderer {
       <li>
         <Link
           variant="caption"
-          sx={{
-            cursor: 'pointer',
-          }}
+          sx={linkStyles}
           onClick={() => handleCategorySelected(rootId, rootName)}
         >
           { rootName }
@@ -36,9 +40,7 @@ class LeafRenderer extends CategoryRenderer {
           <Link
             onClick={() => handleCategorySelected(rootId, rootName)}
             variant="caption"
-            sx={{
-              cursor: 'pointer',
-            }}
+            sx={linkStyles}
           >
             { rootName }
           </Link>

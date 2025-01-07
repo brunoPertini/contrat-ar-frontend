@@ -35,13 +35,13 @@ function ClienteContainer({ handleLogout }) {
 
   const menuOptions = getUserMenuOptions(menuOptionsConfig);
 
-  const dispatchHandleSearch = ({ searchType, searchInput, filters }) => {
+  const dispatchHandleSearch = ({ searchType, filters }) => {
     const httpClient = HttpClientFactory.createVendibleHttpClient(
       searchType,
       { token: userInfo.token, handleLogout },
     );
 
-    return httpClient.getVendibleByFilters({ ...filters, nombre: searchInput });
+    return httpClient.getVendibleByFilters({ ...filters, nombre: filters.vendibleNombre });
   };
 
   if (userInfo.role && userInfo.role !== CLIENTE) {
@@ -54,8 +54,8 @@ function ClienteContainer({ handleLogout }) {
     <NavigationContextProvider>
       { ExitAppDialog }
       <Cliente
-        userInfo={userInfo}
         menuOptions={menuOptions}
+        userInfo={userInfo}
         dispatchHandleSearch={dispatchHandleSearch}
         handleLogout={handleLogout}
       />

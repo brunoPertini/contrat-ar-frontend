@@ -2,6 +2,13 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Link from '@mui/material/Link';
 import CategoryRenderer from './CategoryRenderer';
 
+const linkStyles = {
+  cursor: 'pointer',
+  fontSize: '1rem',
+  color: '#f5c242',
+  textDecoration: 0,
+};
+
 class EmptyTreeRenderer extends CategoryRenderer {
   constructor({
     rootName,
@@ -21,9 +28,7 @@ class EmptyTreeRenderer extends CategoryRenderer {
         <li>
           <Link
             variant="caption"
-            sx={{
-              cursor: 'pointer',
-            }}
+            sx={linkStyles}
             onClick={() => handleCategorySelected(rootId, rootName)}
           >
             { rootName }
@@ -34,9 +39,7 @@ class EmptyTreeRenderer extends CategoryRenderer {
       : (
         <AccordionSummary onClick={() => handleCategorySelected(rootId, rootName)}>
           <Link
-            sx={{
-              cursor: 'pointer',
-            }}
+            sx={linkStyles}
           >
             { rootName }
           </Link>

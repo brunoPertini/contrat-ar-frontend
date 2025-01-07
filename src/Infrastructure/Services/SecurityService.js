@@ -38,7 +38,9 @@ class SecurityService {
     };
 
     Logger.log(error);
-    throw new Error(errorMessages[error.constructor.name]);
+    if (error?.constructor?.name) {
+      throw new Error(errorMessages[error.constructor.name]);
+    }
   }
 
   async readJwtPayload(jwt) {

@@ -1,17 +1,20 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import SaveIcon from '@mui/icons-material/Save';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo, useState } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
-import { PLAN_TYPE_FREE } from '../Shared/Constants/System';
+import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
-import InformativeAlert from '../Shared/Components/Alert';
 import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
 import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
+import Disclaimer from '../Shared/Components/Disclaimer';
+import { flexColumn } from '../Shared/Constants/Styles';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -20,8 +23,20 @@ function PlanData({
 }) {
   const { plansNames } = sharedLabels;
 
-  const onPlanChange = (newPlan) => changeUserInfo(Object.keys(plansNames)
-    .find((key) => plansNames[key] === newPlan));
+  const [showPaidPlanDisclaimer, setShowPaidPlanDisclaimer] = useState(false);
+
+  const onPlanChange = (newPlan) => {
+    const newPlanKey = Object.keys(plansNames)
+      .find((key) => plansNames[key] === newPlan);
+
+    if (actualPlan !== PLAN_TYPE_PAID && newPlanKey === PLAN_TYPE_PAID) {
+      setShowPaidPlanDisclaimer(true);
+    } else {
+      setShowPaidPlanDisclaimer(false);
+    }
+
+    changeUserInfo(newPlanKey);
+  };
 
   const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
@@ -36,48 +51,46 @@ function PlanData({
       : userProfileLabels['plan.subscription.inactive'],
   }), [suscripcionData]);
 
+  const isLayourNearTabletSize = useMediaQuery('(max-width: 700px');
+
   return (
-    <Box display="flex" flexDirection="row" sx={{ ...styles }}>
-      <Box display="flex" flexDirection="column">
-        <StaticAlert
-          styles={{
-            width: '50%',
-            marginTop: '2%',
-          }}
-          severity={subscriptionAlertSeverity}
-          label={subscriptionAlertLabel}
-        />
-        <SelectComponent
-          defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
-          values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-          containerStyles={{ width: '31rem', mt: '5%' }}
-          handleOnChange={onPlanChange}
-          label={userProfileLabels['plan.label']}
-          renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
-          disabled={planRequestChangeExists || hasPendingRequest}
-        />
-        { getPlanDescription(plan, planesInfo, true) }
-        {
-        plan === PLAN_TYPE_FREE && (
-          <LocationMap
-            enableDragEvents={false}
-            circleRadius={1500}
-            location={parseLocationForMap(userLocation)}
-            containerStyles={{
-              height: '500px',
-              width: '100%',
-              marginTop: '5%',
-            }}
-          />
+    <Box
+      {...flexColumn}
+      sx={{ ...styles }}
+    >
+      <StaticAlert
+        styles={{
+          width: !isLayourNearTabletSize ? '15%' : '80%',
+          marginTop: '2%',
+        }}
+        severity={subscriptionAlertSeverity}
+        label={subscriptionAlertLabel}
+      />
+      <SelectComponent
+        defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
+        values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
+        containerStyles={{ mt: !isLayourNearTabletSize ? '3%' : '10%', width: !isLayourNearTabletSize ? '30%' : '100%' }}
+        handleOnChange={onPlanChange}
+        label={userProfileLabels['plan.label']}
+        renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
+        disabled={planRequestChangeExists || hasPendingRequest}
+      />
+      {
+        showPaidPlanDisclaimer && (
+          <Disclaimer text={userProfileLabels['plan.change.paid.disclaimer']} />
         )
       }
-      </Box>
       {
         !hasPendingRequest && (
-          <Box display="flex" flexDirection="column" alignSelf="flex-start">
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignSelf="flex-start"
+          >
             <Button
               variant="contained"
-              sx={{ mt: '5%' }}
+              startIcon={<SaveIcon />}
+              sx={{ mt: '5%', mb: !isLayourNearTabletSize ? 0 : '10%' }}
               disabled={actualPlan === plan}
               onClick={() => handleConfirmPlan()}
             >
@@ -86,12 +99,24 @@ function PlanData({
           </Box>
         )
       }
-      <InformativeAlert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={hasPendingRequest || planRequestChangeExists}
-        label={userProfileLabels['plan.change.finalMessage']}
-        severity="info"
-      />
+      {
+        (hasPendingRequest || planRequestChangeExists) && (
+          <Disclaimer text={userProfileLabels['plan.change.finalMessage']} />
+        )
+      }
+      { getPlanDescription(plan, planesInfo, true) }
+      {
+        plan === PLAN_TYPE_FREE && (
+          <LocationMap
+            enableDragEvents={false}
+            circleRadius={1000}
+            location={parseLocationForMap(userLocation)}
+            containerStyles={{
+              height: '600px',
+            }}
+          />
+        )
+      }
     </Box>
   );
 }

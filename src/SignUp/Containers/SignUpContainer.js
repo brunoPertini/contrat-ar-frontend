@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
+import Groups2Icon from '@mui/icons-material/Groups2';
+import BuildIcon from '@mui/icons-material/Build';
+import HandshakeIcon from '@mui/icons-material/Handshake';
 import Header from '../../Header';
 import { ExpandableCard, withRouter } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
@@ -18,6 +18,19 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
 
 const localStorageService = new LocalStorageService();
+
+const iconStyles = { fontSize: '2.5rem' };
+
+const titleStyles = { fontSize: '1.5rem' };
+
+const cardStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 1 30%',
+  cursor: 'pointer',
+  '&:hover': { boxShadow: 6 },
+  border: '1px solid rgb(36, 134, 164)',
+};
 
 /**
  * Business logic component. It holds signup type and starts the flow for registration process.
@@ -69,67 +82,61 @@ function SignUpContainer({ router }) {
 
   const signupTypeColumns = (
     <>
-      <Grid item xs={4}>
-        <Card>
-          <CardHeader title={signUpLabels['signup.want.to.client']} />
-          <CardContent>
-            <RadioGroup
-              value={signupType}
-              onChange={(e) => setSignupType(e.target.value)}
-              sx={{ marginTop: '2%' }}
-            >
-              <FormControlLabel
-                value={systemConstants.USER_TYPE_CLIENTE}
-                control={<Radio />}
-                label=""
-              />
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={4}>
-        <Card>
-          <CardHeader title={signUpLabels['signup.want.to.offer.services']} />
-          <CardContent>
-            <RadioGroup
-              value={signupType}
-              onChange={(e) => setSignupType(e.target.value)}
-              sx={{ marginTop: '2%' }}
-            >
-              <FormControlLabel
-                value={systemConstants.USER_TYPE_PROVEEDOR_SERVICES}
-                control={<Radio />}
-                label=""
-              />
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={4}>
-        <Card>
-          <CardHeader title={signUpLabels['signup.want.to.offer.products']} />
-          <CardContent>
-            <RadioGroup
-              value={signupType}
-              onChange={(e) => setSignupType(e.target.value)}
-              sx={{ marginTop: '2%' }}
-            >
-              <FormControlLabel
-                value={systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS}
-                control={<Radio />}
-                label=""
-              />
-            </RadioGroup>
-          </CardContent>
-        </Card>
-      </Grid>
+      <Card
+        sx={{
+          ...cardStyles,
+        }}
+        onClick={() => setSignupType(systemConstants.USER_TYPE_CLIENTE)}
+      >
+        <CardHeader
+          title={signUpLabels['signup.want.to.client']}
+          avatar={<Groups2Icon sx={{ ...iconStyles }} />}
+          titleTypographyProps={{ ...titleStyles }}
+        />
+        <CardContent>
+          <Typography variant="body1">
+            { signUpLabels['client.content.text']}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card
+        sx={{ ...cardStyles }}
+        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
+      >
+        <CardHeader
+          title={signUpLabels['signup.want.to.offer.services']}
+          avatar={<BuildIcon sx={{ ...iconStyles }} />}
+          titleTypographyProps={{ ...titleStyles }}
+        />
+        <CardContent>
+          <Typography variant="body1">
+            {signUpLabels['provider.service.context.text']}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Card
+        sx={{ ...cardStyles }}
+        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS)}
+      >
+        <CardHeader
+          title={signUpLabels['signup.want.to.offer.products']}
+          avatar={<HandshakeIcon sx={{ ...iconStyles }} />}
+          titleTypographyProps={{ ...titleStyles }}
+        />
+        <CardContent>
+          <Typography variant="body1">
+            { signUpLabels['provider.product.context.text']}
+          </Typography>
+        </CardContent>
+      </Card>
     </>
   );
+
   const innerComponent = !signupType
     ? (
       <ExpandableCard
         title={(
-          <Typography variant="h3">
+          <Typography variant="h5">
             {signUpLabels['signup.selection.title']}
           </Typography>
         )}
@@ -152,7 +159,6 @@ function SignUpContainer({ router }) {
         createSubscription={handleCreateSubscription}
       />
     );
-
   useEffect(() => {
     if (signupType !== USER_TYPE_CLIENTE) {
       fetchPlanesInfo();
@@ -162,16 +168,13 @@ function SignUpContainer({ router }) {
   return (
     <>
       <Header />
-      <Grid
-        container
-        sx={{
-          marginTop: '5%',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
       >
         {innerComponent}
-      </Grid>
+      </Box>
 
     </>
   );

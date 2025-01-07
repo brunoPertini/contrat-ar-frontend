@@ -126,6 +126,13 @@ class CategoryRenderer {
         onChange={this.onChange()}
         TransitionProps={{ unmountOnExit: true }}
         key={this.key}
+        sx={{
+          border: '1px solid rgb(36, 134, 164)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          borderRadius: '8px !important',
+          '&:before': { display: 'none' },
+          bgcolor: '#f9f9f9',
+        }}
       >
         {
                 this.root

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
 import ImageListItem from '@mui/material/ImageListItem';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
@@ -11,6 +11,7 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import { flexColumn } from '../../Shared/Constants/Styles';
 
 function SecondStep({
   vendibleType, handleUploadImage, imageUrl, setImageUrl, description,
@@ -36,13 +37,13 @@ function SecondStep({
 
   const { imageTitle, mainTitle } = useMemo(() => (isEditionEnabled ? {
     imageTitle:
-    <Typography variant="h5" sx={{ paddingRight: '5%' }}>
+    <Typography variant="h5">
       { sharedLabels.currentImage }
     </Typography>,
     mainTitle: null,
   } : {
     mainTitle: (
-      <Typography variant="h4" sx={{ paddingLeft: '5%' }}>
+      <Typography variant="h4">
         { proveedorLabels['addVendible.lastStep'] }
       </Typography>
     ),
@@ -51,18 +52,19 @@ function SecondStep({
 
   const vendibleUnit = useMemo(() => parseVendibleUnit(vendibleType), [vendibleType]);
 
+  const shouldChangeLayout = useMediaQuery('(max-width: 900px');
+
   return (
-    <Grid
-      item
+    <Box
       display="flex"
-      flexDirection="row"
-      xs={10}
+      flexDirection={{ xs: 'column', md: 'row' }}
+      gap={!shouldChangeLayout ? 0 : 5}
+      height={!shouldChangeLayout ? '100vh' : 'auto'}
     >
-      <Grid
-        item
-        display="flex"
-        flexDirection="column"
-        xs={6}
+      <Box
+        {...flexColumn}
+        flex={1}
+        sx={{ paddingLeft: '1%' }}
       >
 
         { mainTitle }
@@ -71,15 +73,14 @@ function SecondStep({
             __html: proveedorLabels['addVendible.image.text'].replace('{vendible}', vendibleUnit),
           }}
           textAlign="justify"
-          sx={{ width: '50%', mt: '2%' }}
+          sx={{ width: { xs: '80%', md: '50%' }, mt: '2%' }}
         />
-        <Box>
+        <Box {...flexColumn}>
           <ImageListItem
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              width: '50%',
+              width: { xs: '100%', md: '50%' },
               mt: '5%',
             }}
           >
@@ -104,7 +105,7 @@ function SecondStep({
               )
             }
           </ImageListItem>
-          <Box display="flex" flexDirection="column" sx={{ width: '20%' }}>
+          <Box {...flexColumn} sx={{ width: { xs: '100%', md: '20%' } }}>
             <Button
               component="label"
               variant="contained"
@@ -129,12 +130,11 @@ function SecondStep({
             </Button>
           </Box>
         </Box>
-      </Grid>
-      <Grid
-        item
+      </Box>
+      <Box
         display="flex"
         flexDirection="column"
-        xs={6}
+        flex={1}
       >
         <Typography variant="h4" sx={{ paddingRight: '5%' }}>
           { proveedorLabels['addVendible.description.title'].replace('{vendible}', vendibleUnit)}
@@ -147,8 +147,8 @@ function SecondStep({
           value={description}
           onChange={handleChangeDescription}
         />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

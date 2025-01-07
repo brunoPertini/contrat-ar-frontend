@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import { sharedLabels } from '../../StaticData/Shared';
 import FirstStep from './FirstStep';
 import {
@@ -21,6 +21,7 @@ import BackdropLoader from '../../Shared/Components/BackdropLoader';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
+import GoBackLink from '../../Shared/Components/GoBackLink';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
@@ -42,7 +43,7 @@ function VendibleCreateForm({
 
   const [categories, setCategories] = useState([]);
 
-  const [imagenUrl, setImagenUrl] = useState('');
+  const [imagenUrl, setImagenUrl] = useState('+');
   const [descripcion, setDescripcion] = useState('');
 
   const [activeStep, setActiveStep] = useState(0);
@@ -88,15 +89,14 @@ function VendibleCreateForm({
     return setActiveStep(newStep);
   };
 
-  const containerProps = useMemo(() => ({
-    container: true,
+  const containerProps = {
+    display: 'flex',
     flexDirection: 'column',
+    gap: { xs: 2, sm: 7 },
     sx: {
-      minHeight: '100vh',
       alignItems: 'center',
     },
-    spacing: activeStep === 0 ? 35 : 10,
-  }), [activeStep]);
+  };
 
   const nexButtonLabel = useMemo(() => (activeStep === 0
     ? sharedLabels.next : sharedLabels.finish), [activeStep]);
@@ -199,25 +199,27 @@ function VendibleCreateForm({
   useOnLeavingTabHandler();
 
   return (
-    <Grid
+    <Box
       {...containerProps}
     >
+      <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
       {
           activeStep === 2 && (
             <StaticAlert
-              styles={{ mt: '3%', fontSize: '1rem' }}
+              styles={{ mt: '3%', fontSize: '1rem', width: '80%' }}
               severity="info"
               label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
             />
           )
         }
-      <Grid
+      <Box
         item
         sx={{
           display: 'flex',
           flexDirection: 'row',
           alignSelf: 'center',
+          marginBottom: { xs: '1%', md: 0 },
         }}
       >
         <Button
@@ -237,8 +239,8 @@ function VendibleCreateForm({
         >
           {nexButtonLabel}
         </Button>
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 }
 

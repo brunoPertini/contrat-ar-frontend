@@ -1,0 +1,163 @@
+export const proveedorVendiblesResponse = {
+  vendibles: [
+    {
+      vendibleId: 1,
+      descripcion: 'a',
+      vendibleNombre: 'Plomería Profesional',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      categoryNames: ['Plomería', 'Reparación', 'Instalacion'],
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      location: {
+        coordinates: [-34.919056, -57.9503485],
+      },
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 2,
+      descripcion: 'a',
+      vendibleNombre: 'Arte Abstracto',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 3,
+      descripcion: 'a',
+      vendibleNombre: 'Reparación de Electrodomésticos',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 4,
+      descripcion: 'a',
+      vendibleNombre: 'Clases de Música',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 5,
+      descripcion: 'a',
+      vendibleNombre: 'Diseño Gráfico',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 6,
+      descripcion: 'a',
+      vendibleNombre: 'Servicio de Jardinería',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 7,
+      descripcion: 'a',
+      vendibleNombre: 'Asesoría Legal',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+    {
+      vendibleId: 8,
+      descripcion: 'a',
+      vendibleNombre: 'Entrenador Personal',
+      imagenUrl: 'https://samsungar.vtexassets.com/arquivos/ids/168432-800-auto',
+      state: 'ACTIVE',
+      stock: 0,
+      tipoPrecio: 'FIXED',
+      precio: 1,
+      offersDelivery: true,
+      offersInCustomAddress: true,
+    },
+  ],
+  categorias: {
+    Hogar: {
+      root: 'Hogar',
+      children: [
+        {
+          root: 'Plomería',
+          children: [
+            { root: 'Reparación', children: [] },
+            { root: 'Instalación', children: [] },
+          ],
+        },
+        {
+          root: 'Electricidad',
+          children: [
+            { root: 'Instalaciones', children: [] },
+            { root: 'Reparaciones', children: [] },
+          ],
+        },
+      ],
+    },
+    Exterior: {
+      root: 'Exterior',
+      children: [
+        {
+          root: 'Jardinería',
+          children: [
+            { root: 'Poda de árboles', children: [] },
+            { root: 'Mantenimiento de césped', children: [] },
+          ],
+        },
+        {
+          root: 'Paisajismo',
+          children: [
+            { root: 'Diseño de jardines', children: [] },
+            { root: 'Decoración de exteriores', children: [] },
+          ],
+        },
+      ],
+    },
+    Tecnología: {
+      root: 'Tecnología',
+      children: [
+        {
+          root: 'Computación',
+          children: [
+            { root: 'Mantenimiento', children: [] },
+            { root: 'Reparación de hardware', children: [] },
+          ],
+        },
+        {
+          root: 'Electrodomésticos',
+          children: [
+            { root: 'Reparación', children: [] },
+            { root: 'Instalación', children: [] },
+          ],
+        },
+      ],
+    },
+  },
+};

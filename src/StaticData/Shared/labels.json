@@ -6,13 +6,14 @@
     "phone": "Teléfono",
     "email": "Email",
     "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
     "birthDate": "Fecha de nacimiento",
     "dni": "DNI",
     "plan": "Plan",
     "profilePhoto": "Foto de perfil",
     "active": "Activo",
     "createdAt": "Fecha de alta",
-    "siteName": "Contract.ar" ,
+    "siteName": "Contrat.ar" ,
     "optional": "Opcional",
     "back": "Atrás",
     "next": "Siguiente",
@@ -119,5 +120,7 @@
     "sendingEmail": "Enviando email",
     "youCanLeavePage": "¡No queda nada más para hacer! Podés abandonar esta página",
     "here": "acá",
-    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo"
+    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo",
+    "mandatoryField": "* Campo obligatorio",
+    "message": "Mensaje"
 }

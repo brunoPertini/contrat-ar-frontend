@@ -11,8 +11,8 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
-import isEmpty from 'lodash/isEmpty';
-import { sharedLabels } from '../../StaticData/Shared';
+import Box from '@mui/material/Box';
+import { errorMessages, sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
 import { DomUtils } from '../Utils';
@@ -26,7 +26,8 @@ function TextFieldWithLabel(showInlineLabels, componentProps, label) {
   return (
     <>
       { showInlineLabels ? (
-        <InputLabel>
+        // eslint-disable-next-line react/destructuring-assignment
+        <InputLabel htmlFor={componentProps.id}>
           {' '}
           { label }
         </InputLabel>
@@ -103,6 +104,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       surname: '',
       email: '',
       password: '',
+      confirmPassword: '',
       birthDate: '',
       phone: '',
     };
@@ -139,92 +141,106 @@ export class PersonalDataFormBuilder extends FormBuilder {
   /**
    * @param {Object} params
    * @param {UserFormModel} params.fieldsValues Holder object that controls fields values
-   * @param {Function} params.onChangeFields function that runs after some field changes
+   * @param {Function} params.onChangeFields Function that runs after some field changes
    * @param {String} params.usuarioType CLIENTE or SERVICIOS or PRODUCTOS
-   * @param {Object} params.inputProps props to pass to inputs, as readOnly, etc.
-   * @param {Object} params.gridStyles styles applied to each field container
-   * @param {Object} params.fieldsOwnConfig same purpose as inputProps but differentiating
+   * @param {Object} params.inputProps Props to pass to inputs, as readOnly, etc.
+   * @param {Object} params.gridStyles Styles applied to each field container
+   * @param {Object} params.fieldsOwnConfig Same purpose as inputProps but per each field
+   * @param {Boolean} params.showInlineLabels if should show labels inline with input
+   * * @param {Boolean} params.showConfirmPasswordInput if should show confirm password input
    * @param {Object<String, Boolean>} params.errorFields fields with error, that should show
-   * helper message
+helper message
    *  per field key
    * @returns JSX rendered elements for the fields in fieldsValues
    */
   build({
     fieldsValues, errorFields, onChangeFields, usuarioType, gridStyles = {},
-    inputProps, showInlineLabels = false, fieldsOwnConfig = {},
+    inputProps, showInlineLabels = false, fieldsOwnConfig = {}, showConfirmPasswordInput,
   }) {
     super.build({ usuarioType });
 
-    const finalStyles = isEmpty(gridStyles) ? { xs: 12 } : { ...gridStyles };
+    const baseBox = (component) => <Box {...gridStyles}>{component}</Box>;
 
-    const renderNameRow = 'name' in fieldsValues && 'surname' in fieldsValues;
+    const commonInputStyles = {
+      borderRadius: '10px',
+      width: '100%',
+    };
 
-    const nameAndSurnameRow = renderNameRow ? (
-      <Grid item {...finalStyles}>
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-name',
-          type: 'text',
-          value: fieldsValues.name,
-          onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
-          InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
-        }, sharedLabels.name) }
-        {' '}
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-surname',
-          type: 'text',
-          value: fieldsValues.surname,
-          onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
-          InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
-        }, sharedLabels.surname) }
-      </Grid>
+    const borderStyles = (hasError) => (!hasError ? { border: '2px solid rgb(36, 134, 164)' } : { });
+
+    const nameRow = 'name' in fieldsValues ? baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-name',
+      type: 'text',
+      value: fieldsValues.name,
+      onChange: (e) => onChangeFields('name', cleanNumbersFromInput(e.target.value)),
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.name)) },
+      InputProps: 'name' in fieldsOwnConfig ? { ...fieldsOwnConfig.name } : undefined,
+    }, sharedLabels.name)) : null;
+
+    const surnameRow = 'surname' in fieldsValues ? baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-surname',
+      type: 'text',
+      value: fieldsValues.surname,
+      onChange: (e) => onChangeFields('surname', cleanNumbersFromInput(e.target.value)),
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.surname)) },
+      InputProps: 'surname' in fieldsOwnConfig ? { ...fieldsOwnConfig.surname } : undefined,
+    }, sharedLabels.surname)) : null;
+
+    const emailRow = 'email' in fieldsValues ? (
+      baseBox(TextFieldWithLabel(showInlineLabels, {
+        id: 'form-email',
+        type: 'email',
+        value: fieldsValues.email,
+        inputProps,
+        sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.email)) },
+        onChange: (e) => {
+          if (this.shouldValidateField('email')) {
+            const isEmailValid = this.validators.email(fieldsValues.email);
+            return onChangeFields('email', e.target.value, !isEmailValid);
+          }
+
+          return onChangeFields('email', e.target.value, false);
+        },
+        error: !!(errorFields?.email),
+        helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
+        InputProps: 'email' in fieldsOwnConfig ? { ...fieldsOwnConfig.email } : undefined,
+      }, sharedLabels.email))
     ) : null;
 
-    const rendeEmailRow = 'email' in fieldsValues && 'password' in fieldsValues;
+    const passwordRow = 'password' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-password',
+      type: 'password',
+      value: fieldsValues.password,
+      inputProps,
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.password)) },
+      onChange: (e) => onChangeFields('password', e.target.value),
+      InputProps: 'password' in fieldsOwnConfig ? { ...fieldsOwnConfig.password } : undefined,
+      error: !!(errorFields?.password),
+      helperText: (errorFields?.password) ? errorMessages.passwordsNotMatching : undefined,
+    }, sharedLabels.password))) : null;
 
-    const emailAndPasswordRow = rendeEmailRow ? (
-      <Grid item {...finalStyles}>
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-email',
-          type: 'email',
-          value: fieldsValues.email,
-          inputProps,
-          onChange: (e) => {
-            if (this.shouldValidateField('email')) {
-              const isEmailValid = this.validators.email(fieldsValues.email);
-              return onChangeFields('email', e.target.value, !isEmailValid);
-            }
+    const confirmPasswordInput = showConfirmPasswordInput ? (
+      baseBox(TextFieldWithLabel(showInlineLabels, {
+        id: 'form-confirm-password',
+        type: 'password',
+        value: fieldsValues.confirmPassword,
+        inputProps,
+        sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.confirmPassword)) },
+        onChange: (e) => onChangeFields('confirmPassword', e.target.value),
+        InputProps: 'confirmPassword' in fieldsOwnConfig ? { ...fieldsOwnConfig.confirmPassword } : undefined,
+        error: !!(errorFields?.confirmPassword),
+        helperText: (errorFields?.confirmPassword) ? errorMessages.passwordsNotMatching : undefined,
+      }, sharedLabels.confirmPassword))) : null;
 
-            return onChangeFields('email', e.target.value, false);
-          },
-          error: !!(errorFields?.email),
-          helperText: (errorFields?.email) ? sharedLabels.invalidEmail : undefined,
-        }, sharedLabels.email)}
-        {' '}
-        {TextFieldWithLabel(showInlineLabels, {
-          id: 'form-password',
-          type: 'password',
-          value: fieldsValues.password,
-          inputProps,
-          onChange: (e) => onChangeFields('password', e.target.value),
-        }, sharedLabels.password)}
-      </Grid>
-    ) : null;
-
-    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (
-      <Grid item xs={12} sx={{ width: '31rem' }}>
-        <Typography variant="subtitle1" align="left">
-          { sharedLabels.dni }
-        </Typography>
-        <TextField
-          id="form-dni"
-          value={fieldsValues.dni}
-          type="number"
-          sx={{ width: '100%' }}
-          onChange={(e) => onChangeFields('dni', e.target.value)}
-          {...('dni' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.dni } } : {})}
-        />
-      </Grid>
-    ) : null;
+    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-dni',
+      type: 'number',
+      value: fieldsValues.dni,
+      inputProps,
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) },
+      onChange: (e) => onChangeFields('dni', e.target.value),
+      InputProps: 'dni' in fieldsOwnConfig ? { ...fieldsOwnConfig.dni } : undefined,
+    }, sharedLabels.dni))) : null;
 
     let birthDateRow = null;
 
@@ -239,8 +255,8 @@ export class PersonalDataFormBuilder extends FormBuilder {
         })
         : fieldsValues.birthDate;
 
-      birthDateRow = (
-        <Grid item xs={12} sx={{ width: '31rem' }}>
+      birthDateRow = baseBox(
+        <>
           <Typography variant="subtitle1" align="left">
             { sharedLabels.birthDate }
           </Typography>
@@ -248,34 +264,34 @@ export class PersonalDataFormBuilder extends FormBuilder {
             id="form-birthDate"
             value={birthDateFinalValue}
             type="date"
-            sx={{ width: '100%' }}
+            sx={{ ...commonInputStyles, ...borderStyles(!!(errorFields?.dni)) }}
             onChange={(e) => onChangeFields('birthDate', e.target.value)}
             {...('birthDate' in fieldsOwnConfig ? { InputProps: { ...fieldsOwnConfig.birthDate } } : {})}
             {...inputProps}
           />
-        </Grid>
+        </>,
       );
     }
 
-    const phoneRow = 'phone' in fieldsValues ? (
-      <Grid item xs={12} sx={{ width: '31rem' }}>
-        <Typography variant="subtitle1" align="left">
-          { sharedLabels.phone }
-        </Typography>
-        <TextField
-          id="form-phone"
-          value={fieldsValues.phone}
-          type="number"
-          sx={{ width: '100%' }}
-          onChange={(e) => onChangeFields('phone', e.target.value)}
-        />
-      </Grid>
-    ) : null;
+    const phoneRow = 'phone' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+      id: 'form-phone',
+      type: 'number',
+      value: fieldsValues.phone,
+      inputProps,
+      sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.phone)) },
+      onChange: (e) => onChangeFields('phone', e.target.value),
+      InputProps: 'phone' in fieldsOwnConfig ? { ...fieldsOwnConfig.phone } : undefined,
+    }, sharedLabels.phone))) : null;
 
-    const personalDataFields = [nameAndSurnameRow,
-      emailAndPasswordRow,
-      dniRow, birthDateRow,
-      phoneRow];
+    const personalDataFields = [nameRow,
+      surnameRow,
+      birthDateRow,
+      phoneRow,
+      dniRow,
+      emailRow,
+      passwordRow,
+      confirmPasswordInput,
+    ];
 
     return personalDataFields;
   }
@@ -366,29 +382,48 @@ export class SignInFormBuilder extends FormBuilder {
     const passwordValue = fieldsValues.password || this.fields.password;
 
     const row = (
-      <>
-        <Grid item xs={12} sx={{ width: '30%' }}>
-          <TextField
-            id="form-email"
-            value={emailValue}
-            error={this.#hasError(errorFields, 'email')}
-            label={sharedLabels.email}
-            type="email"
-            onChange={(e) => onChangeFields('email', e.target.value)}
-            sx={{ width: '100%' }}
-          />
-        </Grid>
-        <Grid item xs={12} sx={{ width: '30%' }}>
-          <TextField
-            id="form-password"
-            value={passwordValue}
-            error={this.#hasError(errorFields, 'password')}
-            label={sharedLabels.password}
-            type="password"
-            onChange={(e) => onChangeFields('password', e.target.value)}
-            sx={{ width: '100%' }}
-          />
-          {
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignSelf="center"
+        width={{ xs: '80%', md: '60%', xl: '40%' }}
+      >
+        <TextField
+          id="form-email"
+          value={emailValue}
+          error={this.#hasError(errorFields, 'email')}
+          label={sharedLabels.email}
+          type="email"
+          onChange={(e) => onChangeFields('email', e.target.value)}
+          InputProps={{
+            sx: {
+              border: '1px solid rgb(36, 134, 164)',
+              '&:focus-within': {
+                border: '1px solid transparent',
+                boxShadow: 'none',
+              },
+            },
+          }}
+        />
+        <TextField
+          id="form-password"
+          value={passwordValue}
+          error={this.#hasError(errorFields, 'password')}
+          label={sharedLabels.password}
+          type="password"
+          onChange={(e) => onChangeFields('password', e.target.value)}
+          sx={{ marginTop: '3%' }}
+          InputProps={{
+            sx: {
+              border: '1px solid rgb(36, 134, 164)',
+              '&:focus-within': {
+                border: '1px solid transparent',
+                boxShadow: 'none',
+              },
+            },
+          }}
+        />
+        {
             !!errorMessage && (
             <Typography
               variant="h6"
@@ -400,21 +435,19 @@ export class SignInFormBuilder extends FormBuilder {
             </Typography>
             )
           }
-          <Button
-            variant="contained"
-            sx={{ marginTop: '15px' }}
-            onClick={onButtonClick}
-          >
-            { signinLabels.buttonLabel }
-          </Button>
-        </Grid>
-        <Grid item xs={12} sx={{ width: '30%' }}>
+        <Button
+          variant="contained"
+          sx={{ marginTop: '15px' }}
+          onClick={onButtonClick}
+        >
+          { signinLabels.buttonLabel }
+        </Button>
+        <Grid item xs={12} sx={{ mt: '2%' }}>
           <Link href="#">
             { signinLabels.forgotPassword }
           </Link>
         </Grid>
-
-      </>
+      </Box>
     );
 
     return [row];

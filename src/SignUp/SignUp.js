@@ -26,6 +26,7 @@ import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import AccountMailConfirmation from './AccountMailConfirmation';
 import { sharedLabels } from '../StaticData/Shared';
 import { EMPTY_FUNCTION } from '../Shared/Constants/System';
+import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -130,11 +131,23 @@ export default function UserSignUp({
   }, [handleGranted]);
 
   const personalDataFields = personalDataFormBuilder.build({
+    showConfirmPasswordInput: true,
+    showInlineLabels: true,
     usuarioType: signupType,
     fieldsValues: personalDataFieldsValues,
+    gridStyles: { mt: '2%' },
     errorFields,
     onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
-      setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
+      if (fieldId === 'password' || fieldId === 'confirmPassword') {
+        const passwordsNotMatching = fieldId === 'password' ? fieldValue !== personalDataFieldsValues.confirmPassword : fieldValue !== personalDataFieldsValues.password;
+        setErrorFields((previous) => ({
+          ...previous,
+          password: fieldsHasError || passwordsNotMatching,
+          confirmPassword: fieldsHasError || passwordsNotMatching,
+        }));
+      } else {
+        setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
+      }
       setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
     },
   });
@@ -157,15 +170,22 @@ export default function UserSignUp({
 
       const someFieldWithError = Object.values(errorFields).some((key) => key);
 
-      return !someFieldWithError && allFieldsHaveValue;
+      const passwordsMatch = personalDataFieldsValues.password
+      === personalDataFieldsValues.confirmPassword;
+
+      return !someFieldWithError && allFieldsHaveValue && passwordsMatch;
     }, [personalDataFieldsValues, errorFields]),
   },
   {
     label: signUpLabels['steps.your.location'],
     isOptional: false,
     component:
-  <Box display="flex" flexDirection="column">
-    <Box display="flex" flexDirection="row" alignItems="center">
+  <Box
+    display="flex"
+    flexDirection="column"
+    sx={{ mt: '5%' }}
+  >
+    <Box {...flexRow}>
       <Tooltip
         title={(
           <Typography variant="h6">
@@ -214,6 +234,7 @@ export default function UserSignUp({
       isOptional: false,
       component: <Form
         title={signUpLabels['profilePhoto.title']}
+        styles={{ alignItems: 'center ' }}
         fields={[<ProfilePhoto
           src={profilePhoto}
           alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
@@ -235,7 +256,6 @@ export default function UserSignUp({
         planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
-        paidPlanValue={200}
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,
@@ -319,7 +339,7 @@ export default function UserSignUp({
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box {...flexColumn}>
       { isLoading && (
       <>
         <CircularProgress />
