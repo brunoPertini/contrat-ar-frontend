@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import pickBy from 'lodash/pickBy';
 import CategoryAccordion from '../Category/CategoryAccordion';
 import { vendibleCategoryShape } from '../../Shared/PropTypes/Vendibles';
-import { usePreviousPropValue } from '../../Shared/Hooks/usePreviousPropValue';
 import { labels } from '../../StaticData/Cliente';
 import RangeSlider from '../../Shared/Components/RangeSlider';
 import { getTextForDistanceSliderInput, getTextForPricesSliderInput, locationSliderInputHelperTexts } from '../../Shared/Helpers/ClienteHelper';
@@ -25,10 +24,8 @@ function VendiblesFilters({
   categories, filtersApplied, setFiltersApplied, vendibleType,
   onFiltersApplied, containerStyles, sliderContainerStyles, stateContainerStyles,
   showAccordionTitle, enabledFilters, priceSliderAdditionalProps,
-  alternativeAccordionTitle, distanceSliderAdditionalProps,
+  alternativeAccordionTitle, distanceSliderAdditionalProps, onFilterDeleted,
 }) {
-  const previousVendibleType = usePreviousPropValue(vendibleType);
-
   const handleOnCategorySelected = async (categoryId, categoryName) => {
     await setFiltersApplied((previous) => ({ ...previous, category: categoryId, categoryName }));
     onFiltersApplied();
@@ -54,11 +51,12 @@ function VendiblesFilters({
     setFiltersApplied((previous) => {
       const newAppliedFilters = { ...previous };
       filtersKeys.forEach((key) => {
-        newAppliedFilters[key] = null;
+        newAppliedFilters[key] = '';
       });
       return newAppliedFilters;
     });
     onFiltersApplied();
+    onFilterDeleted();
   };
 
   const onChangePricesWrapper = (
@@ -87,11 +85,11 @@ function VendiblesFilters({
     return 0;
   }, [filtersApplied]);
 
-  useEffect(() => {
-    if (previousVendibleType && previousVendibleType !== vendibleType) {
-      setFiltersApplied({});
-    }
-  }, [vendibleType]);
+  // useEffect(() => {
+  //   if (previousVendibleType && previousVendibleType !== vendibleType) {
+  //     setFiltersApplied({});
+  //   }
+  // }, [vendibleType]);
 
   const categoriesSection = !filtersApplied.category && (
   <Box
@@ -258,6 +256,7 @@ VendiblesFilters.defaultProps = {
     state: '',
   },
   setFiltersApplied: EMPTY_FUNCTION,
+  onFilterDeleted: EMPTY_FUNCTION,
 };
 
 VendiblesFilters.propTypes = {
@@ -266,6 +265,7 @@ VendiblesFilters.propTypes = {
   categories: PropTypes.objectOf(PropTypes.arrayOf(vendibleCategoryShape)),
   vendibleType: PropTypes.oneOf(['servicios', 'productos']),
   onFiltersApplied: PropTypes.func.isRequired,
+  onFilterDeleted: PropTypes.func,
   containerStyles: PropTypes.objectOf(PropTypes.string),
   stateContainerStyles: PropTypes.object,
   sliderContainerStyles: PropTypes.object,

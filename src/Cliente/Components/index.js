@@ -27,6 +27,23 @@ import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import { buildFooterOptions } from '../../Shared/Helpers/UtilsHelper';
 import { flexColumn } from '../../Shared/Constants/Styles';
 
+const gridProps = {
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  minHeight: '100vh',
+  sx: {
+    alignItems: 'center',
+    bgcolor: '#ffffff',
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    padding: '24px',
+    boxShadow: 2,
+  },
+};
+
+const filtersModel = { category: undefined, categoryName: undefined, vendibleNombre: '' };
+
 function Cliente({
   menuOptions, dispatchHandleSearch, handleLogout, userInfo,
 }) {
@@ -36,7 +53,7 @@ function Cliente({
 
   const [vendiblesResponse, setVendiblesResponse] = useState();
 
-  const [lastFiltersApplied, setLastFiltersApplied] = useState({ category: undefined, categoryName: undefined, vendibleNombre: '' });
+  const [lastFiltersApplied, setLastFiltersApplied] = useState(filtersModel);
 
   const [searchDone, setSearchDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,15 +69,16 @@ function Cliente({
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
-  const handleFetchVendiblesCall = useCallback((params) => {
-    dispatchHandleSearch(params ? { ...params, searchType }
-      : { searchType }).then((response) => {
+  const handleFetchVendiblesCall = useCallback((params, newSearchType) => {
+    dispatchHandleSearch(params ? { filters: { ...params }, searchType }
+      : { filters: {}, searchType: newSearchType }).then((response) => {
       setVendiblesResponse(response);
       setFiltersEnabled(!!response.categorias);
+      setErrorMessage('');
       // If no params, means its the first fetch, that only includes available filters
       // (like categories) so vendibles are discarded. TODO: a cross refactor is necessary
       // to improve this behavior.
-      if (params?.vendibleNombre || params?.filters) {
+      if (params?.vendibleNombre || params?.category) {
         setSearchDone(true);
         setThereIsNoResults(isEmpty(response.vendibles));
       }
@@ -71,7 +89,7 @@ function Cliente({
       .finally(() => {
         setIsLoading(false);
       });
-  }, [dispatchHandleSearch]);
+  }, [dispatchHandleSearch, searchType]);
 
   const handleFiltersApplied = useCallback((vendibleNombre, comesFromSearcher) => {
     if (comesFromSearcher && !vendibleNombre) {
@@ -88,10 +106,24 @@ function Cliente({
     setSearchType(event.target.value);
     setErrorMessage('');
     setVendiblesResponse({});
-    setLastFiltersApplied({});
+    setLastFiltersApplied({ ...filtersModel });
     setSearchDone(false);
     setThereIsNoResults(false);
-    handleFetchVendiblesCall({ searchType: event.target.value });
+    handleFetchVendiblesCall(null, event.target.value);
+  };
+
+  const onFilterDeleted = () => {
+    setThereIsNoResults(false);
+    setLastFiltersApplied((current) => {
+      const areFiltersEmpty = Object
+        .values(current)
+        .every((value) => !value);
+
+      if (areFiltersEmpty) {
+        setSearchDone(false);
+      }
+      return current;
+    });
   };
 
   const radioGroupConfig = {
@@ -120,21 +152,6 @@ function Cliente({
     ],
   };
 
-  const gridProps = {
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 1,
-    minHeight: '100vh',
-    sx: {
-      alignItems: 'center',
-      bgcolor: '#ffffff',
-      border: '1px solid #e0e0e0',
-      borderRadius: '8px',
-      padding: '24px',
-      boxShadow: 2,
-    },
-  };
-
   const VendiblesList = useCallback(
     () => (!isEmpty(vendiblesResponse)
       ? (
@@ -148,7 +165,7 @@ function Cliente({
   );
 
   useEffect(() => {
-    handleFetchVendiblesCall();
+    handleFetchVendiblesCall(null, searchType);
     setHandleGoBack(() => showlExitAppModal);
   }, []);
 
@@ -201,39 +218,44 @@ function Cliente({
               </FormLabel>
               <RadioList {...radioGroupConfig} />
             </FormControl>
-            <SearcherInput
-              title={labels.title}
-              onSearchClick={(vendibleNombre) => handleFiltersApplied(vendibleNombre, true)}
-              searchLabel={!lastFiltersApplied.vendibleNombre ? sharedLabels.search : ''}
-              hasError={!!searchErrorMessage}
-              errorMessage={searchErrorMessage}
-              inputValue={lastFiltersApplied.vendibleNombre}
-              titleConfig={{
-                variant: 'h5',
-                sx: { mb: 2 },
-              }}
-              searcherConfig={{
-                variant: 'outlined',
-                sx: {
-                  width: '100%',
-                  borderRadius: 2,
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#1976d2',
+            {
+              !lastFiltersApplied.vendibleNombre && (
+                <SearcherInput
+                  title={labels.title}
+                  onSearchClick={(vendibleNombre) => handleFiltersApplied(vendibleNombre, true)}
+                  searchLabel={!lastFiltersApplied.vendibleNombre ? sharedLabels.search : ''}
+                  hasError={!!searchErrorMessage}
+                  errorMessage={searchErrorMessage}
+                  inputValue={lastFiltersApplied.vendibleNombre}
+                  titleConfig={{
+                    variant: 'h5',
+                    sx: { mb: 2 },
+                  }}
+                  searcherConfig={{
+                    variant: 'outlined',
+                    sx: {
+                      width: '100%',
+                      borderRadius: 2,
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#1976d2',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'secondary.main',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                      },
                     },
-                    '&:hover fieldset': {
-                      borderColor: 'secondary.main',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  },
-                },
-              }}
-              keyEvents={{
-                onEnterPressed: (vendibleNombre) => handleFiltersApplied(vendibleNombre, true),
-              }}
-            />
+                  }}
+                  keyEvents={{
+                    onEnterPressed: (vendibleNombre) => handleFiltersApplied(vendibleNombre, true),
+                  }}
+                />
+              )
+            }
+
           </Box>
           {
             filtersEnabled && (
@@ -245,6 +267,7 @@ function Cliente({
                 vendibleType={searchType}
                 onFiltersApplied={handleFiltersApplied}
                 enabledFilters={{ category: true, state: false }}
+                onFilterDeleted={onFilterDeleted}
               />
             </Box>
             )

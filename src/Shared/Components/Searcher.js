@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDeletePressed, isEnterPressed } from '../Utils/DomUtils';
 import { EMPTY_FUNCTION } from '../Constants/System';
 /**
@@ -46,7 +46,9 @@ function Searcher({
 
   const handleOnClick = () => onSearchClick(stateValue);
 
-  const dinamicValue = inputValue ? { value: inputValue } : { value: stateValue };
+  useEffect(() => {
+    if (!inputValue) setStateValue(inputValue);
+  }, [inputValue]);
 
   return (
     <>
@@ -89,7 +91,7 @@ function Searcher({
           helperText={errorMessage}
           placeholder={placeholder}
           sx={{ ...inputStyles }}
-          {...dinamicValue}
+          value={stateValue}
         />
       </FormControl>
     </>
