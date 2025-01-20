@@ -16,6 +16,7 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
+import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 
 const localStorageService = new LocalStorageService();
 
@@ -78,6 +79,12 @@ function SignUpContainer({ router }) {
     const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
 
     return client.createSubscription(proveedorId, planId);
+  };
+
+  const handlePaySubscription = (id, temporalToken) => {
+    const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
+
+    return client.paySubscription(id);
   };
 
   const signupTypeColumns = (
@@ -154,9 +161,11 @@ function SignUpContainer({ router }) {
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
         router={router}
+        localStorageService={localStorageService}
         handleUploadProfilePhoto={handleUploadProfilePhoto}
         sendAccountConfirmEmail={sendAccountConfirmEmail}
         createSubscription={handleCreateSubscription}
+        handlePaySubscription={handlePaySubscription}
       />
     );
   useEffect(() => {
@@ -164,6 +173,8 @@ function SignUpContainer({ router }) {
       fetchPlanesInfo();
     }
   }, []);
+
+  useOnLeavingTabHandler();
 
   return (
     <>

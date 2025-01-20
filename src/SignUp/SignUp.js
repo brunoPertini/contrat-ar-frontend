@@ -20,13 +20,15 @@ import PlanSelection from '../Shared/Components/PlanSelection';
 import Stepper from '../Shared/Components/Stepper';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
-import { getPlanId } from '../Shared/Helpers/PlanesHelper';
+import { getPlanId, getPlanType } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import AccountMailConfirmation from './AccountMailConfirmation';
 import { sharedLabels } from '../StaticData/Shared';
-import { EMPTY_FUNCTION } from '../Shared/Constants/System';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { PLAN_TYPE_PAID } from '../Shared/Constants/System';
+import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
+import { removeOnLeavingTabHandlers } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -42,7 +44,7 @@ const geoSettings = {
  */
 export default function UserSignUp({
   signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
-  sendAccountConfirmEmail, createSubscription,
+  sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
 }) {
   const { title } = signUpLabels;
 
@@ -102,6 +104,16 @@ export default function UserSignUp({
     );
   };
 
+  const saveSignupDataInLocalStorage = () => {
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+      personalDataFieldsValues,
+    );
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
+  };
+
   const handlePermission = useCallback(() => {
     navigator.permissions.query({ name: 'geolocation' }).then((result) => {
       if (result.state === 'granted') {
@@ -129,6 +141,30 @@ export default function UserSignUp({
       }
     });
   }, [handleGranted]);
+
+  const handlePostPlanChosen = () => {
+    setIsLoading(true);
+    if (isEmpty(subscriptionInfo)) {
+      createSubscription(
+        createdUserInfo.id,
+        selectedPlan,
+        createdUserInfo.creationToken,
+      ).then((response) => {
+        const planLabel = getPlanType(planesInfo, response.planId);
+        if (planLabel === PLAN_TYPE_PAID) {
+          removeOnLeavingTabHandlers();
+          saveSignupDataInLocalStorage();
+          handlePaySubscription(
+            response.id,
+            createdUserInfo.creationToken,
+          ).then((checkoutUrl) => {
+            window.location.href = checkoutUrl;
+          });
+        }
+        setSubscriptionInfo(response);
+      });
+    }
+  };
 
   const personalDataFields = personalDataFormBuilder.build({
     showConfirmPasswordInput: true,
@@ -293,13 +329,7 @@ export default function UserSignUp({
 
       3: handleOpenConfirmationModal,
 
-      4: () => (isEmpty(subscriptionInfo) ? createSubscription(
-        createdUserInfo.id,
-        selectedPlan,
-        createdUserInfo.creationToken,
-      )
-        .then((response) => setSubscriptionInfo(response))
-        : EMPTY_FUNCTION),
+      4: handlePostPlanChosen,
 
     };
 
@@ -339,7 +369,7 @@ export default function UserSignUp({
   }, []);
 
   return (
-    <Box {...flexColumn}>
+    <Box {...flexColumn} sx={{ alignItems: 'center' }}>
       { isLoading && (
       <>
         <CircularProgress />
@@ -348,7 +378,7 @@ export default function UserSignUp({
         </Typography>
       </>
       ) }
-      { isStepValid ? steps[activeStep].component : null}
+      { !isLoading && isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
         contextText={signUpLabels['confirmation.context']}
@@ -375,7 +405,7 @@ export default function UserSignUp({
         handleAccept={getCurentLocation}
         handleDeny={() => handleDialogDenied()}
       />
-      {isStepValid && (
+      {!isLoading && isStepValid && (
       <Stepper
         steps={steps}
         activeStep={activeStep}
@@ -399,6 +429,8 @@ UserSignUp.propTypes = {
   createSubscription: PropTypes.func.isRequired,
   sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
+  handlePaySubscription: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
+  localStorageService: PropTypes.instanceOf(LocalStorageService).isRequired,
 };
