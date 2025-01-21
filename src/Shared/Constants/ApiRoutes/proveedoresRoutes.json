@@ -8,5 +8,6 @@
     "changePlan": "/change-requests/usuarios/proveedor/{proveedorId}/plan/{planId}",
     "planBaseUrl": "/plan",
     "proveedorSubscription": "/proveedor/{proveedorId}/suscripcion/{planId}",
-    "paySubscription": "/pay/signup/{subscriptionId}"
+    "paySubscription": "/pay/signup/{subscriptionId}",
+    "paymentById": "/pay/{paymentId}"
 }

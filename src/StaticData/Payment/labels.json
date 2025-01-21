@@ -1,0 +1,5 @@
+{
+    "paymentConfirmed": "Confirmación del pago número {paymentId}",
+    "signup.confirmation.success": "¡Confirmamos tu pago! Una vez que validemos tus datos del registro, tu suscripción va a estar ya activa y vas a poder disfrutar de todos los beneficios de la plataforma",
+    "signup.confirmation.error": "¡No pudimos confirmar tu pago! Si tenés dudas contactanos enviándonos el número de pago {paymentId}"
+}

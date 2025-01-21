@@ -6,4 +6,10 @@ export class PaymentHttpClient extends HttpClient {
     const url = proveedoresRoutes.paySubscription.replace('{subscriptionId}', subscriptionId);
     return this.post(url, null, { integrationType: 'OUTSITE' });
   }
+
+  getPaymentInfo(paymentId) {
+    const url = proveedoresRoutes.paymentById.replace('{paymentId}', paymentId);
+
+    return this.get(url);
+  }
 }

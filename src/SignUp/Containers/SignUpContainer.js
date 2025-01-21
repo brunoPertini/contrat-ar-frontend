@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useState,
+} from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -18,6 +20,7 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
+import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 
 const localStorageService = new LocalStorageService();
 
@@ -42,6 +45,10 @@ function SignUpContainer({ router }) {
   const [planesInfo, setPlanesInfo] = useState([]);
   const [activeStep, setActiveStep] = useState();
 
+  const [temporalToken, setTemporalToken] = useState();
+
+  const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
+
   const paymentParams = usePaymentQueryParams();
 
   const dispatchSignUp = (body) => {
@@ -49,7 +56,10 @@ function SignUpContainer({ router }) {
     return httpClient.crearUsuario(signupType, {}, {
       ...body,
       proveedorType: signupType,
-    }).then((response) => response)
+    }).then((response) => {
+      setTemporalToken(response.creationToken);
+      return response;
+    })
       .catch(() => {
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
@@ -84,16 +94,22 @@ function SignUpContainer({ router }) {
     return client.sendRegistrationConfirmEmail(email);
   };
 
-  const handleCreateSubscription = (proveedorId, planId, temporalToken) => {
+  const handleCreateSubscription = (proveedorId, planId) => {
     const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
 
     return client.createSubscription(proveedorId, planId);
   };
 
-  const handlePaySubscription = (id, temporalToken) => {
+  const handlePaySubscription = (id) => {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
     return client.paySubscription(id);
+  };
+
+  const getPaymentInfo = (id) => {
+    const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
+
+    return client.getPaymentInfo(id);
   };
 
   const signupTypeColumns = (
@@ -178,6 +194,32 @@ function SignUpContainer({ router }) {
         externalStep={activeStep}
       />
     );
+
+  const closePaymentDialogModal = useCallback(
+    () => setOpenPaymentDialogModal(false),
+    [setOpenPaymentDialogModal],
+  );
+
+  const checkPaymentExistence = () => {
+    const restoredToken = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+    );
+    setTemporalToken(restoredToken);
+    getPaymentInfo(paymentParams.paymentId).then((info) => {
+      if (info.id === paymentParams.paymentId && info.state === paymentParams.status) {
+        const storedSignupType = localStorageService.getItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
+        );
+
+        if (storedSignupType) {
+          setSignupType(storedSignupType);
+        }
+        setActiveStep(4);
+        setOpenPaymentDialogModal(true);
+      }
+    }).catch(() => setOpenPaymentDialogModal(false));
+  };
+
   useEffect(() => {
     if (signupType !== USER_TYPE_CLIENTE) {
       fetchPlanesInfo();
@@ -187,18 +229,13 @@ function SignUpContainer({ router }) {
   // Coming back from payment page
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
-      const storedSignupType = localStorageService.getItem(
-        LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
-      );
-
-      if (storedSignupType) {
-        setSignupType(storedSignupType);
-      }
-      setActiveStep(4);
+      checkPaymentExistence();
     }
   }, [paymentParams]);
 
   useOnLeavingTabHandler();
+
+  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal);
 
   return (
     <>
@@ -208,6 +245,7 @@ function SignUpContainer({ router }) {
         flexDirection="column"
         alignItems="center"
       >
+        { paymentDialogModal }
         {innerComponent}
       </Box>
 

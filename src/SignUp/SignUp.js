@@ -28,7 +28,6 @@ import { sharedLabels } from '../StaticData/Shared';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 import { PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
-import { removeOnLeavingTabHandlers } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -112,6 +111,10 @@ export default function UserSignUp({
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+      createdUserInfo.creationToken,
+    );
   };
 
   const handlePermission = useCallback(() => {
@@ -152,11 +155,10 @@ export default function UserSignUp({
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
         if (planLabel === PLAN_TYPE_PAID) {
-          removeOnLeavingTabHandlers();
+          // removeOnLeavingTabHandlers();
           saveSignupDataInLocalStorage();
           handlePaySubscription(
             response.id,
-            createdUserInfo.creationToken,
           ).then((checkoutUrl) => {
             window.location.href = checkoutUrl;
           });

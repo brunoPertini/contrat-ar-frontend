@@ -29,6 +29,7 @@ export class LocalStorageService {
       LOCATION: 'location',
       PROFILE_PHOTO: 'profilePhoto',
       PLAN_ID: 'selectedPlan',
+      CREATION_TOKEN: 'creationToken',
     },
   };
 
