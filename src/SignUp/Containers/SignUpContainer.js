@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -17,6 +17,7 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 
 const localStorageService = new LocalStorageService();
 
@@ -39,6 +40,9 @@ const cardStyles = {
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
   const [planesInfo, setPlanesInfo] = useState([]);
+  const [activeStep, setActiveStep] = useState();
+
+  const paymentParams = usePaymentQueryParams();
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
@@ -52,6 +56,11 @@ function SignUpContainer({ router }) {
         window.location.href = routes.index;
       });
   };
+
+  const handleSetSignupType = useCallback((type) => {
+    setSignupType(type);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE, type);
+  }, [setSignupType]);
 
   const getAllPlanes = () => {
     const client = HttpClientFactory.createProveedorHttpClient();
@@ -93,7 +102,7 @@ function SignUpContainer({ router }) {
         sx={{
           ...cardStyles,
         }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_CLIENTE)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.client']}
@@ -108,7 +117,7 @@ function SignUpContainer({ router }) {
       </Card>
       <Card
         sx={{ ...cardStyles }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.offer.services']}
@@ -123,7 +132,7 @@ function SignUpContainer({ router }) {
       </Card>
       <Card
         sx={{ ...cardStyles }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.offer.products']}
@@ -166,6 +175,7 @@ function SignUpContainer({ router }) {
         sendAccountConfirmEmail={sendAccountConfirmEmail}
         createSubscription={handleCreateSubscription}
         handlePaySubscription={handlePaySubscription}
+        externalStep={activeStep}
       />
     );
   useEffect(() => {
@@ -173,6 +183,20 @@ function SignUpContainer({ router }) {
       fetchPlanesInfo();
     }
   }, []);
+
+  // Coming back from payment page
+  useEffect(() => {
+    if (paymentParams.paymentId && paymentParams.status) {
+      const storedSignupType = localStorageService.getItem(
+        LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
+      );
+
+      if (storedSignupType) {
+        setSignupType(storedSignupType);
+      }
+      setActiveStep(4);
+    }
+  }, [paymentParams]);
 
   useOnLeavingTabHandler();
 

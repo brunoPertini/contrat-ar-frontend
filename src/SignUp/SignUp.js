@@ -43,7 +43,7 @@ const geoSettings = {
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
+  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
   sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
 }) {
   const { title } = signUpLabels;
@@ -368,6 +368,12 @@ export default function UserSignUp({
     handlePermission();
   }, []);
 
+  useEffect(() => {
+    if (externalStep) {
+      setActiveStep(externalStep);
+    }
+  }, [externalStep]);
+
   return (
     <Box {...flexColumn} sx={{ alignItems: 'center' }}>
       { isLoading && (
@@ -421,6 +427,7 @@ export default function UserSignUp({
 UserSignUp.defaultProps = {
   hasError: false,
   handleUploadProfilePhoto: undefined,
+  externalStep: undefined,
 };
 
 UserSignUp.propTypes = {
@@ -432,5 +439,6 @@ UserSignUp.propTypes = {
   handlePaySubscription: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
+  externalStep: PropTypes.number,
   localStorageService: PropTypes.instanceOf(LocalStorageService).isRequired,
 };
