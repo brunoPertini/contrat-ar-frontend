@@ -29,6 +29,7 @@ export default function usePaymentDialogModal(isOpen, onCloseDialog) {
       contextText={modalContent.text}
       open={isOpen}
       onCloseDialog={onCloseDialog}
+      showButtons={false}
     />
   );
 }

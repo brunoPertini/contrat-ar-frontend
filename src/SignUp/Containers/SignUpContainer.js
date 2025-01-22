@@ -106,8 +106,10 @@ function SignUpContainer({ router }) {
     return client.paySubscription(id);
   };
 
-  const getPaymentInfo = (id) => {
-    const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
+  const getPaymentInfo = (id, restoredToken) => {
+    const client = HttpClientFactory.createPaymentHttpClient({
+      token: temporalToken || restoredToken,
+    });
 
     return client.getPaymentInfo(id);
   };
@@ -203,13 +205,13 @@ function SignUpContainer({ router }) {
   const checkPaymentExistence = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-    );
+    ).replaceAll('"', '');
     setTemporalToken(restoredToken);
-    getPaymentInfo(paymentParams.paymentId).then((info) => {
-      if (info.id === paymentParams.paymentId && info.state === paymentParams.status) {
+    getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
+      if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
         const storedSignupType = localStorageService.getItem(
           LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
-        );
+        ).replaceAll('"', '');
 
         if (storedSignupType) {
           setSignupType(storedSignupType);
@@ -217,7 +219,10 @@ function SignUpContainer({ router }) {
         setActiveStep(4);
         setOpenPaymentDialogModal(true);
       }
-    }).catch(() => setOpenPaymentDialogModal(false));
+    }).catch(() => setOpenPaymentDialogModal(false))
+      .finally(() => localStorageService.removeItem(
+        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+      ));
   };
 
   useEffect(() => {

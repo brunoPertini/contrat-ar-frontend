@@ -113,7 +113,7 @@ export default function UserSignUp({
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
     localStorageService.setItem(
       LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-      createdUserInfo.creationToken,
+      createdUserInfo.creationToken.replaceAll('"', ''),
     );
   };
 
@@ -193,6 +193,18 @@ export default function UserSignUp({
   const callUploadProfilePhoto = (
     file,
   ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
+
+  const restoreSignupDataAfterPayment = () => {
+    setActiveStep(externalStep);
+
+    const storedData = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+    );
+
+    if (storedData) {
+      setPersonalDataFieldsValues(JSON.parse(storedData));
+    }
+  };
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
@@ -372,7 +384,7 @@ export default function UserSignUp({
 
   useEffect(() => {
     if (externalStep) {
-      setActiveStep(externalStep);
+      restoreSignupDataAfterPayment();
     }
   }, [externalStep]);
 
