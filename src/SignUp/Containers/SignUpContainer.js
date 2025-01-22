@@ -72,6 +72,19 @@ function SignUpContainer({ router }) {
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE, type);
   }, [setSignupType]);
 
+  const storeTokenInLocalStorage = () => {
+    setTemporalToken((currentToken) => {
+      if (currentToken) {
+        localStorageService.setItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+          currentToken.replaceAll('"', ''),
+        );
+      }
+
+      return currentToken;
+    });
+  };
+
   const getAllPlanes = () => {
     const client = HttpClientFactory.createProveedorHttpClient();
     return client.getAllPlanes();
@@ -205,13 +218,13 @@ function SignUpContainer({ router }) {
   const checkPaymentExistence = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-    ).replaceAll('"', '');
+    )?.replaceAll('"', '');
     setTemporalToken(restoredToken);
     getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
       if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
         const storedSignupType = localStorageService.getItem(
           LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
-        ).replaceAll('"', '');
+        )?.replaceAll('"', '');
 
         if (storedSignupType) {
           setSignupType(storedSignupType);
@@ -238,7 +251,7 @@ function SignUpContainer({ router }) {
     }
   }, [paymentParams]);
 
-  useOnLeavingTabHandler();
+  useOnLeavingTabHandler(storeTokenInLocalStorage);
 
   const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal);
 

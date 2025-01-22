@@ -111,10 +111,13 @@ export default function UserSignUp({
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
-    localStorageService.setItem(
-      LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-      createdUserInfo.creationToken.replaceAll('"', ''),
-    );
+
+    if (createdUserInfo.creationToken) {
+      localStorageService.setItem(
+        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+        createdUserInfo.creationToken.replaceAll('"', ''),
+      );
+    }
   };
 
   const handlePermission = useCallback(() => {
