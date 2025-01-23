@@ -167,7 +167,7 @@ export default function UserSignUp({
           });
         }
         setSubscriptionInfo(response);
-      });
+      }).finally(() => setIsLoading(false));
     }
   };
 
