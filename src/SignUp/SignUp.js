@@ -28,6 +28,7 @@ import { sharedLabels } from '../StaticData/Shared';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 import { PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
+import { useOnLeavingTabHandler } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -103,6 +104,15 @@ export default function UserSignUp({
     );
   };
 
+  const saveCreationTokenInLocalStorage = () => {
+    if (createdUserInfo.creationToken) {
+      localStorageService.setItem(
+        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+        createdUserInfo.creationToken.replaceAll('"', ''),
+      );
+    }
+  };
+
   const saveSignupDataInLocalStorage = () => {
     localStorageService.setItem(
       LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
@@ -112,12 +122,7 @@ export default function UserSignUp({
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
 
-    if (createdUserInfo.creationToken) {
-      localStorageService.setItem(
-        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-        createdUserInfo.creationToken.replaceAll('"', ''),
-      );
-    }
+    saveCreationTokenInLocalStorage();
   };
 
   const handlePermission = useCallback(() => {
@@ -148,6 +153,19 @@ export default function UserSignUp({
     });
   }, [handleGranted]);
 
+  const storeTokenInLocalStorage = () => {
+    setCreatedUserInfo((currentCreatedUserInfo) => {
+      if (createdUserInfo.creationToken) {
+        localStorageService.setItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+          createdUserInfo.creationToken.replaceAll('"', ''),
+        );
+      }
+
+      return currentCreatedUserInfo;
+    });
+  };
+
   const handlePostPlanChosen = () => {
     setIsLoading(true);
     if (isEmpty(subscriptionInfo)) {
@@ -158,16 +176,17 @@ export default function UserSignUp({
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
         if (planLabel === PLAN_TYPE_PAID) {
-          // removeOnLeavingTabHandlers();
           saveSignupDataInLocalStorage();
           handlePaySubscription(
             response.id,
           ).then((checkoutUrl) => {
             window.location.href = checkoutUrl;
+          }).catch(() => {
+            setIsLoading(false);
           });
         }
         setSubscriptionInfo(response);
-      }).finally(() => setIsLoading(false));
+      });
     }
   };
 
@@ -390,6 +409,16 @@ export default function UserSignUp({
       restoreSignupDataAfterPayment();
     }
   }, [externalStep]);
+
+  const newPlanType = useMemo(() => getPlanType(planesInfo, selectedPlan), [selectedPlan]);
+
+  useEffect(() => {
+    if (newPlanType === PLAN_TYPE_PAID) {
+      saveCreationTokenInLocalStorage();
+    }
+  }, [selectedPlan]);
+
+  useOnLeavingTabHandler(storeTokenInLocalStorage, newPlanType === PLAN_TYPE_PAID);
 
   return (
     <Box {...flexColumn} sx={{ alignItems: 'center' }}>

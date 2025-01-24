@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 
 function DialogModal({
   open, handleAccept, handleDeny, title, onCloseDialog,
-  contextText, cancelText, acceptText, showButtons,
+  contextText, cancelText, acceptText, showButtons, paperStyles,
 }) {
   return (
     <Dialog
@@ -16,7 +16,7 @@ function DialogModal({
       onClose={onCloseDialog}
       aria-labelledby="dialog-title"
       PaperProps={{
-        sx: {
+        sx: paperStyles ?? {
           backgroundColor: 'rgb(36, 134, 164)',
           color: '#fff',
         },
@@ -56,6 +56,7 @@ DialogModal.propTypes = {
   contextText: PropTypes.string,
   cancelText: PropTypes.string.isRequired,
   acceptText: PropTypes.string.isRequired,
+  paperStyles: PropTypes.object,
 };
 
 DialogModal.defaultProps = {
@@ -63,6 +64,7 @@ DialogModal.defaultProps = {
   contextText: '',
   showButtons: true,
   onCloseDialog: undefined,
+  paperStyles: undefined,
 };
 
 export default DialogModal;

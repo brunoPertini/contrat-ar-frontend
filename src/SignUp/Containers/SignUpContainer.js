@@ -18,7 +18,6 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
-import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 
@@ -49,7 +48,9 @@ function SignUpContainer({ router }) {
 
   const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
 
-  const paymentParams = usePaymentQueryParams();
+  const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
+
+  const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
@@ -71,19 +72,6 @@ function SignUpContainer({ router }) {
     setSignupType(type);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE, type);
   }, [setSignupType]);
-
-  const storeTokenInLocalStorage = () => {
-    setTemporalToken((currentToken) => {
-      if (currentToken) {
-        localStorageService.setItem(
-          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-          currentToken.replaceAll('"', ''),
-        );
-      }
-
-      return currentToken;
-    });
-  };
 
   const getAllPlanes = () => {
     const client = HttpClientFactory.createProveedorHttpClient();
@@ -116,7 +104,12 @@ function SignUpContainer({ router }) {
   const handlePaySubscription = (id) => {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
-    return client.paySubscription(id);
+    return client.paySubscription(id)
+      .then(() => setPaySubscriptionServiceResult(true))
+      .catch((error) => {
+        setPaySubscriptionServiceResult(false);
+        return Promise.reject(error);
+      });
   };
 
   const getPaymentInfo = (id, restoredToken) => {
@@ -211,9 +204,24 @@ function SignUpContainer({ router }) {
     );
 
   const closePaymentDialogModal = useCallback(
-    () => setOpenPaymentDialogModal(false),
+    () => {
+      setOpenPaymentDialogModal(false);
+      setPaySubscriptionServiceResult(null);
+    },
     [setOpenPaymentDialogModal],
   );
+
+  const openPaymentDialog = () => {
+    const storedSignupType = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
+    )?.replaceAll('"', '');
+
+    if (storedSignupType) {
+      setSignupType(storedSignupType);
+    }
+    setActiveStep(4);
+    setOpenPaymentDialogModal(true);
+  };
 
   const checkPaymentExistence = () => {
     const restoredToken = localStorageService.getItem(
@@ -222,15 +230,7 @@ function SignUpContainer({ router }) {
     setTemporalToken(restoredToken);
     getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
       if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
-        const storedSignupType = localStorageService.getItem(
-          LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
-        )?.replaceAll('"', '');
-
-        if (storedSignupType) {
-          setSignupType(storedSignupType);
-        }
-        setActiveStep(4);
-        setOpenPaymentDialogModal(true);
+        openPaymentDialog();
       }
     }).catch(() => setOpenPaymentDialogModal(false))
       .finally(() => localStorageService.removeItem(
@@ -244,14 +244,14 @@ function SignUpContainer({ router }) {
     }
   }, []);
 
-  // Coming back from payment page
+  // Coming back from payment page or pay subscription service
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
       checkPaymentExistence();
+    } else if (paySubscriptionServiceResult === false) {
+      openPaymentDialog();
     }
-  }, [paymentParams]);
-
-  useOnLeavingTabHandler(storeTokenInLocalStorage);
+  }, [paymentParams, paySubscriptionServiceResult]);
 
   const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal);
 

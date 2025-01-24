@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { PAYMENT_STATE } from '../Constants/System';
 
-export default function usePaymentQueryParams() {
+export default function usePaymentQueryParams(paySubscriptionServiceResult) {
   const queryParams = new URLSearchParams(window.location.search);
 
   const [params, setParams] = useState({ paymentId: null, status: '' });
@@ -14,5 +15,6 @@ export default function usePaymentQueryParams() {
     }
   }, []);
 
-  return params;
+  return paySubscriptionServiceResult === false
+    ? { paymentId: null, status: PAYMENT_STATE.UNKNOWN } : params;
 }

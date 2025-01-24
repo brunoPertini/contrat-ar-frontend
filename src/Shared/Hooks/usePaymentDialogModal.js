@@ -1,21 +1,37 @@
 import { useEffect, useState } from 'react';
-import { DialogModal } from '../Components';
+import { DialogModal, StaticAlert } from '../Components';
 import usePaymentQueryParams from './usePaymentQueryParams';
 import { PAYMENT_STATE } from '../Constants/System';
 import { paymentLabels } from '../../StaticData/Payment';
 
 export default function usePaymentDialogModal(isOpen, onCloseDialog) {
-  const [modalContent, setModalContent] = useState({ title: '', text: '' });
+  const [modalContent, setModalContent] = useState({ title: '', text: '', paperStyles: {} });
 
   const paymentParams = usePaymentQueryParams();
 
   useEffect(() => {
     const { paymentId, status } = paymentParams;
 
+    const wasPaymentOk = status === PAYMENT_STATE.SUCCESS;
+
+    const alertProps = wasPaymentOk ? { severity: 'success' } : { severity: 'error' };
+
+    const paperStyles = { backgroundColor: wasPaymentOk ? '#2e7d32' : '#d32f2f', color: '#fff' };
+
+    let alertLabel;
+
+    if (wasPaymentOk) {
+      alertLabel = paymentLabels['signup.confirmation.success'];
+    } else if (paymentId) {
+      alertLabel = paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentId);
+    } else {
+      alertLabel = paymentLabels['signup.confirmation.unknownError'].replace('{helpPayLink}', process.env.REACT_APP_SITE_URL);
+    }
+
     setModalContent({
-      title: paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId),
-      text: status === PAYMENT_STATE.SUCCESS ? paymentLabels['signup.confirmation.success']
-        : paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentId),
+      title: !paymentId ? paymentLabels.paymentError : paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId),
+      text: <StaticAlert label={alertLabel} {...alertProps} />,
+      paperStyles,
     });
   }, [isOpen]);
 
@@ -25,6 +41,7 @@ export default function usePaymentDialogModal(isOpen, onCloseDialog) {
 
   return (
     <DialogModal
+      paperStyles={modalContent.paperStyles}
       title={modalContent.title}
       contextText={modalContent.text}
       open={isOpen}
