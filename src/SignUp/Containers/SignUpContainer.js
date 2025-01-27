@@ -105,7 +105,10 @@ function SignUpContainer({ router }) {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
     return client.paySubscription(id)
-      .then(() => setPaySubscriptionServiceResult(true))
+      .then((checkoutUrl) => {
+        setPaySubscriptionServiceResult(true);
+        return checkoutUrl;
+      })
       .catch((error) => {
         setPaySubscriptionServiceResult(false);
         return Promise.reject(error);
@@ -223,25 +226,37 @@ function SignUpContainer({ router }) {
     setOpenPaymentDialogModal(true);
   };
 
-  const checkPaymentExistence = () => {
+  const restoreTokenInMemory = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
     )?.replaceAll('"', '');
-    setTemporalToken(restoredToken);
-    getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
-      if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
-        openPaymentDialog();
-      }
-    }).catch(() => setOpenPaymentDialogModal(false))
-      .finally(() => localStorageService.removeItem(
-        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-      ));
+
+    if (restoredToken) {
+      setTemporalToken(restoredToken);
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN);
+    }
+  };
+
+  const checkPaymentExistence = () => {
+    setTemporalToken((restoredToken) => {
+      getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
+        if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
+          openPaymentDialog();
+        }
+      }).catch(() => setOpenPaymentDialogModal(false))
+        .finally(() => localStorageService.removeItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+        ));
+      return restoredToken;
+    });
   };
 
   useEffect(() => {
     if (signupType !== USER_TYPE_CLIENTE) {
       fetchPlanesInfo();
     }
+
+    restoreTokenInMemory();
   }, []);
 
   // Coming back from payment page or pay subscription service

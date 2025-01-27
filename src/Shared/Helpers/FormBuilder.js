@@ -12,6 +12,7 @@ import Link from '@mui/material/Link';
 import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import { errorMessages, sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
@@ -232,7 +233,7 @@ helper message
         helperText: (errorFields?.confirmPassword) ? errorMessages.passwordsNotMatching : undefined,
       }, sharedLabels.confirmPassword))) : null;
 
-    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+    const dniRow = this.shouldShowDni ? (baseBox(TextFieldWithLabel(showInlineLabels, {
       id: 'form-dni',
       type: 'number',
       value: fieldsValues.dni,
@@ -283,6 +284,30 @@ helper message
       InputProps: 'phone' in fieldsOwnConfig ? { ...fieldsOwnConfig.phone } : undefined,
     }, sharedLabels.phone))) : null;
 
+    const termsAndConditionsLink = `<a href="${process.env.REACT_APP_TERMS_AND_CONDITIONS_URL}">
+    ${sharedLabels.termsAndConditions}</a>`;
+
+    const dataUsageLink = `<a href="${process.env.REACT_APP_DATA_USAGE_URL}">
+    ${sharedLabels.dataUsage}</a>`;
+
+    const termsAndConditionsText = sharedLabels.acceptTermsAndConditions.replace(
+      '{termsAndConditionsLink}',
+      termsAndConditionsLink,
+    ).replace('{dataUsageLink}', dataUsageLink);
+
+    const termsAndConditionsRow = 'termsAndConditions' in fieldsValues ? (
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <Checkbox
+          checked={fieldsValues.termsAndConditions}
+          name="accept-terms-and-conditions"
+          onChange={(e) => onChangeFields('termsAndConditions', e.target.checked)}
+        />
+        <Typography variant="body2" color="text.secondary">
+          <span dangerouslySetInnerHTML={{ __html: termsAndConditionsText }} />
+        </Typography>
+      </Box>
+    ) : null;
+
     const personalDataFields = [nameRow,
       surnameRow,
       birthDateRow,
@@ -291,6 +316,7 @@ helper message
       emailRow,
       passwordRow,
       confirmPasswordInput,
+      termsAndConditionsRow,
     ];
 
     return personalDataFields;

@@ -50,9 +50,10 @@ export default function UserSignUp({
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
-    personalDataFormBuilder.fields,
-  );
+  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState({
+    ...personalDataFormBuilder.fields,
+    termsAndConditions: false,
+  });
 
   const [errorFields, setErrorFields] = useState({
     email: false,
@@ -176,17 +177,18 @@ export default function UserSignUp({
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
         if (planLabel === PLAN_TYPE_PAID) {
+          setIsLoading(true);
           saveSignupDataInLocalStorage();
           handlePaySubscription(
             response.id,
           ).then((checkoutUrl) => {
             window.location.href = checkoutUrl;
-          }).catch(() => {
-            setIsLoading(false);
-          });
+          }).catch(() => setIsLoading(false));
+        } else {
+          setIsLoading(false);
         }
         setSubscriptionInfo(response);
-      });
+      }).catch(() => setIsLoading(false));
     }
   };
 
