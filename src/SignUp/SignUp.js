@@ -34,7 +34,7 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 const geoSettings = {
   enableHighAccuracy: true,
-  maximumAge: 30000,
+  maximumAge: 0,
   timeout: 20000,
 };
 
@@ -93,7 +93,11 @@ export default function UserSignUp({
     setOpenPermissionDialog(false);
   };
 
-  const handleDialogDenied = () => {
+  // eslint-disable-next-line consistent-return
+  const handleDialogDenied = (error) => {
+    if (error && error.code !== error.PERMISSION_DENIED) {
+      return handleGranted({ coords: { latitude: 34.9208082, longitude: -57.9556221 } });
+    }
     window.location.href = routes.index;
   };
 
@@ -156,10 +160,10 @@ export default function UserSignUp({
 
   const storeTokenInLocalStorage = () => {
     setCreatedUserInfo((currentCreatedUserInfo) => {
-      if (createdUserInfo.creationToken) {
+      if (currentCreatedUserInfo.creationToken) {
         localStorageService.setItem(
           LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-          createdUserInfo.creationToken.replaceAll('"', ''),
+          currentCreatedUserInfo.creationToken.replaceAll('"', ''),
         );
       }
 
