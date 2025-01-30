@@ -1,0 +1,7 @@
+{
+    "paymentConfirmed": "Confirmación del pago número {paymentId}",
+    "paymentError": "Pago rechazado", 
+    "signup.confirmation.success": "¡Confirmamos tu pago! Una vez que validemos tus datos del registro, tu suscripción va a estar ya activa y vas a poder disfrutar de todos los beneficios de la plataforma",
+    "signup.confirmation.error": "¡No pudimos confirmar tu pago! Si tenés dudas contactanos enviándonos el número de pago {paymentId}",
+    "signup.confirmation.unknownError": "Tuvimos un error inesperado. No te preocupes, tu cuenta ya fue creada. Podés ver cómo reintentar el pago más tarde <a href={helpPayLink} target='_blank'>acá</a>, para que tu suscripción esté activa."
+}

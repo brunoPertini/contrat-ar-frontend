@@ -70,8 +70,8 @@ const LocationMap = memo(function LocationMap({
       translateAddress(location);
     }
   }, [shouldTranslateAddress,
-    location.coords.latitude,
-    location.coords.longitude,
+    location?.coords?.latitude,
+    location?.coords?.longitude,
     previousLocation]);
 
   const LocationMarker = useCallback(() => {
@@ -103,7 +103,7 @@ const LocationMap = memo(function LocationMap({
 
       </Marker>
     );
-  }, [location.coords.latitude, location.coords.longitude, readableAddress, enableDragEvents]);
+  }, [location?.coords?.latitude, location?.coords?.longitude, readableAddress, enableDragEvents]);
 
   const CircleMarker = useCallback(() => (!circleRadius ? null : (
     <Circle

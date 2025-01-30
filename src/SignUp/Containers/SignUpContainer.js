@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useState,
+} from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -16,6 +18,8 @@ import { routes, systemConstants } from '../../Shared/Constants';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
+import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
+import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 
 const localStorageService = new LocalStorageService();
 
@@ -38,22 +42,36 @@ const cardStyles = {
 function SignUpContainer({ router }) {
   const [signupType, setSignupType] = useState();
   const [planesInfo, setPlanesInfo] = useState([]);
+  const [activeStep, setActiveStep] = useState();
+
+  const [temporalToken, setTemporalToken] = useState();
+
+  const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
+
+  const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
+
+  const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.crearUsuario(signupType, {}, {
       ...body,
       proveedorType: signupType,
-    }).then(() => {
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
-      localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, true);
+    }).then((response) => {
+      setTemporalToken(response.creationToken);
+      return response;
     })
       .catch(() => {
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
         localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.SUCCESS, false);
-      })
-      .finally(() => router.navigate(routes.index));
+        window.location.href = routes.index;
+      });
   };
+
+  const handleSetSignupType = useCallback((type) => {
+    setSignupType(type);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE, type);
+  }, [setSignupType]);
 
   const getAllPlanes = () => {
     const client = HttpClientFactory.createProveedorHttpClient();
@@ -71,13 +89,47 @@ function SignUpContainer({ router }) {
     return client.uploadTemporalProfilePhoto(dni, file);
   };
 
+  const sendAccountConfirmEmail = (email) => {
+    const client = HttpClientFactory.createUserHttpClient();
+
+    return client.sendRegistrationConfirmEmail(email);
+  };
+
+  const handleCreateSubscription = (proveedorId, planId) => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
+
+    return client.createSubscription(proveedorId, planId);
+  };
+
+  const handlePaySubscription = (id) => {
+    const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
+
+    return client.paySubscription(id)
+      .then((checkoutUrl) => {
+        setPaySubscriptionServiceResult(true);
+        return checkoutUrl;
+      })
+      .catch((error) => {
+        setPaySubscriptionServiceResult(false);
+        return Promise.reject(error);
+      });
+  };
+
+  const getPaymentInfo = (id, restoredToken) => {
+    const client = HttpClientFactory.createPaymentHttpClient({
+      token: temporalToken || restoredToken,
+    });
+
+    return client.getPaymentInfo(id);
+  };
+
   const signupTypeColumns = (
     <>
       <Card
         sx={{
           ...cardStyles,
         }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_CLIENTE)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.client']}
@@ -92,7 +144,7 @@ function SignUpContainer({ router }) {
       </Card>
       <Card
         sx={{ ...cardStyles }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.offer.services']}
@@ -107,7 +159,7 @@ function SignUpContainer({ router }) {
       </Card>
       <Card
         sx={{ ...cardStyles }}
-        onClick={() => setSignupType(systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS)}
+        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_PRODUCTS)}
       >
         <CardHeader
           title={signUpLabels['signup.want.to.offer.products']}
@@ -145,14 +197,75 @@ function SignUpContainer({ router }) {
         signupType={signupType}
         dispatchSignUp={dispatchSignUp}
         router={router}
+        localStorageService={localStorageService}
         handleUploadProfilePhoto={handleUploadProfilePhoto}
+        sendAccountConfirmEmail={sendAccountConfirmEmail}
+        createSubscription={handleCreateSubscription}
+        handlePaySubscription={handlePaySubscription}
+        externalStep={activeStep}
       />
     );
+
+  const closePaymentDialogModal = useCallback(
+    () => {
+      setOpenPaymentDialogModal(false);
+      setPaySubscriptionServiceResult(null);
+    },
+    [setOpenPaymentDialogModal],
+  );
+
+  const openPaymentDialog = () => {
+    const storedSignupType = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.SIGNUP_TYPE,
+    )?.replaceAll('"', '');
+
+    if (storedSignupType) {
+      setSignupType(storedSignupType);
+    }
+    setActiveStep(4);
+    setOpenPaymentDialogModal(true);
+  };
+
+  const restoreTokenInMemory = () => {
+    const restoredToken = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+    )?.replaceAll('"', '');
+
+    if (restoredToken) {
+      setTemporalToken(restoredToken);
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN);
+    }
+  };
+
+  const checkPaymentExistence = () => {
+    setTemporalToken((restoredToken) => {
+      getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
+        if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
+          openPaymentDialog();
+        }
+      }).catch(() => setOpenPaymentDialogModal(false));
+      return restoredToken;
+    });
+  };
+
   useEffect(() => {
     if (signupType !== USER_TYPE_CLIENTE) {
       fetchPlanesInfo();
     }
+
+    restoreTokenInMemory();
   }, []);
+
+  // Coming back from payment page or pay subscription service
+  useEffect(() => {
+    if (paymentParams.paymentId && paymentParams.status) {
+      checkPaymentExistence();
+    } else if (paySubscriptionServiceResult === false) {
+      openPaymentDialog();
+    }
+  }, [paymentParams, paySubscriptionServiceResult]);
+
+  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal);
 
   return (
     <>
@@ -162,6 +275,7 @@ function SignUpContainer({ router }) {
         flexDirection="column"
         alignItems="center"
       >
+        { paymentDialogModal }
         {innerComponent}
       </Box>
 

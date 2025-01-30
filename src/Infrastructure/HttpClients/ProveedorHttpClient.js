@@ -117,4 +117,18 @@ export class ProveedorHttpClient extends HttpClient {
   getAllPlanes() {
     return this.get(proveedoresRoutes.planBaseUrl, {});
   }
+
+  /**
+   *
+   * @param {String | Number} proveedorId
+   * @param {Number} planId new planId
+   * * @returns {Promise<void> | Promise<Error>}
+   */
+  createSubscription(proveedorId, planId) {
+    const url = proveedoresRoutes.proveedorSubscription
+      .replace('{proveedorId}', proveedorId)
+      .replace('{planId}', planId);
+
+    return this.post(url);
+  }
 }

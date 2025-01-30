@@ -6,5 +6,8 @@
     "productoBaseUrl": "/product",
     "vendibleOperations" : "/usuarios/proveedor/{proveedorId}/vendible/{vendibleId}",
     "changePlan": "/change-requests/usuarios/proveedor/{proveedorId}/plan/{planId}",
-    "planBaseUrl": "/plan"
+    "planBaseUrl": "/plan",
+    "proveedorSubscription": "/proveedor/{proveedorId}/suscripcion/{planId}",
+    "paySubscription": "/pay/signup/{subscriptionId}",
+    "paymentById": "/pay/{paymentId}"
 }

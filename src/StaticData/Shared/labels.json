@@ -31,6 +31,7 @@
     "minimalPrice": "Presupuesto mínimo",
     "priceToBeAgreed": "Precio a  acordar",
     "sendMessage": "Enviar mensaje",
+    "sendEmail": "Enviar email",
     "seeDetail": "Ver detalle",
     "filters": "Filtros"    ,
     "priceType": "Tipo de precio",
@@ -116,6 +117,14 @@
     "products": "Productos",
     "services": "Servicios",
     "changeRequests": "Pedidos de cambio",
+    "sendingEmail": "Enviando email",
+    "youCanLeavePage": "¡No queda nada más para hacer! Podés abandonar esta página",
+    "here": "acá",
+    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo",
     "mandatoryField": "* Campo obligatorio",
-    "message": "Mensaje"
+    "message": "Mensaje",
+    "termsAndConditions": "Términos y Condiciones",
+    "dataUsage": "Política de Privacidad",
+    "acceptTermsAndConditions": "<span>Confirmo que acepto los {termsAndConditionsLink} y doy mi consentimiento para el uso de mis datos conforme a la {dataUsageLink}</span>",
+    "unknownError": "Error desconocido"
 }

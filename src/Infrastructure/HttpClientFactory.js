@@ -3,6 +3,7 @@ import ClienteHttpClient from './HttpClients/ClienteHttpClient';
 import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 // eslint-disable-next-line import/named
 import { HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
+import { PaymentHttpClient } from './HttpClients/PaymentHttpClient';
 import { ProveedorHttpClient } from './HttpClients/ProveedorHttpClient';
 import { UserHttpClient } from './HttpClients/UserHttpClient';
 import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
@@ -29,6 +30,8 @@ export class HttpClientFactory {
   static clienteHttpClientInstance;
 
   static adminHttpClientInstance;
+
+  static paymentHttpClientInstance;
 
   static cleanInstances() {
     HttpClientFactory.httpClientInstance = null;
@@ -95,7 +98,9 @@ export class HttpClientFactory {
    * @returns {ProveedorHttpClient}
    */
   static createProveedorHttpClient(config = {}) {
-    if (!HttpClientFactory.proveedorHttpClientInstance) {
+    if (!HttpClientFactory.proveedorHttpClientInstance
+      || !HttpClientFactory.proveedorHttpClientInstance?.requestConfig?.headers.Authorization
+    ) {
       HttpClientFactory.proveedorHttpClientInstance = new ProveedorHttpClient({
         headersValues: { Authorization: config.token },
         handleLogout: config.handleLogout,
@@ -134,5 +139,20 @@ export class HttpClientFactory {
       });
     }
     return HttpClientFactory.adminHttpClientInstance;
+  }
+
+  /**
+   *
+   * @param {HttpClientInstanceFactoryConfiguration} config
+   * @returns {PaymentHttpClient}
+   */
+  static createPaymentHttpClient(config) {
+    if (!HttpClientFactory.paymentHttpClientInstance) {
+      HttpClientFactory.paymentHttpClientInstance = new PaymentHttpClient({
+        headersValues: { Authorization: config.token },
+        handleLogout: config.handleLogout,
+      });
+    }
+    return HttpClientFactory.paymentHttpClientInstance;
   }
 }

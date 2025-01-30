@@ -8,42 +8,54 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import isEmpty from 'lodash/isEmpty';
 import { signUpLabels } from '../StaticData/SignUp';
 import { labels as locationMapLabels } from '../StaticData/LocationMap';
 
-import {
-  DialogModal,
-  Form, LocationMap, PlanSelection, Stepper,
-} from '../Shared/Components';
+import DialogModal from '../Shared/Components/DialogModal';
+import Form from '../Shared/Components/Form';
+import LocationMap from '../Shared/Components/LocationMap';
+import PlanSelection from '../Shared/Components/PlanSelection';
+import Stepper from '../Shared/Components/Stepper';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
-import { getPlanId } from '../Shared/Helpers/PlanesHelper';
+import { getPlanId, getPlanType } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
+import AccountMailConfirmation from './AccountMailConfirmation';
+import { sharedLabels } from '../StaticData/Shared';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { PLAN_TYPE_PAID } from '../Shared/Constants/System';
+import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
+import { useOnLeavingTabHandler } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 const geoSettings = {
   enableHighAccuracy: true,
-  maximumAge: 30000,
+  maximumAge: 0,
   timeout: 20000,
 };
+
+const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
+  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
+  sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
 }) {
   const { title } = signUpLabels;
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
-    personalDataFormBuilder.fields,
-  );
+  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState({
+    ...personalDataFormBuilder.fields,
+    termsAndConditions: false,
+  });
 
   const [errorFields, setErrorFields] = useState({
     email: false,
@@ -68,6 +80,11 @@ export default function UserSignUp({
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [createdUserInfo, setCreatedUserInfo] = useState({});
+
+  const [subscriptionInfo, setSubscriptionInfo] = useState();
+
   const handleGranted = (position) => {
     setLocation({
       coords: {
@@ -78,7 +95,11 @@ export default function UserSignUp({
     setOpenPermissionDialog(false);
   };
 
-  const handleDialogDenied = () => {
+  // eslint-disable-next-line consistent-return
+  const handleDialogDenied = (error) => {
+    if (error && error.code !== error.PERMISSION_DENIED) {
+      return handleGranted({ coords: fallbackCoords });
+    }
     window.location.href = routes.index;
   };
 
@@ -88,6 +109,31 @@ export default function UserSignUp({
       handleDialogDenied,
       geoSettings,
     );
+  };
+
+  const storeTokenInLocalStorage = () => {
+    setCreatedUserInfo((currentCreatedUserInfo) => {
+      if (currentCreatedUserInfo.creationToken) {
+        localStorageService.setItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+          currentCreatedUserInfo.creationToken.replaceAll('"', ''),
+        );
+      }
+
+      return currentCreatedUserInfo;
+    });
+  };
+
+  const saveSignupDataInLocalStorage = () => {
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+      personalDataFieldsValues,
+    );
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
+
+    storeTokenInLocalStorage();
   };
 
   const handlePermission = useCallback(() => {
@@ -118,6 +164,31 @@ export default function UserSignUp({
     });
   }, [handleGranted]);
 
+  const handlePostPlanChosen = () => {
+    setIsLoading(true);
+    if (isEmpty(subscriptionInfo)) {
+      createSubscription(
+        createdUserInfo.id,
+        selectedPlan,
+        createdUserInfo.creationToken,
+      ).then((response) => {
+        const planLabel = getPlanType(planesInfo, response.planId);
+        if (planLabel === PLAN_TYPE_PAID) {
+          setIsLoading(true);
+          saveSignupDataInLocalStorage();
+          handlePaySubscription(
+            response.id,
+          ).then((checkoutUrl) => {
+            window.location.href = checkoutUrl;
+          }).catch(() => setIsLoading(false));
+        } else {
+          setIsLoading(false);
+        }
+        setSubscriptionInfo(response);
+      }).catch(() => setIsLoading(false));
+    }
+  };
+
   const personalDataFields = personalDataFormBuilder.build({
     showConfirmPasswordInput: true,
     showInlineLabels: true,
@@ -143,6 +214,18 @@ export default function UserSignUp({
   const callUploadProfilePhoto = (
     file,
   ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
+
+  const restoreSignupDataAfterPayment = () => {
+    setActiveStep(externalStep);
+
+    const storedData = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+    );
+
+    if (storedData) {
+      setPersonalDataFieldsValues(JSON.parse(storedData));
+    }
+  };
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
@@ -204,6 +287,16 @@ export default function UserSignUp({
   </Box>,
     nextButtonEnabled: useMemo(() => !!location && Object.values(location)
       .every((value) => value), [[location]]),
+  },
+  {
+    label: signUpLabels['account.confirmation.email'],
+    isOptional: false,
+    component: <AccountMailConfirmation
+      email={personalDataFieldsValues.email}
+      sendAccountConfirmEmail={sendAccountConfirmEmail}
+    />,
+    backButtonEnabled: false,
+    nextButtonEnabled: false,
   }];
 
   if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
@@ -224,9 +317,9 @@ export default function UserSignUp({
       nextButtonEnabled: !!(profilePhoto),
     };
 
-    steps.splice(1, 0, profilePhotoStep);
+    steps.splice(2, 0, profilePhotoStep);
 
-    steps.push({
+    const planTypeStep = {
       label: signUpLabels['steps.planType'],
       isOptional: false,
       component: <PlanSelection
@@ -237,8 +330,22 @@ export default function UserSignUp({
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,
-    });
+    };
+
+    steps.splice(3, 0, planTypeStep);
   }
+
+  const manageSignUp = () => {
+    setIsLoading(true);
+    dispatchSignUp({
+      ...personalDataFieldsValues,
+      fotoPerfilUrl: profilePhoto,
+      location,
+    }).then((response) => setCreatedUserInfo(response))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const prepareFormRendering = async (stepIndex) => {
     const commonSteps = {
@@ -246,16 +353,25 @@ export default function UserSignUp({
 
     };
 
+    const handleOpenConfirmationModal = () => {
+      if (isEmpty(createdUserInfo)) {
+        setOpenConfirmationModal(true);
+      }
+    };
+
     const nonClientFunctions = {
       ...commonSteps,
 
-      4: () => setOpenConfirmationModal(true),
+      3: handleOpenConfirmationModal,
+
+      4: handlePostPlanChosen,
+
     };
 
     const clientFunctions = {
       ...commonSteps,
 
-      2: () => setOpenConfirmationModal(true),
+      2: handleOpenConfirmationModal,
 
     };
 
@@ -278,28 +394,58 @@ export default function UserSignUp({
     setActiveStep(newStepIndex);
   };
 
-  const isStepValid = activeStep < steps.length;
+  const isStepValid = useMemo(
+    () => activeStep < steps.length && !!steps[activeStep],
+    [activeStep, steps],
+  );
 
   useEffect(() => {
     handlePermission();
   }, []);
 
+  useEffect(() => {
+    if (externalStep) {
+      restoreSignupDataAfterPayment();
+    }
+  }, [externalStep]);
+
+  const newPlanType = useMemo(() => getPlanType(planesInfo, selectedPlan), [selectedPlan]);
+
+  useEffect(() => {
+    if (newPlanType === PLAN_TYPE_PAID) {
+      storeTokenInLocalStorage();
+    }
+  }, [selectedPlan]);
+
+  useOnLeavingTabHandler(storeTokenInLocalStorage, newPlanType === PLAN_TYPE_PAID);
+
   return (
-    <Box {...flexColumn}>
-      { isStepValid ? steps[activeStep].component : null}
+    <Box {...flexColumn} sx={{ alignItems: 'center' }}>
+      { isLoading && (
+      <>
+        <CircularProgress />
+        <Typography variant="h6">
+          { sharedLabels.loading }
+        </Typography>
+      </>
+      ) }
+      { !isLoading && isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
         contextText={signUpLabels['confirmation.context']}
         cancelText={signUpLabels['confirmation.cancel']}
         acceptText={signUpLabels['confirmation.ok']}
         open={openConfirmationModal && !hasError}
-        handleAccept={() => dispatchSignUp({
-          ...personalDataFieldsValues,
-          plan: selectedPlan,
-          fotoPerfilUrl: profilePhoto,
-          location,
-        })}
-        handleDeny={() => handleOnStepChange(steps.length - 1)}
+        handleAccept={() => {
+          if (isEmpty(createdUserInfo)) {
+            manageSignUp();
+          }
+          setOpenConfirmationModal(false);
+        }}
+        handleDeny={() => {
+          setOpenConfirmationModal(false);
+          handleOnStepChange(0);
+        }}
       />
       <DialogModal
         title={dialogLabels.title}
@@ -310,7 +456,7 @@ export default function UserSignUp({
         handleAccept={getCurentLocation}
         handleDeny={() => handleDialogDenied()}
       />
-      {isStepValid && (
+      {!isLoading && isStepValid && (
       <Stepper
         steps={steps}
         activeStep={activeStep}
@@ -326,12 +472,18 @@ export default function UserSignUp({
 UserSignUp.defaultProps = {
   hasError: false,
   handleUploadProfilePhoto: undefined,
+  externalStep: undefined,
 };
 
 UserSignUp.propTypes = {
   signupType: PropTypes.string.isRequired,
   dispatchSignUp: PropTypes.func.isRequired,
+  createSubscription: PropTypes.func.isRequired,
+  sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
+  handlePaySubscription: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
+  externalStep: PropTypes.number,
+  localStorageService: PropTypes.instanceOf(LocalStorageService).isRequired,
 };
