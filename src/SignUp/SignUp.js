@@ -38,6 +38,8 @@ const geoSettings = {
   timeout: 20000,
 };
 
+const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
+
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
@@ -96,7 +98,7 @@ export default function UserSignUp({
   // eslint-disable-next-line consistent-return
   const handleDialogDenied = (error) => {
     if (error && error.code !== error.PERMISSION_DENIED) {
-      return handleGranted({ coords: { latitude: 34.9208082, longitude: -57.9556221 } });
+      return handleGranted({ coords: fallbackCoords });
     }
     window.location.href = routes.index;
   };
@@ -109,13 +111,17 @@ export default function UserSignUp({
     );
   };
 
-  const saveCreationTokenInLocalStorage = () => {
-    if (createdUserInfo.creationToken) {
-      localStorageService.setItem(
-        LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-        createdUserInfo.creationToken.replaceAll('"', ''),
-      );
-    }
+  const storeTokenInLocalStorage = () => {
+    setCreatedUserInfo((currentCreatedUserInfo) => {
+      if (currentCreatedUserInfo.creationToken) {
+        localStorageService.setItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+          currentCreatedUserInfo.creationToken.replaceAll('"', ''),
+        );
+      }
+
+      return currentCreatedUserInfo;
+    });
   };
 
   const saveSignupDataInLocalStorage = () => {
@@ -127,7 +133,7 @@ export default function UserSignUp({
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
 
-    saveCreationTokenInLocalStorage();
+    storeTokenInLocalStorage();
   };
 
   const handlePermission = useCallback(() => {
@@ -157,19 +163,6 @@ export default function UserSignUp({
       }
     });
   }, [handleGranted]);
-
-  const storeTokenInLocalStorage = () => {
-    setCreatedUserInfo((currentCreatedUserInfo) => {
-      if (currentCreatedUserInfo.creationToken) {
-        localStorageService.setItem(
-          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-          currentCreatedUserInfo.creationToken.replaceAll('"', ''),
-        );
-      }
-
-      return currentCreatedUserInfo;
-    });
-  };
 
   const handlePostPlanChosen = () => {
     setIsLoading(true);
@@ -420,7 +413,7 @@ export default function UserSignUp({
 
   useEffect(() => {
     if (newPlanType === PLAN_TYPE_PAID) {
-      saveCreationTokenInLocalStorage();
+      storeTokenInLocalStorage();
     }
   }, [selectedPlan]);
 

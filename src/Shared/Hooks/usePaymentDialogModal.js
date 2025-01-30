@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DialogModal, StaticAlert } from '../Components';
+import DialogModal from '../Components/DialogModal';
+import StaticAlert from '../Components/StaticAlert';
 import usePaymentQueryParams from './usePaymentQueryParams';
 import { PAYMENT_STATE } from '../Constants/System';
 import { paymentLabels } from '../../StaticData/Payment';

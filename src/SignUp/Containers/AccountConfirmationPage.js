@@ -10,8 +10,19 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import { routes } from '../../Shared/Constants';
 import AccountMailConfirmation from '../AccountMailConfirmation';
 import { stringIsEmail } from '../../Shared/Utils/InputUtils';
+import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const userHttpClient = HttpClientFactory.createUserHttpClient();
+const localStorageService = new LocalStorageService();
+
+function removeSignupLocalStorageData() {
+  localStorageService.removeItem(
+    LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+  );
+  localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION);
+  localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO);
+  localStorageService.removeItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID);
+}
 
 function AccountConfirmationPage() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -53,6 +64,7 @@ function AccountConfirmationPage() {
   }, [setOperationResult, setErrorMessage]);
 
   useEffect(() => {
+    removeSignupLocalStorageData();
     handleAccountConfirmation();
   }, []);
 

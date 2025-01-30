@@ -243,10 +243,7 @@ function SignUpContainer({ router }) {
         if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
           openPaymentDialog();
         }
-      }).catch(() => setOpenPaymentDialogModal(false))
-        .finally(() => localStorageService.removeItem(
-          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
-        ));
+      }).catch(() => setOpenPaymentDialogModal(false));
       return restoredToken;
     });
   };
