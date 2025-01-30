@@ -23,6 +23,14 @@ export class LocalStorageService {
     ADMIN: {
       USER_INFO: 'userInfo',
     },
+    SIGNUP: {
+      SIGNUP_TYPE: 'signupType',
+      PERSONAL_DATA: 'personalDataFieldsValues',
+      LOCATION: 'location',
+      PROFILE_PHOTO: 'profilePhoto',
+      PLAN_ID: 'selectedPlan',
+      CREATION_TOKEN: 'creationToken',
+    },
   };
 
   setItem(key, value) {

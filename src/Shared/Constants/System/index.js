@@ -95,3 +95,9 @@ export const POST_STATES = {
   PAUSED: 'PAUSED',
   REJECTED: 'REJECTED',
 };
+
+export const PAYMENT_STATE = {
+  SUCCESS: 'APPROVED',
+  ERROR: 'REJECTED',
+  UNKNOWN: 'UNKNOWN_ERROR',
+};

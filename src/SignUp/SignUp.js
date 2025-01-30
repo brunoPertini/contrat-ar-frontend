@@ -20,37 +20,42 @@ import PlanSelection from '../Shared/Components/PlanSelection';
 import Stepper from '../Shared/Components/Stepper';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { routes, systemConstants } from '../Shared/Constants';
-import { getPlanId } from '../Shared/Helpers/PlanesHelper';
+import { getPlanId, getPlanType } from '../Shared/Helpers/PlanesHelper';
 import { planShape } from '../Shared/PropTypes/Proveedor';
 import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import AccountMailConfirmation from './AccountMailConfirmation';
 import { sharedLabels } from '../StaticData/Shared';
-import { EMPTY_FUNCTION } from '../Shared/Constants/System';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { PLAN_TYPE_PAID } from '../Shared/Constants/System';
+import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
+import { useOnLeavingTabHandler } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 const geoSettings = {
   enableHighAccuracy: true,
-  maximumAge: 30000,
+  maximumAge: 0,
   timeout: 20000,
 };
+
+const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
  */
 export default function UserSignUp({
-  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto,
-  sendAccountConfirmEmail, createSubscription,
+  signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
+  sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
 }) {
   const { title } = signUpLabels;
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState(
-    personalDataFormBuilder.fields,
-  );
+  const [personalDataFieldsValues, setPersonalDataFieldsValues] = useState({
+    ...personalDataFormBuilder.fields,
+    termsAndConditions: false,
+  });
 
   const [errorFields, setErrorFields] = useState({
     email: false,
@@ -90,7 +95,11 @@ export default function UserSignUp({
     setOpenPermissionDialog(false);
   };
 
-  const handleDialogDenied = () => {
+  // eslint-disable-next-line consistent-return
+  const handleDialogDenied = (error) => {
+    if (error && error.code !== error.PERMISSION_DENIED) {
+      return handleGranted({ coords: fallbackCoords });
+    }
     window.location.href = routes.index;
   };
 
@@ -100,6 +109,31 @@ export default function UserSignUp({
       handleDialogDenied,
       geoSettings,
     );
+  };
+
+  const storeTokenInLocalStorage = () => {
+    setCreatedUserInfo((currentCreatedUserInfo) => {
+      if (currentCreatedUserInfo.creationToken) {
+        localStorageService.setItem(
+          LocalStorageService.PAGES_KEYS.SIGNUP.CREATION_TOKEN,
+          currentCreatedUserInfo.creationToken.replaceAll('"', ''),
+        );
+      }
+
+      return currentCreatedUserInfo;
+    });
+  };
+
+  const saveSignupDataInLocalStorage = () => {
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+      personalDataFieldsValues,
+    );
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
+
+    storeTokenInLocalStorage();
   };
 
   const handlePermission = useCallback(() => {
@@ -130,6 +164,31 @@ export default function UserSignUp({
     });
   }, [handleGranted]);
 
+  const handlePostPlanChosen = () => {
+    setIsLoading(true);
+    if (isEmpty(subscriptionInfo)) {
+      createSubscription(
+        createdUserInfo.id,
+        selectedPlan,
+        createdUserInfo.creationToken,
+      ).then((response) => {
+        const planLabel = getPlanType(planesInfo, response.planId);
+        if (planLabel === PLAN_TYPE_PAID) {
+          setIsLoading(true);
+          saveSignupDataInLocalStorage();
+          handlePaySubscription(
+            response.id,
+          ).then((checkoutUrl) => {
+            window.location.href = checkoutUrl;
+          }).catch(() => setIsLoading(false));
+        } else {
+          setIsLoading(false);
+        }
+        setSubscriptionInfo(response);
+      }).catch(() => setIsLoading(false));
+    }
+  };
+
   const personalDataFields = personalDataFormBuilder.build({
     showConfirmPasswordInput: true,
     showInlineLabels: true,
@@ -155,6 +214,18 @@ export default function UserSignUp({
   const callUploadProfilePhoto = (
     file,
   ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
+
+  const restoreSignupDataAfterPayment = () => {
+    setActiveStep(externalStep);
+
+    const storedData = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
+    );
+
+    if (storedData) {
+      setPersonalDataFieldsValues(JSON.parse(storedData));
+    }
+  };
 
   const steps = [{
     label: signUpLabels['steps.your.data'],
@@ -293,13 +364,7 @@ export default function UserSignUp({
 
       3: handleOpenConfirmationModal,
 
-      4: () => (isEmpty(subscriptionInfo) ? createSubscription(
-        createdUserInfo.id,
-        selectedPlan,
-        createdUserInfo.creationToken,
-      )
-        .then((response) => setSubscriptionInfo(response))
-        : EMPTY_FUNCTION),
+      4: handlePostPlanChosen,
 
     };
 
@@ -338,8 +403,24 @@ export default function UserSignUp({
     handlePermission();
   }, []);
 
+  useEffect(() => {
+    if (externalStep) {
+      restoreSignupDataAfterPayment();
+    }
+  }, [externalStep]);
+
+  const newPlanType = useMemo(() => getPlanType(planesInfo, selectedPlan), [selectedPlan]);
+
+  useEffect(() => {
+    if (newPlanType === PLAN_TYPE_PAID) {
+      storeTokenInLocalStorage();
+    }
+  }, [selectedPlan]);
+
+  useOnLeavingTabHandler(storeTokenInLocalStorage, newPlanType === PLAN_TYPE_PAID);
+
   return (
-    <Box {...flexColumn}>
+    <Box {...flexColumn} sx={{ alignItems: 'center' }}>
       { isLoading && (
       <>
         <CircularProgress />
@@ -348,7 +429,7 @@ export default function UserSignUp({
         </Typography>
       </>
       ) }
-      { isStepValid ? steps[activeStep].component : null}
+      { !isLoading && isStepValid ? steps[activeStep].component : null}
       <DialogModal
         title={signUpLabels['confirmation.title']}
         contextText={signUpLabels['confirmation.context']}
@@ -375,7 +456,7 @@ export default function UserSignUp({
         handleAccept={getCurentLocation}
         handleDeny={() => handleDialogDenied()}
       />
-      {isStepValid && (
+      {!isLoading && isStepValid && (
       <Stepper
         steps={steps}
         activeStep={activeStep}
@@ -391,6 +472,7 @@ export default function UserSignUp({
 UserSignUp.defaultProps = {
   hasError: false,
   handleUploadProfilePhoto: undefined,
+  externalStep: undefined,
 };
 
 UserSignUp.propTypes = {
@@ -399,6 +481,9 @@ UserSignUp.propTypes = {
   createSubscription: PropTypes.func.isRequired,
   sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
+  handlePaySubscription: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
+  externalStep: PropTypes.number,
+  localStorageService: PropTypes.instanceOf(LocalStorageService).isRequired,
 };

@@ -33,7 +33,11 @@ function AccountMailConfirmation({ email, sendAccountConfirmEmail, containerProp
     })
       .catch((error) => {
         setWasEmailSend(false);
-        setAlertData({ label: error.error, severity: 'error' });
+        setAlertData({
+          label: error.status !== 500
+            ? error.error : sharedLabels.unknownError,
+          severity: 'error',
+        });
       })
       .finally(() => setIsLoading(false));
   }, [email, sendAccountConfirmEmail]);

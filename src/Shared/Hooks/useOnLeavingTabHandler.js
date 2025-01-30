@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { EMPTY_FUNCTION } from '../Constants/System';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
@@ -17,15 +17,41 @@ const handleOnBackButtonPressed = (event, runBeforeLeavingFunction = EMPTY_FUNCT
   localStorageService.setItem(PAGES_KEYS.SHARED.BACKPRESSED, 'true');
 };
 
-export const removeOnLeavingTabHandlers = () => {
-  window.removeEventListener('beforeunload', handleOnLeavingTab);
-  window.removeEventListener('popstate', handleOnBackButtonPressed);
+export const removeOnLeavingTabHandlers = (onLeavingTab, onBackButtonPressed) => {
+  window.removeEventListener('beforeunload', onLeavingTab);
+  window.removeEventListener('popstate', onBackButtonPressed);
   localStorageService.removeItem(PAGES_KEYS.SHARED.BACKPRESSED);
 };
 
-export function useOnLeavingTabHandler(runBeforeLeavingFunction = EMPTY_FUNCTION) {
+export function useOnLeavingTabHandler(
+  runBeforeLeavingFunction = EMPTY_FUNCTION,
+  removeListeners = false,
+) {
+  const [listenersAdded, setListenersAdded] = useState(false);
+
+  const onLeavingTab = useCallback(
+    (e) => handleOnLeavingTab(e, runBeforeLeavingFunction),
+    [runBeforeLeavingFunction],
+  );
+
+  const onBackButtonPressed = useCallback(
+    (e) => handleOnBackButtonPressed(e, runBeforeLeavingFunction),
+    [runBeforeLeavingFunction],
+  );
+
   useEffect(() => {
-    window.addEventListener('beforeunload', (e) => handleOnLeavingTab(e, runBeforeLeavingFunction));
-    window.addEventListener('popstate', (e) => handleOnBackButtonPressed(e, runBeforeLeavingFunction));
-  }, []);
+    if (removeListeners) {
+      return removeOnLeavingTabHandlers(onLeavingTab, onBackButtonPressed);
+    }
+
+    if (!listenersAdded) {
+      setListenersAdded(true);
+      window.addEventListener('beforeunload', onLeavingTab);
+      window.addEventListener('popstate', onBackButtonPressed);
+    }
+
+    return () => {
+      removeOnLeavingTabHandlers(onLeavingTab, onBackButtonPressed);
+    };
+  }, [removeListeners]);
 }
