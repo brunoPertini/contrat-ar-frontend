@@ -86,6 +86,7 @@ function ProveedorContainer({ router, handleLogout }) {
   const handleUploadImage = (file) => {
     const client = HttpClientFactory.createVendibleHttpClient(vendibleType, {
       token,
+      handleLogout,
     });
 
     return client.uploadImage(file, id);

@@ -17,7 +17,6 @@ import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
-import { errorMessages } from '../../../StaticData/Shared';
 
 const store = createStore();
 const cookiesService = new CookiesService();
@@ -72,24 +71,20 @@ export default function withRouter(Component) {
           setIsAdmin(true);
         }
 
-        const userInfo = await securityService.validateJwt(userToken, savedUserInfo?.id);
+        securityService.validateJwt(userToken, savedUserInfo?.id).then(async (userInfo) => {
+          userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
 
-        if (userInfo.status === 401) {
-          return handleLogout({ errorMessage: errorMessages.sessionExpired });
-        }
-
-        userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
-
-        if (isEmpty(userInfo)) {
-          setTokenVerified(false);
-          await store.dispatch(resetUserInfo());
-          navigate(routes.signin);
-        } else {
-          cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
-          setTokenVerified(true);
-          await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
-          cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
-        }
+          if (isEmpty(userInfo)) {
+            setTokenVerified(false);
+            await store.dispatch(resetUserInfo());
+            navigate(routes.signin);
+          } else {
+            cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
+            setTokenVerified(true);
+            await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));
+            cookiesService.remove(CookiesService.COOKIES_NAMES.USER_TOKEN);
+          }
+        }).catch((error) => handleLogout({ errorMessage: error }));
       } catch (error) {
         setTokenVerified(false);
         await store.dispatch(resetUserInfo());

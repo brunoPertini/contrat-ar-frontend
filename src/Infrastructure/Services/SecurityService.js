@@ -5,6 +5,7 @@ import { UserHttpClient } from '../HttpClients/UserHttpClient';
 import { HttpClientFactory } from '../HttpClientFactory';
 import Logger from '../Logging/Logger';
 import { signinLabels } from '../../StaticData/SignIn';
+import { errorMessages } from '../../StaticData/Shared';
 
 const jose = require('jose');
 
@@ -31,7 +32,8 @@ class SecurityService {
   }
 
   #handleError(error) {
-    const errorMessages = {
+    const knownErrors = {
+      JWTExpired: errorMessages.sessionExpired,
       JWSSignatureVerificationFailed: signinLabels['error.jwt.verificationFailed'],
       JOSENotSupported: signinLabels['error.unknown'],
       TypeError: signinLabels['error.unknown'],
@@ -39,8 +41,10 @@ class SecurityService {
 
     Logger.log(error);
     if (error?.constructor?.name) {
-      throw new Error(errorMessages[error.constructor.name]);
+      throw new Error(knownErrors[error.constructor.name]);
     }
+
+    throw new Error(signinLabels['error.unknown']);
   }
 
   async readJwtPayload(jwt) {
@@ -93,16 +97,11 @@ class SecurityService {
           ...payload,
           ...response,
           password: '$%$$%()', // To never expose user's password, I harcode this fake value to be shown in an input
-        })).catch((response) => {
-          if (response.status === 401) {
-            return response;
-          }
-          return payload;
-        });
+        })).catch((response) => Promise.reject(response));
       }
 
       return {};
-    });
+    }).catch((error) => Promise.reject(error.message));
   }
 }
 
