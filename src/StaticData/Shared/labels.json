@@ -126,5 +126,6 @@
     "termsAndConditions": "Términos y Condiciones",
     "dataUsage": "Política de Privacidad",
     "acceptTermsAndConditions": "<span>Confirmo que acepto los {termsAndConditionsLink} y doy mi consentimiento para el uso de mis datos conforme a la {dataUsageLink}</span>",
-    "unknownError": "Error desconocido"
+    "unknownError": "Error desconocido",
+    "role": "Rol"
 }

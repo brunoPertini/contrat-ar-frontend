@@ -57,7 +57,6 @@ function UsuariosAdminFilters({
           inputValue: filters.name,
           searchLabel: sharedLabels.name,
           onSearchClick: applyFilters,
-          isSearchDisabled: !(filters.name),
           keyEvents: {
             onKeyUp: onChangeName,
           },
@@ -70,7 +69,6 @@ function UsuariosAdminFilters({
           inputValue: filters.surname,
           searchLabel: sharedLabels.surname,
           onSearchClick: applyFilters,
-          isSearchDisabled: !(filters.surname),
           keyEvents: {
             onKeyUp: onChangeSurname,
           },
@@ -83,7 +81,6 @@ function UsuariosAdminFilters({
           inputValue: filters.email,
           searchLabel: sharedLabels.email,
           onSearchClick: applyFilters,
-          isSearchDisabled: !(filters.email),
           keyEvents: {
             onKeyUp: onChangeEmail,
           },
