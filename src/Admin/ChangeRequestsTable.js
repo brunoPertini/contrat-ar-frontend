@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
 import pick from 'lodash/pick';
 import { sharedLabels } from '../StaticData/Shared';
-import { EMPTY_FUNCTION } from '../Shared/Constants/System';
+import { CLIENTE, EMPTY_FUNCTION } from '../Shared/Constants/System';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
@@ -100,18 +100,20 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
     InnerComponent = SuscriptionData;
     props = {
       suscripcion: requestDetail,
-      styles: { mt: '5% ' },
     };
   }
 
   if (request.sourceTable === ENTITY_NAME.usuario) {
     InnerComponent = UserInfo;
-    const toShowData = pick(requestDetail, ['id', 'name', 'surname', 'email', 'birthDate', 'phone', 'location', 'role']);
-    const translatedAddress = await translateAddress(toShowData.location);
+    const toShowCommonData = pick(requestDetail, ['id', 'name', 'surname', 'email', 'birthDate', 'phone', 'location', 'role']);
+    const toShowRole = toShowCommonData.role.nombre;
+    const toShowProveedorData = toShowRole === CLIENTE ? {} : pick(requestDetail, ['dni', 'fotoPerfilUrl', 'suscripcion']);
+    const translatedAddress = await translateAddress(toShowCommonData.location);
     props = {
       userInfo: {
-        ...toShowData,
-        role: toShowData.role.nombre,
+        ...toShowCommonData,
+        ...toShowProveedorData,
+        role: toShowRole,
         location: translatedAddress,
       },
     };

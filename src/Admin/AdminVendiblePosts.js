@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {
   useMemo, useState, useEffect,
+  forwardRef,
 } from 'react';
 import Pagination from '@mui/material/Pagination';
 import pickBy from 'lodash/pickBy';
@@ -65,10 +66,10 @@ const modalContexts = {
   state: (value) => sharedLabels['state.change.confirmation'].replace('{newState}', postStateLabelResolver[value]),
 };
 
-function AdminVendiblePosts({
+const AdminVendiblePosts = forwardRef(({
   vendibleType, vendibleId, fetchPosts, paginationInfo, setPaginationInfo, posts,
   setPosts, updatePost,
-}) {
+}, tableContainerRef) => {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -223,7 +224,7 @@ function AdminVendiblePosts({
 
   return (
     <>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} ref={tableContainerRef}>
         <MapModal {...mapModalProps} />
         <InformativeAlert
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -318,7 +319,7 @@ function AdminVendiblePosts({
     }
     </>
   );
-}
+});
 
 AdminVendiblePosts.propTypes = {
   vendibleType: PropTypes.oneOf(['productos', 'servicios']).isRequired,
