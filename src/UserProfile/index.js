@@ -1,14 +1,10 @@
-/* eslint-disable no-nested-ternary */
 import PropTypes from 'prop-types';
 import {
-  useCallback,
   useContext, useEffect, useMemo, useState,
 } from 'react';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import isEmpty from 'lodash/isEmpty';
 import Header from '../Header';
 import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
@@ -25,9 +21,6 @@ import PlanData from './PlanData';
 import { NavigationContext } from '../State/Contexts/NavigationContext';
 import GoBackLink from '../Shared/Components/GoBackLink';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
-import { DialogModal, StaticAlert } from '../Shared/Components';
-import { sharedLabels } from '../StaticData/Shared';
-import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
 import Footer from '../Shared/Components/Footer';
 import { flexColumn } from '../Shared/Constants/Styles';
@@ -75,13 +68,6 @@ const rolesTabs = {
 
 const NEED_APPROVAL_ATTRIBUTES = ['email', 'password'];
 
-const accountActiveModalDefaultValues = {
-  title: '',
-  text: '',
-  handleAccept: () => {},
-  checked: undefined,
-};
-
 const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
@@ -101,6 +87,7 @@ function UserProfile({
     location: userInfo.location,
     phone: userInfo.phone,
     fotoPerfilUrl: userInfo.fotoPerfilUrl,
+    active: userInfo.active,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -120,10 +107,6 @@ function UserProfile({
     email: false,
     password: false,
   });
-
-  const [accountActiveModalContent, setAccountActiveModalContent] = useState(
-    accountActiveModalDefaultValues,
-  );
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
 
@@ -175,6 +158,10 @@ function UserProfile({
     setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
   }, [userInfo.fotoPerfilUrl]);
 
+  useEffect(() => {
+    setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
+  }, [userInfo.active]);
+
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
@@ -195,29 +182,6 @@ function UserProfile({
   };
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
-
-  const handleAcceptChangeIsUserActive = (active) => editCommonInfo({
-    active,
-  }).then(() => {
-    setAlertConfig({
-      open: true,
-      label: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
-      severity: 'info',
-    });
-  }).catch(() => setAlertConfig({
-    open: true,
-    label: adminLabels.unexpectedError,
-    severity: 'error',
-  })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues));
-
-  const openUserActiveModal = (event) => {
-    setAccountActiveModalContent({
-      text: event.target.checked
-        ? adminLabels.enableAccountQuestion : adminLabels.disableAccountQuestion,
-      handleAccept: handleAcceptChangeIsUserActive,
-      checked: event.target.checked,
-    });
-  };
 
   const menuOptionsConfig = {
     myProfile: {
@@ -277,36 +241,6 @@ function UserProfile({
       changeRequestsMade.plan, planesInfo]),
   };
 
-  const activeAlert = useMemo(() => (!isAdmin ? null : !userInfo.active ? (
-    <StaticAlert
-      severity="warning"
-      variant="outlined"
-      label={sharedLabels.inactiveAccount}
-      styles={{ mt: '5%' }}
-    />
-  ) : (
-    <StaticAlert
-      severity="info"
-      variant="outlined"
-      label={sharedLabels.activeAccount}
-      styles={{ mt: '5%' }}
-    />
-  )), [isAdmin, userInfo.active]);
-
-  const UserActiveModal = useCallback(() => (
-    <DialogModal
-      title={sharedLabels.pleaseConfirmAction}
-      contextText={accountActiveModalContent.text}
-      cancelText={sharedLabels.cancel}
-      acceptText={sharedLabels.accept}
-      open={!!(accountActiveModalContent.text)}
-      handleAccept={
-          () => accountActiveModalContent.handleAccept(accountActiveModalContent.checked)
-        }
-      handleDeny={() => setAccountActiveModalContent(accountActiveModalDefaultValues)}
-    />
-  ), [accountActiveModalContent.text]);
-
   if (!(userInfo?.role)) {
     return null;
   }
@@ -318,7 +252,6 @@ function UserProfile({
       minHeight="100vh"
     >
 
-      <UserActiveModal />
       <InformativeAlert
         open={alertConfig.open}
         onClose={() => resetAlertData()}
@@ -346,22 +279,6 @@ function UserProfile({
         </Tabs>
         { tabsComponents[tabOption] }
       </Box>
-      {
-        isAdmin && (
-          <Box {...flexColumn} sx={{ mt: '3%', ml: '3%' }}>
-            { activeAlert }
-            <FormControlLabel
-              control={(
-                <Switch
-                  checked={userInfo.active}
-                  onChange={openUserActiveModal}
-                />
-)}
-              label={userInfo.active ? adminLabels.disableAccount : adminLabels.enableAccount}
-            />
-          </Box>
-        )
-      }
       <Footer options={footerOptions} />
     </Box>
 
