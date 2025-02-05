@@ -70,7 +70,7 @@ const optionsMenuHandlers = ({
             display: 'flex',
             flexDirection: 'column',
             width: '85%',
-            overflow: 'scroll',
+            overflow: 'auto',
           }}
           userToken={userToken}
         />

@@ -233,7 +233,7 @@ helper message
         helperText: (errorFields?.confirmPassword) ? errorMessages.passwordsNotMatching : undefined,
       }, sharedLabels.confirmPassword))) : null;
 
-    const dniRow = this.shouldShowDni ? (baseBox(TextFieldWithLabel(showInlineLabels, {
+    const dniRow = this.shouldShowDni && 'dni' in fieldsValues ? (baseBox(TextFieldWithLabel(showInlineLabels, {
       id: 'form-dni',
       type: 'number',
       value: fieldsValues.dni,
