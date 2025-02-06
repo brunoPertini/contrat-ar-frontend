@@ -70,12 +70,12 @@ function AdminPage({
 
   const tableContainerRef = useRef(null);
 
-  const scroll = (direction) => {
+  const scroll = useCallback((direction) => {
     if (tableContainerRef.current) {
       const scrollAmount = 200;
       tableContainerRef.current.scrollLeft += direction === 'left' ? -scrollAmount : scrollAmount;
     }
-  };
+  }, [tableContainerRef]);
 
   const ScrollingArrows = useCallback(() => (
     <Box sx={{
@@ -157,10 +157,10 @@ function AdminPage({
     });
   };
 
-  const handleDeleteVendible = (vendibleId) => deleteVendible(vendibleId).then(() => {
+  const handleDeleteVendible = useCallback((vendibleId) => deleteVendible(vendibleId).then(() => {
     setFilters({ ...filtersDefaultValues });
     handleFetchVendibles();
-  });
+  }), [deleteVendible]);
 
   const handleApplyPostFilters = (newFilters) => fetchPosts({
     vendibleId: vendibleChosen.id,

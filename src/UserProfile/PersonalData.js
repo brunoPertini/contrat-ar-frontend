@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
@@ -198,28 +196,31 @@ function UserPersonalData({
     </Typography>
   ), [fieldsValues]);
 
-  const handleAcceptChangeIsUserActive = (active) => editCommonInfo({
-    active,
-  }).then(() => {
-    setAlertConfig({
+  const handleAcceptChangeIsUserActive = useCallback(
+    (active) => editCommonInfo({
+      active,
+    }).then(() => {
+      setAlertConfig({
+        openSnackbar: true,
+        alertLabel: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
+        alertSeverity: 'info',
+      });
+    }).catch(() => setAlertConfig({
       openSnackbar: true,
-      alertLabel: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
-      alertSeverity: 'info',
-    });
-  }).catch(() => setAlertConfig({
-    openSnackbar: true,
-    alertLabel: adminLabels.unexpectedError,
-    alertSeverity: 'error',
-  })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues));
+      alertLabel: adminLabels.unexpectedError,
+      alertSeverity: 'error',
+    })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues)),
+    [editCommonInfo],
+  );
 
-  const openUserActiveModal = (event) => {
+  const openUserActiveModal = useCallback((event) => {
     setAccountActiveModalContent({
       text: event.target.checked
         ? adminLabels.enableAccountQuestion : adminLabels.disableAccountQuestion,
       handleAccept: handleAcceptChangeIsUserActive,
       checked: event.target.checked,
     });
-  };
+  }, [setAccountActiveModalContent]);
 
   const activeAlert = useMemo(() => (!isAdmin ? null : !userInfo.active ? (
     <StaticAlert
@@ -389,6 +390,7 @@ UserPersonalData.propTypes = {
     }),
     phone: PropTypes.string,
     fotoPerfilUrl: PropTypes.string,
+    active: PropTypes.bool,
   }).isRequired,
   isAdmin: PropTypes.bool.isRequired,
   styles: PropTypes.object,
