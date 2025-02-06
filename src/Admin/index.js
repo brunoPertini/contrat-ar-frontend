@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -8,6 +8,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import pickBy from 'lodash/pickBy';
 import Link from '@mui/material/Link';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import IconButton from '@mui/material/IconButton';
 import Header from '../Header';
 import UsuariosTable from './UsuariosTable';
 import AdminFilters from './AdminFilters';
@@ -29,10 +32,10 @@ const TABS_LABELS = [sharedLabels.users,
   sharedLabels.changeRequests];
 
 const TABS_COMPONENTS = {
-  usuarios: (props) => <UsuariosTable {...props} />,
-  productos: (props) => <VendiblesTable {...props} />,
-  servicios: (props) => <VendiblesTable {...props} />,
-  changeRequests: (props) => <ChangeRequestsTable {...props} />,
+  usuarios: (ref, props) => <UsuariosTable ref={ref} {...props} />,
+  productos: (ref, props) => <VendiblesTable ref={ref} {...props} />,
+  servicios: (ref, props) => <VendiblesTable ref={ref} {...props} />,
+  changeRequests: (ref, props) => <ChangeRequestsTable ref={ref} {...props} />,
 };
 
 const filtersDefaultValues = {
@@ -64,6 +67,32 @@ function AdminPage({
     min: undefined,
     max: undefined,
   });
+
+  const tableContainerRef = useRef(null);
+
+  const scroll = useCallback((direction) => {
+    if (tableContainerRef.current) {
+      const scrollAmount = 200;
+      tableContainerRef.current.scrollLeft += direction === 'left' ? -scrollAmount : scrollAmount;
+    }
+  }, [tableContainerRef]);
+
+  const ScrollingArrows = useCallback(() => (
+    <Box sx={{
+      position: 'fixed',
+      bottom: '20px',
+      right: '20px',
+      'z-index': 1000,
+    }}
+    >
+      <IconButton onClick={() => scroll('left')} sx={{ bgcolor: 'white', boxShadow: 2 }}>
+        <ChevronLeft />
+      </IconButton>
+      <IconButton onClick={() => scroll('right')} sx={{ bgcolor: 'white', boxShadow: 2 }}>
+        <ChevronRight />
+      </IconButton>
+    </Box>
+  ), [scroll]);
 
   const handleApplyFilters = () => {
     applyFilters({ type: usuarioTypeFilter, filters });
@@ -128,9 +157,10 @@ function AdminPage({
     });
   };
 
-  const handleDeleteVendible = (vendibleId) => deleteVendible(vendibleId).then(
-    () => handleFetchVendibles(),
-  );
+  const handleDeleteVendible = useCallback((vendibleId) => deleteVendible(vendibleId).then(() => {
+    setFilters({ ...filtersDefaultValues });
+    handleFetchVendibles();
+  }), [deleteVendible]);
 
   const handleApplyPostFilters = (newFilters) => fetchPosts({
     vendibleId: vendibleChosen.id,
@@ -226,32 +256,34 @@ function AdminPage({
           }
         </Box>
         <Box {...flexColumn} sx={{ marginTop: '2%' }}>
-          <AdminFilters
-            filtersType={tabOption}
-            isShowingVendiblePosts={isShowingVendiblePosts}
-            usuariosFiltersProps={{
-              usuarioTypeFilter,
-              setUsuarioTypeFilter: handleApplyUsuarioTypeFilter,
-              filters,
-              setFilters: handleSetFilters,
-              applyFilters: handleApplyFilters,
-              planesInfo,
-            }}
-            vendiblesFiltersProps={{
-              categories: vendibles.categorias,
-              onCategorySelected,
-              onFilterByName: filterVendiblesByName,
-            }}
-            postsFiltersProps={
-              {
-                onFilterSelected: handleApplyPostFilters,
-                page: paginationInfo.page,
-                vendibleType: tabOption,
-                priceSliderProps,
-              }
-            }
-          />
-          {
+          <Box {...flexRow}>
+            {
+              tabOption !== 'changeRequests' && (
+                <Box {...flexColumn}>
+                  <AdminFilters
+                    filtersType={tabOption}
+                    isShowingVendiblePosts={isShowingVendiblePosts}
+                    usuariosFiltersProps={{
+                      usuarioTypeFilter,
+                      setUsuarioTypeFilter: handleApplyUsuarioTypeFilter,
+                      filters,
+                      setFilters: handleSetFilters,
+                      applyFilters: handleApplyFilters,
+                      planesInfo,
+                    }}
+                    vendiblesFiltersProps={{
+                      categories: vendibles.categorias,
+                      onCategorySelected,
+                      onFilterByName: filterVendiblesByName,
+                    }}
+                    postsFiltersProps={{
+                      onFilterSelected: handleApplyPostFilters,
+                      page: paginationInfo.page,
+                      vendibleType: tabOption,
+                      priceSliderProps,
+                    }}
+                  />
+                  {
             isShowingVendiblePosts && (
             <Link
               id="closeVendiblePostsTable"
@@ -264,9 +296,15 @@ function AdminPage({
             </Link>
             )
           }
-          {TABS_COMPONENTS[tabOption](propsForCurrentTabOption)}
+                </Box>
+              )
+            }
+          </Box>
+
+          {TABS_COMPONENTS[tabOption](tableContainerRef, propsForCurrentTabOption)}
         </Box>
       </Box>
+      <ScrollingArrows />
     </>
   );
 }

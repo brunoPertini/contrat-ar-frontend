@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import PropTypes from 'prop-types';
 import {
   useCallback, useEffect, useMemo, useState,
@@ -18,6 +19,9 @@ import ProfilePhoto from '../Shared/Components/ProfilePhoto';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 import { systemConstants } from '../Shared/Constants';
 import { flexColumn } from '../Shared/Constants/Styles';
+import { adminLabels } from '../StaticData/Admin';
+import StaticAlert from '../Shared/Components/StaticAlert';
+import DialogModal from '../Shared/Components/DialogModal';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -28,6 +32,13 @@ const getInputConfig = (isAdmin) => (!isAdmin ? {
   readOnly: false,
   disabled: false,
 });
+
+const accountActiveModalDefaultValues = {
+  title: '',
+  text: '',
+  handleAccept: () => {},
+  checked: undefined,
+};
 
 function UserPersonalData({
   userInfo, styles, usuarioType,
@@ -43,6 +54,10 @@ function UserPersonalData({
     alertSeverity: null,
     alertLabel: null,
   });
+
+  const [accountActiveModalContent, setAccountActiveModalContent] = useState(
+    accountActiveModalDefaultValues,
+  );
 
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsEditModeEnabled(false);
@@ -181,6 +196,48 @@ function UserPersonalData({
     </Typography>
   ), [fieldsValues]);
 
+  const handleAcceptChangeIsUserActive = useCallback(
+    (active) => editCommonInfo({
+      active,
+    }).then(() => {
+      setAlertConfig({
+        openSnackbar: true,
+        alertLabel: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
+        alertSeverity: 'info',
+      });
+    }).catch(() => setAlertConfig({
+      openSnackbar: true,
+      alertLabel: adminLabels.unexpectedError,
+      alertSeverity: 'error',
+    })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues)),
+    [editCommonInfo],
+  );
+
+  const openUserActiveModal = useCallback((event) => {
+    setAccountActiveModalContent({
+      text: event.target.checked
+        ? adminLabels.enableAccountQuestion : adminLabels.disableAccountQuestion,
+      handleAccept: handleAcceptChangeIsUserActive,
+      checked: event.target.checked,
+    });
+  }, [setAccountActiveModalContent]);
+
+  const activeAlert = useMemo(() => (!isAdmin ? null : !userInfo.active ? (
+    <StaticAlert
+      severity="warning"
+      variant="outlined"
+      label={sharedLabels.inactiveAccount}
+      styles={{ mt: '5%' }}
+    />
+  ) : (
+    <StaticAlert
+      severity="info"
+      variant="outlined"
+      label={sharedLabels.activeAccount}
+      styles={{ mt: '5%' }}
+    />
+  )), [isAdmin, userInfo.active]);
+
   const firstLayout = (
     <Box
       display="flex"
@@ -236,12 +293,13 @@ function UserPersonalData({
   );
 
   const secondLayout = (
-    <Box
-      {...flexColumn}
-      flex={1}
-      sx={{ mt: '15px' }}
-    >
-      {
+    <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
+      <Box
+        {...flexColumn}
+        flex={1}
+        sx={{ mt: '15px' }}
+      >
+        {
               !!fieldsValues.fotoPerfilUrl && (
                 <Box
                   display="flex"
@@ -257,13 +315,45 @@ function UserPersonalData({
                 </Box>
               )
             }
-      { saveChangesSwitch }
+        { saveChangesSwitch }
+      </Box>
+      {
+        isAdmin && (
+          <Box {...flexColumn} sx={{ mt: '3%' }}>
+            { activeAlert }
+            <FormControlLabel
+              control={(
+                <Switch
+                  checked={userInfo.active}
+                  onChange={openUserActiveModal}
+                />
+)}
+              label={userInfo.active ? adminLabels.disableAccount : adminLabels.enableAccount}
+            />
+          </Box>
+        )
+      }
     </Box>
+
   );
 
   useEffect(() => {
     setFieldsValues(userInfo);
   }, [userInfo]);
+
+  const UserActiveModal = useCallback(() => (
+    <DialogModal
+      title={sharedLabels.pleaseConfirmAction}
+      contextText={accountActiveModalContent.text}
+      cancelText={sharedLabels.cancel}
+      acceptText={sharedLabels.accept}
+      open={!!(accountActiveModalContent.text)}
+      handleAccept={
+          () => accountActiveModalContent.handleAccept(accountActiveModalContent.checked)
+        }
+      handleDeny={() => setAccountActiveModalContent(accountActiveModalDefaultValues)}
+    />
+  ), [accountActiveModalContent.text]);
 
   return (
     <Box
@@ -272,6 +362,7 @@ function UserPersonalData({
       flex={1}
       gap={5}
     >
+      <UserActiveModal />
       <InformativeAlert
         open={alertConfig.openSnackbar}
         onClose={() => resetAlertData()}
@@ -299,6 +390,7 @@ UserPersonalData.propTypes = {
     }),
     phone: PropTypes.string,
     fotoPerfilUrl: PropTypes.string,
+    active: PropTypes.bool,
   }).isRequired,
   isAdmin: PropTypes.bool.isRequired,
   styles: PropTypes.object,

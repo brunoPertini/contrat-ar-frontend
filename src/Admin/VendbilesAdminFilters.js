@@ -30,6 +30,10 @@ function VendiblesAdminFilters({
     }
   }, [vendibleType]);
 
+  useEffect(() => {
+    setFiltersApplied((previous) => ({ ...previous, categoryId: null, categoryName: '' }));
+  }, [categories]);
+
   const memoizedMenuOptions = useMemo(() => {
     const options = [getMenuOption({
       component: SearcherInput,

@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import {
   Suspense,
+  forwardRef,
   lazy, startTransition, useEffect, useState,
 } from 'react';
 import { sharedLabels } from '../StaticData/Shared';
@@ -34,11 +35,11 @@ const ATTIBUTES_LABELS = {
 
 const ACTIONS_OPTIONS = [sharedLabels.delete];
 
-function VendiblesTable({
+const VendiblesTable = forwardRef(({
   vendibles, vendibleType, deleteVendible, fetchPosts, setIsShowingVendiblePosts, posts, setPosts,
   isShowingVendiblePosts, vendibleChosen, setVendibleChosen, paginationInfo, setPaginationInfo,
   updatePost,
-}) {
+}, tableContainerRef) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [operationResult, setOperationResult] = useState(null);
@@ -96,6 +97,7 @@ function VendiblesTable({
     return (
       <Suspense fallback={<BackdropLoader open />}>
         <AdminVendiblePosts
+          ref={tableContainerRef}
           posts={posts}
           setPosts={setPosts}
           fetchPosts={fetchPosts}
@@ -110,7 +112,7 @@ function VendiblesTable({
   }
 
   return !isEmpty(vendibles) ? (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} ref={tableContainerRef}>
       <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
         <TableHead>
           <TableRow sx={{ borderBottom: '1px solid black' }}>
@@ -197,7 +199,7 @@ function VendiblesTable({
       />
     </TableContainer>
   ) : null;
-}
+});
 
 VendiblesTable.defaultProps = {
   vendibleChosen: { name: '', id: null },

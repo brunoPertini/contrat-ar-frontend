@@ -4,8 +4,23 @@ import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../../StaticData/Shared';
 import { suscriptionShape } from '../PropTypes/Proveedor';
 import { getPlanLabel } from '../Helpers/PlanesHelper';
+import { flexColumn } from '../Constants/Styles';
 
-export default function SuscriptionData({ suscripcion, styles }) {
+const rowStyles = { mt: '5%' };
+
+const renderRowAsText = (label, value) => (
+  <Box {...flexColumn} {...rowStyles}>
+    <Typography variant="h5">
+      { label }
+      :
+    </Typography>
+    <Typography variant="h5">
+      { value }
+    </Typography>
+  </Box>
+);
+
+export default function SuscriptionData({ suscripcion }) {
   const planLabel = getPlanLabel(suscripcion.planId);
 
   return (
@@ -19,36 +34,21 @@ export default function SuscriptionData({ suscripcion, styles }) {
       background: 'white',
     }}
     >
-      <Typography variant="h5">
-        { sharedLabels.plan }
-        :
-      </Typography>
-      <Typography variant="h5">
-        { planLabel}
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.state}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.isActive ? sharedLabels.activeF : sharedLabels.inactiveF }
-      </Typography>
-      <Typography variant="h5" sx={{ ...styles }}>
-        { sharedLabels.activeSinceF}
-        :
-      </Typography>
-      <Typography variant="h5">
-        { suscripcion.createdDate }
-      </Typography>
+      {
+        renderRowAsText(sharedLabels.plan, planLabel)
+      }
+      {
+        renderRowAsText(sharedLabels.state, suscripcion.isActive
+          ? sharedLabels.activeF : sharedLabels.inactiveF)
+      }
+      {
+        renderRowAsText(sharedLabels.activeSinceF, suscripcion.createdDate)
+      }
+
     </Box>
   );
 }
 
-SuscriptionData.defaultProps = {
-  styles: {},
-};
-
 SuscriptionData.propTypes = {
   suscripcion: PropTypes.shape(suscriptionShape).isRequired,
-  styles: PropTypes.object,
 };

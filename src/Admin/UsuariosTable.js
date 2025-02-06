@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useState } from 'react';
+import { forwardRef, useCallback, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -68,13 +68,16 @@ const snackbarDefaultValues = { open: false, label: '', severity: '' };
 
 function renderSuscripcionData(suscripcion) {
   return (
-    <SuscriptionData styles={{ mt: '5% ' }} suscripcion={suscripcion} />
+    <SuscriptionData suscripcion={suscripcion} />
   );
 }
 
-export default function UsuariosTable({
-  usuarios, usuarioTypeFilter, loginAsUser, deleteUser,
-}) {
+const UsuariosTable = forwardRef((
+  {
+    usuarios, usuarioTypeFilter, loginAsUser, deleteUser,
+  },
+  tableContainerRef,
+) => {
   const [mapModalProps, setMapModalProps] = useState({
     open: false,
     handleClose: () => setMapModalProps((previous) => ({
@@ -161,7 +164,7 @@ export default function UsuariosTable({
   };
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} ref={tableContainerRef}>
       {
         modalProps.open && (
           <Modal open={modalProps.open} onClose={modalProps.onClose}>
@@ -239,7 +242,7 @@ export default function UsuariosTable({
       </Table>
     </TableContainer>
   );
-}
+});
 
 UsuariosTable.defaultProps = {
   usuarios: [],
@@ -253,3 +256,5 @@ UsuariosTable.propTypes = {
   loginAsUser: PropTypes.func.isRequired,
   deleteUser: PropTypes.func.isRequired,
 };
+
+export default UsuariosTable;

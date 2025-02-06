@@ -8,8 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
+import pick from 'lodash/pick';
 import { sharedLabels } from '../StaticData/Shared';
-import { EMPTY_FUNCTION } from '../Shared/Constants/System';
+import { CLIENTE, EMPTY_FUNCTION } from '../Shared/Constants/System';
 import OptionsMenu from '../Shared/Components/OptionsMenu';
 import { adminLabels } from '../StaticData/Admin';
 import InformativeAlert from '../Shared/Components/Alert';
@@ -19,6 +20,8 @@ import VendibleInfo from '../Shared/Components/VendibleInfo';
 import SuscriptionData from '../Shared/Components/SuscriptionData';
 import { buildVendibleInfo } from '../Shared/Helpers/ProveedorHelper';
 import DialogModal from '../Shared/Components/DialogModal';
+import UserInfo from '../Shared/Components/UserInfo';
+import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -52,7 +55,23 @@ const dialogModalContentDefaultValues = {
 
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
 
-function renderChangeRequestDetail({ request, requestDetail }, userToken) {
+const translateAddress = (coordsObject) => {
+  const { coordinates } = coordsObject ?? {};
+
+  if (coordinates) {
+    const httpClient = HttpClientFactory.createExternalHttpClient('', { });
+
+    return httpClient.getAddressFromLocation({
+      latitude: coordinates[0],
+      longitude: coordinates[1],
+    }).then((readableAddressResponseData) => readableAddressResponseData)
+      .catch(() => '');
+  }
+
+  return '';
+};
+
+async function renderChangeRequestDetail({ request, requestDetail }, userToken) {
   let InnerComponent = null;
   let props = {};
 
@@ -81,7 +100,22 @@ function renderChangeRequestDetail({ request, requestDetail }, userToken) {
     InnerComponent = SuscriptionData;
     props = {
       suscripcion: requestDetail,
-      styles: { mt: '5% ' },
+    };
+  }
+
+  if (request.sourceTable === ENTITY_NAME.usuario) {
+    InnerComponent = UserInfo;
+    const toShowCommonData = pick(requestDetail, ['id', 'name', 'surname', 'email', 'birthDate', 'phone', 'location', 'role']);
+    const toShowRole = toShowCommonData.role.nombre;
+    const toShowProveedorData = toShowRole === CLIENTE ? {} : pick(requestDetail, ['dni', 'fotoPerfilUrl', 'suscripcion']);
+    const translatedAddress = await translateAddress(toShowCommonData.location);
+    props = {
+      userInfo: {
+        ...toShowCommonData,
+        ...toShowProveedorData,
+        role: toShowRole,
+        location: translatedAddress,
+      },
     };
   }
 
@@ -169,13 +203,15 @@ export default function ChangeRequestsTable({
     [sharedLabels.seeDetail]: async (changeRequest) => {
       const detail = await getChangeRequestDetail(changeRequest.changeDetailUrl);
 
+      const content = await renderChangeRequestDetail({
+        request: { ...changeRequest },
+        requestDetail: { ...detail },
+      }, userToken);
+
       setModalProps((previous) => ({
         ...previous,
+        content,
         open: true,
-        content: renderChangeRequestDetail({
-          request: { ...changeRequest },
-          requestDetail: { ...detail },
-        }, userToken),
       }));
     },
   };

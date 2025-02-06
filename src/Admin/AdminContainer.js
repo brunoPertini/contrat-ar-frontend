@@ -55,7 +55,7 @@ function AdminContainer({ handleLogout }) {
 
     const newUserInfo = await client.getUserInfoForLogin(userId);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO, { id: userId });
-    window.open(routes[`ROLE_${newUserInfo.role.nombre}`], '_blank');
+    window.location.href = routes[`ROLE_${newUserInfo.role.nombre}`];
   }, [localStorageService]);
 
   const deleteUser = (userId) => {

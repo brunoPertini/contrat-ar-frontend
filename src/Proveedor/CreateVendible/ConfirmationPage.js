@@ -31,7 +31,7 @@ function ConfirmationPage({
           display: 'flex',
           flexDirection: 'column',
           width: '85%',
-          overflow: 'scroll',
+          overflow: 'auto',
         }}
         cardRowStyles={{
           width: '40%',
