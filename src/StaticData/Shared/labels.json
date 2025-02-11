@@ -127,5 +127,6 @@
     "dataUsage": "Política de Privacidad",
     "acceptTermsAndConditions": "<span>Confirmo que acepto los {termsAndConditionsLink} y doy mi consentimiento para el uso de mis datos conforme a la {dataUsageLink}</span>",
     "unknownError": "Error desconocido",
-    "role": "Rol"
+    "role": "Rol",
+    "2fa.start.title": "Para proteger tu cuenta, vamos a enviarte un código de seguridad al mail registrado"
 }

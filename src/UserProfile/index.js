@@ -23,6 +23,7 @@ import GoBackLink from '../Shared/Components/GoBackLink';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import InformativeAlert from '../Shared/Components/Alert';
 import Footer from '../Shared/Components/Footer';
+import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
 
 const TABS_NAMES = {
@@ -110,6 +111,11 @@ function UserProfile({
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
 
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  const [show2FaComponent, setShow2FaComponent] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
   };
@@ -183,6 +189,15 @@ function UserProfile({
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
 
+  const onEditionModeEnabled = () => {
+    setIsLoading(true);
+    if (!userInfo.is2FaValid) {
+      setShow2FaComponent(true);
+    }
+    setIsEditModeEnabled(true);
+    setIsLoading(false);
+  };
+
   const menuOptionsConfig = {
     myProfile: {
       props: userInfo,
@@ -212,6 +227,8 @@ function UserProfile({
         changeUserInfo={handlePersonalDataChanged}
         editCommonInfo={editCommonInfo}
         uploadProfilePhoto={uploadProfilePhoto}
+        onEditionModeEnabled={onEditionModeEnabled}
+        isEditModeEnabled={isEditModeEnabled}
         usuarioType={usuarioType}
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
@@ -266,19 +283,26 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Box {...flexColumn}>
+      <Layout gridProps={{ sx: { ...flexColumn } }} isLoading={isLoading}>
         <GoBackLink styles={{ pl: '1%' }} />
-        <Tabs
-          value={tabOption}
-          onChange={handleTabOptionChange}
-          variant="scrollable"
-          scrollButtons
-          allowScrollButtonsMobile
-        >
-          { rolesTabs[userInfo.role].map((tab) => tab) }
-        </Tabs>
-        { tabsComponents[tabOption] }
-      </Box>
+        {show2FaComponent ? (
+          <div />
+        ) : (
+          <>
+            <Tabs
+              value={tabOption}
+              onChange={handleTabOptionChange}
+              variant="scrollable"
+              scrollButtons
+              allowScrollButtonsMobile
+            >
+              {rolesTabs[userInfo.role].map((tab) => tab)}
+            </Tabs>
+            {tabsComponents[tabOption]}
+          </>
+        )}
+      </Layout>
+
       <Footer options={footerOptions} />
     </Box>
 

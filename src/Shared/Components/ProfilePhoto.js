@@ -7,7 +7,7 @@ import { sharedLabels } from '../../StaticData/Shared';
 import InformativeAlert from './Alert';
 
 export default function ProfilePhoto({
-  src, alt, onUpload, onSuccess,
+  src, alt, onUpload, onSuccess, isButtonEnabled,
 }) {
   const [alertErrorConfig, setAlertErrorConfig] = useState({
     openSnackbar: false,
@@ -60,6 +60,7 @@ export default function ProfilePhoto({
         variant="contained"
         sx={{ width: '30%' }}
         startIcon={<CloudUploadIcon />}
+        disabled={!isButtonEnabled}
       >
         {sharedLabels.changeImage}
         <input
@@ -86,6 +87,7 @@ ProfilePhoto.defaultProps = {
 };
 
 ProfilePhoto.propTypes = {
+  isButtonEnabled: PropTypes.bool.isRequired,
   src: PropTypes.string.isRequired,
   alt: PropTypes.string,
   onUpload: PropTypes.func.isRequired,

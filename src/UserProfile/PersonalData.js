@@ -25,14 +25,6 @@ import DialogModal from '../Shared/Components/DialogModal';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
-const getInputConfig = (isAdmin) => (!isAdmin ? {
-  readOnly: true,
-  disabled: true,
-} : {
-  readOnly: false,
-  disabled: false,
-});
-
 const accountActiveModalDefaultValues = {
   title: '',
   text: '',
@@ -44,10 +36,10 @@ function UserPersonalData({
   userInfo, styles, usuarioType,
   userToken, changeUserInfo, isAdmin,
   editCommonInfo, uploadProfilePhoto,
+  onEditionModeEnabled, isEditModeEnabled,
+  setIsEditModeEnabled,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
-
-  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
   const [alertConfig, setAlertConfig] = useState({
     openSnackbar: false,
@@ -107,7 +99,11 @@ function UserPersonalData({
   const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
   const handleEditModeChange = (event) => {
-    setIsEditModeEnabled(event.target.checked);
+    if (event.target.checked) {
+      onEditionModeEnabled();
+    } else {
+      setIsEditModeEnabled(false);
+    }
   };
 
   const resetAlertData = () => {
@@ -125,20 +121,6 @@ function UserPersonalData({
       changeUserInfo(fieldId, fieldValue);
     },
     showInlineLabels: true,
-    fieldsOwnConfig: {
-      name: {
-        ...getInputConfig(isAdmin),
-      },
-      surname: {
-        ...getInputConfig(isAdmin),
-      },
-      dni: {
-        ...getInputConfig(isAdmin),
-      },
-      birthDate: {
-        ...getInputConfig(isAdmin),
-      },
-    },
   })), [fieldsValues, isEditModeEnabled, userInfo]);
 
   const saveChangesSwitch = (
@@ -311,6 +293,7 @@ function UserPersonalData({
                     alt={userInfo.name}
                     onUpload={callHandleUploadPhoto}
                     onSuccess={onSuccessUploadPhoto}
+                    isButtonEnabled={isEditModeEnabled}
                   />
                 </Box>
               )
@@ -391,6 +374,7 @@ UserPersonalData.propTypes = {
     phone: PropTypes.string,
     fotoPerfilUrl: PropTypes.string,
     active: PropTypes.bool,
+    is2FaValid: PropTypes.bool,
   }).isRequired,
   isAdmin: PropTypes.bool.isRequired,
   styles: PropTypes.object,
@@ -399,6 +383,9 @@ UserPersonalData.propTypes = {
   changeUserInfo: PropTypes.func.isRequired,
   editCommonInfo: PropTypes.func.isRequired,
   uploadProfilePhoto: PropTypes.func.isRequired,
+  onEditionModeEnabled: PropTypes.func.isRequired,
+  isEditModeEnabled: PropTypes.bool.isRequired,
+  setIsEditModeEnabled: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;

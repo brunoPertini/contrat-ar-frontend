@@ -17,6 +17,7 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @property {String} dni
  * @property {String} fotoPerfilUrl
  * @property {Boolean} active
+ * @property {Boolean} is2FaValid
  * @property{{ usuarioId: Number, planId: Number, createdDate: String, active: Boolean}} suscripcion
  */
 
@@ -38,6 +39,7 @@ export const userState = {
   dni: '',
   fotoPerfilUrl: '',
   active: false,
+  is2FaValid: false,
   suscripcion: {},
 };
 
