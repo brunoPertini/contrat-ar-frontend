@@ -85,4 +85,8 @@ export class UserHttpClient extends HttpClient {
   confirmUserAccount(toAddress, token) {
     return this.post(usersRoutes.confirmUserAccount, null, { toAddress, token });
   }
+
+  send2FaCode() {
+    return this.post(usersRoutes.request2FaCode);
+  }
 }

@@ -25,6 +25,7 @@ import InformativeAlert from '../Shared/Components/Alert';
 import Footer from '../Shared/Components/Footer';
 import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
+import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -286,7 +287,7 @@ function UserProfile({
       <Layout gridProps={{ sx: { ...flexColumn } }} isLoading={isLoading}>
         <GoBackLink styles={{ pl: '1%' }} />
         {show2FaComponent ? (
-          <div />
+          <TwoFactorAuthentication userToken={userInfo.token} />
         ) : (
           <>
             <Tabs
