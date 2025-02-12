@@ -101,3 +101,10 @@ export const PAYMENT_STATE = {
   ERROR: 'REJECTED',
   UNKNOWN: 'UNKNOWN_ERROR',
 };
+
+export const TwoFactorAuthResult = {
+  PENDING: 'PENDING',
+  PASSED: 'PASSED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED',
+};

@@ -14,7 +14,9 @@ import { flexColumn } from '../Constants/Styles';
  * @param { any } children - component to render inside the grid
  * @param { boolean } isLoading - flag to enable the loader
  */
-function Layout({ gridProps, children, isLoading }) {
+function Layout({
+  gridProps, children, isLoading, isLoadingAlternativeLabel,
+}) {
   return (
     <Box
       {...gridProps}
@@ -26,7 +28,7 @@ function Layout({ gridProps, children, isLoading }) {
         }}
         />
         <Typography variant="h6">
-          { sharedLabels.loading }
+          { isLoadingAlternativeLabel || sharedLabels.loading }
         </Typography>
       </Box>
       ) }
@@ -38,12 +40,14 @@ function Layout({ gridProps, children, isLoading }) {
 Layout.defaultProps = {
   gridProps: {},
   isLoading: false,
+  isLoadingAlternativeLabel: '',
 };
 
 Layout.propTypes = {
   gridProps: PropTypes.object,
   children: PropTypes.any.isRequired,
   isLoading: PropTypes.bool,
+  isLoadingAlternativeLabel: PropTypes.string,
 };
 
 export default Layout;

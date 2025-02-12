@@ -128,5 +128,7 @@
     "acceptTermsAndConditions": "<span>Confirmo que acepto los {termsAndConditionsLink} y doy mi consentimiento para el uso de mis datos conforme a la {dataUsageLink}</span>",
     "unknownError": "Error desconocido",
     "role": "Rol",
-    "2fa.start.title": "Para proteger tu cuenta, vamos a enviarte un código de seguridad al mail registrado"
+    "2fa.start.title": "Para proteger tu cuenta, vamos a enviarte un código de seguridad al mail registrado",
+    "2fa.checkingCode": "Verificando el código",
+    "2fa.wrongCode": "El código es incorrecto"
 }

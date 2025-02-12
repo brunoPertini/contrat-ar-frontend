@@ -11,16 +11,25 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 
 const stateSelector = (state) => state;
 
-const userInfoSelector = createSelector(
-  stateSelector,
-  (state) => state.usuario,
-);
-
 const localStorageService = new LocalStorageService();
 
 function UserProfileContainer({ handleLogout, isAdmin }) {
+  const userInfoSelector = createSelector(
+    stateSelector,
+    (state) => state.usuario,
+  );
+
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
+
+  const getUserInfo = () => {
+    const client = HttpClientFactory.createUserHttpClient(null, {
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.getUserInfo(userInfo.id).then((info) => dispatch(replaceUserInfo(info)));
+  };
 
   const editClienteInfo = (info) => {
     const client = HttpClientFactory.createUserHttpClient(null, {
@@ -117,6 +126,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         requestChangeExists={requestChangeExists}
         getAllPlanes={getAllPlanes}
         isAdmin={isAdmin}
+        getUserInfo={getUserInfo}
       />
     </NavigationContextProvider>
   );

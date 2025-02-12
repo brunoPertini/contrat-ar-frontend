@@ -75,7 +75,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin,
+  isAdmin, getUserInfo,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -169,6 +169,12 @@ function UserProfile({
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
   }, [userInfo.active]);
 
+  useEffect(() => {
+    if (userInfo?.is2FaValid) {
+      setIsEditModeEnabled(true);
+    }
+  }, [userInfo]);
+
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
@@ -218,6 +224,11 @@ function UserProfile({
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
     return confirmPlanChange(userInfo.id, planId);
+  };
+
+  const on2FaPassed = () => {
+    setShow2FaComponent(false);
+    getUserInfo();
   };
 
   const tabsComponents = {
@@ -287,7 +298,10 @@ function UserProfile({
       <Layout gridProps={{ sx: { ...flexColumn } }} isLoading={isLoading}>
         <GoBackLink styles={{ pl: '1%' }} />
         {show2FaComponent ? (
-          <TwoFactorAuthentication userToken={userInfo.token} />
+          <TwoFactorAuthentication
+            userToken={userInfo.token}
+            onVerificationSuccess={on2FaPassed}
+          />
         ) : (
           <>
             <Tabs
@@ -297,7 +311,7 @@ function UserProfile({
               scrollButtons
               allowScrollButtonsMobile
             >
-              {rolesTabs[userInfo.role].map((tab) => tab)}
+              {rolesTabs[userInfo.role]?.map((tab) => tab)}
             </Tabs>
             {tabsComponents[tabOption]}
           </>
@@ -318,6 +332,7 @@ UserProfile.propTypes = {
   confirmPlanChange: PropTypes.func.isRequired,
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 
