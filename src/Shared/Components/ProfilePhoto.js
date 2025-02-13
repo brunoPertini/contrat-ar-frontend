@@ -84,10 +84,11 @@ export default function ProfilePhoto({
 
 ProfilePhoto.defaultProps = {
   alt: '',
+  isButtonEnabled: true,
 };
 
 ProfilePhoto.propTypes = {
-  isButtonEnabled: PropTypes.bool.isRequired,
+  isButtonEnabled: PropTypes.bool,
   src: PropTypes.string.isRequired,
   alt: PropTypes.string,
   onUpload: PropTypes.func.isRequired,

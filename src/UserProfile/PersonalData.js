@@ -36,8 +36,8 @@ function UserPersonalData({
   userInfo, styles, usuarioType,
   userToken, changeUserInfo, isAdmin,
   editCommonInfo, uploadProfilePhoto,
-  onEditionModeEnabled, isEditModeEnabled,
-  setIsEditModeEnabled,
+  isEditModeEnabled, setIsEditModeEnabled,
+  show2FaComponent,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
@@ -74,7 +74,8 @@ function UserPersonalData({
         alertSeverity: 'success',
         alertLabel: sharedLabels.infoModifiedSuccess,
       });
-    }).catch(() => {
+    }).catch((error) => {
+      console.log('edit error: ', error);
       setAlertConfig({
         openSnackbar: true,
         alertSeverity: 'error',
@@ -99,11 +100,15 @@ function UserPersonalData({
   const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
   const handleEditModeChange = (event) => {
-    if (event.target.checked) {
-      onEditionModeEnabled();
-    } else {
-      setIsEditModeEnabled(false);
+    if (event.target.checked && userInfo.is2FaValid) {
+      return setIsEditModeEnabled(true);
     }
+
+    if (event.target.checked && !userInfo.is2FaValid) {
+      return show2FaComponent();
+    }
+
+    return setIsEditModeEnabled(false);
   };
 
   const resetAlertData = () => {
@@ -383,9 +388,9 @@ UserPersonalData.propTypes = {
   changeUserInfo: PropTypes.func.isRequired,
   editCommonInfo: PropTypes.func.isRequired,
   uploadProfilePhoto: PropTypes.func.isRequired,
-  onEditionModeEnabled: PropTypes.func.isRequired,
   isEditModeEnabled: PropTypes.bool.isRequired,
   setIsEditModeEnabled: PropTypes.func.isRequired,
+  show2FaComponent: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;

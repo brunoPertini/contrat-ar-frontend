@@ -90,6 +90,7 @@ function UserProfile({
     phone: userInfo.phone,
     fotoPerfilUrl: userInfo.fotoPerfilUrl,
     active: userInfo.active,
+    is2FaValid: userInfo.is2FaValid,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -114,8 +115,6 @@ function UserProfile({
 
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const [show2FaComponent, setShow2FaComponent] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
@@ -169,15 +168,11 @@ function UserProfile({
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
   }, [userInfo.active]);
 
-  useEffect(() => {
-    if (userInfo?.is2FaValid) {
-      setIsEditModeEnabled(true);
-    }
-  }, [userInfo]);
-
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
+
+  const handleShow2FaComponent = () => setShow2FaComponent(true);
 
   const handleTabOptionChange = (_, newValue) => {
     setTabOption(newValue);
@@ -195,15 +190,6 @@ function UserProfile({
   };
 
   const handlePlanDataChanged = (newPlan) => setPlanData(newPlan);
-
-  const onEditionModeEnabled = () => {
-    setIsLoading(true);
-    if (!userInfo.is2FaValid) {
-      setShow2FaComponent(true);
-    }
-    setIsEditModeEnabled(true);
-    setIsLoading(false);
-  };
 
   const menuOptionsConfig = {
     myProfile: {
@@ -227,8 +213,9 @@ function UserProfile({
   };
 
   const on2FaPassed = () => {
-    setShow2FaComponent(false);
     getUserInfo();
+    setShow2FaComponent(false);
+    setIsEditModeEnabled(true);
   };
 
   const tabsComponents = {
@@ -239,13 +226,14 @@ function UserProfile({
         changeUserInfo={handlePersonalDataChanged}
         editCommonInfo={editCommonInfo}
         uploadProfilePhoto={uploadProfilePhoto}
-        onEditionModeEnabled={onEditionModeEnabled}
         isEditModeEnabled={isEditModeEnabled}
+        setIsEditModeEnabled={setIsEditModeEnabled}
+        show2FaComponent={handleShow2FaComponent}
         usuarioType={usuarioType}
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
       />
-    ), [personalData, userInfo.token]),
+    ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
@@ -295,7 +283,7 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Layout gridProps={{ sx: { ...flexColumn } }} isLoading={isLoading}>
+      <Layout gridProps={{ sx: { ...flexColumn } }}>
         <GoBackLink styles={{ pl: '1%' }} />
         {show2FaComponent ? (
           <TwoFactorAuthentication

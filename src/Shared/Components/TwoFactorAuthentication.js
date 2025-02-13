@@ -51,7 +51,17 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
     userHttpClient.send2FaCode().then(({ codeTtl, codeDigits }) => {
       setTwoFaData({ codeDigits, codeTtl });
       setCodeInputs(new Array(codeDigits).fill(''));
-    }).finally(() => setIsLoading(false));
+    })
+      .catch((error) => {
+        if (error.status === 409) {
+          setAlertData({ severity: 'error', label: error });
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setVerificationResult(null);
+        setWasCodeVerified(false);
+      });
   }, [userHttpClient]);
 
   const handleSendConfirmationEmail = useCallback(() => {
@@ -60,18 +70,29 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
         const isCheckOk = result === TwoFactorAuthResult.PASSED;
         setVerificationResult(isCheckOk);
 
-        if (!isCheckOk) {
-          setAlertData({ severity: 'error', label: sharedLabels['2fa.wrongCode'] });
-        } else {
+        if (isCheckOk) {
           onVerificationSuccess();
         }
-      });
+
+        if (result === TwoFactorAuthResult.FAILED) {
+          setAlertData({ severity: 'error', label: sharedLabels['2fa.wrongCode'] });
+        } else if (result === TwoFactorAuthResult.EXPIRED) {
+          setAlertData({ severity: 'error', label: sharedLabels['2fa.codeExpired'] });
+        }
+      })
+        .catch((error) => {
+          if (error.status === 409) {
+            setAlertData({ severity: 'error', label: error });
+          }
+        })
+        .finally(() => setIsLoading(false));
 
       return currentCodeInputs;
     });
   }, [userHttpClient]);
 
-  const showCodeInput = useMemo(() => twoFaData.codeDigits && twoFaData.codeTtl, [twoFaData]);
+  const showCodeInput = useMemo(() => (twoFaData.codeDigits && twoFaData.codeTtl)
+  && !(verificationResult === false), [twoFaData, verificationResult]);
 
   useEffect(() => {
     const filledInputsLength = codeInputs.reduce((
@@ -80,7 +101,7 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
     ) => (current ? (previous + 1) : (previous + 0)), 0);
 
     setWasCodeVerified((wasCodeChecked) => {
-      if ((filledInputsLength === twoFaData.codeDigits && !wasCodeChecked)) {
+      if (filledInputsLength === twoFaData.codeDigits && !wasCodeChecked) {
         setIsLoading(true);
         setWasCodeVerified(true);
         handleSendConfirmationEmail();
@@ -110,7 +131,6 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
         },
       }}
       isLoading={isLoading}
-      isLoadingAlternativeLabel={wasCodeVerified ? sharedLabels['2fa.checkingCode'] : undefined}
     >
       <Typography variant="h5">
         { sharedLabels['2fa.start.title']}
@@ -126,12 +146,13 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
               value={digit}
               onChange={(e) => handleInputChange(index, e.target.value)}
               sx={{ width: '40px' }}
+              disabled={verificationResult === false}
             />
           ))}
         </div>
       )}
       {
-          verificationResult === false && <StaticAlert {...alertData} />
+          verificationResult === false && <StaticAlert styles={{ mt: '1%' }} {...alertData} />
       }
       <Button
         disabled={!buttonEnabled}

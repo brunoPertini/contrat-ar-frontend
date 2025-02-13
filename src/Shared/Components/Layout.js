@@ -15,7 +15,7 @@ import { flexColumn } from '../Constants/Styles';
  * @param { boolean } isLoading - flag to enable the loader
  */
 function Layout({
-  gridProps, children, isLoading, isLoadingAlternativeLabel,
+  gridProps, children, isLoading,
 }) {
   return (
     <Box
@@ -28,7 +28,7 @@ function Layout({
         }}
         />
         <Typography variant="h6">
-          { isLoadingAlternativeLabel || sharedLabels.loading }
+          { sharedLabels.loading }
         </Typography>
       </Box>
       ) }

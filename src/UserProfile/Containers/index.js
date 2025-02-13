@@ -6,7 +6,7 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
-import { replaceUserInfo } from '../../State/Actions/usuario';
+import { replaceUserInfo, setUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
@@ -28,7 +28,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       handleLogout,
     });
 
-    return client.getUserInfo(userInfo.id).then((info) => dispatch(replaceUserInfo(info)));
+    return client.getUserInfo(userInfo.id).then((info) => dispatch(setUserInfo(info)));
   };
 
   const editClienteInfo = (info) => {
@@ -81,7 +81,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       PROVEEDOR_SERVICIOS: () => editProveedorInfo(info),
     };
 
-    const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role] : editPersonalInfoForAdmin;
+    const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role]
+      : editPersonalInfoForAdmin;
 
     return toRunFunction(info).then(() => {
       dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
