@@ -99,7 +99,7 @@ function UserPersonalData({
   const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
 
   const handleEditModeChange = (event) => {
-    if (event.target.checked && userInfo.is2FaValid) {
+    if (event.target.checked && (userInfo.is2FaValid || isAdmin)) {
       return setIsEditModeEnabled(true);
     }
 

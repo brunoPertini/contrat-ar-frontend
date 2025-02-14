@@ -210,6 +210,10 @@ const UsuariosTable = forwardRef((
                       const rendererType = ATTRIBUTES_CONFIG[attribute]
                       ?? PROVEEDORES_ATTRIBUTES_CONFIG[attribute];
 
+                      if (!rendererType) {
+                        return null;
+                      }
+
                       return (
                         <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
                           {
