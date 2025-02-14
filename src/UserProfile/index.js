@@ -23,7 +23,9 @@ import GoBackLink from '../Shared/Components/GoBackLink';
 import { getUserInfoResponseShape } from '../Shared/PropTypes/Vendibles';
 import InformativeAlert from '../Shared/Components/Alert';
 import Footer from '../Shared/Components/Footer';
+import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
+import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -73,7 +75,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin,
+  isAdmin, getUserInfo,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -88,6 +90,7 @@ function UserProfile({
     phone: userInfo.phone,
     fotoPerfilUrl: userInfo.fotoPerfilUrl,
     active: userInfo.active,
+    is2FaValid: userInfo.is2FaValid,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -109,6 +112,9 @@ function UserProfile({
   });
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
+
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  const [show2FaComponent, setShow2FaComponent] = useState(false);
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
@@ -166,6 +172,8 @@ function UserProfile({
 
   const onCancelExitApp = () => setIsExitAppModalOpen(false);
 
+  const handleShow2FaComponent = () => setShow2FaComponent(true);
+
   const handleTabOptionChange = (_, newValue) => {
     setTabOption(newValue);
   };
@@ -204,6 +212,12 @@ function UserProfile({
     return confirmPlanChange(userInfo.id, planId);
   };
 
+  const on2FaPassed = () => {
+    getUserInfo();
+    setShow2FaComponent(false);
+    setIsEditModeEnabled(true);
+  };
+
   const tabsComponents = {
     [TABS_NAMES.PERSONAL_DATA]: useMemo(() => (
       <UserPersonalData
@@ -212,11 +226,14 @@ function UserProfile({
         changeUserInfo={handlePersonalDataChanged}
         editCommonInfo={editCommonInfo}
         uploadProfilePhoto={uploadProfilePhoto}
+        isEditModeEnabled={isEditModeEnabled}
+        setIsEditModeEnabled={setIsEditModeEnabled}
+        show2FaComponent={handleShow2FaComponent}
         usuarioType={usuarioType}
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
       />
-    ), [personalData, userInfo.token]),
+    ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
@@ -266,19 +283,29 @@ function UserProfile({
         withMenuComponent
         menuOptions={menuOptions}
       />
-      <Box {...flexColumn}>
+      <Layout gridProps={{ sx: { ...flexColumn } }}>
         <GoBackLink styles={{ pl: '1%' }} />
-        <Tabs
-          value={tabOption}
-          onChange={handleTabOptionChange}
-          variant="scrollable"
-          scrollButtons
-          allowScrollButtonsMobile
-        >
-          { rolesTabs[userInfo.role].map((tab) => tab) }
-        </Tabs>
-        { tabsComponents[tabOption] }
-      </Box>
+        {show2FaComponent ? (
+          <TwoFactorAuthentication
+            userToken={userInfo.token}
+            onVerificationSuccess={on2FaPassed}
+          />
+        ) : (
+          <>
+            <Tabs
+              value={tabOption}
+              onChange={handleTabOptionChange}
+              variant="scrollable"
+              scrollButtons
+              allowScrollButtonsMobile
+            >
+              {rolesTabs[userInfo.role]?.map((tab) => tab)}
+            </Tabs>
+            {tabsComponents[tabOption]}
+          </>
+        )}
+      </Layout>
+
       <Footer options={footerOptions} />
     </Box>
 
@@ -293,6 +320,7 @@ UserProfile.propTypes = {
   confirmPlanChange: PropTypes.func.isRequired,
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
+  getUserInfo: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

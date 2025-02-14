@@ -6,7 +6,7 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
-import { replaceUserInfo } from '../../State/Actions/usuario';
+import { replaceUserInfo, setUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 
 const stateSelector = (state) => state;
@@ -21,6 +21,15 @@ const localStorageService = new LocalStorageService();
 function UserProfileContainer({ handleLogout, isAdmin }) {
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
+
+  const getUserInfo = () => {
+    const client = HttpClientFactory.createUserHttpClient(null, {
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.getUserInfo(userInfo.id).then((info) => dispatch(setUserInfo(info)));
+  };
 
   const editClienteInfo = (info) => {
     const client = HttpClientFactory.createUserHttpClient(null, {
@@ -72,7 +81,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       PROVEEDOR_SERVICIOS: () => editProveedorInfo(info),
     };
 
-    const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role] : editPersonalInfoForAdmin;
+    const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role]
+      : editPersonalInfoForAdmin;
 
     return toRunFunction(info).then(() => {
       dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
@@ -117,6 +127,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         requestChangeExists={requestChangeExists}
         getAllPlanes={getAllPlanes}
         isAdmin={isAdmin}
+        getUserInfo={getUserInfo}
       />
     </NavigationContextProvider>
   );

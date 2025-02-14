@@ -14,7 +14,9 @@ import { flexColumn } from '../Constants/Styles';
  * @param { any } children - component to render inside the grid
  * @param { boolean } isLoading - flag to enable the loader
  */
-function Layout({ gridProps, children, isLoading }) {
+function Layout({
+  gridProps, children, isLoading,
+}) {
   return (
     <Box
       {...gridProps}

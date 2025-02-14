@@ -9,5 +9,6 @@
     "clientesBaseUrl": "/cliente/{usuarioId}",
     "proveedoresBaseUrl": "/proveedor/{usuarioId}",
     "mailSignUp": "/mail/signup",
-    "confirmUserAccount": "/mail/signup/ok"
+    "confirmUserAccount": "/mail/signup/ok",
+    "request2FaCode": "/2fa"
 }

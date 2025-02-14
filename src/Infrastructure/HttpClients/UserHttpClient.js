@@ -80,9 +80,22 @@ export class UserHttpClient extends HttpClient {
    *
    * @param {String} toAddress user email
    * @param {String} token token given at registration email
-   * @returns
    */
   confirmUserAccount(toAddress, token) {
     return this.post(usersRoutes.confirmUserAccount, null, { toAddress, token });
+  }
+
+  /**
+   * @returns {Promise<{codeTtl: Number, codeDigits: Number}>}
+   */
+  send2FaCode() {
+    return this.post(usersRoutes.request2FaCode);
+  }
+
+  /**
+   * @returns {Promise<Boolean>}
+   */
+  confirn2FaCode(code) {
+    return this.patch(`${usersRoutes.request2FaCode}/${code}`);
   }
 }

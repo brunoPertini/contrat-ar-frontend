@@ -7,17 +7,14 @@ import { systemConstants } from '../../Shared/Constants';
 import { ROLE_ADMIN } from '../../Shared/Constants/System';
 
 export function setUserInfo(userInfo) {
-  return (dispatch, getState) => {
-    const { usuario } = getState();
-    if (!usuario.id) {
-      const keysToPick = Object.keys(userModel);
-      const sanitizedUserInfo = pick(userInfo, keysToPick);
-      if (userInfo.authorities[0] !== ROLE_ADMIN) {
-        sanitizedUserInfo.email = userInfo.sub;
-      }
-      sanitizedUserInfo.role = userInfo.role.nombre;
-      dispatch({ type: actionTypes.SET_USER_INFO, payload: sanitizedUserInfo });
+  return (dispatch) => {
+    const keysToPick = Object.keys(userModel);
+    const sanitizedUserInfo = pick(userInfo, keysToPick);
+    if (userInfo.authorities && userInfo.authorities[0] !== ROLE_ADMIN) {
+      sanitizedUserInfo.email = userInfo.sub;
     }
+    sanitizedUserInfo.role = userInfo.role.nombre;
+    dispatch({ type: actionTypes.SET_USER_INFO, payload: sanitizedUserInfo });
   };
 }
 

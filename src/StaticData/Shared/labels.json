@@ -120,12 +120,16 @@
     "sendingEmail": "Enviando email",
     "youCanLeavePage": "¡No queda nada más para hacer! Podés abandonar esta página",
     "here": "acá",
-    "email.send.wait.minutes": "¿El mail no llegó? En pocos minutos vas a poder reenviarlo",
+    "email.send.wait.minutes": "En pocos minutos vas a poder reenviar el mail",
     "mandatoryField": "* Campo obligatorio",
     "message": "Mensaje",
     "termsAndConditions": "Términos y Condiciones",
     "dataUsage": "Política de Privacidad",
     "acceptTermsAndConditions": "<span>Confirmo que acepto los {termsAndConditionsLink} y doy mi consentimiento para el uso de mis datos conforme a la {dataUsageLink}</span>",
     "unknownError": "Error desconocido",
-    "role": "Rol"
+    "role": "Rol",
+    "2fa.start.title": "Para proteger tu cuenta, vamos a enviarte un código de seguridad al mail registrado",
+    "2fa.checkingCode": "Verificando el código",
+    "2fa.wrongCode": "El código es incorrecto",
+    "2fa.codeExpired": "El código ya no es válido, por favor solicitá otro"
 }

@@ -56,12 +56,12 @@ export default function useDisableElementTimer({
   disableDuration, enableFn, disableFn, isTimerStarted, label,
 }) {
   useEffect(() => {
-    if (isTimerStarted) {
+    if (isTimerStarted && disableDuration) {
       startTimer({
         disableDuration, enableFn, disableFn,
       });
     }
-  }, [isTimerStarted]);
+  }, [isTimerStarted, disableDuration]);
   return isTimerStarted ? (
     <Typography variant="h6" sx={{ color: 'red' }}>
       { label }

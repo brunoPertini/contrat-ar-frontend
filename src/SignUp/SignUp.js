@@ -333,6 +333,7 @@ export default function UserSignUp({
     };
 
     steps.splice(3, 0, planTypeStep);
+    personalDataFieldsValues.dni = '';
   }
 
   const manageSignUp = () => {
