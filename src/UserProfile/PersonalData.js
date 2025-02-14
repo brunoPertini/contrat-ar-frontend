@@ -74,8 +74,7 @@ function UserPersonalData({
         alertSeverity: 'success',
         alertLabel: sharedLabels.infoModifiedSuccess,
       });
-    }).catch((error) => {
-      console.log('edit error: ', error);
+    }).catch(() => {
       setAlertConfig({
         openSnackbar: true,
         alertSeverity: 'error',

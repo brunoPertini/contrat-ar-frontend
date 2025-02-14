@@ -40,14 +40,12 @@ function Layout({
 Layout.defaultProps = {
   gridProps: {},
   isLoading: false,
-  isLoadingAlternativeLabel: '',
 };
 
 Layout.propTypes = {
   gridProps: PropTypes.object,
   children: PropTypes.any.isRequired,
   isLoading: PropTypes.bool,
-  isLoadingAlternativeLabel: PropTypes.string,
 };
 
 export default Layout;

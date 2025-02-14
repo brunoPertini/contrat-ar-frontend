@@ -11,14 +11,14 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 
 const stateSelector = (state) => state;
 
+const userInfoSelector = createSelector(
+  stateSelector,
+  (state) => state.usuario,
+);
+
 const localStorageService = new LocalStorageService();
 
 function UserProfileContainer({ handleLogout, isAdmin }) {
-  const userInfoSelector = createSelector(
-    stateSelector,
-    (state) => state.usuario,
-  );
-
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
