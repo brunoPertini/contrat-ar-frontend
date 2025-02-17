@@ -54,11 +54,7 @@ function UserPersonalData({
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsEditModeEnabled(false);
 
-    const params = !isAdmin ? {
-      phone: userInfo.phone,
-      location: userInfo.location,
-      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
-    } : {
+    const params = {
       ...userInfo,
       fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
       birthDate: switchDateFormat({

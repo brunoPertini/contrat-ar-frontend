@@ -18,10 +18,14 @@ export function setUserInfo(userInfo) {
   };
 }
 
-export const replaceUserInfo = (newUserInfo) => (dispatch) => {
+export const replaceUserInfo = (newUserInfo) => (dispatch, getState) => {
+  const previous = getState().usuario;
   dispatch({
     type: actionTypes.SET_USER_INFO,
-    payload: newUserInfo,
+    payload: {
+      ...previous,
+      ...newUserInfo,
+    },
   });
 };
 

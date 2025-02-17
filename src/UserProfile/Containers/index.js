@@ -84,10 +84,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role]
       : editPersonalInfoForAdmin;
 
-    return toRunFunction(info).then(() => {
-      dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
+    return toRunFunction(info).then((response) => {
+      dispatch(replaceUserInfo({ ...response, id: userInfo.id }));
       return Promise.resolve();
-    }).catch(() => Promise.reject());
+    }).catch(() => {
+      dispatch(replaceUserInfo({ is2FaValid: false }));
+      return Promise.reject();
+    });
   };
 
   const handleUploadProfilePhoto = (file) => {
