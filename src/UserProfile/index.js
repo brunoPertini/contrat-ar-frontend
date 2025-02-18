@@ -26,6 +26,7 @@ import Footer from '../Shared/Components/Footer';
 import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 
 const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -137,6 +138,8 @@ function UserProfile({
       .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
   };
 
+  const acceptSecurityDataChange = () => editCommonInfo(securityData);
+
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
@@ -159,10 +162,21 @@ function UserProfile({
     setHandleGoBack(() => goToIndex);
   }, []);
 
+  // For some reason, these data isn't changed automatically after update
   useEffect(() => {
-    // For some reason, fotoPerfilUrl is not updated automatically when userInfo changes
     setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
   }, [userInfo.fotoPerfilUrl]);
+
+  useEffect(() => {
+    setPersonalData((previous) => ({
+      ...previous,
+      birthDate: switchDateFormat({
+        date: userInfo.birthDate,
+        inputFormat: FORMAT_YMD,
+        outputFormat: FORMAT_DMY,
+      }),
+    }));
+  }, [userInfo.birthDate]);
 
   useEffect(() => {
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
@@ -179,6 +193,13 @@ function UserProfile({
   };
 
   const handlePersonalDataChanged = (key, value) => setPersonalData(
+    (previous) => ({
+      ...previous,
+      [key]: value,
+    }),
+  );
+
+  const handleSecuritylDataChanged = (key, value) => setSecurityData(
     (previous) => ({
       ...previous,
       [key]: value,
@@ -232,16 +253,24 @@ function UserProfile({
         usuarioType={usuarioType}
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
+        handleLogout={handleLogout}
       />
     ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
+        setData={handleSecuritylDataChanged}
         usuarioType={usuarioType}
         styles={{ height: '100vh', minHeight: '100vh' }}
-        requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
+        isEditModeEnabled={isEditModeEnabled}
+        setIsEditModeEnabled={setIsEditModeEnabled}
+        is2FaValid={userInfo.is2FaValid}
+        isAdmin={isAdmin}
+        show2FaComponent={handleShow2FaComponent}
+        handleConfirmEdition={acceptSecurityDataChange}
+        handleLogout={handleLogout}
       />
-    ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
+    ) : null), [securityData, isAdmin, userInfo.is2FaValid, tabOption, isEditModeEnabled]),
     [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
@@ -289,6 +318,7 @@ function UserProfile({
           <TwoFactorAuthentication
             userToken={userInfo.token}
             onVerificationSuccess={on2FaPassed}
+            handleLogout={handleLogout}
           />
         ) : (
           <>

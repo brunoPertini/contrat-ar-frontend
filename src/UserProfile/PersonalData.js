@@ -22,6 +22,7 @@ import { flexColumn } from '../Shared/Constants/Styles';
 import { adminLabels } from '../StaticData/Admin';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import DialogModal from '../Shared/Components/DialogModal';
+import Layout from '../Shared/Components/Layout';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -51,7 +52,10 @@ function UserPersonalData({
     accountActiveModalDefaultValues,
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
+    setIsLoading(true);
     setIsEditModeEnabled(false);
 
     const params = {
@@ -64,19 +68,22 @@ function UserPersonalData({
       }),
     };
 
-    editCommonInfo(params).then(() => {
-      setAlertConfig({
-        openSnackbar: true,
-        alertSeverity: 'success',
-        alertLabel: sharedLabels.infoModifiedSuccess,
-      });
-    }).catch(() => {
-      setAlertConfig({
-        openSnackbar: true,
-        alertSeverity: 'error',
-        alertLabel: sharedLabels.infoModifiedError,
-      });
-    });
+    setTimeout(() => {
+      editCommonInfo(params).then(() => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'success',
+          alertLabel: sharedLabels.infoModifiedSuccess,
+        });
+      }).catch(() => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'error',
+          alertLabel: sharedLabels.infoModifiedError,
+        });
+      })
+        .finally(() => setIsLoading(false));
+    }, 2000);
   };
 
   /**
@@ -339,11 +346,16 @@ function UserPersonalData({
   ), [accountActiveModalContent.text]);
 
   return (
-    <Box
-      {...flexColumn}
-      sx={{ ...styles }}
-      flex={1}
-      gap={5}
+    <Layout
+      isLoading={isLoading}
+      gridProps={{
+        sx: {
+          ...styles,
+          ...flexColumn,
+        },
+        flex: 1,
+        gap: 5,
+      }}
     >
       <UserActiveModal />
       <InformativeAlert
@@ -355,7 +367,8 @@ function UserPersonalData({
       />
       { secondLayout }
       { firstLayout }
-    </Box>
+    </Layout>
+
   );
 }
 

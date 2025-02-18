@@ -24,7 +24,7 @@
         "import/prefer-default-export": [0],
         "react/jsx-props-no-spreading": [0],
         "react/no-danger": [0],
-        "eslint no-underscore-dangle": [0],
+        "no-underscore-dangle": [0],
         "no-param-reassign": [0],
         "class-methods-use-this": [0],
         "default-param-last": [0],
@@ -32,6 +32,7 @@
         "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
         "jsx-a11y/anchor-is-valid": [0],
         "react/no-array-index-key": [0],
-        "import/no-cycle": [0]
+        "import/no-cycle": [0],
+        "max-len": ["error", { "code": 120 }]
     }
 }
