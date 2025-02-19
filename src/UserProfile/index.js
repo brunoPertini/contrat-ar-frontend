@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
 import Header from '../Header';
 import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
@@ -28,7 +29,7 @@ import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 
-const TABS_NAMES = {
+export const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
   SECURITY: 'SECURITY',
   PLAN: 'PLAN',
@@ -98,6 +99,7 @@ function UserProfile({
   const [securityData, setSecurityData] = useState({
     email: userInfo.email,
     password: userInfo.password,
+    confirmPassword: userInfo.password,
   });
 
   // planData can be changed, currentUserPlanData is only set once
@@ -138,7 +140,13 @@ function UserProfile({
       .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
   };
 
-  const acceptSecurityDataChange = () => editCommonInfo(securityData);
+  const acceptSecurityDataChange = () => {
+    const sanitizedBody = pickBy(
+      securityData,
+      (value, key) => key !== 'confirmPassword' && userInfo[key] !== securityData[key],
+    );
+    return editCommonInfo(sanitizedBody, tabOption);
+  };
 
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered

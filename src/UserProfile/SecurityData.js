@@ -2,7 +2,8 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import SaveIcon from '@mui/icons-material/Save';
-import { useState } from 'react';
+import isEqual from 'lodash/isEqual';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, FormControlLabel, Switch } from '@mui/material';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
@@ -26,16 +27,42 @@ function SecurityData({
     alertLabel: null,
   });
 
+  const [errorFields, setErrorFields] = useState();
+  // eslint-disable-next-line no-unused-vars
+  const [initialData, setInitialData] = useState({ ...data });
+
+  const someFieldHasError = useMemo(() => errorFields && Object.values(errorFields)
+    .some((value) => value), [errorFields]);
+
+  const someInfoChanged = useMemo(() => !isEqual(
+    { email: data.email, password: data.password },
+    { email: initialData.email, password: initialData.password },
+  ), [data, initialData]);
+
   const formFields = personalDataFormBuilder.build({
     usuarioType,
     fieldsValues: data,
-    onChangeFields: (fieldId, fieldValue) => {
+    onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
+      if (fieldId === 'password' || fieldId === 'confirmPassword') {
+        const passwordsNotMatching = fieldId === 'password'
+          ? fieldValue !== data.confirmPassword
+          : fieldValue !== data.password;
+        setErrorFields((previous) => ({
+          ...previous,
+          password: passwordsNotMatching,
+          confirmPassword: passwordsNotMatching,
+        }));
+      } else {
+        setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
+      }
       setData(fieldId, fieldValue);
     },
     showInlineLabels: true,
+    showConfirmPasswordInput: isEditModeEnabled,
     inputProps: {
       readOnly: !isEditModeEnabled,
     },
+    errorFields,
   });
 
   const handleEditModeChange = (event) => {
@@ -99,7 +126,7 @@ function SecurityData({
           backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
           '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
         }}
-        disabled={!isEditModeEnabled}
+        disabled={!isEditModeEnabled || someFieldHasError || !someInfoChanged}
         onClick={handleConfirm}
       >
         { sharedLabels.saveChanges }
@@ -114,6 +141,15 @@ function SecurityData({
       alertLabel: '',
     });
   };
+
+  useEffect(() => {
+    const initialErrorValues = Object.keys(data).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {});
+
+    setErrorFields({ ...initialErrorValues });
+  }, []);
 
   return (
     <Layout isLoading={isLoading} gridProps={{ sx: { ...styles, ...flexColumn } }}>

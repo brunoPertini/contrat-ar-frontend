@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import SaveIcon from '@mui/icons-material/Save';
+import isEqual from 'lodash/isEqual';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -23,6 +24,7 @@ import { adminLabels } from '../StaticData/Admin';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import DialogModal from '../Shared/Components/DialogModal';
 import Layout from '../Shared/Components/Layout';
+import { TABS_NAMES } from '.';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -54,12 +56,14 @@ function UserPersonalData({
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // eslint-disable-next-line no-unused-vars
+  const [initialData, setInitialData] = useState({ ...userInfo });
+
   const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
     setIsLoading(true);
     setIsEditModeEnabled(false);
 
-    const params = {
-      ...userInfo,
+    const dataSanitizer = {
       fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
       birthDate: switchDateFormat({
         date: userInfo.birthDate,
@@ -68,8 +72,16 @@ function UserPersonalData({
       }),
     };
 
+    const params = {};
+
+    Object.keys(userInfo).forEach((key) => {
+      if (!isEqual(userInfo[key], initialData[key])) {
+        params[key] = key in dataSanitizer ? dataSanitizer[key] : userInfo[key];
+      }
+    });
+
     setTimeout(() => {
-      editCommonInfo(params).then(() => {
+      editCommonInfo(params, TABS_NAMES.PERSONAL_DATA).then(() => {
         setAlertConfig({
           openSnackbar: true,
           alertSeverity: 'success',
@@ -121,6 +133,8 @@ function UserPersonalData({
     });
   };
 
+  const isSomeFieldEmpty = Object.values(fieldsValues).some((field) => !field);
+
   const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
     usuarioType,
     fieldsValues,
@@ -154,7 +168,7 @@ function UserPersonalData({
           backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
           '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
         }}
-        disabled={!isEditModeEnabled}
+        disabled={!isEditModeEnabled || isSomeFieldEmpty}
         onClick={handleConfirmEdition}
       >
         { sharedLabels.saveChanges }

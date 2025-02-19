@@ -142,7 +142,7 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
             <TextField
               key={index}
               id={`code-input-${index}`}
-              type="text"
+              type="number"
               inputProps={{ maxLength: 1, style: { textAlign: 'center' } }}
               value={digit}
               onChange={(e) => handleInputChange(index, e.target.value)}
