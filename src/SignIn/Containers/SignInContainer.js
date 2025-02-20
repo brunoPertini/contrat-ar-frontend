@@ -28,7 +28,13 @@ function SignInContainer({ router, securityService, cookiesService }) {
         router.navigate(userInfo.indexPage);
       }
     }).catch(({ error }) => {
-      setErrorMessage(error);
+      // error is 401
+      if (!error.status) {
+        setErrorMessage(error);
+      } else {
+        // error is 403 but may be because unverified email
+        setErrorMessage(error.message);
+      }
     });
   };
 

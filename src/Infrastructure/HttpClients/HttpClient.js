@@ -104,14 +104,29 @@ export class HttpClient {
 
   #handleError(error) {
     if (error?.response) {
-      const { status } = error.response;
+      Logger.log(error.response);
+      const { status, headers, config: { url } } = error.response;
       if (status && status === 401) {
-        Logger.log(error.response);
         if (this.#handleLogout) {
           this.#handleLogout({ errorMessage: errorMessages.sessionExpired });
         }
         return Promise.reject(error.response);
       }
+
+      const loginWasCalled = url.includes('login');
+      const wasForbidden = status && status === 403;
+      const backendCheckedAccount = headers['account-status'];
+
+      if (loginWasCalled && wasForbidden && backendCheckedAccount) {
+        return Promise.reject({
+          error: {
+            status,
+            message: error.response.data,
+            accountStatus: headers['account-status'],
+          },
+        });
+      }
+
       const wrappedError = error.response.data || error.response.data.error;
       Logger.log(wrappedError);
       return Promise.reject(wrappedError);

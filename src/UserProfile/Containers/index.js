@@ -8,7 +8,6 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
 import { replaceUserInfo, setUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
-import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
 
 const stateSelector = (state) => state;
@@ -89,10 +88,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return toRunFunction(info).then(() => {
       dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
       if (tabName === TABS_NAMES.SECURITY) {
-        const emailHasChanged = !!info.email && userInfo.email !== info.email;
-        const errorMessage = emailHasChanged ? signUpLabels['signup.accountConfirmation.title']
-          : signinLabels['session.closed.signin'];
-        handleLogout({ errorMessage });
+        handleLogout({ errorMessage: signinLabels['session.closed.signin'] });
       }
     }).catch(() => {
       dispatch(replaceUserInfo({ is2FaValid: false }));
