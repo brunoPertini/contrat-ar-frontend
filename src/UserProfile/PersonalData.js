@@ -10,6 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import SaveIcon from '@mui/icons-material/Save';
 import isEqual from 'lodash/isEqual';
+import { isNull, isUndefined } from 'lodash';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -56,15 +57,13 @@ function UserPersonalData({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // eslint-disable-next-line no-unused-vars
-  const [initialData, setInitialData] = useState({ ...userInfo });
+  const [initialData, setInitialData] = useState();
 
-  const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
+  const handleConfirmEdition = () => {
     setIsLoading(true);
     setIsEditModeEnabled(false);
 
     const dataSanitizer = {
-      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
       birthDate: switchDateFormat({
         date: userInfo.birthDate,
         inputFormat: FORMAT_DMY,
@@ -75,8 +74,8 @@ function UserPersonalData({
     const params = {};
 
     Object.keys(userInfo).forEach((key) => {
-      if (!isEqual(userInfo[key], initialData[key])) {
-        params[key] = key in dataSanitizer ? dataSanitizer[key] : userInfo[key];
+      if (!isEqual(fieldsValues[key], initialData[key])) {
+        params[key] = key in dataSanitizer ? dataSanitizer[key] : fieldsValues[key];
       }
     });
 
@@ -111,7 +110,7 @@ function UserPersonalData({
 
   const callHandleUploadPhoto = (file) => uploadProfilePhoto(file);
 
-  const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
+  const onSuccessUploadPhoto = (response) => setFieldsValues((previous) => ({ ...previous, fotoPerfilUrl: response }));
 
   const handleEditModeChange = (event) => {
     if (event.target.checked && (userInfo.is2FaValid || isAdmin)) {
@@ -133,7 +132,9 @@ function UserPersonalData({
     });
   };
 
-  const isSomeFieldEmpty = Object.values(fieldsValues).some((field) => !field);
+  const isSomeFieldEmpty = useMemo(() => Object.values(fieldsValues).some(
+    (field) => isUndefined(field) || isNull(field) || field === '',
+  ), fieldsValues);
 
   const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
     usuarioType,
@@ -340,6 +341,10 @@ function UserPersonalData({
     </Box>
 
   );
+
+  useEffect(() => {
+    setInitialData({ ...userInfo });
+  }, []);
 
   useEffect(() => {
     setFieldsValues(userInfo);

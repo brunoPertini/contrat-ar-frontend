@@ -86,8 +86,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     const toRunFunction = !isAdmin ? noAminHandlers[userInfo.role]
       : editPersonalInfoForAdmin;
 
-    return toRunFunction(info).then((response) => {
-      dispatch(replaceUserInfo({ ...response, id: userInfo.id }));
+    return toRunFunction(info).then(() => {
+      dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
       if (tabName === TABS_NAMES.SECURITY) {
         const emailHasChanged = !!info.email && userInfo.email !== info.email;
         const errorMessage = emailHasChanged ? signUpLabels['signup.accountConfirmation.title']
