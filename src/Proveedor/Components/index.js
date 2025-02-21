@@ -31,12 +31,11 @@ import VendibleCreateForm from '../CreateVendible';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import InformativeAlert from '../../Shared/Components/Alert';
-import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import GoBackLink from '../../Shared/Components/GoBackLink';
 import { NavigationContext } from '../../State/Contexts/NavigationContext';
 import VendibleInfo from '../../Shared/Components/VendibleInfo';
 import ModifyVendibleForm from '../ModifyVendible';
-import { buildFooterOptions, parseVendibleUnit, waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import { buildFooterOptions, parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import Footer from '../../Shared/Components/Footer';
 import BasicMenu from '../../Shared/Components/Menu';
@@ -475,8 +474,6 @@ function ProveedorPage({
     // TODO: mainContent esta de mas. Ver si se puede sacar.
     mainContent = <InnerComponent {...innerProps} />;
   }
-
-  useOnLeavingTabHandler(waitAndCleanUserTokenCookie);
 
   const footerOptions = buildFooterOptions(routes.ROLE_PROVEEDOR_PRODUCTOS);
 

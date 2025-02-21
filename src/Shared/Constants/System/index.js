@@ -108,3 +108,8 @@ export const TwoFactorAuthResult = {
   FAILED: 'FAILED',
   EXPIRED: 'EXPIRED',
 };
+
+export const ACCOUNT_STATUS = {
+  DISABLED: 'disabled',
+  UNVERIFIED: 'unverified',
+};

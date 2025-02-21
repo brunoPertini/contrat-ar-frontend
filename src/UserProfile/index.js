@@ -90,7 +90,6 @@ function UserProfile({
     birthDate: userInfo.birthDate,
     location: userInfo.location,
     phone: userInfo.phone,
-    fotoPerfilUrl: userInfo.fotoPerfilUrl,
     active: userInfo.active,
     is2FaValid: userInfo.is2FaValid,
   });
@@ -151,11 +150,12 @@ function UserProfile({
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
-      const { dni } = userInfo;
+      const { dni, fotoPerfilUrl } = userInfo;
       setPersonalData(
         (previous) => ({
           ...previous,
           dni,
+          fotoPerfilUrl,
         }),
       );
 
