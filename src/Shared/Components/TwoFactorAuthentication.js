@@ -11,9 +11,9 @@ import useDisableElementTimer from '../Hooks/useDisableElementTimer';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { flexColumn } from '../Constants/Styles';
 import StaticAlert from './StaticAlert';
-import { TwoFactorAuthResult } from '../Constants/System';
+import { EMPTY_FUNCTION, TwoFactorAuthResult } from '../Constants/System';
 
-export default function TwoFactorAuthentication({ userToken, onVerificationSuccess }) {
+export default function TwoFactorAuthentication({ userToken, onVerificationSuccess, handleLogout = EMPTY_FUNCTION }) {
   const [isLoading, setIsLoading] = useState(false);
   const [buttonEnabled, setButtonEnabled] = useState(true);
 
@@ -30,7 +30,7 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
   const [verificationResult, setVerificationResult] = useState(null);
 
   const userHttpClient = useMemo(
-    () => HttpClientFactory.createUserHttpClient(null, { token: userToken }),
+    () => HttpClientFactory.createUserHttpClient(null, { token: userToken, handleLogout }),
     [userToken],
   );
 
@@ -55,6 +55,7 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
       .catch((error) => {
         if (error.status === 409) {
           setAlertData({ severity: 'error', label: error });
+          setButtonEnabled(false);
         }
       })
       .finally(() => {
@@ -141,7 +142,7 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
             <TextField
               key={index}
               id={`code-input-${index}`}
-              type="text"
+              type="number"
               inputProps={{ maxLength: 1, style: { textAlign: 'center' } }}
               value={digit}
               onChange={(e) => handleInputChange(index, e.target.value)}
@@ -174,4 +175,5 @@ export default function TwoFactorAuthentication({ userToken, onVerificationSucce
 TwoFactorAuthentication.propTypes = {
   userToken: PropTypes.string.isRequired,
   onVerificationSuccess: PropTypes.func.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };

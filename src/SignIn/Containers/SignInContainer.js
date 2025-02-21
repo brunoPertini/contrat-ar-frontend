@@ -6,9 +6,11 @@ import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { withRouter } from '../../Shared/Components';
 import SecurityService from '../../Infrastructure/Services/SecurityService';
 import CookiesService from '../../Infrastructure/Services/CookiesService';
+import { ACCOUNT_STATUS } from '../../Shared/Constants/System';
 
 function SignInContainer({ router, securityService, cookiesService }) {
   const [errorMessage, setErrorMessage] = useState('');
+  const [shouldVerifyEmail, setShouldVerifyEmail] = useState(false);
 
   const location = useLocation();
 
@@ -28,11 +30,34 @@ function SignInContainer({ router, securityService, cookiesService }) {
         router.navigate(userInfo.indexPage);
       }
     }).catch(({ error }) => {
-      setErrorMessage(error);
+      // error is 401
+      if (!error.status) {
+        setErrorMessage(error);
+      } else {
+        // error is 403 but may be because unverified email
+        setErrorMessage(error.message);
+
+        if (error.accountStatus === ACCOUNT_STATUS.UNVERIFIED) {
+          setShouldVerifyEmail(true);
+        }
+      }
     });
   };
 
-  return <SignIn dispatchSignIn={dispatchSignIn} errorMessage={errorMessage} />;
+  const sendAccountConfirmEmail = (email) => {
+    const client = HttpClientFactory.createUserHttpClient();
+
+    return client.sendRegistrationConfirmEmail(email);
+  };
+
+  return (
+    <SignIn
+      dispatchSignIn={dispatchSignIn}
+      shouldVerifyEmail={shouldVerifyEmail}
+      errorMessage={errorMessage}
+      sendAccountConfirmEmail={sendAccountConfirmEmail}
+    />
+  );
 }
 
 SignInContainer.propTypes = {

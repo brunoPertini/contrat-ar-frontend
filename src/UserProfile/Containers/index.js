@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
-import UserProfile from '../index';
+import UserProfile, { TABS_NAMES } from '../index';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import { CLIENTE } from '../../Shared/Constants/System';
 import { replaceUserInfo, setUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
+import { signinLabels } from '../../StaticData/SignIn';
 
 const stateSelector = (state) => state;
 
@@ -74,7 +75,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     });
   };
 
-  const callEditCommonInfo = async (info) => {
+  const callEditCommonInfo = async (info, tabName) => {
     const noAminHandlers = {
       CLIENTE: () => editClienteInfo(info),
       PROVEEDOR_PRODUCTOS: () => editProveedorInfo(info),
@@ -86,8 +87,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
 
     return toRunFunction(info).then(() => {
       dispatch(replaceUserInfo({ ...info, id: userInfo.id }));
-      return Promise.resolve();
-    }).catch(() => Promise.reject());
+      if (tabName === TABS_NAMES.SECURITY) {
+        handleLogout({ errorMessage: signinLabels['session.closed.signin'] });
+      }
+    }).catch(() => {
+      dispatch(replaceUserInfo({ is2FaValid: false }));
+      return Promise.reject();
+    });
   };
 
   const handleUploadProfilePhoto = (file) => {

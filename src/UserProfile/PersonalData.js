@@ -9,6 +9,9 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import SaveIcon from '@mui/icons-material/Save';
+import isEqual from 'lodash/isEqual';
+import isNull from 'lodash/isNull';
+import isUndefined from 'lodash/isUndefined';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import LocationMap from '../Shared/Components/LocationMap';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
@@ -22,6 +25,8 @@ import { flexColumn } from '../Shared/Constants/Styles';
 import { adminLabels } from '../StaticData/Admin';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import DialogModal from '../Shared/Components/DialogModal';
+import Layout from '../Shared/Components/Layout';
+import { TABS_NAMES } from '.';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
@@ -51,16 +56,15 @@ function UserPersonalData({
     accountActiveModalDefaultValues,
   );
 
-  const handleConfirmEdition = ({ newFotoPerfilUrl = '' }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [initialData, setInitialData] = useState();
+
+  const handleConfirmEdition = () => {
+    setIsLoading(true);
     setIsEditModeEnabled(false);
 
-    const params = !isAdmin ? {
-      phone: userInfo.phone,
-      location: userInfo.location,
-      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
-    } : {
-      ...userInfo,
-      fotoPerfilUrl: newFotoPerfilUrl || userInfo.fotoPerfilUrl,
+    const dataSanitizer = {
       birthDate: switchDateFormat({
         date: userInfo.birthDate,
         inputFormat: FORMAT_DMY,
@@ -68,19 +72,30 @@ function UserPersonalData({
       }),
     };
 
-    editCommonInfo(params).then(() => {
-      setAlertConfig({
-        openSnackbar: true,
-        alertSeverity: 'success',
-        alertLabel: sharedLabels.infoModifiedSuccess,
-      });
-    }).catch(() => {
-      setAlertConfig({
-        openSnackbar: true,
-        alertSeverity: 'error',
-        alertLabel: sharedLabels.infoModifiedError,
-      });
+    const params = {};
+
+    Object.keys(userInfo).forEach((key) => {
+      if (!isEqual(fieldsValues[key], initialData[key])) {
+        params[key] = key in dataSanitizer ? dataSanitizer[key] : fieldsValues[key];
+      }
     });
+
+    setTimeout(() => {
+      editCommonInfo(params, TABS_NAMES.PERSONAL_DATA).then(() => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'success',
+          alertLabel: sharedLabels.infoModifiedSuccess,
+        });
+      }).catch(() => {
+        setAlertConfig({
+          openSnackbar: true,
+          alertSeverity: 'error',
+          alertLabel: sharedLabels.infoModifiedError,
+        });
+      })
+        .finally(() => setIsLoading(false));
+    }, 2000);
   };
 
   /**
@@ -96,7 +111,7 @@ function UserPersonalData({
 
   const callHandleUploadPhoto = (file) => uploadProfilePhoto(file);
 
-  const onSuccessUploadPhoto = (response) => handleConfirmEdition({ newFotoPerfilUrl: response });
+  const onSuccessUploadPhoto = (response) => setFieldsValues((previous) => ({ ...previous, fotoPerfilUrl: response }));
 
   const handleEditModeChange = (event) => {
     if (event.target.checked && (userInfo.is2FaValid || isAdmin)) {
@@ -117,6 +132,10 @@ function UserPersonalData({
       alertLabel: '',
     });
   };
+
+  const isSomeFieldEmpty = useMemo(() => Object.values(fieldsValues).some(
+    (field) => isUndefined(field) || isNull(field) || field === '',
+  ), fieldsValues);
 
   const editableFields = useMemo(() => (!isEditModeEnabled ? null : personalDataFormBuilder.build({
     usuarioType,
@@ -151,7 +170,7 @@ function UserPersonalData({
           backgroundColor: isEditModeEnabled ? 'rgb(36, 134, 164)' : '#ccc',
           '&:hover': { backgroundColor: isEditModeEnabled ? 'rgb(28, 110, 135)' : '#ccc' },
         }}
-        disabled={!isEditModeEnabled}
+        disabled={!isEditModeEnabled || isSomeFieldEmpty}
         onClick={handleConfirmEdition}
       >
         { sharedLabels.saveChanges }
@@ -325,6 +344,10 @@ function UserPersonalData({
   );
 
   useEffect(() => {
+    setInitialData({ ...userInfo });
+  }, []);
+
+  useEffect(() => {
     setFieldsValues(userInfo);
   }, [userInfo]);
 
@@ -343,11 +366,16 @@ function UserPersonalData({
   ), [accountActiveModalContent.text]);
 
   return (
-    <Box
-      {...flexColumn}
-      sx={{ ...styles }}
-      flex={1}
-      gap={5}
+    <Layout
+      isLoading={isLoading}
+      gridProps={{
+        sx: {
+          ...styles,
+          ...flexColumn,
+        },
+        flex: 1,
+        gap: 5,
+      }}
     >
       <UserActiveModal />
       <InformativeAlert
@@ -359,7 +387,8 @@ function UserPersonalData({
       />
       { secondLayout }
       { firstLayout }
-    </Box>
+    </Layout>
+
   );
 }
 

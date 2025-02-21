@@ -8,9 +8,12 @@ import {
 import { thunk } from 'redux-thunk';
 import usuarioReducer from './Reducers/usuario';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const isProduction = process.env.NODE_ENV === 'production';
 
-// TODO: differentiate dev and prod
+const composeEnhancers = !isProduction
+  ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({ trace: true }) || compose
+  : compose;
+
 /**
  * @returns {Store}
  */

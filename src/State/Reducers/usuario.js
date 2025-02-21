@@ -1,3 +1,4 @@
+import { CLIENTE } from '../../Shared/Constants/System';
 import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
 
 /**
@@ -46,6 +47,11 @@ export const userState = {
 function usuarioReducer(state = userState, action) {
   switch (action.type) {
     case SET_USER_INFO:
+      if (action.payload.role === CLIENTE) {
+        delete state.dni;
+        delete state.fotoPerfilUrl;
+        delete state.suscripcion;
+      }
       return {
         ...state,
         ...action.payload,

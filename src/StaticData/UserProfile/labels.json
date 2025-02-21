@@ -13,5 +13,9 @@
     "plan.change.finalMessage": "¡Recibimos tu solicitud de cambio de plan! Te contactaremos a la brevedad.",
     "plan.subscription.activeFrom": "Suscripción activa desde {createdAt}",
     "plan.subscription.inactive": "Suscripción inactiva",
-    "plan.change.paid.disclaimer": "Si guardás los cambios, te vamos a redirigir a la página de pagos para que completes el cambio de plan."
+    "plan.change.paid.disclaimer": "Si guardás los cambios, te vamos a redirigir a la página de pagos para que completes el cambio de plan.",
+    "email.change.success": "¡Tu email fue cambiado!",
+    "email.change.error": "¡Tu email no pudo ser cambiado! Intentalo más tarde o contactanos",
+    "password.change.success": "¡Tu contraseña fue cambiada!",
+    "password.change.error": "¡Tu contraseña no pudo ser cambiada! Intentalo más tarde o contactanos"
 }

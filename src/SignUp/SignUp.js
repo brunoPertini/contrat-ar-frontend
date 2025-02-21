@@ -156,7 +156,10 @@ export default function UserSignUp({
       if (result.state === 'denied') {
         setDialogLabels({
           title: locationMapLabels['dialog.permission.revoke.title'],
-          contextText: <span dangerouslySetInnerHTML={{ __html: locationMapLabels['dialog.permission.revoke.textContext'] }} />,
+          contextText: <span dangerouslySetInnerHTML={{
+            __html: locationMapLabels['dialog.permission.revoke.textContext'],
+          }}
+          />,
           acceptText: locationMapLabels['dialog.permission.revoke.finish'],
         });
         setOpenPermissionDialog(true);
@@ -198,7 +201,9 @@ export default function UserSignUp({
     errorFields,
     onChangeFields: (fieldId, fieldValue, fieldsHasError) => {
       if (fieldId === 'password' || fieldId === 'confirmPassword') {
-        const passwordsNotMatching = fieldId === 'password' ? fieldValue !== personalDataFieldsValues.confirmPassword : fieldValue !== personalDataFieldsValues.password;
+        const passwordsNotMatching = fieldId === 'password'
+          ? fieldValue !== personalDataFieldsValues.confirmPassword
+          : fieldValue !== personalDataFieldsValues.password;
         setErrorFields((previous) => ({
           ...previous,
           password: fieldsHasError || passwordsNotMatching,

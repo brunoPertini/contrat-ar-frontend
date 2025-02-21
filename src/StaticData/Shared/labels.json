@@ -72,7 +72,7 @@
     "saveChanges": "Guardar Cambios",
     "finalMonthlyPrice": " Precio final mensual: {price}",
     "infoModifiedSuccess": "¡La información fue modificada!",
-    "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde",
+    "infoModifiedError": "¡La información no pudo ser modificada! Por favor, intentalo más tarde, o contactanos",
     "invalidEmail": "Mail inválido",
     "userType": "Tipo de usuario",
     "showing": "Mostrando:",

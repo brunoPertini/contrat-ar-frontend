@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
 import Header from '../Header';
 import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
@@ -26,8 +27,9 @@ import Footer from '../Shared/Components/Footer';
 import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 
-const TABS_NAMES = {
+export const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
   SECURITY: 'SECURITY',
   PLAN: 'PLAN',
@@ -88,7 +90,6 @@ function UserProfile({
     birthDate: userInfo.birthDate,
     location: userInfo.location,
     phone: userInfo.phone,
-    fotoPerfilUrl: userInfo.fotoPerfilUrl,
     active: userInfo.active,
     is2FaValid: userInfo.is2FaValid,
   });
@@ -97,6 +98,7 @@ function UserProfile({
   const [securityData, setSecurityData] = useState({
     email: userInfo.email,
     password: userInfo.password,
+    confirmPassword: userInfo.password,
   });
 
   // planData can be changed, currentUserPlanData is only set once
@@ -137,14 +139,23 @@ function UserProfile({
       .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
   };
 
+  const acceptSecurityDataChange = () => {
+    const sanitizedBody = pickBy(
+      securityData,
+      (value, key) => key !== 'confirmPassword' && userInfo[key] !== securityData[key],
+    );
+    return editCommonInfo(sanitizedBody, tabOption);
+  };
+
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
-      const { dni } = userInfo;
+      const { dni, fotoPerfilUrl } = userInfo;
       setPersonalData(
         (previous) => ({
           ...previous,
           dni,
+          fotoPerfilUrl,
         }),
       );
 
@@ -159,10 +170,21 @@ function UserProfile({
     setHandleGoBack(() => goToIndex);
   }, []);
 
+  // For some reason, these data isn't changed automatically after update
   useEffect(() => {
-    // For some reason, fotoPerfilUrl is not updated automatically when userInfo changes
     setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
   }, [userInfo.fotoPerfilUrl]);
+
+  useEffect(() => {
+    setPersonalData((previous) => ({
+      ...previous,
+      birthDate: switchDateFormat({
+        date: userInfo.birthDate,
+        inputFormat: FORMAT_YMD,
+        outputFormat: FORMAT_DMY,
+      }),
+    }));
+  }, [userInfo.birthDate]);
 
   useEffect(() => {
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
@@ -179,6 +201,13 @@ function UserProfile({
   };
 
   const handlePersonalDataChanged = (key, value) => setPersonalData(
+    (previous) => ({
+      ...previous,
+      [key]: value,
+    }),
+  );
+
+  const handleSecuritylDataChanged = (key, value) => setSecurityData(
     (previous) => ({
       ...previous,
       [key]: value,
@@ -232,16 +261,24 @@ function UserProfile({
         usuarioType={usuarioType}
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
+        handleLogout={handleLogout}
       />
     ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
       <SecurityData
         data={securityData}
+        setData={handleSecuritylDataChanged}
         usuarioType={usuarioType}
         styles={{ height: '100vh', minHeight: '100vh' }}
-        requestChangeExists={changeRequestsMade.email || changeRequestsMade.password}
+        isEditModeEnabled={isEditModeEnabled}
+        setIsEditModeEnabled={setIsEditModeEnabled}
+        is2FaValid={userInfo.is2FaValid}
+        isAdmin={isAdmin}
+        show2FaComponent={handleShow2FaComponent}
+        handleConfirmEdition={acceptSecurityDataChange}
+        handleLogout={handleLogout}
       />
-    ) : null), [securityData, changeRequestsMade.email, changeRequestsMade.password, tabOption]),
+    ) : null), [securityData, isAdmin, userInfo.is2FaValid, tabOption, isEditModeEnabled]),
     [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
@@ -289,6 +326,7 @@ function UserProfile({
           <TwoFactorAuthentication
             userToken={userInfo.token}
             onVerificationSuccess={on2FaPassed}
+            handleLogout={handleLogout}
           />
         ) : (
           <>

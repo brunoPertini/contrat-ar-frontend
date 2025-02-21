@@ -67,7 +67,17 @@ export class UserHttpClient extends HttpClient {
     const url = (role === systemConstants.CLIENTE ? (usersRoutes.clientesBaseUrl)
       : (usersRoutes.proveedoresBaseUrl)).replace('{usuarioId}', userId);
 
-    return this.put(url, null, { ...info, location: parsedLocation });
+    return this.put(
+      url,
+      null,
+      {
+        ...info,
+        is2FaValid: undefined,
+        active: undefined,
+        userId,
+        location: parsedLocation,
+      },
+    );
   }
 
   sendRegistrationConfirmEmail(email) {

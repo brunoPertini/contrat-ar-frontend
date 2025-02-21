@@ -105,18 +105,29 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
 
   if (request.sourceTable === ENTITY_NAME.usuario) {
     InnerComponent = UserInfo;
-    const toShowCommonData = pick(requestDetail, ['id', 'name', 'surname', 'email', 'birthDate', 'phone', 'location', 'role']);
-    const toShowRole = toShowCommonData.role.nombre;
-    const toShowProveedorData = toShowRole === CLIENTE ? {} : pick(requestDetail, ['dni', 'fotoPerfilUrl', 'suscripcion']);
-    const translatedAddress = await translateAddress(toShowCommonData.location);
+    const toShowCommonData = pick(requestDetail, ['id', 'name', 'surname', 'email',
+      'birthDate', 'phone', 'location', 'role', 'password']);
+
+    const toShowRole = toShowCommonData.role?.nombre;
+    const toShowProveedorData = toShowRole === CLIENTE ? {} : pick(requestDetail, ['dni',
+      'fotoPerfilUrl', 'suscripcion']);
+
     props = {
       userInfo: {
         ...toShowCommonData,
         ...toShowProveedorData,
-        role: toShowRole,
-        location: translatedAddress,
       },
     };
+
+    if (toShowRole) {
+      props.userInfo.role = toShowRole;
+    }
+
+    const translatedAddress = await translateAddress(toShowCommonData.location);
+
+    if (translatedAddress) {
+      props.userInfo.location = translateAddress;
+    }
   }
 
   return <InnerComponent {...props} />;
@@ -166,7 +177,11 @@ export default function ChangeRequestsTable({
   const showDialogModal = (changeRequestId, operation) => {
     setDialogModalContent({
       open: true,
-      text: (operation === 'CONFIRM' ? adminLabels['changeRequest.confirm'] : adminLabels['changeRequest.delete.confirm']).replace('{id}', changeRequestId),
+      text: (operation === 'CONFIRM' ? adminLabels['changeRequest.confirm']
+        : adminLabels['changeRequest.delete.confirm']).replace(
+        '{id}',
+        changeRequestId,
+      ),
       handleAccept: () => {
         const newSnackbarProps = {
           open: true,
@@ -262,7 +277,11 @@ export default function ChangeRequestsTable({
                       const rendererType = ATTRIBUTES_CONFIG[attribute];
                       if (rendererType) {
                         return (
-                          <TableCell key={`cell-${request.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                          <TableCell
+                            key={`cell-${request.id}-${attribute}`}
+                            scope="row"
+                            sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+                          >
                             {
                               ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
                                 rendererType,
@@ -278,7 +297,11 @@ export default function ChangeRequestsTable({
                       return null;
                     })
                   }
-              <TableCell key={`cell-${request.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+              <TableCell
+                key={`cell-${request.id}-actions`}
+                scope="row"
+                sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+              >
                 <OptionsMenu
                   title={sharedLabels.actions}
                   options={ACTIONS_OPTIONS(request.wasApplied)}
