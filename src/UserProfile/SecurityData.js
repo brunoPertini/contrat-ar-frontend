@@ -1,10 +1,11 @@
-/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import SaveIcon from '@mui/icons-material/Save';
 import isEqual from 'lodash/isEqual';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, FormControlLabel, Switch } from '@mui/material';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { CLIENTE, PROVEEDOR } from '../Shared/Constants/System';
@@ -174,8 +175,19 @@ SecurityData.defaultProps = {
 
 SecurityData.propTypes = {
   styles: PropTypes.object,
-  data: PropTypes.shape({ email: PropTypes.string, password: PropTypes.string }).isRequired,
+  data: PropTypes.shape({
+    email: PropTypes.string,
+    password: PropTypes.string,
+    confirmPassword: PropTypes.string,
+  }).isRequired,
+  setData: PropTypes.func.isRequired,
   usuarioType: PropTypes.oneOf([PROVEEDOR, CLIENTE]).isRequired,
+  isEditModeEnabled: PropTypes.bool.isRequired,
+  setIsEditModeEnabled: PropTypes.func.isRequired,
+  is2FaValid: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+  show2FaComponent: PropTypes.func.isRequired,
+  handleConfirmEdition: PropTypes.func.isRequired,
 };
 
 export default SecurityData;
