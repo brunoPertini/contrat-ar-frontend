@@ -108,4 +108,11 @@ export class UserHttpClient extends HttpClient {
   confirn2FaCode(code) {
     return this.patch(`${usersRoutes.request2FaCode}/${code}`);
   }
+
+   /**
+   * @returns {Promise<Boolean>}
+   */
+  sendForgotPasswordLink(email) {
+    
+  }
 }

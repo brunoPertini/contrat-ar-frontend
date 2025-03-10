@@ -10,5 +10,6 @@
     "proveedoresBaseUrl": "/proveedor/{usuarioId}",
     "mailSignUp": "/mail/signup",
     "confirmUserAccount": "/mail/signup/ok",
-    "request2FaCode": "/2fa"
+    "request2FaCode": "/2fa",
+    "resetPasswordEmail": "/mail/password/forgot"
 }

@@ -50,6 +50,10 @@ function SignInContainer({ router, securityService, cookiesService }) {
     return client.sendRegistrationConfirmEmail(email);
   };
 
+  const sendForgotPasswordEmail = (email) => {
+    
+  }
+
   return (
     <SignIn
       dispatchSignIn={dispatchSignIn}

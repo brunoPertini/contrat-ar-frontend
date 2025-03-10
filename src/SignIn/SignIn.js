@@ -5,6 +5,7 @@ import { SignInFormBuilder } from '../Shared/Helpers/FormBuilder';
 import Form from '../Shared/Components/Form';
 import { signinLabels } from '../StaticData/SignIn';
 import AccountMailConfirmation from '../SignUp/AccountMailConfirmation';
+import ForgotPassword from './Components/ForgotPassword';
 
 function SignIn({
   dispatchSignIn,
@@ -14,7 +15,9 @@ function SignIn({
 
   const [formValues, setFormValues] = useState(formBuilder.fields);
   const [emptyFields, setEmptyFields] = useState([]);
+
   const [showAccountVerificationComponent, setShowAccountVerificationComponent] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const onButtonClick = () => {
     let newErrorFields = [...emptyFields];
@@ -54,22 +57,29 @@ function SignIn({
     errorFields: emptyFields,
     onButtonClick: shouldVerifyEmail ? () => setShowAccountVerificationComponent(true) : onButtonClick,
     errorMessage: finalErrorMessage,
+    onOpenForgotPassword: () => setShowForgotPassword(true),
   });
 
   return (
     <>
       <Header />
-      {!showAccountVerificationComponent ? (
+      { showAccountVerificationComponent && (
+      <AccountMailConfirmation
+        email={formValues.email}
+        sendAccountConfirmEmail={sendAccountConfirmEmail}
+      />
+      )}
+      {!showAccountVerificationComponent && !showForgotPassword && (
         <Form
           title={signinLabels.title}
           fields={formFields}
         />
-      ) : (
-        <AccountMailConfirmation
-          email={formValues.email}
-          sendAccountConfirmEmail={sendAccountConfirmEmail}
-        />
       )}
+      {
+        showForgotPassword && (
+          <ForgotPassword />
+        )
+      }
     </>
   );
 }

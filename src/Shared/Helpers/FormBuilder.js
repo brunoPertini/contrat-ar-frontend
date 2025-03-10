@@ -403,7 +403,7 @@ export class SignInFormBuilder extends FormBuilder {
 
   build({
     onButtonClick, onChangeFields, fieldsValues = {}, errorFields = [], errorMessage,
-    shouldVerifyEmail = false,
+    shouldVerifyEmail = false, onOpenForgotPassword,
   }) {
     const emailValue = fieldsValues.email || this.fields.email;
     const passwordValue = fieldsValues.password || this.fields.password;
@@ -471,7 +471,7 @@ export class SignInFormBuilder extends FormBuilder {
           { !shouldVerifyEmail ? signinLabels.buttonLabel : signinLabels.verifyEmail}
         </Button>
         <Grid item xs={12} sx={{ mt: '2%' }}>
-          <Link href="#">
+          <Link onClick={onOpenForgotPassword}>
             { signinLabels.forgotPassword }
           </Link>
         </Grid>
