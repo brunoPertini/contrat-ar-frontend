@@ -51,8 +51,10 @@ function SignInContainer({ router, securityService, cookiesService }) {
   };
 
   const sendForgotPasswordEmail = (email) => {
-    
-  }
+    const client = HttpClientFactory.createUserHttpClient();
+
+    return client.sendForgotPasswordLink(email);
+  };
 
   return (
     <SignIn
@@ -60,6 +62,7 @@ function SignInContainer({ router, securityService, cookiesService }) {
       shouldVerifyEmail={shouldVerifyEmail}
       errorMessage={errorMessage}
       sendAccountConfirmEmail={sendAccountConfirmEmail}
+      sendForgotPasswordEmail={sendForgotPasswordEmail}
     />
   );
 }

@@ -109,10 +109,10 @@ export class UserHttpClient extends HttpClient {
     return this.patch(`${usersRoutes.request2FaCode}/${code}`);
   }
 
-   /**
-   * @returns {Promise<Boolean>}
+  /**
+   * @returns {Promise<Number>} Link expiration in minutes
    */
   sendForgotPasswordLink(email) {
-    
+    return this.post(usersRoutes.resetPasswordEmail, null, { toAddress: email });
   }
 }

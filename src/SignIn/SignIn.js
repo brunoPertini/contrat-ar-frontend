@@ -8,7 +8,7 @@ import AccountMailConfirmation from '../SignUp/AccountMailConfirmation';
 import ForgotPassword from './Components/ForgotPassword';
 
 function SignIn({
-  dispatchSignIn,
+  dispatchSignIn, sendForgotPasswordEmail,
   sendAccountConfirmEmail, errorMessage, shouldVerifyEmail = false,
 }) {
   const formBuilder = new SignInFormBuilder();
@@ -77,7 +77,7 @@ function SignIn({
       )}
       {
         showForgotPassword && (
-          <ForgotPassword />
+          <ForgotPassword sendForgotPasswordEmail={sendForgotPasswordEmail} />
         )
       }
     </>
@@ -90,6 +90,7 @@ SignIn.defaultProps = {
 
 SignIn.propTypes = {
   sendAccountConfirmEmail: PropTypes.func.isRequired,
+  sendForgotPasswordEmail: PropTypes.func.isRequired,
   shouldVerifyEmail: PropTypes.bool.isRequired,
   dispatchSignIn: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
