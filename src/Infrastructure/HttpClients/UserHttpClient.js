@@ -115,4 +115,11 @@ export class UserHttpClient extends HttpClient {
   sendForgotPasswordLink(email) {
     return this.post(usersRoutes.resetPasswordEmail, null, { toAddress: email });
   }
+
+  /**
+   * @returns {Promise<Boolean>}
+   */
+  checkForgotPasswordToken() {
+    return this.get(usersRoutes.checkForgotPasswordToken, { type: 'reset_password' });
+  }
 }

@@ -11,5 +11,6 @@
     "mailSignUp": "/mail/signup",
     "confirmUserAccount": "/mail/signup/ok",
     "request2FaCode": "/2fa",
-    "resetPasswordEmail": "/mail/password/forgot"
+    "resetPasswordEmail": "/mail/password/forgot",
+    "checkForgotPasswordToken": "/security/token"
 }

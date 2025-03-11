@@ -18,7 +18,7 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 function SecurityData({
   styles, data, setData, usuarioType, isEditModeEnabled, setIsEditModeEnabled,
-  is2FaValid, isAdmin, show2FaComponent, handleConfirmEdition,
+  is2FaValid, isAdmin, show2FaComponent, handleConfirmEdition, isInForgotPasswordPage = false,
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,17 +109,21 @@ function SecurityData({
       flexDirection="row"
       sx={{ mt: '2%' }}
     >
-      <FormControlLabel
-        control={(
-          <Switch
-            checked={isEditModeEnabled}
-            color="primary"
-          />
+      {
+        !isInForgotPasswordPage && (
+          <FormControlLabel
+            control={(
+              <Switch
+                checked={isEditModeEnabled}
+                color="primary"
+              />
       )}
-        label={userProfileLabels.modifyData}
-        onChange={handleEditModeChange}
-        sx={{ color: '#333', fontSize: '16px' }}
-      />
+            label={userProfileLabels.modifyData}
+            onChange={handleEditModeChange}
+            sx={{ color: '#333', fontSize: '16px' }}
+          />
+        )
+      }
       <Button
         variant="contained"
         startIcon={<SaveIcon />}
@@ -161,10 +165,17 @@ function SecurityData({
         severity={alertConfig.alertSeverity}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
-      { saveChangesSwitch }
-      {
-      formFields.map((field) => field)
-      }
+      {isInForgotPasswordPage ? (
+        <>
+          {formFields.map((field) => field)}
+          {saveChangesSwitch}
+        </>
+      ) : (
+        <>
+          {saveChangesSwitch}
+          {formFields.map((field) => field)}
+        </>
+      )}
     </Layout>
   );
 }
@@ -188,6 +199,7 @@ SecurityData.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
   show2FaComponent: PropTypes.func.isRequired,
   handleConfirmEdition: PropTypes.func.isRequired,
+  isInForgotPasswordPage: PropTypes.bool.isRequired,
 };
 
 export default SecurityData;
