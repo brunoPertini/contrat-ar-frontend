@@ -99,7 +99,7 @@ export default function ForgotPassword({ sendForgotPasswordEmail }) {
               <Button
                 variant="contained"
                 sx={{ marginTop: '20px' }}
-                disabled={!fieldData.value}
+                disabled={!fieldData.value || fieldData.hasError}
                 onClick={handleEmailSend}
               >
                 {sharedLabels.sendEmail}

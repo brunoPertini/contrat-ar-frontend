@@ -8,7 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
-import { CLIENTE, PROVEEDOR } from '../Shared/Constants/System';
+import { CLIENTE, EMPTY_FUNCTION, PROVEEDOR } from '../Shared/Constants/System';
 import { flexColumn } from '../Shared/Constants/Styles';
 import { sharedLabels } from '../StaticData/Shared';
 import { Layout } from '../Shared/Components';
@@ -182,6 +182,7 @@ function SecurityData({
 
 SecurityData.defaultProps = {
   styles: {},
+  setIsEditModeEnabled: EMPTY_FUNCTION,
 };
 
 SecurityData.propTypes = {
@@ -194,7 +195,7 @@ SecurityData.propTypes = {
   setData: PropTypes.func.isRequired,
   usuarioType: PropTypes.oneOf([PROVEEDOR, CLIENTE]).isRequired,
   isEditModeEnabled: PropTypes.bool.isRequired,
-  setIsEditModeEnabled: PropTypes.func.isRequired,
+  setIsEditModeEnabled: PropTypes.func,
   is2FaValid: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   show2FaComponent: PropTypes.func.isRequired,

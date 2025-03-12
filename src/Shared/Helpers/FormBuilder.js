@@ -471,7 +471,7 @@ export class SignInFormBuilder extends FormBuilder {
           { !shouldVerifyEmail ? signinLabels.buttonLabel : signinLabels.verifyEmail}
         </Button>
         <Grid item xs={12} sx={{ mt: '2%' }}>
-          <Link onClick={onOpenForgotPassword}>
+          <Link onClick={onOpenForgotPassword} style={{ cursor: 'pointer' }}>
             { signinLabels.forgotPassword }
           </Link>
         </Grid>

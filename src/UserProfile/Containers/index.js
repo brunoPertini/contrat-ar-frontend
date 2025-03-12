@@ -32,15 +32,6 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getUserInfo(userInfo.id).then((info) => dispatch(setUserInfo(info)));
   };
 
-  const editClienteInfo = (info) => {
-    const client = HttpClientFactory.createUserHttpClient(null, {
-      token: userInfo.token,
-      handleLogout,
-    });
-
-    return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
-  };
-
   const confirmPlanChange = (proveedorId, planId) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token: userInfo.token,
@@ -48,6 +39,15 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     });
 
     return client.updatePlan(proveedorId, planId);
+  };
+
+  const editClienteInfo = (info) => {
+    const client = HttpClientFactory.createUserHttpClient(null, {
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.updateUserCommonInfo(userInfo.id, info, userInfo.role);
   };
 
   const editProveedorInfo = (info) => {
