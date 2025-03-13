@@ -105,7 +105,7 @@ export default function RestorePasswordPage() {
       </Box>
       ) }
       {
-        isTokenValid && wasUpdateSuccessful === null && (
+        isTokenValid && wasUpdateSuccessful === null && !isLoading && (
         <SecurityData
           data={data}
           setData={handleDataChanged}
