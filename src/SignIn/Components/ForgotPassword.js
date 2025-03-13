@@ -9,7 +9,7 @@ import { flexColumn, flexRow } from '../../Shared/Constants/Styles';
 import { sharedLabels } from '../../StaticData/Shared';
 import { stringIsEmail } from '../../Shared/Utils/InputUtils';
 import { signinLabels } from '../../StaticData/SignIn';
-import { StaticAlert } from '../../Shared/Components';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 
 export default function ForgotPassword({ sendForgotPasswordEmail }) {
   const [fieldData, setFieldData] = useState({ value: '', hasError: false });

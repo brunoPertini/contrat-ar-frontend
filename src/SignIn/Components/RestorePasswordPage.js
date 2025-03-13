@@ -8,7 +8,7 @@ import Header from '../../Header';
 import { sharedLabels } from '../../StaticData/Shared';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
 import SecurityData from '../../UserProfile/SecurityData';
-import { StaticAlert } from '../../Shared/Components';
+import StaticAlert from '../../Shared/Components/StaticAlert';
 import { signinLabels } from '../../StaticData/SignIn';
 import Footer from '../../Shared/Components/Footer';
 import { buildFooterOptions } from '../../Shared/Helpers/UtilsHelper';
@@ -89,6 +89,8 @@ export default function RestorePasswordPage() {
     }
   }, [isTokenValid]);
 
+  const canRenderPasswordForm = isTokenValid && wasUpdateSuccessful === null && !isLoading;
+
   return (
     <Box
       display="flex"
@@ -105,7 +107,7 @@ export default function RestorePasswordPage() {
       </Box>
       ) }
       {
-        isTokenValid && wasUpdateSuccessful === null && !isLoading && (
+        canRenderPasswordForm && (
         <SecurityData
           data={data}
           setData={handleDataChanged}
