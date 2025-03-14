@@ -8,7 +8,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { PersonalDataFormBuilder } from '../Shared/Helpers/FormBuilder';
 import { userProfileLabels } from '../StaticData/UserProfile';
-import { CLIENTE, PROVEEDOR } from '../Shared/Constants/System';
+import { CLIENTE, EMPTY_FUNCTION, PROVEEDOR } from '../Shared/Constants/System';
 import { flexColumn } from '../Shared/Constants/Styles';
 import { sharedLabels } from '../StaticData/Shared';
 import { Layout } from '../Shared/Components';
@@ -18,7 +18,7 @@ const personalDataFormBuilder = new PersonalDataFormBuilder();
 
 function SecurityData({
   styles, data, setData, usuarioType, isEditModeEnabled, setIsEditModeEnabled,
-  is2FaValid, isAdmin, show2FaComponent, handleConfirmEdition,
+  is2FaValid, isAdmin, show2FaComponent, handleConfirmEdition, isInForgotPasswordPage = false,
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,17 +109,21 @@ function SecurityData({
       flexDirection="row"
       sx={{ mt: '2%' }}
     >
-      <FormControlLabel
-        control={(
-          <Switch
-            checked={isEditModeEnabled}
-            color="primary"
-          />
+      {
+        !isInForgotPasswordPage && (
+          <FormControlLabel
+            control={(
+              <Switch
+                checked={isEditModeEnabled}
+                color="primary"
+              />
       )}
-        label={userProfileLabels.modifyData}
-        onChange={handleEditModeChange}
-        sx={{ color: '#333', fontSize: '16px' }}
-      />
+            label={userProfileLabels.modifyData}
+            onChange={handleEditModeChange}
+            sx={{ color: '#333', fontSize: '16px' }}
+          />
+        )
+      }
       <Button
         variant="contained"
         startIcon={<SaveIcon />}
@@ -161,16 +165,24 @@ function SecurityData({
         severity={alertConfig.alertSeverity}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
-      { saveChangesSwitch }
-      {
-      formFields.map((field) => field)
-      }
+      {isInForgotPasswordPage ? (
+        <>
+          {formFields.map((field) => field)}
+          {saveChangesSwitch}
+        </>
+      ) : (
+        <>
+          {saveChangesSwitch}
+          {formFields.map((field) => field)}
+        </>
+      )}
     </Layout>
   );
 }
 
 SecurityData.defaultProps = {
   styles: {},
+  setIsEditModeEnabled: EMPTY_FUNCTION,
 };
 
 SecurityData.propTypes = {
@@ -183,11 +195,12 @@ SecurityData.propTypes = {
   setData: PropTypes.func.isRequired,
   usuarioType: PropTypes.oneOf([PROVEEDOR, CLIENTE]).isRequired,
   isEditModeEnabled: PropTypes.bool.isRequired,
-  setIsEditModeEnabled: PropTypes.func.isRequired,
+  setIsEditModeEnabled: PropTypes.func,
   is2FaValid: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   show2FaComponent: PropTypes.func.isRequired,
   handleConfirmEdition: PropTypes.func.isRequired,
+  isInForgotPasswordPage: PropTypes.bool.isRequired,
 };
 
 export default SecurityData;

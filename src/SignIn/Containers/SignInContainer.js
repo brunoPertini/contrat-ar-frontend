@@ -50,12 +50,19 @@ function SignInContainer({ router, securityService, cookiesService }) {
     return client.sendRegistrationConfirmEmail(email);
   };
 
+  const sendForgotPasswordEmail = (email) => {
+    const client = HttpClientFactory.createUserHttpClient();
+
+    return client.sendForgotPasswordLink(email);
+  };
+
   return (
     <SignIn
       dispatchSignIn={dispatchSignIn}
       shouldVerifyEmail={shouldVerifyEmail}
       errorMessage={errorMessage}
       sendAccountConfirmEmail={sendAccountConfirmEmail}
+      sendForgotPasswordEmail={sendForgotPasswordEmail}
     />
   );
 }

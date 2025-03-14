@@ -18,6 +18,7 @@ import { VendiblePage } from './Vendible';
 import UserProfile from './UserProfile/Containers';
 import AdminPage from './Admin/AdminContainer';
 import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage';
+import RestorePasswordPage from './SignIn/Components/RestorePasswordPage';
 
 function ErrorComponent() {
 // TODO: crear páginas de errores
@@ -98,6 +99,12 @@ const router = createBrowserRouter([
   {
     path: '/signup/email-confirm',
     element: <AccountConfirmationPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/forgot-password',
+    element: <RestorePasswordPage />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },

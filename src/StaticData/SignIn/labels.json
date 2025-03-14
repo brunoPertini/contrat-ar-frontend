@@ -5,5 +5,8 @@
     "verifyEmail": "Verificar email",
     "error.jwt.verificationFailed": "Hubo un error al iniciar sesión, por favor intentalo más tarde",
     "error.unknown": "Estamos en mantenimiento, por favor iniciá sesión más tarde",
-    "session.closed.signin": "¡Cerramos tu sesión! Por favor ingresá nuevamente"
+    "session.closed.signin": "¡Cerramos tu sesión! Por favor ingresá nuevamente",
+    "forgotPassword.firstStage.title": "Introducí tu email registrado para que podamos indicarte cómo cambiar tu contraseña",
+    "forgotPassword.emailSend.ok": "¡El mail fue enviado! En {expirationMinutes} minutos vas a poder reenviarlo",
+    "forgotPassword.tokenCheck.error": "¡El link venció! Por favor <a style=\"color: white\" href=\"{signinLink}\">solicitá otro</a>"
 }

@@ -68,7 +68,8 @@ function AccountConfirmationPage() {
     handleAccountConfirmation();
   }, []);
 
-  const linkLabel = `<a href="${process.env.REACT_APP_SITE_URL}${routes.signin}" style="color: white;">${sharedLabels.here}</a>`;
+  const linkLabel = `<a href="${process.env.REACT_APP_SITE_URL}${routes.signin}" 
+  style="color: white;">${sharedLabels.here}</a>`;
 
   const isLoading = operationResult === null;
 

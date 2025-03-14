@@ -108,4 +108,18 @@ export class UserHttpClient extends HttpClient {
   confirn2FaCode(code) {
     return this.patch(`${usersRoutes.request2FaCode}/${code}`);
   }
+
+  /**
+   * @returns {Promise<Number>} Link expiration in minutes
+   */
+  sendForgotPasswordLink(email) {
+    return this.post(usersRoutes.resetPasswordEmail, null, { toAddress: email });
+  }
+
+  /**
+   * @returns {Promise<Boolean>}
+   */
+  checkForgotPasswordToken() {
+    return this.get(usersRoutes.checkForgotPasswordToken, { type: 'reset_password' });
+  }
 }
