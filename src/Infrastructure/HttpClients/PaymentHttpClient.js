@@ -1,4 +1,5 @@
 import { proveedoresRoutes } from '../../Shared/Constants';
+import { paymentRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class PaymentHttpClient extends HttpClient {
@@ -9,6 +10,12 @@ export class PaymentHttpClient extends HttpClient {
 
   getPaymentInfo(paymentId) {
     const url = proveedoresRoutes.paymentById.replace('{paymentId}', paymentId);
+
+    return this.get(url);
+  }
+
+  getPaymentsOfSubscription(subscriptionId) {
+    const url = paymentRoutes.getSubscriptionPayments.replace('{subscriptionId}', subscriptionId);
 
     return this.get(url);
   }

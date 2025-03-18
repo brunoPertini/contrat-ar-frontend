@@ -20,5 +20,13 @@
     "email.change.success": "¡Tu email fue cambiado!",
     "email.change.error": "¡Tu email no pudo ser cambiado! Intentalo más tarde o contactanos",
     "password.change.success": "¡Tu contraseña fue cambiada!",
-    "password.change.error": "¡Tu contraseña no pudo ser cambiada! Intentalo más tarde o contactanos"
+    "password.change.error": "¡Tu contraseña no pudo ser cambiada! Intentalo más tarde o contactanos",
+    "paymentData": {
+        "paymentPeriod": "Período de suscripción",
+        "date": "Fecha de pago",
+        "amount": "Monto",
+        "currency": "Moneda de pago",
+        "state": "Estado del pago",
+         "paymentProviderName": "Proveedor de pago"
+    }
 }
