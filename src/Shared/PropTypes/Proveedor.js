@@ -31,8 +31,14 @@ export const planShape = {
 
 export const suscriptionShape = {
   id: PropTypes.number,
-  isActive: PropTypes.bool,
+  active: PropTypes.bool,
   createdDate: PropTypes.string,
   planId: PropTypes.number,
+  planPrice: PropTypes.number,
   usuarioId: PropTypes.number,
+  validity: PropTypes.shape({
+    canBePayed: PropTypes.bool,
+    valid: PropTypes.bool,
+    expirationDate: PropTypes.string,
+  }),
 };
