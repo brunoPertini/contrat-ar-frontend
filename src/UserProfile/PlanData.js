@@ -23,6 +23,8 @@ function PlanData({
 }) {
   const { plansNames } = sharedLabels;
 
+  const { validity: { valid, expirationDate } } = suscripcionData;
+
   const [showPaidPlanDisclaimer, setShowPaidPlanDisclaimer] = useState(false);
 
   const onPlanChange = (newPlan) => {
@@ -45,10 +47,10 @@ function PlanData({
   };
 
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
-    subscriptionAlertSeverity: suscripcionData.isActive ? 'success' : 'error',
-    subscriptionAlertLabel: suscripcionData.isActive
+    subscriptionAlertSeverity: valid ? 'success' : 'error',
+    subscriptionAlertLabel: valid
       ? userProfileLabels['plan.subscription.activeFrom'].replace('{createdAt}', suscripcionData.createdDate)
-      : userProfileLabels['plan.subscription.inactive'],
+      : userProfileLabels['plan.subscription.invalid'],
   }), [suscripcionData]);
 
   const isLayourNearTabletSize = useMediaQuery('(max-width: 700px');
@@ -66,10 +68,25 @@ function PlanData({
         severity={subscriptionAlertSeverity}
         label={subscriptionAlertLabel}
       />
+      {
+        plan === PLAN_TYPE_PAID && (
+          <StaticAlert
+            styles={{
+              width: !isLayourNearTabletSize ? '15%' : '80%',
+              marginTop: '2%',
+            }}
+            severity="info"
+            label={userProfileLabels['plan.subscription.expiresOn'].replace('{expirationDate}', expirationDate)}
+          />
+        )
+      }
       <SelectComponent
         defaultSelected={actualPlan === PLAN_TYPE_FREE ? 0 : 1}
         values={[sharedLabels.plansNames.FREE, sharedLabels.plansNames.PAID]}
-        containerStyles={{ mt: !isLayourNearTabletSize ? '3%' : '10%', width: !isLayourNearTabletSize ? '30%' : '100%' }}
+        containerStyles={{
+          mt: !isLayourNearTabletSize ? '3%' : '10%',
+          width: !isLayourNearTabletSize ? '30%' : '100%',
+        }}
         handleOnChange={onPlanChange}
         label={userProfileLabels['plan.label']}
         renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}

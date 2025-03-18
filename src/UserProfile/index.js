@@ -28,6 +28,7 @@ import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
+import PaymentData from './PaymentData';
 
 export const TABS_NAMES = {
   PERSONAL_DATA: 'PERSONAL_DATA',
@@ -35,6 +36,7 @@ export const TABS_NAMES = {
   PLAN: 'PLAN',
   MESSAGES_CLIENT: 'MESSAGES_CLIENT',
   MESSAGES_PROVIDER: 'MESSAGES_PROVIDER',
+  MY_PAYMENTS: 'MY_PAYMENTS',
 };
 
 const PERSONAL_DATA_TAB = (
@@ -53,10 +55,18 @@ const MESSAGES_TAB_CLIENT = (
   />
 );
 
+// eslint-disable-next-line no-unused-vars
 const MESSAGES_TAB_PROVIDER = (
   <Tab
     label={userProfileLabels.myMessagesProvider}
     value={TABS_NAMES.MESSAGES_PROVIDER}
+  />
+);
+
+const PAYMENTS_TAB = (
+  <Tab
+    label={userProfileLabels.myPayments}
+    value={TABS_NAMES.MY_PAYMENTS}
   />
 );
 
@@ -65,9 +75,9 @@ const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.S
 const rolesTabs = {
   [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
   [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
+    SECURITY_TAB, MY_PLAN_TAB, PAYMENTS_TAB],
   [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
+    SECURITY_TAB, MY_PLAN_TAB, PAYMENTS_TAB],
 };
 
 const NEED_APPROVAL_ATTRIBUTES = ['email', 'password'];
@@ -293,6 +303,11 @@ function UserProfile({
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
+    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (
+      <PaymentData
+        canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+      />
+    ), [userInfo.suscripcion.validity]),
   };
 
   if (!(userInfo?.role)) {
