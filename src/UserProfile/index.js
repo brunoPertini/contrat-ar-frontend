@@ -87,7 +87,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo,
+  isAdmin, getUserInfo, getPaymentsOfSubscription,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -305,7 +305,9 @@ function UserProfile({
       changeRequestsMade.plan, planesInfo]),
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (
       <PaymentData
+        subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        getPayments={getPaymentsOfSubscription}
       />
     ), [userInfo.suscripcion.validity]),
   };
@@ -374,6 +376,7 @@ UserProfile.propTypes = {
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
+  getPaymentsOfSubscription: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 
