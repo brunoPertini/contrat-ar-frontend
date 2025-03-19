@@ -212,7 +212,7 @@ export default function UserSignUp({
       } else {
         setErrorFields((previous) => ({ ...previous, [fieldId]: fieldsHasError }));
       }
-      setPersonalDataFieldsValues({ ...personalDataFieldsValues, [fieldId]: fieldValue });
+      setPersonalDataFieldsValues((previous) => ({ ...previous, [fieldId]: fieldValue }));
     },
   });
 
@@ -338,7 +338,6 @@ export default function UserSignUp({
     };
 
     steps.splice(3, 0, planTypeStep);
-    personalDataFieldsValues.dni = '';
   }
 
   const manageSignUp = () => {
@@ -422,6 +421,12 @@ export default function UserSignUp({
       storeTokenInLocalStorage();
     }
   }, [selectedPlan]);
+
+  useEffect(() => {
+    if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
+      setPersonalDataFieldsValues((current) => ({ ...current, dni: '' }));
+    }
+  }, [signupType]);
 
   useOnLeavingTabHandler(storeTokenInLocalStorage, newPlanType === PLAN_TYPE_PAID);
 
