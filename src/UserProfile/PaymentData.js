@@ -37,7 +37,9 @@ const attributesRenderers = {
   paymentProviderName: (value) => value.toUpperCase(),
 };
 
-export default function PaymentData({ getPayments, subscriptionId, canPaySubscription }) {
+export default function PaymentData({
+  getPayments, subscriptionId, isSubscriptionValid, canPaySubscription,
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [payments, setPayments] = useState([]);
 
@@ -57,7 +59,7 @@ export default function PaymentData({ getPayments, subscriptionId, canPaySubscri
       gridProps={{ sx: { ...flexColumn } }}
       isLoading={isLoading}
     >
-      { canPaySubscription
+      { canPaySubscription && isSubscriptionValid
       && (
         <Box>
           <Disclaimer text={userProfileLabels['plan.subscription.canBePayed']} />
@@ -121,4 +123,5 @@ PaymentData.propTypes = {
   getPayments: PropTypes.func.isRequired,
   subscriptionId: PropTypes.number.isRequired,
   canPaySubscription: PropTypes.bool.isRequired,
+  isSubscriptionValid: PropTypes.bool.isRequired,
 };

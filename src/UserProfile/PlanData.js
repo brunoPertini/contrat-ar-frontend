@@ -26,6 +26,7 @@ function PlanData({
   const { validity: { valid, expirationDate } } = suscripcionData;
 
   const [showPaidPlanDisclaimer, setShowPaidPlanDisclaimer] = useState(false);
+  const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
   const onPlanChange = (newPlan) => {
     const newPlanKey = Object.keys(plansNames)
@@ -39,8 +40,6 @@ function PlanData({
 
     changeUserInfo(newPlanKey);
   };
-
-  const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
   const handleConfirmPlan = () => {
     confirmPlanChange(plan).then(() => setHasPendingRequest(true));
@@ -69,7 +68,7 @@ function PlanData({
         label={subscriptionAlertLabel}
       />
       {
-        plan === PLAN_TYPE_PAID && (
+        actualPlan === PLAN_TYPE_PAID && (
           <StaticAlert
             styles={{
               width: !isLayourNearTabletSize ? '15%' : '80%',

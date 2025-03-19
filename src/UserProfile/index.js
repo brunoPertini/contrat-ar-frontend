@@ -307,6 +307,7 @@ function UserProfile({
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        isSubscriptionValid={userInfo.suscripcion.valid}
         getPayments={getPaymentsOfSubscription}
       />
     ), [userInfo.suscripcion.validity]),
