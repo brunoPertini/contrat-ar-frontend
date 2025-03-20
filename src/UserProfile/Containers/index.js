@@ -128,6 +128,12 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getPaymentsOfSubscription(subscriptionId);
   };
 
+  const paySubscription = (subscriptionId, returnTab) => {
+    const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
+
+    return client.paySubscriptionFromUserProfile(subscriptionId, returnTab);
+  };
+
   return (
     <NavigationContextProvider>
       <UserProfile
@@ -141,6 +147,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         getPaymentsOfSubscription={getPaymentsOfSubscription}
         isAdmin={isAdmin}
         getUserInfo={getUserInfo}
+        paySubscription={paySubscription}
       />
     </NavigationContextProvider>
   );

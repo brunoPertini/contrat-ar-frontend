@@ -88,6 +88,7 @@ function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
   isAdmin, getUserInfo, getPaymentsOfSubscription,
+  paySubscription,
 }) {
   const { setHandleGoBack } = useContext(NavigationContext);
 
@@ -309,8 +310,9 @@ function UserProfile({
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
-        isSubscriptionValid={userInfo.suscripcion.valid}
+        isSubscriptionValid={userInfo.suscripcion.validity.valid}
         getPayments={getPaymentsOfSubscription}
+        paySubscription={paySubscription}
       />
     ) : null), [userInfo]),
   };
@@ -380,6 +382,7 @@ UserProfile.propTypes = {
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
   getPaymentsOfSubscription: PropTypes.func.isRequired,
+  paySubscription: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

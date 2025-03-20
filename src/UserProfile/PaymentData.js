@@ -41,7 +41,7 @@ const attributesRenderers = {
 };
 
 export default function PaymentData({
-  getPayments, subscriptionId, isSubscriptionValid, canPaySubscription,
+  getPayments, subscriptionId, isSubscriptionValid, canPaySubscription, paySubscription,
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [payments, setPayments] = useState([]);
@@ -59,6 +59,13 @@ export default function PaymentData({
 
   const hasNoPayments = useMemo(() => !isLoading && !payments.length, [isLoading, payments]);
 
+  const handlePaySubscription = useCallback(() => {
+    setIsLoading(true);
+    paySubscription(subscriptionId, 'payment').then((checkoutUrl) => {
+      window.location.href = checkoutUrl;
+    });
+  }, [paySubscription]);
+
   return (
     <Layout
       gridProps={{ sx: { ...flexColumn } }}
@@ -68,7 +75,11 @@ export default function PaymentData({
       && (
         <Box>
           <Disclaimer text={userProfileLabels['plan.subscription.canBePayed']} />
-          <Button variant="contained" sx={{ mt: '1%' }}>
+          <Button
+            variant="contained"
+            sx={{ mt: '1%' }}
+            onClick={handlePaySubscription}
+          >
             { sharedLabels.pay}
           </Button>
         </Box>
@@ -132,6 +143,7 @@ export default function PaymentData({
 
 PaymentData.propTypes = {
   getPayments: PropTypes.func.isRequired,
+  paySubscription: PropTypes.func.isRequired,
   subscriptionId: PropTypes.number.isRequired,
   canPaySubscription: PropTypes.bool.isRequired,
   isSubscriptionValid: PropTypes.bool.isRequired,
