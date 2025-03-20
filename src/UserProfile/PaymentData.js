@@ -8,13 +8,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { sharedLabels } from '../StaticData/Shared';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import Disclaimer from '../Shared/Components/Disclaimer';
 import { flexColumn } from '../Shared/Constants/Styles';
 import { paymentLabels } from '../StaticData/Payment';
-import { Layout } from '../Shared/Components';
+import Layout from '../Shared/Components/Layout';
+import StaticAlert from '../Shared/Components/StaticAlert';
 import { PAYMENT_STATE } from '../Shared/Constants/System';
 
 const paymentsFields = ['paymentPeriod', 'date', 'amount', 'currency', 'state', 'paymentProviderName'];
@@ -54,6 +57,8 @@ export default function PaymentData({
     handleSetPayments();
   }, []);
 
+  const hasNoPayments = useMemo(() => !isLoading && !payments.length, [isLoading, payments]);
+
   return (
     <Layout
       gridProps={{ sx: { ...flexColumn } }}
@@ -68,11 +73,14 @@ export default function PaymentData({
           </Button>
         </Box>
       )}
-      <TableContainer component={Paper} sx={{ mt: '1%' }}>
-        <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
-          <TableHead>
-            <TableRow sx={{ borderBottom: '1px solid black' }}>
-              {
+      {
+        hasNoPayments ? <StaticAlert severity="info" styles={{ mt: '1%' }} label={paymentLabels.noPaymentsDone} />
+          : (
+            <TableContainer component={Paper} sx={{ mt: '1%' }}>
+              <Table sx={{ textAlign: 'center', borderTop: '1px solid black' }}>
+                <TableHead>
+                  <TableRow sx={{ borderBottom: '1px solid black' }}>
+                    {
               Object.values(userProfileLabels.paymentData).map((label) => (
                 <TableCell
                   sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
@@ -81,14 +89,14 @@ export default function PaymentData({
                 </TableCell>
               ))
             }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {payments.map((payment) => (
-              <TableRow
-                key={`payment-row-${payment.id}`}
-              >
-                {
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {payments.map((payment) => (
+                    <TableRow
+                      key={`payment-row-${payment.id}`}
+                    >
+                      {
                     Object.keys(payment).map((attribute) => {
                       if (!paymentsFields.includes(attribute)) {
                         return null;
@@ -109,12 +117,15 @@ export default function PaymentData({
                       );
                     })
                   }
-              </TableRow>
-            ))}
+                    </TableRow>
+                  ))}
 
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )
+      }
+
     </Layout>
   );
 }

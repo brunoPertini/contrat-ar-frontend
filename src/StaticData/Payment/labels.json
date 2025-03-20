@@ -9,5 +9,6 @@
         "PROCESSED": "En proceso",
         "REJECTED": "Rechazado",
         "PENDING": "Pendiente"
-    }
+    },
+    "noPaymentsDone": "¡No tenés ningún pago hecho!"
 }

@@ -128,6 +128,8 @@ function UserProfile({
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const [show2FaComponent, setShow2FaComponent] = useState(false);
 
+  const isProveedorUser = useMemo(() => userInfo.role.startsWith(systemConstants.PROVEEDOR), [userInfo]);
+
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
   };
@@ -159,7 +161,7 @@ function UserProfile({
 
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
-    if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
+    if (isProveedorUser) {
       const { dni, fotoPerfilUrl } = userInfo;
       setPersonalData(
         (previous) => ({
@@ -303,14 +305,14 @@ function UserProfile({
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
-    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (
+    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
         isSubscriptionValid={userInfo.suscripcion.valid}
         getPayments={getPaymentsOfSubscription}
       />
-    ), [userInfo.suscripcion.validity]),
+    ) : null), [userInfo]),
   };
 
   if (!(userInfo?.role)) {
