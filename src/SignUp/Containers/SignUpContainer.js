@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect, useMemo, useState,
 } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -20,6 +20,7 @@ import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageS
 import { USER_TYPE_CLIENTE } from '../../Shared/Constants/System';
 import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
+import { paymentLabels } from '../../StaticData/Payment';
 
 const localStorageService = new LocalStorageService();
 
@@ -51,6 +52,13 @@ function SignUpContainer({ router }) {
   const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
 
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
+
+  const paymentModalLabels = useMemo(() => ({
+    success: paymentLabels['signup.confirmation.success'],
+    error: paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentParams.paymentId),
+    unknown: paymentLabels['signup.confirmation.unknownError']
+      .replace('{helpPayLink}', process.env.REACT_APP_SITE_URL),
+  }), [paymentParams]);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
@@ -265,7 +273,7 @@ function SignUpContainer({ router }) {
     }
   }, [paymentParams, paySubscriptionServiceResult]);
 
-  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal);
+  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels);
 
   return (
     <>

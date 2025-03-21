@@ -5,7 +5,12 @@ import usePaymentQueryParams from './usePaymentQueryParams';
 import { PAYMENT_STATE } from '../Constants/System';
 import { paymentLabels } from '../../StaticData/Payment';
 
-export default function usePaymentDialogModal(isOpen, onCloseDialog) {
+export default function usePaymentDialogModal(
+  isOpen,
+  onCloseDialog,
+  modalLabels = { success: '', error: '', unknown: '' },
+  paySubscriptionServiceResult,
+) {
   const [modalContent, setModalContent] = useState({ title: '', text: '', paperStyles: {} });
 
   const paymentParams = usePaymentQueryParams();
@@ -21,12 +26,16 @@ export default function usePaymentDialogModal(isOpen, onCloseDialog) {
 
     let alertLabel;
 
-    if (wasPaymentOk) {
-      alertLabel = paymentLabels['signup.confirmation.success'];
-    } else if (paymentId) {
-      alertLabel = paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentId);
-    } else {
-      alertLabel = paymentLabels['signup.confirmation.unknownError'].replace('{helpPayLink}', process.env.REACT_APP_SITE_URL);
+    if (isOpen && paySubscriptionServiceResult) {
+      if (wasPaymentOk) {
+        alertLabel = modalLabels.success;
+      } else if (paymentId) {
+        alertLabel = modalLabels.error;
+      } else {
+        alertLabel = modalLabels.unknown;
+      }
+    } else if (paySubscriptionServiceResult === false) {
+      alertLabel = paymentLabels['payment.unknownError'];
     }
 
     setModalContent({

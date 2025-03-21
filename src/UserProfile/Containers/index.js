@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import { useDispatch, useSelector } from 'react-redux';
-import UserProfile, { TABS_NAMES } from '../index';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
+import UserProfile from '../index';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { withRouter } from '../../Shared/Components';
 import { HttpClientFactory } from '../../Infrastructure/HttpClientFactory';
@@ -9,6 +12,10 @@ import { CLIENTE } from '../../Shared/Constants/System';
 import { replaceUserInfo, setUserInfo } from '../../State/Actions/usuario';
 import { LocalStorageService } from '../../Infrastructure/Services/LocalStorageService';
 import { signinLabels } from '../../StaticData/SignIn';
+import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
+import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
+import { paymentLabels } from '../../StaticData/Payment';
+import { TABS_NAMES } from '../Constants';
 
 const stateSelector = (state) => state;
 
@@ -20,6 +27,18 @@ const userInfoSelector = createSelector(
 const localStorageService = new LocalStorageService();
 
 function UserProfileContainer({ handleLogout, isAdmin }) {
+  const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
+  const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
+
+  // eslint-disable-next-line no-unused-vars
+  const [temporalToken, setTemporalToken] = useState();
+
+  const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
+
+  const queryParams = new URLSearchParams(window.location.search);
+
+  const returnTab = queryParams.get('returnTab');
+
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
 
@@ -128,14 +147,107 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getPaymentsOfSubscription(subscriptionId);
   };
 
-  const paySubscription = (subscriptionId, returnTab) => {
+  const paySubscription = (subscriptionId, sourceTab) => {
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN, userInfo.token);
     const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
 
-    return client.paySubscriptionFromUserProfile(subscriptionId, returnTab);
+    return client.paySubscriptionFromUserProfile(subscriptionId, sourceTab).then((checkoutUrl) => {
+      setPaySubscriptionServiceResult(true);
+      return checkoutUrl;
+    })
+      .catch((error) => {
+        setPaySubscriptionServiceResult(false);
+        return Promise.reject(error);
+      });
   };
+
+  const getPaymentInfo = (id) => {
+    const client = HttpClientFactory.createPaymentHttpClient({
+      token: userInfo.token,
+    });
+
+    return client.getPaymentInfo(id);
+  };
+
+  const closePaymentDialogModal = useCallback(
+    () => {
+      setOpenPaymentDialogModal(false);
+      setPaySubscriptionServiceResult(null);
+    },
+    [setOpenPaymentDialogModal],
+  );
+
+  const openPaymentDialog = () => {
+    setOpenPaymentDialogModal(true);
+  };
+
+  const checkPaymentExistence = () => {
+    setTemporalToken((currentToken) => {
+      getPaymentInfo(paymentParams.paymentId, currentToken || userInfo.token).then((info) => {
+        if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
+          openPaymentDialog();
+        }
+      }).catch(() => setOpenPaymentDialogModal(false));
+      return currentToken;
+    });
+  };
+
+  const restoreTokenInMemory = () => {
+    const restoredToken = localStorageService.getItem(
+      LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN,
+    )?.replaceAll('"', '');
+
+    if (restoredToken) {
+      setTemporalToken(restoredToken);
+      localStorageService.removeItem(LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN);
+    }
+  };
+
+  // Coming back from payment page or pay subscription service
+  useEffect(() => {
+    if (paymentParams.paymentId && paymentParams.status) {
+      checkPaymentExistence();
+    } else if (paySubscriptionServiceResult === false) {
+      openPaymentDialog();
+    }
+  }, [paymentParams, paySubscriptionServiceResult]);
+
+  useEffect(() => {
+    restoreTokenInMemory();
+  }, []);
+
+  const resolvedPaymentLabels = useMemo(() => {
+    if (returnTab === TABS_NAMES.MY_PAYMENTS) {
+      return {
+        success: paymentLabels['payment.done'],
+        error: paymentLabels['payment.notDone'].replace('{paymentId}', paymentParams.paymentId),
+        unknown: paymentLabels['payment.unknownError'],
+
+      };
+    }
+
+    if (returnTab === TABS_NAMES.PLAN) {
+      return {
+        success: paymentLabels['payment.plan.done'],
+        error: paymentLabels['payment.plan.notDone'].replace('{paymentId}', paymentParams.paymentId),
+        unknown: paymentLabels['payment.plan.unknownError'],
+
+      };
+    }
+
+    return null;
+  }, [returnTab, paymentParams, paySubscriptionServiceResult]);
+
+  const paymentDialogModal = usePaymentDialogModal(
+    openPaymentDialogModal,
+    closePaymentDialogModal,
+    resolvedPaymentLabels,
+    paySubscriptionServiceResult,
+  );
 
   return (
     <NavigationContextProvider>
+      { paymentDialogModal }
       <UserProfile
         handleLogout={handleLogout}
         userInfo={userInfo}

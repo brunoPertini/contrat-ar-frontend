@@ -11,10 +11,10 @@ export class PaymentHttpClient extends HttpClient {
   /**
    *
    * @param {Number} subscriptionId
-   * @param {String} returnTab
+   * @param {String} returnTab MY_PAYMENTS or PLAN
    * @returns {Promise<String>} Checkout url
    */
-  paySubscriptionFromUserProfile(subscriptionId, returnTab = 'payment') {
+  paySubscriptionFromUserProfile(subscriptionId, returnTab = 'MY_PAYMENTS') {
     const url = paymentRoutes.paySubscriptionFromUserProfile.replace('{subscriptionId}', subscriptionId);
     return this.post(url, { returnTab }, { integrationType: 'OUTSITE' });
   }

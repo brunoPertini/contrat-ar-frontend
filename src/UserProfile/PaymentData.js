@@ -19,6 +19,7 @@ import { paymentLabels } from '../StaticData/Payment';
 import Layout from '../Shared/Components/Layout';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import { PAYMENT_STATE } from '../Shared/Constants/System';
+import { TABS_NAMES } from './Constants';
 
 const paymentsFields = ['paymentPeriod', 'date', 'amount', 'currency', 'state', 'paymentProviderName'];
 
@@ -61,9 +62,9 @@ export default function PaymentData({
 
   const handlePaySubscription = useCallback(() => {
     setIsLoading(true);
-    paySubscription(subscriptionId, 'payment').then((checkoutUrl) => {
+    paySubscription(subscriptionId, TABS_NAMES.MY_PAYMENTS).then((checkoutUrl) => {
       window.location.href = checkoutUrl;
-    });
+    }).catch(() => setIsLoading(false));
   }, [paySubscription]);
 
   return (
