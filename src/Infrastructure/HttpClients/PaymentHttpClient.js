@@ -28,6 +28,7 @@ export class PaymentHttpClient extends HttpClient {
   getPaymentsOfSubscription(subscriptionId) {
     const url = paymentRoutes.getSubscriptionPayments.replace('{subscriptionId}', subscriptionId);
 
-    return this.get(url);
+    return this.get(url).then((payments) => payments)
+      .catch(() => []);
   }
 }

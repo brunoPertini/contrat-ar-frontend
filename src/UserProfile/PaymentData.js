@@ -11,15 +11,18 @@ import Paper from '@mui/material/Paper';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import HelpOutline from '@mui/icons-material/HelpOutline';
+import Link from '@mui/material/Link';
 import { sharedLabels } from '../StaticData/Shared';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import Disclaimer from '../Shared/Components/Disclaimer';
-import { flexColumn } from '../Shared/Constants/Styles';
+import { flexColumn, flexRow } from '../Shared/Constants/Styles';
 import { paymentLabels } from '../StaticData/Payment';
 import Layout from '../Shared/Components/Layout';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import { PAYMENT_STATE } from '../Shared/Constants/System';
 import { TABS_NAMES } from './Constants';
+import DialogModal from '../Shared/Components/DialogModal';
 
 const paymentsFields = ['paymentPeriod', 'date', 'amount', 'currency', 'state', 'paymentProviderName'];
 
@@ -41,11 +44,24 @@ const attributesRenderers = {
   paymentProviderName: (value) => value.toUpperCase(),
 };
 
+const disclaimerModalTexts = {
+  title: paymentLabels['payment.disclaimer.title'],
+  contextText: <span dangerouslySetInnerHTML={{
+    __html: paymentLabels['payment.disclaimer.text'].replace(
+      '{dataUsageLink}',
+      process.env.REACT_APP_DATA_USAGE_URL,
+    ),
+  }}
+  />,
+};
+
 export default function PaymentData({
   getPayments, subscriptionId, isSubscriptionValid, canPaySubscription, paySubscription,
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [payments, setPayments] = useState([]);
+
+  const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
 
   const handleSetPayments = useCallback(async () => {
     setIsLoading(true);
@@ -67,24 +83,44 @@ export default function PaymentData({
     }).catch(() => setIsLoading(false));
   }, [paySubscription]);
 
+  const openDisclaimer = useCallback(() => setIsDisclaimerOpen(true), [setIsDisclaimerOpen]);
+
+  const closeDisclaimer = useCallback(() => setIsDisclaimerOpen(false), [setIsDisclaimerOpen]);
+
   return (
     <Layout
       gridProps={{ sx: { ...flexColumn } }}
       isLoading={isLoading}
     >
-      { canPaySubscription && isSubscriptionValid
+      <DialogModal
+        {...disclaimerModalTexts}
+        open={isDisclaimerOpen}
+        onCloseDialog={closeDisclaimer}
+        showButtons={false}
+      />
+      <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} justifyContent="space-between">
+        { canPaySubscription && isSubscriptionValid
       && (
-        <Box>
-          <Disclaimer text={userProfileLabels['plan.subscription.canBePayed']} />
-          <Button
-            variant="contained"
-            sx={{ mt: '1%' }}
-            onClick={handlePaySubscription}
-          >
-            { sharedLabels.pay}
-          </Button>
+      <Box {...flexColumn}>
+        <Disclaimer text={userProfileLabels['plan.subscription.canBePayed']} />
+        <Button
+          variant="contained"
+          sx={{ mt: '1%' }}
+          onClick={handlePaySubscription}
+        >
+          {sharedLabels.pay}
+        </Button>
+      </Box>
+      ) }
+
+        <Box {...flexRow} alignItems="center" marginTop={{ xs: '3%', md: 0 }}>
+          <HelpOutline />
+          <Link variant="h6" sx={{ cursor: 'pointer' }} onClick={openDisclaimer}>
+            { paymentLabels['payment.infoWeStore']}
+          </Link>
         </Box>
-      )}
+
+      </Box>
       {
         hasNoPayments ? <StaticAlert severity="info" styles={{ mt: '1%' }} label={paymentLabels.noPaymentsDone} />
           : (
