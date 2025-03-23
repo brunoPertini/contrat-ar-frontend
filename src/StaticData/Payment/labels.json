@@ -3,5 +3,21 @@
     "paymentError": "Pago rechazado", 
     "signup.confirmation.success": "¡Confirmamos tu pago! Una vez que validemos tus datos del registro, tu suscripción va a estar ya activa y vas a poder disfrutar de todos los beneficios de la plataforma",
     "signup.confirmation.error": "¡No pudimos confirmar tu pago! Si tenés dudas contactanos enviándonos el número de pago {paymentId}",
-    "signup.confirmation.unknownError": "Tuvimos un error inesperado. No te preocupes, tu cuenta ya fue creada. Podés ver cómo reintentar el pago más tarde <a href={helpPayLink} target='_blank'>acá</a>, para que tu suscripción esté activa."
+    "signup.confirmation.unknownError": "Tuvimos un error inesperado. No te preocupes, tu cuenta ya fue creada. Podés ver cómo reintentar el pago más tarde <a href={helpPayLink} target='_blank'>acá</a>, para que tu suscripción esté activa.",
+    "payment.state.translation": {
+        "APPROVED": "Aprobado",
+        "PROCESSED": "En proceso",
+        "REJECTED": "Rechazado",
+        "PENDING": "Pendiente"
+    },
+    "noPaymentsDone": "¡No tenés ningún pago hecho!",
+    "payment.done": "¡Tu pago fue confirmado!",
+    "payment.notDone": "¡No pudimos confirmar tu pago! Si tenés dudas contactanos enviándonos el número de pago {paymentId}",
+    "payment.unknownError": "¡No pudimos confirmar tu pago! Por favor intentalo más tarde o contactate con nosotros",
+    "payment.plan.done": "¡Tu pago fue confirmado! Vas a ver reflejado el cambio de plan en breve",
+    "payment.plan.notDone": "¡No pudimos confirmar tu pago! El cambio de plan no pudo ser hecho. Si tenés dudas contactanos enviándonos el número de pago {paymentId}",
+    "payment.plan.unknownError": "¡No pudimos confirmar tu pago! El cambio de plan no pudo ser hecho.",
+    "payment.infoWeStore": "Qué información guardamos de tus pagos",
+    "payment.disclaimer.title": "Información sobre tus pagos",
+    "payment.disclaimer.text": "Nuestros registros no almacenan ninguna información sobre las tarjetas usadas en los pagos. Hay ocasiones en las que nuestro proveedor de pagos envía al usuario esta información por email al momento de realizar el pago. Para más información, podés consultar nuestra <a href=\"{dataUsageLink}\">política de privacidad y datos.</a>"
 }

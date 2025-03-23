@@ -21,7 +21,6 @@ import SuscriptionData from '../Shared/Components/SuscriptionData';
 import { buildVendibleInfo } from '../Shared/Helpers/ProveedorHelper';
 import DialogModal from '../Shared/Components/DialogModal';
 import UserInfo from '../Shared/Components/UserInfo';
-import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
 
 const ATTRIBUTES_CONFIG = {
   id: 'text',
@@ -54,22 +53,6 @@ const dialogModalContentDefaultValues = {
 };
 
 const snackbarDefaultValues = { open: false, label: '', severity: '' };
-
-const translateAddress = (coordsObject) => {
-  const { coordinates } = coordsObject ?? {};
-
-  if (coordinates) {
-    const httpClient = HttpClientFactory.createExternalHttpClient('', { });
-
-    return httpClient.getAddressFromLocation({
-      latitude: coordinates[0],
-      longitude: coordinates[1],
-    }).then((readableAddressResponseData) => readableAddressResponseData)
-      .catch(() => '');
-  }
-
-  return '';
-};
 
 async function renderChangeRequestDetail({ request, requestDetail }, userToken) {
   let InnerComponent = null;
@@ -121,12 +104,6 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
 
     if (toShowRole) {
       props.userInfo.role = toShowRole;
-    }
-
-    const translatedAddress = await translateAddress(toShowCommonData.location);
-
-    if (translatedAddress) {
-      props.userInfo.location = translateAddress;
     }
   }
 

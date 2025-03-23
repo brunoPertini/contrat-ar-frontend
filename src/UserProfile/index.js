@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import isEmpty from 'lodash/isEmpty';
@@ -10,10 +9,9 @@ import pickBy from 'lodash/pickBy';
 import Header from '../Header';
 import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
-import { userProfileLabels } from '../StaticData/UserProfile';
 import {
-  CLIENTE, PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS,
-  ROLE_PROVEEDOR_SERVICIOS, USER_TYPE_CLIENTE,
+  CLIENTE, PROVEEDOR,
+  USER_TYPE_CLIENTE,
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
@@ -29,66 +27,20 @@ import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 import PaymentData from './PaymentData';
-
-export const TABS_NAMES = {
-  PERSONAL_DATA: 'PERSONAL_DATA',
-  SECURITY: 'SECURITY',
-  PLAN: 'PLAN',
-  MESSAGES_CLIENT: 'MESSAGES_CLIENT',
-  MESSAGES_PROVIDER: 'MESSAGES_PROVIDER',
-  MY_PAYMENTS: 'MY_PAYMENTS',
-};
-
-const PERSONAL_DATA_TAB = (
-  <Tab
-    label={userProfileLabels.personalData}
-    value={TABS_NAMES.PERSONAL_DATA}
-  />
-);
-
-const MY_PLAN_TAB = <Tab label={userProfileLabels.myPlan} value={TABS_NAMES.PLAN} />;
-
-const MESSAGES_TAB_CLIENT = (
-  <Tab
-    label={userProfileLabels.myMessages}
-    value={TABS_NAMES.MESSAGES_CLIENT}
-  />
-);
-
-// eslint-disable-next-line no-unused-vars
-const MESSAGES_TAB_PROVIDER = (
-  <Tab
-    label={userProfileLabels.myMessagesProvider}
-    value={TABS_NAMES.MESSAGES_PROVIDER}
-  />
-);
-
-const PAYMENTS_TAB = (
-  <Tab
-    label={userProfileLabels.myPayments}
-    value={TABS_NAMES.MY_PAYMENTS}
-  />
-);
-
-const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.SECURITY} />;
-
-const rolesTabs = {
-  [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
-  [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, PAYMENTS_TAB],
-  [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, PAYMENTS_TAB],
-};
-
-const NEED_APPROVAL_ATTRIBUTES = ['email', 'password'];
+import { NEED_APPROVAL_ATTRIBUTES, rolesTabs, TABS_NAMES } from './Constants';
 
 const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo,
+  isAdmin, getUserInfo, getPaymentsOfSubscription,
+  paySubscription,
 }) {
+  const queryParams = new URLSearchParams(window.location.search);
+
+  const returnTab = queryParams.get('returnTab');
+
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -128,6 +80,8 @@ function UserProfile({
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const [show2FaComponent, setShow2FaComponent] = useState(false);
 
+  const isProveedorUser = useMemo(() => userInfo.role.startsWith(systemConstants.PROVEEDOR), [userInfo]);
+
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
   };
@@ -159,7 +113,7 @@ function UserProfile({
 
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
-    if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
+    if (isProveedorUser) {
       const { dni, fotoPerfilUrl } = userInfo;
       setPersonalData(
         (previous) => ({
@@ -199,6 +153,12 @@ function UserProfile({
   useEffect(() => {
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
   }, [userInfo.active]);
+
+  useEffect(() => {
+    if (returnTab in TABS_NAMES) {
+      setTabOption(returnTab);
+    }
+  }, [returnTab]);
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
@@ -303,11 +263,15 @@ function UserProfile({
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.plan, planesInfo]),
-    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (
+    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
+        subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        isSubscriptionValid={userInfo.suscripcion.validity.valid}
+        getPayments={getPaymentsOfSubscription}
+        paySubscription={paySubscription}
       />
-    ), [userInfo.suscripcion.validity]),
+    ) : null), [userInfo]),
   };
 
   if (!(userInfo?.role)) {
@@ -374,6 +338,8 @@ UserProfile.propTypes = {
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
+  getPaymentsOfSubscription: PropTypes.func.isRequired,
+  paySubscription: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

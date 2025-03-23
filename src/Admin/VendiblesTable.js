@@ -162,7 +162,11 @@ const VendiblesTable = forwardRef(({
                   { sharedLabels.seePosts }
                 </Link>
               </TableCell>
-              <TableCell key={`cell-${vendibleName}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+              <TableCell
+                key={`cell-${vendibleName}-actions`}
+                scope="row"
+                sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+              >
                 <OptionsMenu
                   title={sharedLabels.actions}
                   options={ACTIONS_OPTIONS}

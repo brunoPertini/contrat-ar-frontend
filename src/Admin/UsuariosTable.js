@@ -215,7 +215,11 @@ const UsuariosTable = forwardRef((
                       }
 
                       return (
-                        <TableCell key={`cell-${usuario.id}-${attribute}`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+                        <TableCell
+                          key={`cell-${usuario.id}-${attribute}`}
+                          scope="row"
+                          sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+                        >
                           {
                             ATTRIBUTES_RENDERERS[rendererType](...paramsToRender({
                               rendererType,
@@ -228,7 +232,11 @@ const UsuariosTable = forwardRef((
                       );
                     })
                   }
-              <TableCell key={`cell-${usuario.id}-actions`} scope="row" sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}>
+              <TableCell
+                key={`cell-${usuario.id}-actions`}
+                scope="row"
+                sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+              >
                 <OptionsMenu
                   title={sharedLabels.actions}
                   options={ACTIONS_OPTIONS}
