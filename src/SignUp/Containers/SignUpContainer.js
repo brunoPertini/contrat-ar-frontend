@@ -273,6 +273,7 @@ function SignUpContainer({ router }) {
     }
   }, [paymentParams, paySubscriptionServiceResult]);
 
+  // TODO: check if have to pass service result flag
   const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels);
 
   return (
