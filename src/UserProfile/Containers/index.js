@@ -192,6 +192,15 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     });
   };
 
+  const cancelPlanChange = (changeRequestId) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.cancelPlanChange(changeRequestId);
+  };
+
   const restoreTokenInMemory = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN,
@@ -260,6 +269,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         isAdmin={isAdmin}
         getUserInfo={getUserInfo}
         paySubscription={paySubscription}
+        cancelPlanChange={cancelPlanChange}
       />
     </NavigationContextProvider>
   );

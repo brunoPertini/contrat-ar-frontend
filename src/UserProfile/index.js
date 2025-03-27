@@ -35,7 +35,7 @@ function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
   isAdmin, getUserInfo, getPaymentsOfSubscription,
-  paySubscription,
+  paySubscription, cancelPlanChange,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
 
@@ -70,9 +70,9 @@ function UserProfile({
   const [planesInfo, setPlanesInfo] = useState();
 
   const [changeRequestsMade, setChangeRequestsMade] = useState({
-    plan: false,
-    email: false,
-    password: false,
+    suscripcion: null,
+    email: null,
+    password: null,
   });
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
@@ -96,11 +96,11 @@ function UserProfile({
 
   const checkAttributeRequestChange = (sourceTableId, attribute) => {
     requestChangeExists(sourceTableId, [attribute]).then(
-      () => setChangeRequestsMade((previous) => ({
-        ...previous, [attribute]: true,
+      (changeRequestId) => setChangeRequestsMade((previous) => ({
+        ...previous, [attribute]: changeRequestId,
       })),
     )
-      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: null })));
   };
 
   const acceptSecurityDataChange = () => {
@@ -124,7 +124,7 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange([userInfo.suscripcion.id], 'plan');
+      checkAttributeRequestChange([userInfo.id], 'suscripcion');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
@@ -211,6 +211,10 @@ function UserProfile({
     return confirmPlanChange(userInfo.id, planId);
   };
 
+  const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
+    setChangeRequestsMade((previous) => ({ ...previous, suscripcion: null }));
+  });
+
   const on2FaPassed = () => {
     getUserInfo();
     setShow2FaComponent(false);
@@ -256,13 +260,14 @@ function UserProfile({
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
         confirmPlanChange={handlePlanChangeConfirmation}
-        planRequestChangeExists={changeRequestsMade.plan}
+        planRequestChangeExists={!!changeRequestsMade.suscripcion}
+        cancelPlanChange={handleCancelPlanChange}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
         styles={{ height: '100vh', pl: '1%', pr: '1%' }}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
-      changeRequestsMade.plan, planesInfo]),
+      changeRequestsMade.suscripcion, planesInfo]),
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
@@ -340,6 +345,7 @@ UserProfile.propTypes = {
   getUserInfo: PropTypes.func.isRequired,
   getPaymentsOfSubscription: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
+  cancelPlanChange: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 
