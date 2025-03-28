@@ -19,5 +19,5 @@
     "payment.plan.unknownError": "¡No pudimos confirmar tu pago! El cambio de plan no pudo ser hecho.",
     "payment.infoWeStore": "Qué información guardamos de tus pagos",
     "payment.disclaimer.title": "Información sobre tus pagos",
-    "payment.disclaimer.text": "Nuestros registros no almacenan ninguna información sobre las tarjetas usadas en los pagos. Hay ocasiones en las que nuestro proveedor de pagos envía al usuario esta información por email al momento de realizar el pago. Para más información, podés consultar nuestra <a href=\"{dataUsageLink}\">política de privacidad y datos.</a>"
+    "payment.disclaimer.text": "Nuestros registros no almacenan ninguna información sobre las tarjetas usadas en los pagos. Hay ocasiones en las que nuestro proveedor de pagos envía al usuario esta información por email al momento de realizar el pago. Cualquier duda, podés consultar nuestra <a href=\"{dataUsageLink}\">política de privacidad y datos.</a>"
 }

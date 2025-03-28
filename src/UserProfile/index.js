@@ -34,7 +34,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo, getPaymentsOfSubscription,
+  isAdmin, getUserInfo, getPaymentsOfUser,
   paySubscription, cancelPlanChange,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -265,6 +265,7 @@ function UserProfile({
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
         styles={{ height: '100vh', pl: '1%', pr: '1%' }}
+        paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
       changeRequestsMade.suscripcion, planesInfo]),
@@ -273,7 +274,7 @@ function UserProfile({
         subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
-        getPayments={getPaymentsOfSubscription}
+        getPayments={getPaymentsOfUser}
         paySubscription={paySubscription}
       />
     ) : null), [userInfo]),
@@ -343,7 +344,7 @@ UserProfile.propTypes = {
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
-  getPaymentsOfSubscription: PropTypes.func.isRequired,
+  getPaymentsOfUser: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,

@@ -20,11 +20,12 @@ import Disclaimer from '../Shared/Components/Disclaimer';
 import { flexColumn } from '../Shared/Constants/Styles';
 import Layout from '../Shared/Components/Layout';
 import DialogModal from '../Shared/Components/DialogModal';
+import { TABS_NAMES } from './Constants';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
   actualPlan, confirmPlanChange, planRequestChangeExists,
-  suscripcionData, cancelPlanChange,
+  suscripcionData, cancelPlanChange, paySubscription,
 }) {
   const { plansNames } = sharedLabels;
 
@@ -73,8 +74,30 @@ function PlanData({
     changeUserInfo(newPlanKey);
   };
 
-  const handleConfirmPlan = () => {
-    confirmPlanChange(plan).then(() => setHasPendingRequest(true));
+  const planChangeHandlers = {
+    [PLAN_TYPE_FREE]: () => {
+      setIsLoading(true);
+      confirmPlanChange(plan).then(() => {
+        setHasPendingRequest(true);
+        return Promise.resolve();
+      }).catch((error) => Promise.reject(error))
+        .finally(() => setIsLoading(false));
+    },
+
+    [PLAN_TYPE_PAID]: () => {
+      const failHandler = (error) => {
+        setIsLoading(false);
+        return Promise.reject(error);
+      };
+
+      setIsLoading(true);
+      confirmPlanChange(plan).then((subscriptionData) => {
+        paySubscription(subscriptionData.id, TABS_NAMES.PLAN).then((checkoutUrl) => {
+          window.location.href = checkoutUrl;
+        }).catch(failHandler);
+      }).catch(failHandler);
+    },
+
   };
 
   const handlePlanCancel = useCallback(() => {
@@ -166,7 +189,7 @@ function PlanData({
               startIcon={<SaveIcon />}
               sx={{ mt: '5%', mb: !isLayourNearTabletSize ? 0 : '10%' }}
               disabled={actualPlan === plan}
-              onClick={() => handleConfirmPlan()}
+              onClick={() => planChangeHandlers[plan]()}
             >
               { sharedLabels.saveChanges }
             </Button>
@@ -218,6 +241,7 @@ PlanData.propTypes = {
   changeUserInfo: PropTypes.func.isRequired,
   confirmPlanChange: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
+  paySubscription: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,

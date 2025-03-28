@@ -11,12 +11,13 @@ export class PaymentHttpClient extends HttpClient {
   /**
    *
    * @param {Number} subscriptionId
+   * @param {Number} toBeBindUserId
    * @param {String} returnTab MY_PAYMENTS or PLAN
    * @returns {Promise<String>} Checkout url
    */
-  paySubscriptionFromUserProfile(subscriptionId, returnTab = 'MY_PAYMENTS') {
+  paySubscriptionFromUserProfile(subscriptionId, toBeBindUserId, returnTab = 'MY_PAYMENTS') {
     const url = paymentRoutes.paySubscriptionFromUserProfile.replace('{subscriptionId}', subscriptionId);
-    return this.post(url, { returnTab }, { integrationType: 'OUTSITE' });
+    return this.post(url, { returnTab }, { integrationType: 'OUTSITE', toBeBindUserId });
   }
 
   getPaymentInfo(paymentId) {
@@ -25,8 +26,8 @@ export class PaymentHttpClient extends HttpClient {
     return this.get(url);
   }
 
-  getPaymentsOfSubscription(subscriptionId) {
-    const url = paymentRoutes.getSubscriptionPayments.replace('{subscriptionId}', subscriptionId);
+  getPaymentsOfUser(userId) {
+    const url = paymentRoutes.getUserPayments.replace('{userId}', userId);
 
     return this.get(url).then((payments) => payments)
       .catch(() => []);

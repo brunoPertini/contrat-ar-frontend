@@ -1,5 +1,6 @@
 {
     "getSubscriptionPayments": "/pay/suscription/{subscriptionId}",
+    "getUserPayments": "/payments/{userId}",
     "paySubscriptionFromUserProfile": "/pay/profile/suscription/{subscriptionId}"
 }
                                                                                                     
