@@ -13,6 +13,7 @@
     "plan.change.disclaimer": "Si tenés un cambio de plan recientemente hecho, tené en cuenta que puede tardar unos minutos en verse reflejado.",
     "plan.change.finalMessage": "¡Recibimos tu solicitud de cambio de plan! Tu nuevo plan va a estar activo cuando finalice tu suscripción actual",
     "plan.change.cancel": "Cancelar cambio de plan",
+    "plan.change.error": "Hubo un error al intentar cambiar tu plan. Intentalo más tarde o contactanos",
     "plan.change.cancel.text": "Tu cambio de plan quedará cancelado automáticamente",
     "plan.subscription.activeFrom": "Suscripción activa desde {createdAt}",
     "plan.subscription.expiresOn": "Tu suscripción vence el {expirationDate}",

@@ -9,6 +9,7 @@ export default function usePaymentDialogModal(
   isOpen,
   onCloseDialog,
   modalLabels = { success: '', error: '', unknown: '' },
+  paySubscriptionServiceResult,
 ) {
   const [modalContent, setModalContent] = useState({ title: '', text: '', paperStyles: {} });
 
@@ -25,7 +26,9 @@ export default function usePaymentDialogModal(
 
     let alertLabel;
 
-    if (isOpen) {
+    if (paySubscriptionServiceResult === false) {
+      alertLabel = paymentLabels['payment.unknownError'];
+    } else if (isOpen) {
       if (wasPaymentOk) {
         alertLabel = modalLabels.success;
       } else if (paymentId) {

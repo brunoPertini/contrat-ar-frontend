@@ -28,6 +28,7 @@ import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthenticatio
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 import PaymentData from './PaymentData';
 import { NEED_APPROVAL_ATTRIBUTES, rolesTabs, TABS_NAMES } from './Constants';
+import { userProfileLabels } from '../StaticData/UserProfile';
 
 const footerOptions = buildFooterOptions(routes.userProfile);
 
@@ -208,7 +209,10 @@ function UserProfile({
   const handlePlanChangeConfirmation = (newPlanType) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId);
+    return confirmPlanChange(userInfo.id, planId).catch(() => {
+      setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
+      return Promise.reject();
+    });
   };
 
   const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {

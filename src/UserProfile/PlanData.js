@@ -74,28 +74,29 @@ function PlanData({
     changeUserInfo(newPlanKey);
   };
 
+  const cancelIsLoading = () => {
+    setIsLoading(false);
+  };
+
   const planChangeHandlers = {
     [PLAN_TYPE_FREE]: () => {
       setIsLoading(true);
+      setShowPlanDisclaimer(false);
       confirmPlanChange(plan).then(() => {
         setHasPendingRequest(true);
         return Promise.resolve();
-      }).catch((error) => Promise.reject(error))
-        .finally(() => setIsLoading(false));
+      }).catch(cancelIsLoading)
+        .finally(cancelIsLoading);
     },
 
     [PLAN_TYPE_PAID]: () => {
-      const failHandler = (error) => {
-        setIsLoading(false);
-        return Promise.reject(error);
-      };
-
       setIsLoading(true);
+      setShowPlanDisclaimer(false);
       confirmPlanChange(plan).then((subscriptionData) => {
         paySubscription(subscriptionData.id, TABS_NAMES.PLAN).then((checkoutUrl) => {
           window.location.href = checkoutUrl;
-        }).catch(failHandler);
-      }).catch(failHandler);
+        }).catch(cancelIsLoading);
+      }).catch(cancelIsLoading);
     },
 
   };

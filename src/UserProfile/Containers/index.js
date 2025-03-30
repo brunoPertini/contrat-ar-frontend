@@ -251,6 +251,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     openPaymentDialogModal,
     closePaymentDialogModal,
     resolvedPaymentLabels,
+    paySubscriptionServiceResult,
   );
 
   return (
