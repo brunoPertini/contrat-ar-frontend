@@ -21,6 +21,7 @@ import { flexColumn } from '../Shared/Constants/Styles';
 import Layout from '../Shared/Components/Layout';
 import DialogModal from '../Shared/Components/DialogModal';
 import { TABS_NAMES } from './Constants';
+import InformativeAlert from '../Shared/Components/Alert';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -46,6 +47,16 @@ function PlanData({
       open: false,
     })),
   });
+
+  const [informativeAlertData, setInformativeAlertData] = useState({
+    open: false,
+    severity: '',
+    label: '',
+  });
+
+  useEffect(() => () => {
+    changeUserInfo(actualPlan);
+  }, []);
 
   useEffect(() => {
     setHasPendingRequest(planRequestChangeExists);
@@ -101,12 +112,35 @@ function PlanData({
 
   };
 
+  const cleanInformativeAlertInfo = useCallback(() => {
+    setInformativeAlertData((previous) => ({
+      ...previous, label: '', severity: '', open: false,
+    }));
+  }, [setInformativeAlertData]);
+
   const handlePlanCancel = useCallback(() => {
     setIsLoading(true);
-    cancelPlanChange().finally(() => {
-      closeDialogModal();
-      setIsLoading(false);
-    });
+    cancelPlanChange()
+      .then(() => {
+        setInformativeAlertData((previous) => ({
+          ...previous,
+          open: true,
+          severity: 'success',
+          label: userProfileLabels['plan.change.cancel.success'],
+        }));
+      })
+      .catch(() => {
+        setInformativeAlertData((previous) => ({
+          ...previous,
+          open: true,
+          severity: 'error',
+          label: userProfileLabels['plan.change.cancel.error'],
+        }));
+      })
+      .finally(() => {
+        closeDialogModal();
+        setIsLoading(false);
+      });
   }, [cancelPlanChange]);
 
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
@@ -132,6 +166,11 @@ function PlanData({
 
   return (
     <Layout isLoading={isLoading} gridProps={{ sx: { ...flexColumn, ...styles } }}>
+      <InformativeAlert
+        {...informativeAlertData}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        onClose={cleanInformativeAlertInfo}
+      />
       <DialogModal
         {...modalContent}
         cancelText={sharedLabels.cancel}

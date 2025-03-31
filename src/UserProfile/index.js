@@ -217,7 +217,7 @@ function UserProfile({
 
   const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
     setChangeRequestsMade((previous) => ({ ...previous, suscripcion: null }));
-  });
+  }).catch(() => Promise.reject());
 
   const on2FaPassed = () => {
     getUserInfo();
@@ -257,7 +257,7 @@ function UserProfile({
         handleLogout={handleLogout}
       />
     ) : null), [securityData, isAdmin, userInfo.is2FaValid, tabOption, isEditModeEnabled]),
-    [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (tabOption === TABS_NAMES.PLAN && !isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
         actualPlan={currentUserPlanData}
@@ -272,7 +272,7 @@ function UserProfile({
         paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
-      changeRequestsMade.suscripcion, planesInfo]),
+      changeRequestsMade.suscripcion, planesInfo, tabOption]),
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
