@@ -13,6 +13,7 @@ import {
 } from 'react';
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import Link from '@mui/material/Link';
+import InfoIcon from '@mui/icons-material/Info';
 import { sharedLabels } from '../StaticData/Shared';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import Disclaimer from '../Shared/Components/Disclaimer';
@@ -42,6 +43,34 @@ const attributesRenderers = {
     return <span style={{ color: labelColor }}>{label}</span>;
   },
   paymentProviderName: (value) => value.toUpperCase(),
+};
+
+const labelsRenderers = {
+  default: (paymentLabel) => (
+    <TableCell
+      sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
+    >
+      { paymentLabel }
+    </TableCell>
+  ),
+
+  state: (paymentLabel) => (
+    <TableCell
+      sx={{
+        borderBottom: '1px solid black',
+        borderRight: '1px solid black',
+      }}
+    >
+      <Box
+        display="flex"
+        flexDirection="row"
+      >
+        <InfoIcon sx={{ cursor: 'pointer' }} />
+        { paymentLabel }
+      </Box>
+
+    </TableCell>
+  ),
 };
 
 const disclaimerModalTexts = {
@@ -129,13 +158,11 @@ export default function PaymentData({
                 <TableHead>
                   <TableRow sx={{ borderBottom: '1px solid black' }}>
                     {
-              Object.values(userProfileLabels.paymentData).map((label) => (
-                <TableCell
-                  sx={{ borderBottom: '1px solid black', borderRight: '1px solid black' }}
-                >
-                  { label }
-                </TableCell>
-              ))
+              Object.keys(userProfileLabels.paymentData).map((label) => {
+                const key = label in labelsRenderers ? label : 'default';
+
+                return labelsRenderers[key](userProfileLabels.paymentData[label]);
+              })
             }
                   </TableRow>
                 </TableHead>
