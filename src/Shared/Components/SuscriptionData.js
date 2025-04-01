@@ -38,7 +38,7 @@ export default function SuscriptionData({ suscripcion }) {
         renderRowAsText(sharedLabels.plan, planLabel)
       }
       {
-        renderRowAsText(sharedLabels.state, suscripcion.isActive
+        renderRowAsText(sharedLabels.state, suscripcion.active
           ? sharedLabels.activeF : sharedLabels.inactiveF)
       }
       {
