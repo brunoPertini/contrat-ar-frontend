@@ -14,6 +14,7 @@ import {
 import HelpOutline from '@mui/icons-material/HelpOutline';
 import Link from '@mui/material/Link';
 import InfoIcon from '@mui/icons-material/Info';
+import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../StaticData/Shared';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import Disclaimer from '../Shared/Components/Disclaimer';
@@ -24,6 +25,7 @@ import StaticAlert from '../Shared/Components/StaticAlert';
 import { PAYMENT_STATE } from '../Shared/Constants/System';
 import { TABS_NAMES } from './Constants';
 import DialogModal from '../Shared/Components/DialogModal';
+import Tooltip from '../Shared/Components/Tooltip';
 
 const paymentsFields = ['paymentPeriod', 'date', 'amount', 'currency', 'state', 'paymentProviderName'];
 
@@ -54,7 +56,7 @@ const labelsRenderers = {
     </TableCell>
   ),
 
-  state: (paymentLabel) => (
+  state: (paymentLabel, params) => (
     <TableCell
       sx={{
         borderBottom: '1px solid black',
@@ -65,8 +67,26 @@ const labelsRenderers = {
         display="flex"
         flexDirection="row"
       >
-        <InfoIcon sx={{ cursor: 'pointer' }} />
         { paymentLabel }
+        <Tooltip
+          placement="right-end"
+          title={(
+            <Box>
+              {Object.keys(params).map((state) => (
+                <Typography variant="h6" sx={{ mb: '1%' }}>
+                  {state}
+                  {' '}
+                  :
+                  {' '}
+                  {params[state]}
+                </Typography>
+              ))}
+            </Box>
+
+          )}
+        >
+          <InfoIcon sx={{ cursor: 'pointer' }} />
+        </Tooltip>
       </Box>
 
     </TableCell>
@@ -90,12 +110,23 @@ export default function PaymentData({
   const [isLoading, setIsLoading] = useState(false);
   const [payments, setPayments] = useState([]);
 
+  const [states, setStates] = useState({});
+
   const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
 
   const handleSetPayments = useCallback(async () => {
     setIsLoading(true);
-    const newPayments = await getPayments(subscriptionId);
+    const { payments: newPayments, states: statesResponse } = await getPayments(subscriptionId);
     setPayments([...newPayments]);
+
+    const newStatesObject = Object.keys(statesResponse).reduce((acc, key) => {
+      const translation = paymentLabels['payment.state.translation'][key];
+      acc[translation] = statesResponse[key];
+      return acc;
+    }, {});
+
+    setStates({ ...newStatesObject });
+
     setIsLoading(false);
   }, [setPayments]);
 
@@ -115,6 +146,11 @@ export default function PaymentData({
   const openDisclaimer = useCallback(() => setIsDisclaimerOpen(true), [setIsDisclaimerOpen]);
 
   const closeDisclaimer = useCallback(() => setIsDisclaimerOpen(false), [setIsDisclaimerOpen]);
+
+  const labelRenderersParams = {
+    default: {},
+    state: states,
+  };
 
   return (
     <Layout
@@ -161,7 +197,7 @@ export default function PaymentData({
               Object.keys(userProfileLabels.paymentData).map((label) => {
                 const key = label in labelsRenderers ? label : 'default';
 
-                return labelsRenderers[key](userProfileLabels.paymentData[label]);
+                return labelsRenderers[key](userProfileLabels.paymentData[label], labelRenderersParams[key]);
               })
             }
                   </TableRow>

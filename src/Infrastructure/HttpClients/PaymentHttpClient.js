@@ -30,6 +30,6 @@ export class PaymentHttpClient extends HttpClient {
     const url = paymentRoutes.getUserPayments.replace('{userId}', userId);
 
     return this.get(url).then((payments) => payments)
-      .catch(() => []);
+      .catch(() => ({ payments: [], states: [] }));
   }
 }
