@@ -3,9 +3,9 @@ import { paymentRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class PaymentHttpClient extends HttpClient {
-  paySubscription(subscriptionId) {
+  paySubscription(subscriptionId, userId) {
     const url = proveedoresRoutes.paySubscription.replace('{subscriptionId}', subscriptionId);
-    return this.post(url, null, { integrationType: 'OUTSITE' });
+    return this.post(url, null, { integrationType: 'OUTSITE', toBeBindUserId: userId });
   }
 
   /**

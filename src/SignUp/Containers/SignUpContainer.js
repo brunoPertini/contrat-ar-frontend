@@ -109,10 +109,10 @@ function SignUpContainer({ router }) {
     return client.createSubscription(proveedorId, planId);
   };
 
-  const handlePaySubscription = (id) => {
+  const handlePaySubscription = (id, userId) => {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
-    return client.paySubscription(id)
+    return client.paySubscription(id, userId)
       .then((checkoutUrl) => {
         setPaySubscriptionServiceResult(true);
         return checkoutUrl;

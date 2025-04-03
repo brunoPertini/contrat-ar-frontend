@@ -181,6 +181,7 @@ export default function UserSignUp({
           saveSignupDataInLocalStorage();
           handlePaySubscription(
             response.id,
+            createdUserInfo.id,
           ).then((checkoutUrl) => {
             window.location.href = checkoutUrl;
           }).catch(() => setIsLoading(false));
