@@ -141,17 +141,17 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getAllPlanes();
   };
 
-  const getPaymentsOfSubscription = (subscriptionId) => {
+  const getPaymentsOfUser = () => {
     const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
 
-    return client.getPaymentsOfSubscription(subscriptionId);
+    return client.getPaymentsOfUser(userInfo.id);
   };
 
   const paySubscription = (subscriptionId, sourceTab) => {
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN, userInfo.token);
     const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
 
-    return client.paySubscriptionFromUserProfile(subscriptionId, sourceTab).then((checkoutUrl) => {
+    return client.paySubscriptionFromUserProfile(subscriptionId, userInfo.id, sourceTab).then((checkoutUrl) => {
       setPaySubscriptionServiceResult(true);
       return checkoutUrl;
     })
@@ -190,6 +190,15 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       }).catch(() => setOpenPaymentDialogModal(false));
       return currentToken;
     });
+  };
+
+  const cancelPlanChange = (changeRequestId) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.cancelPlanChange(changeRequestId);
   };
 
   const restoreTokenInMemory = () => {
@@ -236,7 +245,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     }
 
     return null;
-  }, [returnTab, paymentParams, paySubscriptionServiceResult]);
+  }, [paymentParams]);
 
   const paymentDialogModal = usePaymentDialogModal(
     openPaymentDialogModal,
@@ -256,10 +265,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         confirmPlanChange={confirmPlanChange}
         requestChangeExists={requestChangeExists}
         getAllPlanes={getAllPlanes}
-        getPaymentsOfSubscription={getPaymentsOfSubscription}
+        getPaymentsOfUser={getPaymentsOfUser}
         isAdmin={isAdmin}
         getUserInfo={getUserInfo}
         paySubscription={paySubscription}
+        cancelPlanChange={cancelPlanChange}
       />
     </NavigationContextProvider>
   );

@@ -58,6 +58,10 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
   let InnerComponent = null;
   let props = {};
 
+  // TODO: refactor this somehow. Should never be aware of DDBB attributes names
+  const shouldRenderSubscriptionData = request.sourceTable === ENTITY_NAME.suscripcion
+   || (request.sourceTable === ENTITY_NAME.proveedor && request.attributes.includes('suscripcion'));
+
   if (request.sourceTable === ENTITY_NAME.proveedor_vendible) {
     const { vendibleType } = requestDetail;
     InnerComponent = VendibleInfo;
@@ -79,7 +83,7 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
     };
   }
 
-  if (request.sourceTable === ENTITY_NAME.suscripcion) {
+  if (shouldRenderSubscriptionData) {
     InnerComponent = SuscriptionData;
     props = {
       suscripcion: requestDetail,

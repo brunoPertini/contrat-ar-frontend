@@ -28,14 +28,15 @@ import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthenticatio
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
 import PaymentData from './PaymentData';
 import { NEED_APPROVAL_ATTRIBUTES, rolesTabs, TABS_NAMES } from './Constants';
+import { userProfileLabels } from '../StaticData/UserProfile';
 
 const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo, getPaymentsOfSubscription,
-  paySubscription,
+  isAdmin, getUserInfo, getPaymentsOfUser,
+  paySubscription, cancelPlanChange,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
 
@@ -70,9 +71,9 @@ function UserProfile({
   const [planesInfo, setPlanesInfo] = useState();
 
   const [changeRequestsMade, setChangeRequestsMade] = useState({
-    plan: false,
-    email: false,
-    password: false,
+    suscripcion: null,
+    email: null,
+    password: null,
   });
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
@@ -96,11 +97,11 @@ function UserProfile({
 
   const checkAttributeRequestChange = (sourceTableId, attribute) => {
     requestChangeExists(sourceTableId, [attribute]).then(
-      () => setChangeRequestsMade((previous) => ({
-        ...previous, [attribute]: true,
+      (changeRequestId) => setChangeRequestsMade((previous) => ({
+        ...previous, [attribute]: changeRequestId,
       })),
     )
-      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: null })));
   };
 
   const acceptSecurityDataChange = () => {
@@ -124,7 +125,7 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange([userInfo.suscripcion.id], 'plan');
+      checkAttributeRequestChange([userInfo.id], 'suscripcion');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
@@ -208,8 +209,15 @@ function UserProfile({
   const handlePlanChangeConfirmation = (newPlanType) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId);
+    return confirmPlanChange(userInfo.id, planId).catch(() => {
+      setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
+      return Promise.reject();
+    });
   };
+
+  const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
+    setChangeRequestsMade((previous) => ({ ...previous, suscripcion: null }));
+  }).catch(() => Promise.reject());
 
   const on2FaPassed = () => {
     getUserInfo();
@@ -249,26 +257,28 @@ function UserProfile({
         handleLogout={handleLogout}
       />
     ) : null), [securityData, isAdmin, userInfo.is2FaValid, tabOption, isEditModeEnabled]),
-    [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (tabOption === TABS_NAMES.PLAN && !isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
         actualPlan={currentUserPlanData}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
         confirmPlanChange={handlePlanChangeConfirmation}
-        planRequestChangeExists={changeRequestsMade.plan}
+        planRequestChangeExists={!!changeRequestsMade.suscripcion}
+        cancelPlanChange={handleCancelPlanChange}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
         styles={{ height: '100vh', pl: '1%', pr: '1%' }}
+        paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
-      changeRequestsMade.plan, planesInfo]),
+      changeRequestsMade.suscripcion, planesInfo, tabOption]),
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
         canPaySubscription={userInfo.suscripcion.validity.canBePayed}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
-        getPayments={getPaymentsOfSubscription}
+        getPayments={getPaymentsOfUser}
         paySubscription={paySubscription}
       />
     ) : null), [userInfo]),
@@ -338,8 +348,9 @@ UserProfile.propTypes = {
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
-  getPaymentsOfSubscription: PropTypes.func.isRequired,
+  getPaymentsOfUser: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
+  cancelPlanChange: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

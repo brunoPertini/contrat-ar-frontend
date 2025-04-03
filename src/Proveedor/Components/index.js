@@ -10,7 +10,9 @@ import {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import Header from '../../Header';
-import { DialogModal, SearcherInput, Tooltip } from '../../Shared/Components';
+import DialogModal from '../../Shared/Components/DialogModal';
+import SearcherInput from '../../Shared/Components/Searcher';
+import Tooltip from '../../Shared/Components/Tooltip';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import VendiblesList from '../VendiblesList';
 import VendiblesFilters from '../../Vendible/Filters';
