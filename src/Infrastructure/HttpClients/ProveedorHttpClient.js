@@ -111,7 +111,7 @@ export class ProveedorHttpClient extends HttpClient {
       .replace('{proveedorId}', proveedorId)
       .replace('{planId}', planId);
 
-    return this.put(url, null, null);
+    return this.post(url);
   }
 
   getAllPlanes() {
@@ -130,5 +130,11 @@ export class ProveedorHttpClient extends HttpClient {
       .replace('{planId}', planId);
 
     return this.post(url);
+  }
+
+  cancelPlanChange(changeRequestId) {
+    const url = proveedoresRoutes.cancelPlanChange.replace('{changeRequestId}', changeRequestId);
+
+    return this.delete(url);
   }
 }

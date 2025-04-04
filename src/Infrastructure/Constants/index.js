@@ -13,5 +13,6 @@ export const HEADERS_VALUES = {
 export const ENTITY_NAME = {
   proveedor_vendible: 'proveedor_vendible',
   suscripcion: 'suscripcion',
+  proveedor: 'proveedor',
   usuario: 'usuario',
 };

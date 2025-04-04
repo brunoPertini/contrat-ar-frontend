@@ -131,5 +131,7 @@
     "2fa.start.title": "Para proteger tu cuenta, vamos a enviarte un código de seguridad al mail registrado",
     "2fa.checkingCode": "Verificando el código",
     "2fa.wrongCode": "El código es incorrecto",
-    "2fa.codeExpired": "El código ya no es válido, por favor solicitá otro"
+    "2fa.codeExpired": "El código ya no es válido, por favor solicitá otro",
+    "pay": "Pagar",
+    "makeClickHere": "Hacé click acá"
 }

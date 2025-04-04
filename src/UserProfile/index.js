@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import {
   useContext, useEffect, useMemo, useState,
 } from 'react';
-import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
 import isEmpty from 'lodash/isEmpty';
@@ -10,10 +9,9 @@ import pickBy from 'lodash/pickBy';
 import Header from '../Header';
 import { buildFooterOptions, getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../Shared/Hooks/useExitAppDialog';
-import { userProfileLabels } from '../StaticData/UserProfile';
 import {
-  CLIENTE, PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS,
-  ROLE_PROVEEDOR_SERVICIOS, USER_TYPE_CLIENTE,
+  CLIENTE, PROVEEDOR,
+  USER_TYPE_CLIENTE,
 } from '../Shared/Constants/System';
 import UserPersonalData from './PersonalData';
 import SecurityData from './SecurityData';
@@ -28,57 +26,22 @@ import Layout from '../Shared/Components/Layout';
 import { flexColumn } from '../Shared/Constants/Styles';
 import TwoFactorAuthentication from '../Shared/Components/TwoFactorAuthentication';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from '../Shared/Helpers/DatesHelper';
-
-export const TABS_NAMES = {
-  PERSONAL_DATA: 'PERSONAL_DATA',
-  SECURITY: 'SECURITY',
-  PLAN: 'PLAN',
-  MESSAGES_CLIENT: 'MESSAGES_CLIENT',
-  MESSAGES_PROVIDER: 'MESSAGES_PROVIDER',
-};
-
-const PERSONAL_DATA_TAB = (
-  <Tab
-    label={userProfileLabels.personalData}
-    value={TABS_NAMES.PERSONAL_DATA}
-  />
-);
-
-const MY_PLAN_TAB = <Tab label={userProfileLabels.myPlan} value={TABS_NAMES.PLAN} />;
-
-const MESSAGES_TAB_CLIENT = (
-  <Tab
-    label={userProfileLabels.myMessages}
-    value={TABS_NAMES.MESSAGES_CLIENT}
-  />
-);
-
-const MESSAGES_TAB_PROVIDER = (
-  <Tab
-    label={userProfileLabels.myMessagesProvider}
-    value={TABS_NAMES.MESSAGES_PROVIDER}
-  />
-);
-
-const SECURITY_TAB = <Tab label={userProfileLabels.security} value={TABS_NAMES.SECURITY} />;
-
-const rolesTabs = {
-  [CLIENTE]: [PERSONAL_DATA_TAB, SECURITY_TAB, MESSAGES_TAB_CLIENT],
-  [ROLE_PROVEEDOR_PRODUCTOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
-  [ROLE_PROVEEDOR_SERVICIOS]: [PERSONAL_DATA_TAB,
-    SECURITY_TAB, MY_PLAN_TAB, MESSAGES_TAB_PROVIDER],
-};
-
-const NEED_APPROVAL_ATTRIBUTES = ['email', 'password'];
+import PaymentData from './PaymentData';
+import { NEED_APPROVAL_ATTRIBUTES, rolesTabs, TABS_NAMES } from './Constants';
+import { userProfileLabels } from '../StaticData/UserProfile';
 
 const footerOptions = buildFooterOptions(routes.userProfile);
 
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo,
+  isAdmin, getUserInfo, getPaymentsOfUser,
+  paySubscription, cancelPlanChange,
 }) {
+  const queryParams = new URLSearchParams(window.location.search);
+
+  const returnTab = queryParams.get('returnTab');
+
   const { setHandleGoBack } = useContext(NavigationContext);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -108,15 +71,17 @@ function UserProfile({
   const [planesInfo, setPlanesInfo] = useState();
 
   const [changeRequestsMade, setChangeRequestsMade] = useState({
-    plan: false,
-    email: false,
-    password: false,
+    suscripcion: null,
+    email: null,
+    password: null,
   });
 
   const [alertConfig, setAlertConfig] = useState({ open: false, label: '', severity: '' });
 
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
   const [show2FaComponent, setShow2FaComponent] = useState(false);
+
+  const isProveedorUser = useMemo(() => userInfo.role.startsWith(systemConstants.PROVEEDOR), [userInfo]);
 
   const goToIndex = () => {
     window.location.href = userInfo.indexPage;
@@ -132,11 +97,11 @@ function UserProfile({
 
   const checkAttributeRequestChange = (sourceTableId, attribute) => {
     requestChangeExists(sourceTableId, [attribute]).then(
-      () => setChangeRequestsMade((previous) => ({
-        ...previous, [attribute]: true,
+      (changeRequestId) => setChangeRequestsMade((previous) => ({
+        ...previous, [attribute]: changeRequestId,
       })),
     )
-      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: false })));
+      .catch(() => setChangeRequestsMade((previous) => ({ ...previous, [attribute]: null })));
   };
 
   const acceptSecurityDataChange = () => {
@@ -149,7 +114,7 @@ function UserProfile({
 
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
-    if (userInfo.role.startsWith(systemConstants.PROVEEDOR)) {
+    if (isProveedorUser) {
       const { dni, fotoPerfilUrl } = userInfo;
       setPersonalData(
         (previous) => ({
@@ -160,7 +125,7 @@ function UserProfile({
       );
 
       handleSetPlanesInfo();
-      checkAttributeRequestChange([userInfo.suscripcion.id], 'plan');
+      checkAttributeRequestChange([userInfo.id], 'suscripcion');
     }
 
     NEED_APPROVAL_ATTRIBUTES.forEach((attribute) => {
@@ -189,6 +154,12 @@ function UserProfile({
   useEffect(() => {
     setPersonalData((previous) => ({ ...previous, active: userInfo.active }));
   }, [userInfo.active]);
+
+  useEffect(() => {
+    if (returnTab in TABS_NAMES) {
+      setTabOption(returnTab);
+    }
+  }, [returnTab]);
 
   const showExitAppModal = () => setIsExitAppModalOpen(true);
 
@@ -238,8 +209,15 @@ function UserProfile({
   const handlePlanChangeConfirmation = (newPlanType) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId);
+    return confirmPlanChange(userInfo.id, planId).catch(() => {
+      setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
+      return Promise.reject();
+    });
   };
+
+  const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
+    setChangeRequestsMade((previous) => ({ ...previous, suscripcion: null }));
+  }).catch(() => Promise.reject());
 
   const on2FaPassed = () => {
     getUserInfo();
@@ -279,20 +257,31 @@ function UserProfile({
         handleLogout={handleLogout}
       />
     ) : null), [securityData, isAdmin, userInfo.is2FaValid, tabOption, isEditModeEnabled]),
-    [TABS_NAMES.PLAN]: useMemo(() => (!isEmpty(planesInfo) ? (
+    [TABS_NAMES.PLAN]: useMemo(() => (tabOption === TABS_NAMES.PLAN && !isEmpty(planesInfo) ? (
       <PlanData
         plan={planData}
         actualPlan={currentUserPlanData}
         userLocation={personalData.location}
         changeUserInfo={handlePlanDataChanged}
         confirmPlanChange={handlePlanChangeConfirmation}
-        planRequestChangeExists={changeRequestsMade.plan}
+        planRequestChangeExists={!!changeRequestsMade.suscripcion}
+        cancelPlanChange={handleCancelPlanChange}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
         styles={{ height: '100vh', pl: '1%', pr: '1%' }}
+        paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
-      changeRequestsMade.plan, planesInfo]),
+      changeRequestsMade.suscripcion, planesInfo, tabOption]),
+    [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
+      <PaymentData
+        subscriptionId={userInfo.suscripcion.id}
+        canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        isSubscriptionValid={userInfo.suscripcion.validity.valid}
+        getPayments={getPaymentsOfUser}
+        paySubscription={paySubscription}
+      />
+    ) : null), [userInfo]),
   };
 
   if (!(userInfo?.role)) {
@@ -359,6 +348,9 @@ UserProfile.propTypes = {
   requestChangeExists: PropTypes.func.isRequired,
   getAllPlanes: PropTypes.func.isRequired,
   getUserInfo: PropTypes.func.isRequired,
+  getPaymentsOfUser: PropTypes.func.isRequired,
+  paySubscription: PropTypes.func.isRequired,
+  cancelPlanChange: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

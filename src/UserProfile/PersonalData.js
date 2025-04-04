@@ -26,7 +26,7 @@ import { adminLabels } from '../StaticData/Admin';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import DialogModal from '../Shared/Components/DialogModal';
 import Layout from '../Shared/Components/Layout';
-import { TABS_NAMES } from '.';
+import { TABS_NAMES } from './Constants';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 

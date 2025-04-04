@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { sharedLabels } from '../../StaticData/Shared';
 import { flexColumn } from '../Constants/Styles';
 import SuscriptionData from './SuscriptionData';
+import MapModal from './MapModal';
 
 const rowStyles = { mt: '5%' };
 
@@ -46,6 +47,18 @@ export default function UserInfo({ userInfo }) {
     })),
   });
 
+  const [mapModalProps, setMapModalProps] = useState({
+    open: false,
+    handleClose: () => setMapModalProps((previous) => ({
+      ...previous,
+      open: false,
+      location: null,
+      title: '',
+    })),
+    location: null,
+    title: '',
+  });
+
   const renderers = {
     fotoPerfilUrl: (_, url) => renderRowAsLink(sharedLabels.profilePhoto, () => window.open(url, '_blank')),
 
@@ -57,6 +70,13 @@ export default function UserInfo({ userInfo }) {
         content: <SuscriptionData suscripcion={info} />,
       })),
     ),
+
+    location: (label, userLocation) => renderRowAsLink(label, () => setMapModalProps((previous) => ({
+      ...previous,
+      open: true,
+      location: userLocation,
+      title: sharedLabels.locationOf.replace('{name}', userInfo.name).replace('{surname}', userInfo.surname),
+    }))),
 
     textAttribute: (label, value) => renderRowAsText(label, value),
   };
@@ -72,6 +92,7 @@ export default function UserInfo({ userInfo }) {
       maxHeight: '100vh',
     }}
     >
+      <MapModal {...mapModalProps} />
       {
         modalProps.open && (
         <Modal open={modalProps.open} onClose={modalProps.onClose}>

@@ -23,6 +23,9 @@ export class LocalStorageService {
     ADMIN: {
       USER_INFO: 'userInfo',
     },
+    USER_PROFILE: {
+      TOKEN: 'token',
+    },
     SIGNUP: {
       SIGNUP_TYPE: 'signupType',
       PERSONAL_DATA: 'personalDataFieldsValues',
