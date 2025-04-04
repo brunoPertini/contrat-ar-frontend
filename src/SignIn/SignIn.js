@@ -6,6 +6,7 @@ import Form from '../Shared/Components/Form';
 import { signinLabels } from '../StaticData/SignIn';
 import AccountMailConfirmation from '../SignUp/AccountMailConfirmation';
 import ForgotPassword from './Components/ForgotPassword';
+import BackdropLoader from '../Shared/Components/BackdropLoader';
 
 function SignIn({
   dispatchSignIn, sendForgotPasswordEmail,
@@ -19,7 +20,15 @@ function SignIn({
   const [showAccountVerificationComponent, setShowAccountVerificationComponent] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const renderLoginForm = useMemo(
+    () => !isLoading && !showAccountVerificationComponent && !showForgotPassword,
+    [isLoading, showAccountVerificationComponent, showForgotPassword],
+  );
+
   const onButtonClick = () => {
+    setIsLoading(true);
     let newErrorFields = [...emptyFields];
     Object.keys(formValues).forEach((key) => {
       if (!formValues[key]) {
@@ -32,7 +41,9 @@ function SignIn({
     setEmptyFields(newErrorFields);
 
     if (!newErrorFields.length) {
-      dispatchSignIn(formValues);
+      setTimeout(() => {
+        dispatchSignIn(formValues).finally(() => setIsLoading(false));
+      }, 2000);
     }
   };
 
@@ -69,12 +80,15 @@ function SignIn({
         sendAccountConfirmEmail={sendAccountConfirmEmail}
       />
       )}
-      {!showAccountVerificationComponent && !showForgotPassword && (
+      {renderLoginForm && (
         <Form
           title={signinLabels.title}
           fields={formFields}
         />
       )}
+
+      <BackdropLoader open={isLoading} label={signinLabels.loading} />
+
       {
         showForgotPassword && (
           <ForgotPassword sendForgotPasswordEmail={sendForgotPasswordEmail} />

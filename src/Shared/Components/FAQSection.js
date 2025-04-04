@@ -23,7 +23,14 @@ function FAQSection({ containerStyles }) {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
-                { indexLabels[`faq.a.${index}`]}
+                <span dangerouslySetInnerHTML={{
+                  __html: index !== 2 ? indexLabels[`faq.a.${index}`]
+                    : indexLabels[`faq.a.${index}`].replace(
+                      '{termsAndConditionsLink}',
+                      process.env.REACT_APP_TERMS_AND_CONDITIONS_URL,
+                    ),
+                }}
+                />
               </Typography>
             </AccordionDetails>
           </Accordion>
