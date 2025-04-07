@@ -55,15 +55,6 @@ const proveedoresVendiblesFiltersModel = {
 
 const footerOptions = buildFooterOptions(routes.servicioIndex);
 
-function splitVendibleDescription(description) {
-  const canSplitByDot = description.includes('.');
-
-  return `${(canSplitByDot ? description.split('.')
-    : description.split(' '))[0]}...`;
-}
-
-const DESCRIPTION_MAX_LENGTH = 200;
-
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router,
   handleLogout, paginationInfo,
@@ -363,17 +354,10 @@ function VendiblePage({
               const textAreaId = `contact_proveedor_${proveedorId}`;
               const isSendMessageButtonEnabled = buttonsEnabled[textAreaId];
 
-              const descriptionExceedsLimit = descripcion.length > DESCRIPTION_MAX_LENGTH;
-
-              const parsedDescripcion = descriptionExceedsLimit
-                ? splitVendibleDescription(descripcion)
-                : descripcion;
-
               return (
                 <Fragment key={`${vendibleNombre}_${fullName}`}>
                   <Box
                     display="flex"
-                    alignItems={{ xs: 'center', md: '"flex-start"' }}
                     flexDirection={shouldChangeLayout ? 'column' : 'row'}
                     gap={3}
                     sx={{
@@ -400,7 +384,7 @@ function VendiblePage({
                           borderColor: 'primary.main',
                         }}
                       />
-                      <Box>
+                      <Box {...flexColumn}>
                         <Typography variant="h6" fontWeight="bold">
                           {fullName}
                         </Typography>
@@ -411,7 +395,13 @@ function VendiblePage({
                         </Typography>
                         )}
                         {!!distance && (
-                        <Link onClick={() => handleOpenMap(proveedorInfo)} sx={{ fontSize: '0.875rem' }}>
+                        <Link
+                          onClick={() => handleOpenMap(proveedorInfo)}
+                          sx={{
+                            fontSize: '0.875rem',
+                            cursor: 'pointer',
+                          }}
+                        >
                           {vendiblesLabels.seeInMap}
                         </Link>
                         )}
@@ -435,18 +425,14 @@ function VendiblePage({
                       <Typography
                         paragraph
                         sx={{
+                          maxWidth: '500px',
+                          overflowWrap: 'break-word',
                           wordBreak: 'break-word',
-                          fontSize: '1rem',
-                          color: 'text.primary',
+                          whiteSpace: 'pre-wrap',
                         }}
                       >
-                        {parsedDescripcion}
+                        {descripcion}
                       </Typography>
-                      {!!descriptionExceedsLimit && (
-                        <Link href="#" sx={{ fontSize: '0.875rem' }}>
-                          {sharedLabels.seeMore}
-                        </Link>
-                      )}
                     </Box>
 
                     <Box
