@@ -43,6 +43,7 @@ import Footer from '../../Shared/Components/Footer';
 import BasicMenu from '../../Shared/Components/Menu';
 import { routes } from '../../Shared/Constants';
 import { flexColumn } from '../../Shared/Constants/Styles';
+import SecurityService from '../../Infrastructure/Services/SecurityService';
 
 const localStorageService = new LocalStorageService();
 
@@ -142,6 +143,7 @@ function ProveedorPage({
   handleDeleteVendible,
   handleGetVendibles,
   router,
+  securityService,
 }) {
   const { vendibleType, labelVendibleType } = useMemo(() => ({
     vendibleType: userInfo.role === ROLE_PROVEEDOR_PRODUCTOS ? PRODUCTS : SERVICES,
@@ -491,7 +493,11 @@ function ProveedorPage({
       </Typography>
       <Link
         sx={{ mt: '10px', cursor: 'pointer' }}
-        onClick={() => onChangeCurrentScreen({ newScreen: 'addNewVendible' })}
+        onClick={() => {
+          securityService.readJwtPayload(userInfo.token).then(() => onChangeCurrentScreen({
+            newScreen: 'addNewVendible',
+          }));
+        }}
       >
         {addVendibleLink}
       </Link>
@@ -714,6 +720,7 @@ ProveedorPage.propTypes = {
   handleDeleteVendible: PropTypes.func.isRequired,
   handleGetVendibles: PropTypes.func.isRequired,
   router: PropTypes.shape(routerShape).isRequired,
+  securityService: PropTypes.instanceOf(SecurityService).isRequired,
 };
 
 export default ProveedorPage;

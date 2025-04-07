@@ -18,6 +18,7 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import InformativeAlert from '../../Shared/Components/Alert';
+import SecurityService from '../../Infrastructure/Services/SecurityService';
 
 const stateSelector = (state) => state;
 
@@ -39,7 +40,7 @@ const addNewVendiblesLabels = {
 
 const localStorageService = new LocalStorageService();
 
-function ProveedorContainer({ router, handleLogout }) {
+function ProveedorContainer({ router, handleLogout, securityService }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
@@ -164,7 +165,9 @@ function ProveedorContainer({ router, handleLogout }) {
       <InformativeAlert
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={operationResult !== null}
-        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
+        label={operationResult
+          ? proveedorLabels['vendible.state.update.ok']
+          : proveedorLabels['vendible.state.update.failed']}
         severity={operationResult ? 'success' : 'error'}
         onClose={() => setOperationResult(null)}
       />
@@ -182,6 +185,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handleDeleteVendible={handleDeleteVendible}
         handleGetVendibles={handleGetVendibles}
         router={router}
+        securityService={securityService}
       />
     </NavigationContextProvider>
 
@@ -191,6 +195,7 @@ function ProveedorContainer({ router, handleLogout }) {
 ProveedorContainer.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
   handleLogout: PropTypes.func.isRequired,
+  securityService: PropTypes.instanceOf(SecurityService).isRequired,
 };
 
 export default withRouter(ProveedorContainer);
