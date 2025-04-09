@@ -6,8 +6,13 @@ import { HttpClientFactory } from '../HttpClientFactory';
 import Logger from '../Logging/Logger';
 import { signinLabels } from '../../StaticData/SignIn';
 import { errorMessages } from '../../StaticData/Shared';
+import { removeOnLeavingTabHandlers } from '../../Shared/Hooks/useOnLeavingTabHandler';
+import { LocalStorageService } from './LocalStorageService';
+import { routes } from '../../Shared/Constants';
 
 const jose = require('jose');
+
+const localStorageService = new LocalStorageService();
 
 class SecurityService {
   /**
@@ -40,7 +45,18 @@ class SecurityService {
     };
 
     Logger.log(error);
-    if (error?.constructor?.name) {
+    const errorClassName = error?.constructor?.name;
+    if (errorClassName) {
+      if (errorClassName === 'JWTExpired') {
+        HttpClientFactory.cleanInstances();
+        removeOnLeavingTabHandlers();
+        Object.keys(LocalStorageService.PAGES_KEYS).forEach(
+          (page) => localStorageService.removeAllKeysOfPage(page),
+        );
+
+        window.location.href = routes.signin;
+      }
+
       throw new Error(knownErrors[error.constructor.name]);
     }
 
