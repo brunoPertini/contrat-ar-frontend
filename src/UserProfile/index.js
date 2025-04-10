@@ -137,7 +137,9 @@ function UserProfile({
 
   // For some reason, these data isn't changed automatically after update
   useEffect(() => {
-    setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+    if (isProveedorUser && userInfo.fotoPerfilUrl) {
+      setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+    }
   }, [userInfo.fotoPerfilUrl]);
 
   useEffect(() => {
