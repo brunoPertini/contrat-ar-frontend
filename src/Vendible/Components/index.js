@@ -24,6 +24,7 @@ import Layout from '../../Shared/Components/Layout';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+  SERVICES,
 } from '../../Shared/Constants/System';
 import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
@@ -182,10 +183,13 @@ function VendiblePage({
 
     const fullAmountLabel = `${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${localeFormattedPrice}`;
 
+    const priceTypeVariableWithAmountRenderer = vendibleType === SERVICES.toLowerCase() ? sharedLabels.minimalPrice
+      : sharedLabels.minimalPriceProducts;
+
     const renderers = {
       [PRICE_TYPE_VARIABLE]: () => sharedLabels.priceToBeAgreed,
       [PRICE_TYPE_FIXED]: () => `${sharedLabels.price}: ${fullAmountLabel}`,
-      [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: () => `${sharedLabels.minimalPrice}: ${fullAmountLabel}`,
+      [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: () => `${priceTypeVariableWithAmountRenderer}: ${fullAmountLabel}`,
     };
 
     return renderers[tipoPrecio]();
