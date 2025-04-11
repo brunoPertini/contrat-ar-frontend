@@ -122,4 +122,8 @@ export class UserHttpClient extends HttpClient {
   checkForgotPasswordToken() {
     return this.get(usersRoutes.checkForgotPasswordToken, { type: 'reset_password' });
   }
+
+  sendContactFormEmail(data) {
+    return this.post(usersRoutes.sendContactFormEmail, null, data);
+  }
 }

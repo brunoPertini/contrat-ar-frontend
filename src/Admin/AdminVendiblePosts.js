@@ -191,7 +191,10 @@ const AdminVendiblePosts = forwardRef(({
     ...previous,
     open: true,
     location: post.location,
-    title: sharedLabels.locationOfVendible.replace('{vendible}', post.vendibleNombre).replace('{proveedor}', post.proveedorName),
+    title: sharedLabels.locationOfVendible.replace(
+      '{vendible}',
+      post.vendibleNombre,
+    ).replace('{proveedor}', post.proveedorName),
   }));
 
   const paramsToRender = ({

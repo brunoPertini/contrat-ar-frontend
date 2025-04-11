@@ -6,7 +6,6 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import isEmpty from 'lodash/isEmpty';
-import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { sharedLabels } from '../StaticData/Shared';
 import Menu from '../Shared/Components/Menu';
@@ -101,24 +100,19 @@ export default function Header({
           top: 0,
           zIndex: 1100,
           overflow: 'hidden',
-          padding: 1,
         }}
       >
-        <Box flexGrow={1}>
-          <Link
-            variant="h3"
-            sx={{
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: { xs: '1.5rem', md: '2rem' },
-              textAlign: { xs: 'center', md: 'left' },
-              display: 'block',
-            }}
-            href="/"
-          >
-            {sharedLabels.siteName}
-          </Link>
-        </Box>
+        <Box
+          component="img"
+          src={`${process.env.REACT_APP_CDN_URL}/header/logo-6.png`}
+          alt="Logo"
+          sx={{
+            padding: 0,
+            margin: 0,
+            height: 120,
+            width: 'auto',
+          }}
+        />
         {renderNavigationLinks && <Box>{menusMarkup}</Box>}
         {!renderNavigationLinks && menusMarkup}
       </Box>
