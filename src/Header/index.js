@@ -84,6 +84,10 @@ export default function Header({
     </Box>
   );
 
+  const goToIndex = () => {
+    window.location.href = '/';
+  };
+
   return (
     <AppBar position="sticky">
       <Box
@@ -105,12 +109,14 @@ export default function Header({
         <Box
           component="img"
           src={`${process.env.REACT_APP_CDN_URL}/header/logo-6.png`}
+          onClick={goToIndex}
           alt="Logo"
           sx={{
             padding: 0,
             margin: 0,
             height: 120,
             width: 'auto',
+            cursor: 'pointer',
           }}
         />
         {renderNavigationLinks && <Box>{menusMarkup}</Box>}

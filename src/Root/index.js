@@ -196,11 +196,8 @@ const RootPage = withRouter(({ router }) => {
               sx={{ objectFit: 'cover', height: '100%' }}
             />
             <CardContent>
-              <Typography variant="h5">
-                { indexLabels['benefits.title'] }
-              </Typography>
               <Box {...flexRow}>
-                <Box {...flexColumn} sx={{ mt: '5%' }}>
+                <Box {...flexColumn}>
                   <Typography variant="h6">
                     { indexLabels['benefits.forProviders.title'] }
                   </Typography>
@@ -211,7 +208,7 @@ const RootPage = withRouter(({ router }) => {
                   </ul>
 
                 </Box>
-                <Box {...flexColumn} sx={{ mt: '5%', ml: '10%' }}>
+                <Box {...flexColumn} sx={{ ml: '10%' }}>
                   <Typography variant="h6">
                     { indexLabels['benefits.forClients.title'] }
                   </Typography>

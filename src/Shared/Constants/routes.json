@@ -8,5 +8,6 @@
     "ADMIN": "/admin",
     "productoIndex": "/producto",
     "servicioIndex": "/servicio",
-    "userProfile": "/profile"
+    "userProfile": "/profile",
+    "contact": "/contact"
 }

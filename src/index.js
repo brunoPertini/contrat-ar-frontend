@@ -19,6 +19,7 @@ import UserProfile from './UserProfile/Containers';
 import AdminPage from './Admin/AdminContainer';
 import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage';
 import RestorePasswordPage from './SignIn/Components/RestorePasswordPage';
+import ContactPage from './Shared/Components/ContactPage';
 
 function ErrorComponent() {
 // TODO: crear páginas de errores
@@ -105,6 +106,12 @@ const router = createBrowserRouter([
   {
     path: '/forgot-password',
     element: <RestorePasswordPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/contact',
+    element: <ContactPage />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },

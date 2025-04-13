@@ -100,9 +100,11 @@ const scrollToElement = (element) => element.scrollIntoView({
 });
 
 export function buildFooterOptions(page = routes.index) {
+  const helpAndTermsAndConditions = [{ label: indexLabels.helpAndQuestions, onClick: () => {} },
+    { label: indexLabels.termsAndConditions, onClick: () => {} }];
+
   const loggedUserOptions = [
-    { label: indexLabels.helpAndQuestions, onClick: () => {} },
-    { label: indexLabels.termsAndConditions, onClick: () => {} },
+    ...helpAndTermsAndConditions,
     { label: indexLabels.contactUs, onClick: () => {} },
   ];
 
@@ -114,6 +116,10 @@ export function buildFooterOptions(page = routes.index) {
   { label: indexLabels.helpAndQuestions, onClick: () => scrollToElement(document.querySelector('.faqSection')) },
   { label: indexLabels.termsAndConditions, onClick: () => {} },
   ];
+
+  if (page === routes.contact) {
+    return helpAndTermsAndConditions;
+  }
 
   return page === routes.index ? indexOptions : loggedUserOptions;
 }

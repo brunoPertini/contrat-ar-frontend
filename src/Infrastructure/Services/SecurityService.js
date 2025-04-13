@@ -47,7 +47,7 @@ class SecurityService {
     Logger.log(error);
     const errorClassName = error?.constructor?.name;
     if (errorClassName) {
-      if (errorClassName === 'JWTExpired') {
+      if (errorClassName === 'JWTExpired' || errorClassName === 'JWSInvalid') {
         HttpClientFactory.cleanInstances();
         removeOnLeavingTabHandlers();
         Object.keys(LocalStorageService.PAGES_KEYS).forEach(
