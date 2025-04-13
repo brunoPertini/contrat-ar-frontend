@@ -156,7 +156,7 @@ const RootPage = withRouter(({ router }) => {
             <CardMedia
               component="img"
               sx={{ objectFit: 'cover', height: '100%' }}
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_RKR8CFTODQ.jpg"
+              image={`${process.env.REACT_APP_CDN_URL}/index/first-section-1.png`}
               alt="nuestra mision"
             />
             <CardContent>
@@ -173,7 +173,7 @@ const RootPage = withRouter(({ router }) => {
           <CardActionArea sx={actionAreaStyles}>
             <CardMedia
               component="img"
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_89AZTB8E5H.jpg"
+              image={`${process.env.REACT_APP_CDN_URL}/index/first-section-2.png`}
               alt="como lo hacemos"
               sx={{ objectFit: 'cover', height: '100%' }}
             />
@@ -191,7 +191,7 @@ const RootPage = withRouter(({ router }) => {
           <CardActionArea sx={actionAreaStyles}>
             <CardMedia
               component="img"
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_IHBPBLYUFE.jpg"
+              image={`${process.env.REACT_APP_CDN_URL}/index/first-section-3.jpg`}
               alt="beneficios"
               sx={{ objectFit: 'cover', height: '100%' }}
             />
