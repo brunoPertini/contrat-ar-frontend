@@ -20,6 +20,7 @@ import AdminPage from './Admin/AdminContainer';
 import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage';
 import RestorePasswordPage from './SignIn/Components/RestorePasswordPage';
 import ContactPage from './Shared/Components/ContactPage';
+import StaticDataRenderer from './Shared/Components/StaticDataRenderer';
 
 function ErrorComponent() {
 // TODO: crear páginas de errores
@@ -112,6 +113,12 @@ const router = createBrowserRouter([
   {
     path: '/contact',
     element: <ContactPage />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/terms-and-conditions',
+    element: <StaticDataRenderer />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },

@@ -1,0 +1,3 @@
+{
+    "readDocument": "/static/document/{id}/{type}"
+}

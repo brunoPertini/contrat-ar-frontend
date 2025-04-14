@@ -9,5 +9,6 @@
     "productoIndex": "/producto",
     "servicioIndex": "/servicio",
     "userProfile": "/profile",
-    "contact": "/contact"
+    "contact": "/contact",
+    "termsAndConditions": "/terms-and-conditions"
 }
