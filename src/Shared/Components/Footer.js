@@ -28,7 +28,6 @@ export default function Footer({ options }) {
         paddingLeft: '20px',
         bgcolor: 'primary.main',
         textAlign: 'center',
-        position: 'sticky',
       }}
     >
       <List sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>

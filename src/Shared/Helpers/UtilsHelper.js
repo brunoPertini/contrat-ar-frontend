@@ -105,7 +105,12 @@ export function buildFooterOptions(page = routes.index) {
 
   const loggedUserOptions = [
     ...helpAndTermsAndConditions,
-    { label: indexLabels.contactUs, onClick: () => {} },
+    {
+      label: indexLabels.contactUs,
+      onClick: () => {
+        window.location.href = routes.contact;
+      },
+    },
   ];
 
   const indexOptions = [{

@@ -28,7 +28,7 @@ class SecurityService {
 
   #handleLogout;
 
-  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile', '/admin'];
+  static SECURED_PATHS = ['/cliente', '/producto', '/servicio', '/proveedor', '/profile', '/admin', '/contact'];
 
   static LOGIN_PATH = '/signin';
 
@@ -37,6 +37,10 @@ class SecurityService {
   }
 
   #handleError(error) {
+    if (window.location.pathname === routes.contact) {
+      return Promise.resolve();
+    }
+
     const knownErrors = {
       JWTExpired: errorMessages.sessionExpired,
       JWSSignatureVerificationFailed: signinLabels['error.jwt.verificationFailed'],
