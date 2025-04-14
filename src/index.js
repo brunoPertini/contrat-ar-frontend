@@ -139,7 +139,6 @@ const theme = createTheme({
 root.render(
   <ThemeProvider theme={theme}>
     <RouterProvider router={router} />
-    ,
   </ThemeProvider>,
 );
 
