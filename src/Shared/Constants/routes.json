@@ -10,5 +10,6 @@
     "servicioIndex": "/servicio",
     "userProfile": "/profile",
     "contact": "/contact",
-    "termsAndConditions": "/terms-and-conditions"
+    "termsAndConditions": "/terms-and-conditions",
+    "dataUsage": "/data-usage"
 }

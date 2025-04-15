@@ -102,13 +102,20 @@ const scrollToElement = (element) => element.scrollIntoView({
 export function buildFooterOptions(page = routes.index) {
   const contactOption = {
     label: indexLabels.contactUs,
-    onClick: () => {
-      window.location.href = routes.contact;
-    },
+    onClick: () => window.open(routes.contact, '_blank'),
   };
 
-  const helpAndTermsAndConditions = [{ label: indexLabels.helpAndQuestions, onClick: () => {} },
-    { label: indexLabels.termsAndConditions, onClick: () => {} }];
+  const termsAndConditionsOption = {
+    label: indexLabels.termsAndConditions,
+    onClick: () => window.open(routes.termsAndConditions, '_blank'),
+  };
+
+  const dataUsageOption = {
+    label: indexLabels.dataUsage,
+    onClick: () => window.open(routes.dataUsage, '_blank'),
+  };
+
+  const helpAndTermsAndConditions = [dataUsageOption, termsAndConditionsOption];
 
   const loggedUserOptions = [
     ...helpAndTermsAndConditions,
@@ -120,8 +127,8 @@ export function buildFooterOptions(page = routes.index) {
     onClick: () => scrollToElement(document.querySelector('.companyDescription')),
   },
   { label: indexLabels.ourPlans, onClick: () => scrollToElement(document.querySelector('.plansDescriptions')) },
-  { label: indexLabels.helpAndQuestions, onClick: () => scrollToElement(document.querySelector('.faqSection')) },
-  { label: indexLabels.termsAndConditions, onClick: () => {} },
+  dataUsageOption,
+  termsAndConditionsOption,
   ];
 
   if (page === routes.termsAndConditions || page === routes.contact) {

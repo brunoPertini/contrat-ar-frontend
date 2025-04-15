@@ -165,7 +165,7 @@ export class HttpClientFactory {
    */
   static createStaticContentHttpClient() {
     if (!HttpClientFactory.staticContentClientInstance) {
-      HttpClientFactory.staticContentClientInstance = new StaticContentHttpClient();
+      HttpClientFactory.staticContentClientInstance = new StaticContentHttpClient({});
     }
     return HttpClientFactory.staticContentClientInstance;
   }

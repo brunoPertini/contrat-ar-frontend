@@ -15,6 +15,7 @@ export default function Footer({ options }) {
     sx: {
       color: '#f5c242',
       cursor: 'pointer',
+      textAlign: 'center',
     },
   };
 
@@ -52,7 +53,6 @@ export default function Footer({ options }) {
             href="mailto:hola@contratar.com.ar"
             sx={{
               color: '#f5c242',
-              textAlign: 'left',
               cursor: 'pointer',
               ml: '2%',
             }}

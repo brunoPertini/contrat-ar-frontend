@@ -4,7 +4,7 @@
     "howWeDoIt.title": "Encontrá lo que buscás, sin vueltas",
     "howWeDoIt.description": "En Contrat-Ar vas a descubrir una amplia oferta de servicios y productos. ¿Necesitás algo puntual? Probablemente haya decenas o cientos de personas listas para ayudarte. Gracias a nuestro buscador inteligente, cada búsqueda es rápida, clara y enfocada en lo que realmente necesitás. Y si ofrecés algo, sumarte es igual de simple. Con un panel fácil de usar, vas a poder cargar, editar y gestionar tu producto o servicio sin complicaciones.",
     "benefits.title": "Beneficios de nuestra plataforma",
-    "benefits.forProviders.title": "Mostrate sin pagar de más",
+    "benefits.forProviders.title": "Obtené la visibilidad que buscás, sin pagar de más",
     "benefits.forProviders.description": "Acá no necesitás invertir en campañas ni pelear por visibilidad en redes. Cargás tu propuesta en minutos desde un panel simple y claro, y listo: los clientes te van a encontrar por lo que hacés, no por cuánto gastás. Gestioná tu oferta de forma ágil, editá lo que necesites cuando quieras, y hacelo a tu manera. Total libertad, sin complicaciones.",
     "benefits.forClients.title": "Encontrá lo que necesitás, sin perder tiempo",
     "benefits.forClients.description": "Sabemos que cuando buscás algo, no querés perderte entre opciones irrelevantes, por eso te damos filtros inteligentes que afinan tu búsqueda hasta encontrar lo que necesitás. Y lo mejor: una vez que encontrás a quien ofrece lo que buscás, vos decidís cómo seguir: contacto directo, libertad total para coordinar y pagar como más te convenga.",
@@ -26,6 +26,6 @@
      "aboutUs": "Sobre Nosotros",
      "ourPlans": "Nuestros planes",
      "contactUs": "Contactanos",
-     "helpAndQuestions": "Ayuda y preguntas frecuentes",
+     "dataUsage": "Privacidad y uso de datos",
      "termsAndConditions": "Términos y condiciones"
 }

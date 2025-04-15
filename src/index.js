@@ -20,7 +20,7 @@ import AdminPage from './Admin/AdminContainer';
 import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage';
 import RestorePasswordPage from './SignIn/Components/RestorePasswordPage';
 import ContactPage from './Shared/Components/ContactPage';
-import StaticDataRenderer from './Shared/Components/StaticDataRenderer';
+import StaticDataRendererContainer from './Shared/Components/StaticDataRenderer/StatiicDataRendererContainer';
 
 function ErrorComponent() {
 // TODO: crear páginas de errores
@@ -118,7 +118,13 @@ const router = createBrowserRouter([
   },
   {
     path: '/terms-and-conditions',
-    element: <StaticDataRenderer />,
+    element: <StaticDataRendererContainer />,
+    errorElement: <ErrorComponent />,
+    hasErrorBoundary: true,
+  },
+  {
+    path: '/data-usage',
+    element: <StaticDataRendererContainer />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
   },
