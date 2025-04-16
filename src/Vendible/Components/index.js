@@ -239,7 +239,9 @@ function VendiblePage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
 
-  const isNearMobileSize = useMediaQuery('(max-width:565px)');
+  const isNearMobileSize = useMediaQuery('(max-width:800px)');
+
+  const showImagesAsRow = useMediaQuery('(min-width:500px) and (max-width:1024px)');
 
   const filtersResolvedWidth = { xs: '100%', lg: '60%' };
 
@@ -307,7 +309,8 @@ function VendiblePage({
       flex={{ xs: 1, md: 9, lg: 10 }}
       {...flexColumn}
       width="100%"
-      height="100%"
+      height="100vh"
+      minHeight="100vh"
     >
       {ExitAppDialog}
       <Header
@@ -374,7 +377,7 @@ function VendiblePage({
                   >
                     <Box
                       display="flex"
-                      flexDirection="column"
+                      flexDirection={showImagesAsRow ? 'row' : 'column'}
                       alignItems="flex-start"
                       gap={2}
                     >
@@ -410,33 +413,36 @@ function VendiblePage({
                         </Link>
                         )}
                       </Box>
-                      {!!imagenUrl && (
-                      <Box
-                        component="img"
-                        src={imagenUrl}
-                        alt={vendibleNombre}
-                        loading="lazy"
-                        sx={{
-                          maxWidth: '100%',
-                          height: 'auto',
-                          borderRadius: 2,
-                          boxShadow: 1,
-                          maxHeight: '300px',
-                          objectFit: 'cover',
-                        }}
-                      />
-                      )}
-                      <Typography
-                        paragraph
-                        sx={{
-                          maxWidth: '500px',
-                          overflowWrap: 'break-word',
-                          wordBreak: 'break-word',
-                          whiteSpace: 'pre-wrap',
-                        }}
-                      >
-                        {descripcion}
-                      </Typography>
+                      <Box>
+                        {!!imagenUrl && (
+                        <Box
+                          component="img"
+                          src={imagenUrl}
+                          alt={vendibleNombre}
+                          loading="lazy"
+                          sx={{
+                            maxWidth: '100%',
+                            height: 'auto',
+                            borderRadius: 2,
+                            boxShadow: 1,
+                            maxHeight: '300px',
+                            objectFit: 'cover',
+                          }}
+                        />
+                        )}
+                        <Typography
+                          paragraph
+                          sx={{
+                            maxWidth: '500px',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word',
+                            whiteSpace: 'pre-wrap',
+                          }}
+                        >
+                          {descripcion}
+                        </Typography>
+                      </Box>
+
                     </Box>
 
                     <Box
