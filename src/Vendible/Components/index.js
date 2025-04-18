@@ -172,6 +172,7 @@ function VendiblePage({
 
     setHandleGoBack(() => router.navigate);
     setParams([routes.ROLE_CLIENTE]);
+    setNoResultsFound(!(proveedoresInfo?.proveedores.length));
   }, []);
 
   useEffect(() => {

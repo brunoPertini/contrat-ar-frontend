@@ -4,17 +4,18 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import Groups2Icon from '@mui/icons-material/Groups2';
+import { Box } from '@mui/material';
 import VendibleCard from '../../Shared/Components/VendibleCard';
 import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';
 import { routes, systemConstants } from '../../Shared/Constants';
 import ClienteVendibleCard from '../../Shared/Components/VendibleCard/ClienteVendibleCard';
-import { MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
-import { flexColumn } from '../../Shared/Constants/Styles';
+import { CLIENTE, MAX_CLIENT_VENDIBLES_GALLERY_IMAGES } from '../../Shared/Constants/System';
+import { flexColumn, flexRow } from '../../Shared/Constants/Styles';
 
 function LinkSection({ linkLabel, onClick, vendibleId }) {
   return (
-    <>
+    <Box {...flexRow}>
       <Groups2Icon fontSize="large" color="primary" />
       <Link
         onClick={() => onClick(vendibleId)}
@@ -31,7 +32,7 @@ function LinkSection({ linkLabel, onClick, vendibleId }) {
       >
         {linkLabel}
       </Link>
-    </>
+    </Box>
   );
 }
 
@@ -68,6 +69,7 @@ export default function VendiblesList({ vendiblesObject, vendibleType }) {
 
         return (
           <VendibleCard
+            userRole={CLIENTE}
             vendibleTitle={vendibleName}
             images={images}
             key={`vendibleCard_${vendibleName}`}
