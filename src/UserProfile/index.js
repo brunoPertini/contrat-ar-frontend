@@ -35,7 +35,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo, getPaymentsOfUser,
+  isAdmin, getUserInfo, getPaymentsOfUser, changeUserActive,
   paySubscription, cancelPlanChange,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -242,6 +242,7 @@ function UserProfile({
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
         handleLogout={handleLogout}
+        changeUserActive={changeUserActive}
       />
     ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
@@ -353,6 +354,7 @@ UserProfile.propTypes = {
   getPaymentsOfUser: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
+  changeUserActive: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

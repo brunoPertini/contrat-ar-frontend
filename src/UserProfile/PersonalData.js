@@ -42,7 +42,7 @@ function UserPersonalData({
   userToken, changeUserInfo, isAdmin,
   editCommonInfo, uploadProfilePhoto,
   isEditModeEnabled, setIsEditModeEnabled,
-  show2FaComponent,
+  show2FaComponent, changeUserActive,
 }) {
   const [fieldsValues, setFieldsValues] = useState(userInfo);
 
@@ -202,9 +202,9 @@ function UserPersonalData({
   ), [fieldsValues]);
 
   const handleAcceptChangeIsUserActive = useCallback(
-    (active) => editCommonInfo({
+    (active) => changeUserActive(
       active,
-    }).then(() => {
+    ).then(() => {
       setAlertConfig({
         openSnackbar: true,
         alertLabel: active ? adminLabels.accountEnabled : adminLabels.accountDisabled,
@@ -215,7 +215,7 @@ function UserPersonalData({
       alertLabel: adminLabels.unexpectedError,
       alertSeverity: 'error',
     })).finally(() => setAccountActiveModalContent(accountActiveModalDefaultValues)),
-    [editCommonInfo],
+    [changeUserActive],
   );
 
   const openUserActiveModal = useCallback((event) => {
@@ -419,6 +419,7 @@ UserPersonalData.propTypes = {
   isEditModeEnabled: PropTypes.bool.isRequired,
   setIsEditModeEnabled: PropTypes.func.isRequired,
   show2FaComponent: PropTypes.func.isRequired,
+  changeUserActive: PropTypes.func.isRequired,
 };
 
 export default UserPersonalData;

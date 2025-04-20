@@ -36,6 +36,8 @@ const indent = { marginLeft: '1%' };
 
 const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
 
+const cardMarginRight = { mr: '15%' };
+
 const sectionStyles = {
   border: '1px solid #d1d1d1',
   borderRadius: '8px',
@@ -142,7 +144,7 @@ const RootPage = withRouter(({ router }) => {
         justifyContent="center"
       >
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
-          <Card sx={cardStyles}>
+          <Card sx={{ ...cardStyles, ...cardMarginRight }}>
             <CardActionArea sx={actionAreaStyles}>
               <CardMedia
                 component="img"
@@ -180,7 +182,7 @@ const RootPage = withRouter(({ router }) => {
           </Card>
         </Box>
         <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
-          <Card sx={cardStyles}>
+          <Card sx={{ ...cardStyles, ...cardMarginRight }}>
             <CardActionArea sx={actionAreaStyles}>
               <CardMedia
                 component="img"
@@ -204,7 +206,7 @@ const RootPage = withRouter(({ router }) => {
             <CardActionArea sx={actionAreaStyles}>
               <CardMedia
                 component="img"
-                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-3.jpg`}
+                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-4.png`}
                 alt="beneficios"
                 sx={{ objectFit: 'cover', height: '100%' }}
               />

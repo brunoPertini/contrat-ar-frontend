@@ -193,6 +193,19 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.cancelPlanChange(changeRequestId);
   };
 
+  const changeUserActive = (isActive) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.changeIsUserActive(userInfo.id, isActive).then(() => {
+      dispatch(replaceUserInfo({ active: isActive }));
+      return Promise.resolve();
+    }).catch(() => Promise.reject());
+  };
+
   const restoreTokenInMemory = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN,
@@ -262,6 +275,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         getUserInfo={getUserInfo}
         paySubscription={paySubscription}
         cancelPlanChange={cancelPlanChange}
+        changeUserActive={changeUserActive}
       />
     </NavigationContextProvider>
   );
