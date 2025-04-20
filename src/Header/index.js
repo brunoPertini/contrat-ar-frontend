@@ -108,7 +108,7 @@ export default function Header({
       >
         <Box
           component="img"
-          src={`${process.env.REACT_APP_CDN_URL}/header/logo-6.png`}
+          src={`${process.env.REACT_APP_CDN_URL}/header/logo.png`}
           onClick={goToIndex}
           alt="Logo"
           sx={{

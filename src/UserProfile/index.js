@@ -115,12 +115,13 @@ function UserProfile({
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (isProveedorUser) {
-      const { dni, fotoPerfilUrl } = userInfo;
+      const { dni, fotoPerfilUrl, hasWhatsapp } = userInfo;
       setPersonalData(
         (previous) => ({
           ...previous,
           dni,
           fotoPerfilUrl,
+          hasWhatsapp,
         }),
       );
 

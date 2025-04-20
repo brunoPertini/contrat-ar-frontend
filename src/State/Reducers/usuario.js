@@ -19,6 +19,7 @@ import { RESET_USER_INFO, SET_USER_INFO } from '../ActionTypes/usuario';
  * @property {String} fotoPerfilUrl
  * @property {Boolean} active
  * @property {Boolean} is2FaValid
+ * @property {Boolean} hasWhatsapp
  * @property{{ usuarioId: Number, planId: Number, createdDate: String, active: Boolean}} suscripcion
  */
 
@@ -42,6 +43,7 @@ export const userState = {
   active: false,
   is2FaValid: false,
   suscripcion: {},
+  hasWhatsapp: false,
 };
 
 function usuarioReducer(state = userState, action) {
@@ -51,6 +53,7 @@ function usuarioReducer(state = userState, action) {
         delete state.dni;
         delete state.fotoPerfilUrl;
         delete state.suscripcion;
+        delete state.hasWhatsapp;
       }
       return {
         ...state,

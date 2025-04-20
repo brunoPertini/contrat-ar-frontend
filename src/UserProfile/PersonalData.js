@@ -196,7 +196,8 @@ function UserPersonalData({
         variant="body1"
         sx={{ ml: '10px', display: 'inline', color: '#666' }}
       >
-        {fieldsValues[dataKey]}
+        {dataKey !== 'hasWhatsapp' ? fieldsValues[dataKey]
+          : fieldsValues[dataKey] ? sharedLabels.yes : sharedLabels.no }
       </Typography>
     </Typography>
   ), [fieldsValues]);
@@ -269,6 +270,7 @@ function UserPersonalData({
             { renderReadOnlyField('surname')}
             { renderReadOnlyField('birthDate')}
             { renderReadOnlyField('phone')}
+            { renderReadOnlyField('hasWhatsapp')}
             { usuarioType !== systemConstants.USER_TYPE_CLIENTE && renderReadOnlyField('dni')}
           </Box>
         )
