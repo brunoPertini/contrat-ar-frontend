@@ -37,6 +37,7 @@ import BasicMenu from '../../Shared/Components/Menu';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import { flexColumn } from '../../Shared/Constants/Styles';
 import MapModal from '../../Shared/Components/MapModal';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -58,7 +59,7 @@ const footerOptions = buildFooterOptions(routes.servicioIndex);
 
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router,
-  handleLogout, paginationInfo,
+  handleLogout, paginationInfo, sendMessageToProveedor,
 }) {
   const [firstSearchDone, setFirstSearchDone] = useState(false);
   const [mapModalProps, setMapModalProps] = useState({
@@ -72,6 +73,8 @@ function VendiblePage({
       title: '',
     })),
   });
+
+  const [contactResult, setContactResult] = useState(null);
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
     let distances; let prices;
@@ -123,6 +126,31 @@ function VendiblePage({
     isDistancesSliderEnabled: proveedoresInfo.minDistance !== null
     && proveedoresInfo.maxDistance !== null,
   }), [proveedoresInfo]);
+
+  const closeContactAlert = () => setContactResult(null);
+
+  const alertConfig = useMemo(() => {
+    if (contactResult === true) {
+      return {
+        open: true,
+        onClose: closeContactAlert,
+        severity: 'success',
+        label: clientLabels['proveedorContact.success'],
+      };
+    }
+
+    if (contactResult === false) {
+      return {
+        open: true,
+        onClose: closeContactAlert,
+        severity: 'error',
+        label: clientLabels['proveedorContact.error'],
+      };
+    }
+    return {
+      open: false,
+    };
+  }, [contactResult]);
 
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
@@ -203,18 +231,37 @@ function VendiblePage({
     [setButtonsEnabled],
   );
 
-  const handleSendMessageClick = useCallback((textAreaId, phone, proveedorName) => {
+  const handleSendMessageClick = useCallback((
+    textAreaId,
+    phone,
+    proveedorName,
+    proveedorEmail,
+    proveedorHasWhatsapp,
+  ) => {
     const message = document.querySelector(`#${textAreaId}`).value;
-    const messageTemplate = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
-      .replace('{contractArLink}', 'www.contractar.com')
-      .replace('{additionalText}', message); // TODO: reemplazar por dominio via deploy
+    setIsLoadingVendibles(true);
 
-    const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}
-        &text=${messageTemplate.replace('{proveedor}', proveedorName)}`;
+    setTimeout(() => {
+      if (proveedorHasWhatsapp) {
+        const messageTemplate = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
+          .replace('{contractArLink}', process.env.REACT_APP_SITE_URL)
+          .replace('{additionalText}', message);
 
-    document.querySelector(`#${textAreaId}`).value = '';
-    setButtonsEnabled((previous) => ({ ...previous, [textAreaId]: false }));
-    window.open(contactLink, '_blank');
+        const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}
+          &text=${messageTemplate.replace('{proveedor}', proveedorName)}`;
+
+        window.open(contactLink, '_blank');
+      }
+
+      sendMessageToProveedor(proveedorEmail, vendibleNombre, message)
+        .then(() => setContactResult(true))
+        .catch(() => setContactResult(false))
+        .finally(async () => {
+          setIsLoadingVendibles(false);
+        });
+
+      setButtonsEnabled((previous) => ({ ...previous, [textAreaId]: false }));
+    }, [2000]);
   }, [setButtonsEnabled]);
 
   const handleOpenMap = useCallback((proveedor) => {
@@ -326,6 +373,10 @@ function VendiblePage({
         flex={1}
         gap="5%"
       >
+        <InformativeAlert
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          {...alertConfig}
+        />
         <MapModal {...mapModalProps} />
         <Box
           display="flex"
@@ -472,7 +523,13 @@ function VendiblePage({
                         onChange={handleEnableButton}
                       />
                       <Button
-                        onClick={() => handleSendMessageClick(textAreaId, phone, name)}
+                        onClick={() => handleSendMessageClick(
+                          textAreaId,
+                          phone,
+                          name,
+                          proveedorInfo.email,
+                          proveedorInfo.hasWhatsapp,
+                        )}
                         target="_blank"
                         variant="contained"
                         color="secondary"
@@ -539,6 +596,7 @@ function VendiblePage({
 }
 
 VendiblePage.propTypes = {
+  sendMessageToProveedor: PropTypes.func.isRequired,
   getVendibles: PropTypes.func.isRequired,
   handleLogout: PropTypes.func.isRequired,
   proveedoresInfo: PropTypes.shape({

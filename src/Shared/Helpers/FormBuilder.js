@@ -120,7 +120,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       location: sharedLabels.yourLocation,
       dni: sharedLabels.dni,
       fotoPerfilUrl: proveedorLabels.yourProfilePhoto,
-      hasWhatsapp: proveedorLabels.hasWhatsapp,
+      hasWhatsapp: sharedLabels.hasWhatsapp,
     };
 
     this.validators = {
@@ -293,7 +293,7 @@ helper message
           onChange={(e) => onChangeFields('hasWhatsapp', e.target.checked)}
         />
         <Typography variant="body2" color="text.secondary">
-          { proveedorLabels.hasWhatsapp }
+          { sharedLabels.hasWhatsapp }
         </Typography>
       </Box>
     ) : null;

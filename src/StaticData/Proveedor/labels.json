@@ -39,7 +39,6 @@
     "deleteVendible.alert.error": "¡Tu {vendible} no pudo ser borrado!",
     "vendible.state.pause": "Pausar publicación",
     "vendible.state.resume": "Activar publicación",
-    "hasWhatsapp": "Es un número con whatsapp",
     "vendible.update.state": "¿Establecer la publicacion en estado {newState}?",
     "vendible.state.update.ok": "¡Se cambió el estado de tu publicación!",
     "vendible.state.update.failed": "¡Hubo un error! Por favor, intentalo más tarde",

@@ -66,6 +66,20 @@ function VendibleContainer({ router, handleLogout }) {
       .finally(() => window.scrollTo(0, 0));
   };
 
+  const sendMessageToProveedor = (proveedorEmail, vendibleName, message) => {
+    const client = HttpClientFactory.createClienteHttpClient({
+      token: userInfo.token,
+      handleLogout,
+    });
+
+    return client.sendProveedorMessage({
+      toAddress: proveedorEmail,
+      clienteMail: userInfo.email,
+      vendibleName,
+      message,
+    });
+  };
+
   useEffect(() => {
     handleGetProveedoresInfo();
   }, []);
@@ -83,6 +97,7 @@ function VendibleContainer({ router, handleLogout }) {
         router={router}
         paginationInfo={paginationInfo}
         setPaginationInfo={setPaginationInfo}
+        sendMessageToProveedor={sendMessageToProveedor}
       />
     </NavigationContextProvider>
 

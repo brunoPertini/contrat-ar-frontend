@@ -13,5 +13,7 @@
     "filterByPriceTitle": "¡Filtrá por precio!",
     "filterByStockTitle": "¡Filtrá por unidades en stock!",
     "filterByPriceExplanation": "Elegí un precio mínimo y uno máximo para establecer el rango",
-    "vendibleDisclaimer": " Los resultados pueden variar entre páginas debido a configuraciones de visibilidad según la ubicación del proveedor."
+    "vendibleDisclaimer": " Los resultados pueden variar entre páginas debido a configuraciones de visibilidad según la ubicación del proveedor.",
+    "proveedorContact.success": "¡Enviamos tu mensaje!",
+    "proveedorContact.error": "¡No pudimos enviar tu mensaje! Por favor, intentalo más tarde"
 }

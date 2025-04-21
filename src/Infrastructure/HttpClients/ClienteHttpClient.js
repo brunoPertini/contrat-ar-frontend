@@ -1,5 +1,5 @@
 /* eslint-disable prefer-destructuring */
-import { usersRoutes } from '../../Shared/Constants';
+import { proveedoresRoutes, usersRoutes } from '../../Shared/Constants';
 import { HttpClient } from './HttpClient';
 
 export default class ClienteHttpClient extends HttpClient {
@@ -44,5 +44,16 @@ export default class ClienteHttpClient extends HttpClient {
     }
 
     return this.get(finalUrl, queryParams);
+  }
+
+  sendProveedorMessage({
+    toAddress, clienteMail, vendibleName, message,
+  }) {
+    return this.post(proveedoresRoutes.sendProveedorMessage, null, {
+      toAddress,
+      clienteMail,
+      vendibleName,
+      message,
+    });
   }
 }
