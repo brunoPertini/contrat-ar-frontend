@@ -24,8 +24,8 @@ const getDocumentContent = (documentId, documentType) => httpClient.readDocument
 export default function StaticDataRendererContainer() {
   const page = window.location.pathname;
 
-  if (!(page in documentIdsResolver)) {
-    throw new Response('', { status: 404 });
+  if (!page || !(page in documentIdsResolver)) {
+    window.location.href = routes.error.replace('{code}', 404);
   }
 
   const documentId = documentIdsResolver[page];

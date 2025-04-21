@@ -8,7 +8,7 @@ import AdminPage from '.';
 import { getUserMenuOptions } from '../Shared/Helpers/UtilsHelper';
 import { withRouter } from '../Shared/Components';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
-import { USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
+import { ROLE_ADMIN, USUARIO_TYPE_PROVEEDORES } from '../Shared/Constants/System';
 import { LocalStorageService } from '../Infrastructure/Services/LocalStorageService';
 import { routes } from '../Shared/Constants';
 
@@ -21,7 +21,7 @@ const userInfoSelector = createSelector(
 
 const localStorageService = new LocalStorageService();
 
-function AdminContainer({ handleLogout }) {
+function AdminContainer({ handleLogout, router: { navigate } }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [usuariosInfo, setUsuariosInfo] = useState();
@@ -155,7 +155,12 @@ function AdminContainer({ handleLogout }) {
   };
 
   // First info fetching, with default values
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
+    if (userInfo.role !== ROLE_ADMIN) {
+      return navigate('/error/404', { replace: true });
+    }
+
     fetchFilteredUsuariosInfo({
       type: USUARIO_TYPE_PROVEEDORES,
       filters: { showOnlyActives: false },
@@ -199,4 +204,5 @@ export default withRouter(AdminContainer);
 
 AdminContainer.propTypes = {
   handleLogout: PropTypes.func.isRequired,
+  router: PropTypes.any.isRequired,
 };

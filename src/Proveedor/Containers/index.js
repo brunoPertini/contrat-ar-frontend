@@ -70,10 +70,19 @@ function ProveedorContainer({ router, handleLogout, securityService }) {
   const vendibleType = useMemo(() => (role === ROLE_PROVEEDOR_PRODUCTOS
     ? PRODUCTS : SERVICES), [role]);
 
+  const handleGetVendibles = async (filters) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+      handleLogout,
+    });
+    client.getVendibles(id, filters).then((newResponse) => setResponse(newResponse));
+  };
+
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (userInfo.role && userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
       && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
-      throw new Response('', { status: 404 });
+      return router.navigate('/error/404', { replace: true });
     }
 
     const backButtonPresed = localStorageService.getItem(
@@ -82,6 +91,8 @@ function ProveedorContainer({ router, handleLogout, securityService }) {
     if (!backButtonPresed && role.startsWith(systemConstants.PROVEEDOR)) {
       localStorageService.removeAllKeysOfPage(systemConstants.PROVEEDOR);
     }
+
+    handleGetVendibles();
   }, []);
 
   const handleUploadImage = (file) => {
@@ -91,14 +102,6 @@ function ProveedorContainer({ router, handleLogout, securityService }) {
     });
 
     return client.uploadImage(file, id);
-  };
-
-  const handleGetVendibles = async (filters) => {
-    const client = HttpClientFactory.createProveedorHttpClient({
-      token,
-      handleLogout,
-    });
-    client.getVendibles(id, filters).then((newResponse) => setResponse(newResponse));
   };
 
   const handlePostVendible = async (vendibleData) => {
@@ -153,10 +156,6 @@ function ProveedorContainer({ router, handleLogout, securityService }) {
       return postVendibleResponse;
     }).catch((error) => Promise.reject(error));
   };
-
-  useEffect(() => {
-    handleGetVendibles();
-  }, []);
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 

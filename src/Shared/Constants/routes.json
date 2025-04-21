@@ -11,5 +11,6 @@
     "userProfile": "/profile",
     "contact": "/contact",
     "termsAndConditions": "/terms-and-conditions",
-    "dataUsage": "/data-usage"
+    "dataUsage": "/data-usage",
+    "error": "/error/{code}"
 }

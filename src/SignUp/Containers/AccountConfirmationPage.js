@@ -30,7 +30,7 @@ function AccountConfirmationPage() {
   const token = queryParams.get('token');
 
   if (queryParams.size !== 2 || !stringIsEmail(email) || !token) {
-    throw new Response('', { status: 404 });
+    window.location.href = routes.error.replace('{code}', 404);
   }
 
   const [operationResult, setOperationResult] = useState(null);
@@ -82,7 +82,7 @@ function AccountConfirmationPage() {
   const isUnknownError = operationResult === false && !errorCode;
 
   if (isUnknownError) {
-    throw new Response('', { status: 404 });
+    window.location.href = routes.error.replace('{code}', 500);
   }
 
   return (

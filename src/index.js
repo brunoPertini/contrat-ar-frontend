@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
@@ -21,32 +20,11 @@ import AccountConfirmationPage from './SignUp/Containers/AccountConfirmationPage
 import RestorePasswordPage from './SignIn/Components/RestorePasswordPage';
 import ContactPage from './Shared/Components/ContactPage';
 import StaticDataRendererContainer from './Shared/Components/StaticDataRenderer/StatiicDataRendererContainer';
+import ErrorPage from './Root/error';
 
 function ErrorComponent() {
-// TODO: crear páginas de errores
   const error = useRouteError();
-  const handlers = {
-    401: () => (
-      <div>
-        NO ESTA AUTORIZADO A VER ESTE CONTENIDO
-      </div>
-    ),
-    500: () => (
-      <div>
-        ERROR INESPERADO
-      </div>
-    ),
-    404: () => (
-      <div>
-        PAGINA NO ENCONTRADA
-      </div>
-    ),
-  };
-  return error.status ? handlers[error.status]() : (
-    <div>
-      ERROR INESPERADO
-    </div>
-  );
+  return <ErrorPage status={error.status || 500} />;
 }
 
 const router = createBrowserRouter([
@@ -127,6 +105,10 @@ const router = createBrowserRouter([
     element: <StaticDataRendererContainer />,
     errorElement: <ErrorComponent />,
     hasErrorBoundary: true,
+  },
+  {
+    path: '/error/:code',
+    element: <ErrorPage />,
   },
 ]);
 

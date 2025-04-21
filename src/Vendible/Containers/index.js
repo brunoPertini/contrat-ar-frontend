@@ -12,12 +12,13 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { routerShape } from '../../Shared/PropTypes/Shared';
 import { useOnLeavingTabHandler } from '../../Shared/Hooks/useOnLeavingTabHandler';
 import { waitAndCleanUserTokenCookie } from '../../Shared/Helpers/UtilsHelper';
+import { CLIENTE } from '../../Shared/Constants/System';
 
 const stateSelector = (state) => state;
 
 function VendibleContainer({ router, handleLogout }) {
   const location = useLocation();
-  const { vendibleType, vendibleId } = location.state;
+  const { vendibleType, vendibleId } = location.state ?? {};
 
   const [proveedoresInfo, setProveedoresInfo] = useState();
   const [isError, setIsError] = useState(false);
@@ -80,7 +81,11 @@ function VendibleContainer({ router, handleLogout }) {
     });
   };
 
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
+    if (userInfo.role && userInfo.role !== CLIENTE) {
+      return router.navigate('/error/404', { replace: true });
+    }
     handleGetProveedoresInfo();
   }, []);
 

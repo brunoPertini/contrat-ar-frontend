@@ -17,7 +17,7 @@ const userInfoSelector = createSelector(
   (state) => state.usuario,
 );
 
-function ClienteContainer({ handleLogout }) {
+function ClienteContainer({ handleLogout, router: { navigate } }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [isExitAppModalOpen, setIsExitAppModalOpen] = useState(false);
@@ -45,7 +45,7 @@ function ClienteContainer({ handleLogout }) {
   };
 
   if (userInfo.role && userInfo.role !== CLIENTE) {
-    throw new Response('', { status: 404 });
+    navigate('/error/404', { replace: true });
   }
 
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
@@ -67,4 +67,5 @@ export default withRouter(ClienteContainer);
 
 ClienteContainer.propTypes = {
   handleLogout: PropTypes.func.isRequired,
+  router: PropTypes.object.isRequired,
 };

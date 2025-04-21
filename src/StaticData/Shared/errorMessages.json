@@ -1,4 +1,7 @@
 {
     "sessionExpired": "¡Sesión expirada! por favor, ingresá nuevamente",
-    "passwordsNotMatching": "¡Las contraseñas no coinciden!"
+    "passwordsNotMatching": "¡Las contraseñas no coinciden!",
+    "page.notFound": "¡La página no existe!",
+    "page.unauthorized": "¡No estás autorizado a aceder a esta página!",
+    "page.unknownError": "¡Error inesperado!"
 }
