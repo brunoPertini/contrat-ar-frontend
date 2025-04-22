@@ -270,8 +270,13 @@ function UserPersonalData({
             { renderReadOnlyField('surname')}
             { renderReadOnlyField('birthDate')}
             { renderReadOnlyField('phone')}
-            { renderReadOnlyField('hasWhatsapp')}
-            { usuarioType !== systemConstants.USER_TYPE_CLIENTE && renderReadOnlyField('dni')}
+            { usuarioType !== systemConstants.USER_TYPE_CLIENTE
+            && (
+            <>
+              {renderReadOnlyField('hasWhatsapp')}
+              {renderReadOnlyField('dni')}
+            </>
+            )}
           </Box>
         )
       }

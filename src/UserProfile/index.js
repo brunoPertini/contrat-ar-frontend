@@ -212,10 +212,14 @@ function UserProfile({
   const handlePlanChangeConfirmation = (newPlanType) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId).catch(() => {
-      setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
-      return Promise.reject();
-    });
+    return confirmPlanChange(userInfo.id, planId)
+      .then(() => {
+        checkAttributeRequestChange([userInfo.id], 'suscripcion');
+      })
+      .catch(() => {
+        setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
+        return Promise.reject();
+      });
   };
 
   const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
@@ -280,12 +284,12 @@ function UserProfile({
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
-        canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        canPaySubscription={userInfo.suscripcion.validity.canBePayed && !changeRequestsMade.suscripcion}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
         getPayments={getPaymentsOfUser}
         paySubscription={paySubscription}
       />
-    ) : null), [userInfo]),
+    ) : null), [userInfo, changeRequestsMade]),
   };
 
   if (!(userInfo?.role)) {
