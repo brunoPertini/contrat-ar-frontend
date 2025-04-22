@@ -29,11 +29,10 @@ export default function ErrorPage({ status = undefined }) {
       <Header />
       <StaticAlert
         styles={{
-          width: '100%',
-          maxWidth: 600,
+          width: '85%',
           mx: 'auto',
           mt: 4,
-          fontSize: '1.1rem',
+          fontSize: '1.5rem',
           p: 2,
           borderRadius: 2,
         }}
