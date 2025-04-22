@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import Groups2Icon from '@mui/icons-material/Groups2';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import VendibleCard from '../../Shared/Components/VendibleCard';
 import { labels } from '../../StaticData/Cliente';
 import { getVendiblesResponseShape } from '../../Shared/PropTypes/Vendibles';

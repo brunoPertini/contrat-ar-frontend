@@ -13,7 +13,7 @@ import StaticAlert from '../StaticAlert';
 import { CLIENTE, POST_STATES } from '../../Constants/System';
 import { postStateLabelResolver } from '../../Helpers/ProveedorHelper';
 import { proveedorLabels } from '../../../StaticData/Proveedor';
-import { Tooltip } from '..';
+import Tooltip from '../Tooltip';
 import { labels } from '../../../StaticData/Cliente';
 
 const STATE_SEVERITY = {

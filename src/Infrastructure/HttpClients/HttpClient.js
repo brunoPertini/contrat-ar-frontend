@@ -110,7 +110,6 @@ export class HttpClient {
         if (this.#handleLogout) {
           this.#handleLogout({ errorMessage: errorMessages.sessionExpired });
         }
-        // return Promise.reject(error.response);
       }
 
       const loginWasCalled = url.includes('login');
