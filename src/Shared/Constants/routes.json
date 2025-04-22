@@ -8,5 +8,9 @@
     "ADMIN": "/admin",
     "productoIndex": "/producto",
     "servicioIndex": "/servicio",
-    "userProfile": "/profile"
+    "userProfile": "/profile",
+    "contact": "/contact",
+    "termsAndConditions": "/terms-and-conditions",
+    "dataUsage": "/data-usage",
+    "error": "/error/{code}"
 }

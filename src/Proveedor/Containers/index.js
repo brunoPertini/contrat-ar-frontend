@@ -18,6 +18,7 @@ import { NavigationContextProvider } from '../../State/Contexts/NavigationContex
 import { getUserMenuOptions } from '../../Shared/Helpers/UtilsHelper';
 import useExitAppDialog from '../../Shared/Hooks/useExitAppDialog';
 import InformativeAlert from '../../Shared/Components/Alert';
+import SecurityService from '../../Infrastructure/Services/SecurityService';
 
 const stateSelector = (state) => state;
 
@@ -39,7 +40,7 @@ const addNewVendiblesLabels = {
 
 const localStorageService = new LocalStorageService();
 
-function ProveedorContainer({ router, handleLogout }) {
+function ProveedorContainer({ router, handleLogout, securityService }) {
   const userInfo = useSelector(userInfoSelector);
 
   const [response, setResponse] = useState({ vendibles: [], categorias: {} });
@@ -69,10 +70,19 @@ function ProveedorContainer({ router, handleLogout }) {
   const vendibleType = useMemo(() => (role === ROLE_PROVEEDOR_PRODUCTOS
     ? PRODUCTS : SERVICES), [role]);
 
+  const handleGetVendibles = async (filters) => {
+    const client = HttpClientFactory.createProveedorHttpClient({
+      token,
+      handleLogout,
+    });
+    client.getVendibles(id, filters).then((newResponse) => setResponse(newResponse));
+  };
+
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (userInfo.role && userInfo.role !== ROLE_PROVEEDOR_PRODUCTOS
       && userInfo.role !== ROLE_PROVEEDOR_SERVICIOS) {
-      throw new Response('', { status: 404 });
+      return router.navigate('/error/404', { replace: true });
     }
 
     const backButtonPresed = localStorageService.getItem(
@@ -81,6 +91,8 @@ function ProveedorContainer({ router, handleLogout }) {
     if (!backButtonPresed && role.startsWith(systemConstants.PROVEEDOR)) {
       localStorageService.removeAllKeysOfPage(systemConstants.PROVEEDOR);
     }
+
+    handleGetVendibles();
   }, []);
 
   const handleUploadImage = (file) => {
@@ -90,14 +102,6 @@ function ProveedorContainer({ router, handleLogout }) {
     });
 
     return client.uploadImage(file, id);
-  };
-
-  const handleGetVendibles = async (filters) => {
-    const client = HttpClientFactory.createProveedorHttpClient({
-      token,
-      handleLogout,
-    });
-    client.getVendibles(id, filters).then((newResponse) => setResponse(newResponse));
   };
 
   const handlePostVendible = async (vendibleData) => {
@@ -153,10 +157,6 @@ function ProveedorContainer({ router, handleLogout }) {
     }).catch((error) => Promise.reject(error));
   };
 
-  useEffect(() => {
-    handleGetVendibles();
-  }, []);
-
   const ExitAppDialog = useExitAppDialog(isExitAppModalOpen, handleLogout, onCancelExitApp);
 
   return (
@@ -164,7 +164,9 @@ function ProveedorContainer({ router, handleLogout }) {
       <InformativeAlert
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={operationResult !== null}
-        label={operationResult ? proveedorLabels['vendible.state.update.ok'] : proveedorLabels['vendible.state.update.failed']}
+        label={operationResult
+          ? proveedorLabels['vendible.state.update.ok']
+          : proveedorLabels['vendible.state.update.failed']}
         severity={operationResult ? 'success' : 'error'}
         onClose={() => setOperationResult(null)}
       />
@@ -182,6 +184,7 @@ function ProveedorContainer({ router, handleLogout }) {
         handleDeleteVendible={handleDeleteVendible}
         handleGetVendibles={handleGetVendibles}
         router={router}
+        securityService={securityService}
       />
     </NavigationContextProvider>
 
@@ -191,6 +194,7 @@ function ProveedorContainer({ router, handleLogout }) {
 ProveedorContainer.propTypes = {
   router: PropTypes.shape(routerShape).isRequired,
   handleLogout: PropTypes.func.isRequired,
+  securityService: PropTypes.instanceOf(SecurityService).isRequired,
 };
 
 export default withRouter(ProveedorContainer);

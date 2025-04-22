@@ -60,6 +60,8 @@ function SignUpContainer({ router }) {
       .replace('{helpPayLink}', process.env.REACT_APP_SITE_URL),
   }), [paymentParams]);
 
+  const signupWasntStarted = useMemo(() => !signupType && !activeStep, [signupType, activeStep]);
+
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
     return httpClient.crearUsuario(signupType, {}, {
@@ -183,7 +185,7 @@ function SignUpContainer({ router }) {
     </>
   );
 
-  const innerComponent = !signupType
+  const innerComponent = signupWasntStarted
     ? (
       <ExpandableCard
         title={(

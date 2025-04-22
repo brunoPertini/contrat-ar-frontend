@@ -57,7 +57,9 @@ export const ATTRIBUTES_RENDERERS = {
     const enumAttributes = {
       plan: () => sharedLabels.plansNames[attributeValue],
       tipoPrecio: () => PRICE_TYPES[attributeValue],
-      category: () => <span dangerouslySetInnerHTML={{ __html: `${attributeValue.name}<br>(id: ${attributeValue.id})` }} />,
+      category: () => (
+        <span dangerouslySetInnerHTML={{ __html: `${attributeValue.name}<br>(id: ${attributeValue.id})` }} />
+      ),
       precio: () => `${getLocaleCurrencySymbol('es-AR')}${formatNumberWithLocale(attributeValue)}`,
       stock: () => `${formatNumberWithLocale(attributeValue)}`,
       wasApplied: () => (attributeValue ? sharedLabels.yes : sharedLabels.no),

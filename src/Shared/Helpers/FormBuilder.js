@@ -120,6 +120,7 @@ export class PersonalDataFormBuilder extends FormBuilder {
       location: sharedLabels.yourLocation,
       dni: sharedLabels.dni,
       fotoPerfilUrl: proveedorLabels.yourProfilePhoto,
+      hasWhatsapp: sharedLabels.hasWhatsapp,
     };
 
     this.validators = {
@@ -284,10 +285,23 @@ helper message
       InputProps: 'phone' in fieldsOwnConfig ? { ...fieldsOwnConfig.phone } : undefined,
     }, sharedLabels.phone))) : null;
 
-    const termsAndConditionsLink = `<a href="${process.env.REACT_APP_TERMS_AND_CONDITIONS_URL}">
+    const hasWhatsappRow = 'hasWhatsapp' in fieldsValues ? (
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <Checkbox
+          checked={fieldsValues.hasWhatsapp}
+          name="hasWhatsapp"
+          onChange={(e) => onChangeFields('hasWhatsapp', e.target.checked)}
+        />
+        <Typography variant="body2" color="text.secondary">
+          { sharedLabels.hasWhatsapp }
+        </Typography>
+      </Box>
+    ) : null;
+
+    const termsAndConditionsLink = `<a href="${process.env.REACT_APP_TERMS_AND_CONDITIONS_URL}" target="_blank">
     ${sharedLabels.termsAndConditions}</a>`;
 
-    const dataUsageLink = `<a href="${process.env.REACT_APP_DATA_USAGE_URL}">
+    const dataUsageLink = `<a href="${process.env.REACT_APP_DATA_USAGE_URL}" target="_blank">
     ${sharedLabels.dataUsage}</a>`;
 
     const termsAndConditionsText = sharedLabels.acceptTermsAndConditions.replace(
@@ -312,6 +326,7 @@ helper message
       surnameRow,
       birthDateRow,
       phoneRow,
+      hasWhatsappRow,
       dniRow,
       emailRow,
       passwordRow,

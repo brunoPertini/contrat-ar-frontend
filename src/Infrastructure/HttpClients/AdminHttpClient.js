@@ -155,4 +155,8 @@ export default class AdminHttpClient extends HttpClient {
 
     return this.put(url, null, postInfo);
   }
+
+  changeIsUserActive(userId, isActive) {
+    return this.put(adminRoutes.changeIsUserActive, null, { userId, active: isActive });
+  }
 }

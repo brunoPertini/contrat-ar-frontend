@@ -11,7 +11,7 @@ import OptionsMenu from '../../Shared/Components/OptionsMenu';
 import DialogModal from '../../Shared/Components/DialogModal';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { postStateLabelResolver } from '../../Shared/Helpers/ProveedorHelper';
-import { POST_STATES } from '../../Shared/Constants/System';
+import { POST_STATES, PROVEEDOR } from '../../Shared/Constants/System';
 
 const MODIFIABLE_STATES = [POST_STATES.ACTIVE, POST_STATES.REJECTED, POST_STATES.PAUSED];
 
@@ -92,6 +92,7 @@ export default function VendiblesList({
       <List>
         {vendibles.map((vendible) => (
           <VendibleCard
+            userRole={PROVEEDOR}
             vendibleTitle={vendible.vendibleNombre}
             images={vendible.imagenUrl ? [vendible.imagenUrl] : []}
             key={`vendibleCard_${vendible.vendibleNombre}`}

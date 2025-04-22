@@ -242,8 +242,9 @@ export default function UserSignUp({
     />,
     backButtonEnabled: false,
     nextButtonEnabled: useMemo(() => {
-      const allFieldsHaveValue = Object.values(personalDataFieldsValues)
-        .every((value) => value && !(errorFields[value]));
+      const allFieldsHaveValue = Object.keys(personalDataFieldsValues)
+        .filter((key) => key !== 'hasWhatsapp')
+        .every((key) => personalDataFieldsValues[key] && !(errorFields[key]));
 
       const someFieldWithError = Object.values(errorFields).some((key) => key);
 
@@ -425,7 +426,7 @@ export default function UserSignUp({
 
   useEffect(() => {
     if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
-      setPersonalDataFieldsValues((current) => ({ ...current, dni: '' }));
+      setPersonalDataFieldsValues((current) => ({ ...current, dni: '', hasWhatsapp: false }));
     }
   }, [signupType]);
 

@@ -8,10 +8,13 @@ import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { useMemo } from 'react';
+import InfoIcon from '@mui/icons-material/Info';
 import StaticAlert from '../StaticAlert';
-import { POST_STATES } from '../../Constants/System';
+import { CLIENTE, POST_STATES } from '../../Constants/System';
 import { postStateLabelResolver } from '../../Helpers/ProveedorHelper';
 import { proveedorLabels } from '../../../StaticData/Proveedor';
+import Tooltip from '../Tooltip';
+import { labels } from '../../../StaticData/Cliente';
 
 const STATE_SEVERITY = {
   [POST_STATES.ACTIVE]: 'success',
@@ -23,7 +26,7 @@ const STATE_SEVERITY = {
 
 export default function VendibleCard({
   vendibleTitle, images, LinkSection,
-  imageListProps,
+  imageListProps, userRole,
   cardStyles, linkCardStyles, ChildrenComponent,
   state, manageStateChange,
 }) {
@@ -73,6 +76,21 @@ export default function VendibleCard({
     <CardContent sx={{ ...contentStyles }}>
       <Typography variant="h5" component="div" fontWeight="bold">
         {vendibleTitle}
+        {
+          userRole === CLIENTE && (
+            <Tooltip
+              placement="top-end"
+              title={(
+                <Typography variant="h6">
+                  { labels.vendibleDisclaimer }
+                </Typography>
+
+                                  )}
+            >
+              <InfoIcon sx={{ cursor: 'pointer' }} />
+            </Tooltip>
+          )
+        }
       </Typography>
       {state && (
         <StaticAlert
@@ -132,4 +150,5 @@ VendibleCard.propTypes = {
   ChildrenComponent: PropTypes.elementType.isRequired,
   manageStateChange: PropTypes.func.isRequired,
   state: PropTypes.string.isRequired,
+  userRole: PropTypes.string.isRequired,
 };

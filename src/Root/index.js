@@ -20,37 +20,29 @@ import PlansSection from '../Shared/Components/PlansSection';
 import FAQSection from '../Shared/Components/FAQSection';
 import ContactForm from '../Shared/Components/ContactForm';
 import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
-import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { flexColumn } from '../Shared/Constants/Styles';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
 
 const renderBenefits = (benefits) => benefits.split('.')
-  .filter((line) => !!(line))
-  .map((line) => (
-    <li style={{ display: 'flex' }}>
-      <CheckIcon sx={{ mr: '2%' }} />
-      <span>{ line }</span>
-    </li>
-
+  .filter((line) => !!(line.trim()))
+  .map((line, i) => (
+    <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
+      <CheckIcon sx={{ mr: 1, mt: '2px' }} />
+      <Typography variant="body2">{line.trim()}</Typography>
+    </Box>
   ));
 
 const indent = { marginLeft: '1%' };
 
 const cardStyles = { maxWidth: { xs: '100%', sm: 400 }, width: '100%' };
 
+const cardMarginRight = { mr: '15%' };
+
 const sectionStyles = {
   border: '1px solid #d1d1d1',
   borderRadius: '8px',
   padding: '20px',
   marginBottom: '20px',
-};
-
-const benefitsStyles = {
-  ...flexColumn,
-  gap: '10px',
-  listStyleType: 'none',
-  listStylePosition: 'inside',
-  padding: 0,
-  margin: 0,
 };
 
 const actionAreaStyles = { cursor: 'default' };
@@ -145,89 +137,93 @@ const RootPage = withRouter(({ router }) => {
       <Header menuOptions={menuOptions} />
       <Stack
         className="companyDescription"
-        direction={{ xs: 'column', md: 'row' }}
+        direction="column"
         spacing={5}
         sx={{ ...indent, ...sectionStyles }}
-        alignItems={{ xs: 'center', md: 'unset' }}
+        alignItems="center"
         justifyContent="center"
       >
-        <Card sx={cardStyles}>
-          <CardActionArea sx={actionAreaStyles}>
-            <CardMedia
-              component="img"
-              sx={{ objectFit: 'cover', height: '100%' }}
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_RKR8CFTODQ.jpg"
-              alt="nuestra mision"
-            />
-            <CardContent>
-              <Typography variant="h5">
-                { indexLabels['mission.title'] }
-              </Typography>
-              <Typography variant="body2">
-                { indexLabels['mission.description']}
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-        <Card sx={cardStyles}>
-          <CardActionArea sx={actionAreaStyles}>
-            <CardMedia
-              component="img"
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_89AZTB8E5H.jpg"
-              alt="como lo hacemos"
-              sx={{ objectFit: 'cover', height: '100%' }}
-            />
-            <CardContent>
-              <Typography variant="h5">
-                { indexLabels['howWeDoIt.title'] }
-              </Typography>
-              <Typography variant="body2">
-                { indexLabels['howWeDoIt.description']}
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-        <Card sx={cardStyles}>
-          <CardActionArea sx={actionAreaStyles}>
-            <CardMedia
-              component="img"
-              image="https://storage.googleapis.com/contract-ar-cdn/StockSnap_IHBPBLYUFE.jpg"
-              alt="beneficios"
-              sx={{ objectFit: 'cover', height: '100%' }}
-            />
-            <CardContent>
-              <Typography variant="h5">
-                { indexLabels['benefits.title'] }
-              </Typography>
-              <Box {...flexRow}>
-                <Box {...flexColumn} sx={{ mt: '5%' }}>
-                  <Typography variant="h6">
+        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
+          <Card sx={{ ...cardStyles, ...cardMarginRight }}>
+            <CardActionArea sx={actionAreaStyles}>
+              <CardMedia
+                component="img"
+                sx={{ objectFit: 'cover', height: '100%' }}
+                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-1.png`}
+                alt="nuestra mision"
+              />
+              <CardContent>
+                <Typography variant="h5">
+                  { indexLabels['mission.title'] }
+                </Typography>
+                <Typography variant="body2">
+                  { indexLabels['mission.description']}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={cardStyles}>
+            <CardActionArea sx={actionAreaStyles}>
+              <CardMedia
+                component="img"
+                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-2.png`}
+                alt="como lo hacemos"
+                sx={{ objectFit: 'cover', height: '100%' }}
+              />
+              <CardContent>
+                <Typography variant="h5">
+                  { indexLabels['howWeDoIt.title'] }
+                </Typography>
+                <Typography variant="body2">
+                  { indexLabels['howWeDoIt.description']}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Box>
+        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
+          <Card sx={{ ...cardStyles, ...cardMarginRight }}>
+            <CardActionArea sx={actionAreaStyles}>
+              <CardMedia
+                component="img"
+                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-3.jpg`}
+                alt="beneficios"
+                sx={{ objectFit: 'cover', height: '100%' }}
+              />
+              <CardContent>
+                <Box {...flexColumn}>
+                  <Typography variant="h5">
                     { indexLabels['benefits.forProviders.title'] }
                   </Typography>
-                  <ul style={benefitsStyles}>
-                    {
-                        renderBenefits(indexLabels['benefits.forProviders.description'])
-                  }
-                  </ul>
-
+                  <Typography variant="body2">
+                    { renderBenefits(indexLabels['benefits.forProviders.description'])}
+                  </Typography>
                 </Box>
-                <Box {...flexColumn} sx={{ mt: '5%', ml: '10%' }}>
-                  <Typography variant="h6">
+              </CardContent>
+            </CardActionArea>
+          </Card>
+          <Card sx={cardStyles}>
+            <CardActionArea sx={actionAreaStyles}>
+              <CardMedia
+                component="img"
+                image={`${process.env.REACT_APP_CDN_URL}/index/first-section-4.png`}
+                alt="beneficios"
+                sx={{ objectFit: 'cover', height: '100%' }}
+              />
+              <CardContent>
+                <Box {...flexColumn}>
+                  <Typography variant="h5">
                     { indexLabels['benefits.forClients.title'] }
                   </Typography>
-                  <ul style={benefitsStyles}>
-                    {
-            renderBenefits(indexLabels['benefits.forClients.description'])
-          }
-                  </ul>
-
+                  <Typography variant="body2">
+                    { renderBenefits(indexLabels['benefits.forClients.description'])}
+                  </Typography>
                 </Box>
-              </Box>
 
-            </CardContent>
-          </CardActionArea>
-        </Card>
-
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Box>
       </Stack>
       <PlansSection plans={plansData} containerStyles={sectionStyles} />
       <FAQSection containerStyles={sectionStyles} />

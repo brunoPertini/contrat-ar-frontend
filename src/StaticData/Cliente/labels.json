@@ -6,11 +6,14 @@
     "searchErrorMessage": "Por favor introducí el nombre de un producto o servicio",
     "linkVendibleCardProduct": "Fijate quién lo vende",
     "linkVendibleCardService": "Fijate quién lo puede hacer",
-    "contactProvider": "¡Contactá a {nombreProveedor} por Whatsapp!",
+    "contactProvider": "¡Contactá a {nombreProveedor}!",
     "sendWhatsappLink": "¡Hola {proveedor}! Esta es una consulta por {vendible} que ví en {contractArLink}: {additionalText}",
     "filterByDistanceTitle": "¡Filtrá a los proveedores por distancia!",
     "filterByDistanceExplanation": "Seleccioná a cuántos km de distancia como mínimo y máximo querés que se encuentren tus vendedores",
     "filterByPriceTitle": "¡Filtrá por precio!",
     "filterByStockTitle": "¡Filtrá por unidades en stock!",
-    "filterByPriceExplanation": "Elegí un precio mínimo y uno máximo para establecer el rango"
+    "filterByPriceExplanation": "Elegí un precio mínimo y uno máximo para establecer el rango",
+    "vendibleDisclaimer": " Los resultados pueden variar entre páginas debido a configuraciones de visibilidad según la ubicación del proveedor.",
+    "proveedorContact.success": "¡Enviamos tu mensaje!",
+    "proveedorContact.error": "¡No pudimos enviar tu mensaje! Por favor, intentalo más tarde"
 }

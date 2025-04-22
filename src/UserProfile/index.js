@@ -35,7 +35,7 @@ const footerOptions = buildFooterOptions(routes.userProfile);
 function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
-  isAdmin, getUserInfo, getPaymentsOfUser,
+  isAdmin, getUserInfo, getPaymentsOfUser, changeUserActive,
   paySubscription, cancelPlanChange,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -115,12 +115,13 @@ function UserProfile({
   useEffect(() => {
     // If user is proveedor, additional fields should be rendered
     if (isProveedorUser) {
-      const { dni, fotoPerfilUrl } = userInfo;
+      const { dni, fotoPerfilUrl, hasWhatsapp } = userInfo;
       setPersonalData(
         (previous) => ({
           ...previous,
           dni,
           fotoPerfilUrl,
+          hasWhatsapp,
         }),
       );
 
@@ -137,7 +138,9 @@ function UserProfile({
 
   // For some reason, these data isn't changed automatically after update
   useEffect(() => {
-    setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+    if (isProveedorUser && userInfo.fotoPerfilUrl) {
+      setPersonalData((previous) => ({ ...previous, fotoPerfilUrl: userInfo.fotoPerfilUrl }));
+    }
   }, [userInfo.fotoPerfilUrl]);
 
   useEffect(() => {
@@ -209,10 +212,14 @@ function UserProfile({
   const handlePlanChangeConfirmation = (newPlanType) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId).catch(() => {
-      setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
-      return Promise.reject();
-    });
+    return confirmPlanChange(userInfo.id, planId)
+      .then(() => {
+        checkAttributeRequestChange([userInfo.id], 'suscripcion');
+      })
+      .catch(() => {
+        setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
+        return Promise.reject();
+      });
   };
 
   const handleCancelPlanChange = () => cancelPlanChange(changeRequestsMade.suscripcion).then(() => {
@@ -240,6 +247,7 @@ function UserProfile({
         styles={{ pl: '2%', pb: '1%' }}
         isAdmin={isAdmin}
         handleLogout={handleLogout}
+        changeUserActive={changeUserActive}
       />
     ), [personalData, userInfo.token, isEditModeEnabled]),
     [TABS_NAMES.SECURITY]: useMemo(() => (tabOption === TABS_NAMES.SECURITY ? (
@@ -276,12 +284,12 @@ function UserProfile({
     [TABS_NAMES.MY_PAYMENTS]: useMemo(() => (isProveedorUser ? (
       <PaymentData
         subscriptionId={userInfo.suscripcion.id}
-        canPaySubscription={userInfo.suscripcion.validity.canBePayed}
+        canPaySubscription={userInfo.suscripcion.validity.canBePayed && !changeRequestsMade.suscripcion}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
         getPayments={getPaymentsOfUser}
         paySubscription={paySubscription}
       />
-    ) : null), [userInfo]),
+    ) : null), [userInfo, changeRequestsMade]),
   };
 
   if (!(userInfo?.role)) {
@@ -351,6 +359,7 @@ UserProfile.propTypes = {
   getPaymentsOfUser: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
+  changeUserActive: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

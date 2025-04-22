@@ -5,6 +5,7 @@ import { ExternalHttpClient } from './HttpClients/ExternalHttpClient';
 import { HttpClientInstanceConfiguration } from './HttpClients/HttpClient';
 import { PaymentHttpClient } from './HttpClients/PaymentHttpClient';
 import { ProveedorHttpClient } from './HttpClients/ProveedorHttpClient';
+import StaticContentHttpClient from './HttpClients/StaticContentHttpClient';
 import { UserHttpClient } from './HttpClients/UserHttpClient';
 import { VendibleHttpClient } from './HttpClients/VendibleHttpClient';
 
@@ -32,6 +33,8 @@ export class HttpClientFactory {
   static adminHttpClientInstance;
 
   static paymentHttpClientInstance;
+
+  static staticContentClientInstance;
 
   static cleanInstances() {
     HttpClientFactory.httpClientInstance = null;
@@ -154,5 +157,16 @@ export class HttpClientFactory {
       });
     }
     return HttpClientFactory.paymentHttpClientInstance;
+  }
+
+  /**
+   *
+   * @returns {StaticContentHttpClient}
+   */
+  static createStaticContentHttpClient() {
+    if (!HttpClientFactory.staticContentClientInstance) {
+      HttpClientFactory.staticContentClientInstance = new StaticContentHttpClient({});
+    }
+    return HttpClientFactory.staticContentClientInstance;
   }
 }

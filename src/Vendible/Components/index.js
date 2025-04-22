@@ -24,6 +24,7 @@ import Layout from '../../Shared/Components/Layout';
 import StaticAlert from '../../Shared/Components/StaticAlert';
 import {
   ARGENTINA_LOCALE, PRICE_TYPE_FIXED, PRICE_TYPE_VARIABLE, PRICE_TYPE_VARIABLE_WITH_AMOUNT,
+  SERVICES,
 } from '../../Shared/Constants/System';
 import { formatNumberWithLocale, getLocaleCurrencySymbol } from '../../Shared/Helpers/PricesHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
@@ -36,6 +37,7 @@ import BasicMenu from '../../Shared/Components/Menu';
 import ScrollUpIcon from '../../Shared/Components/ScrollUpIcon';
 import { flexColumn } from '../../Shared/Constants/Styles';
 import MapModal from '../../Shared/Components/MapModal';
+import InformativeAlert from '../../Shared/Components/Alert';
 
 /**
  * @typedef ProveedoresVendiblesFiltersType
@@ -55,18 +57,9 @@ const proveedoresVendiblesFiltersModel = {
 
 const footerOptions = buildFooterOptions(routes.servicioIndex);
 
-function splitVendibleDescription(description) {
-  const canSplitByDot = description.includes('.');
-
-  return `${(canSplitByDot ? description.split('.')
-    : description.split(' '))[0]}...`;
-}
-
-const DESCRIPTION_MAX_LENGTH = 200;
-
 function VendiblePage({
   proveedoresInfo, vendibleType, userInfo, getVendibles, router,
-  handleLogout, paginationInfo,
+  handleLogout, paginationInfo, sendMessageToProveedor,
 }) {
   const [firstSearchDone, setFirstSearchDone] = useState(false);
   const [mapModalProps, setMapModalProps] = useState({
@@ -80,6 +73,8 @@ function VendiblePage({
       title: '',
     })),
   });
+
+  const [contactResult, setContactResult] = useState(null);
 
   const { distancesForSlider, pricesForSlider, vendibleNombre } = useMemo(() => {
     let distances; let prices;
@@ -132,6 +127,31 @@ function VendiblePage({
     && proveedoresInfo.maxDistance !== null,
   }), [proveedoresInfo]);
 
+  const closeContactAlert = () => setContactResult(null);
+
+  const alertConfig = useMemo(() => {
+    if (contactResult === true) {
+      return {
+        open: true,
+        onClose: closeContactAlert,
+        severity: 'success',
+        label: clientLabels['proveedorContact.success'],
+      };
+    }
+
+    if (contactResult === false) {
+      return {
+        open: true,
+        onClose: closeContactAlert,
+        severity: 'error',
+        label: clientLabels['proveedorContact.error'],
+      };
+    }
+    return {
+      open: false,
+    };
+  }, [contactResult]);
+
   const [isLoadingVendibles, setIsLoadingVendibles] = useState(false);
   const [noResultsFound, setNoResultsFound] = useState();
 
@@ -180,6 +200,7 @@ function VendiblePage({
 
     setHandleGoBack(() => router.navigate);
     setParams([routes.ROLE_CLIENTE]);
+    setNoResultsFound(!(proveedoresInfo?.proveedores.length));
   }, []);
 
   useEffect(() => {
@@ -191,10 +212,13 @@ function VendiblePage({
 
     const fullAmountLabel = `${getLocaleCurrencySymbol(ARGENTINA_LOCALE)}${localeFormattedPrice}`;
 
+    const priceTypeVariableWithAmountRenderer = vendibleType === SERVICES.toLowerCase() ? sharedLabels.minimalPrice
+      : sharedLabels.minimalPriceProducts;
+
     const renderers = {
       [PRICE_TYPE_VARIABLE]: () => sharedLabels.priceToBeAgreed,
       [PRICE_TYPE_FIXED]: () => `${sharedLabels.price}: ${fullAmountLabel}`,
-      [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: () => `${sharedLabels.minimalPrice}: ${fullAmountLabel}`,
+      [PRICE_TYPE_VARIABLE_WITH_AMOUNT]: () => `${priceTypeVariableWithAmountRenderer}: ${fullAmountLabel}`,
     };
 
     return renderers[tipoPrecio]();
@@ -207,18 +231,37 @@ function VendiblePage({
     [setButtonsEnabled],
   );
 
-  const handleSendMessageClick = useCallback((textAreaId, phone, proveedorName) => {
+  const handleSendMessageClick = useCallback((
+    textAreaId,
+    phone,
+    proveedorName,
+    proveedorEmail,
+    proveedorHasWhatsapp,
+  ) => {
     const message = document.querySelector(`#${textAreaId}`).value;
-    const messageTemplate = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
-      .replace('{contractArLink}', 'www.contractar.com')
-      .replace('{additionalText}', message); // TODO: reemplazar por dominio via deploy
+    setIsLoadingVendibles(true);
 
-    const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}
-        &text=${messageTemplate.replace('{proveedor}', proveedorName)}`;
+    setTimeout(() => {
+      if (proveedorHasWhatsapp) {
+        const messageTemplate = clientLabels.sendWhatsappLink.replace('{vendible}', vendibleNombre)
+          .replace('{contractArLink}', process.env.REACT_APP_SITE_URL)
+          .replace('{additionalText}', message);
 
-    document.querySelector(`#${textAreaId}`).value = '';
-    setButtonsEnabled((previous) => ({ ...previous, [textAreaId]: false }));
-    window.open(contactLink, '_blank');
+        const contactLink = `${thirdPartyRoutes.sendWhatsappMesageUrl}?phone=${phone}
+          &text=${messageTemplate.replace('{proveedor}', proveedorName)}`;
+
+        window.open(contactLink, '_blank');
+      }
+
+      sendMessageToProveedor(proveedorEmail, vendibleNombre, message)
+        .then(() => setContactResult(true))
+        .catch(() => setContactResult(false))
+        .finally(async () => {
+          setIsLoadingVendibles(false);
+        });
+
+      setButtonsEnabled((previous) => ({ ...previous, [textAreaId]: false }));
+    }, [2000]);
   }, [setButtonsEnabled]);
 
   const handleOpenMap = useCallback((proveedor) => {
@@ -244,7 +287,9 @@ function VendiblePage({
 
   const shouldChangeLayout = useMediaQuery('(max-width:1024px)');
 
-  const isNearMobileSize = useMediaQuery('(max-width:565px)');
+  const isNearMobileSize = useMediaQuery('(max-width:800px)');
+
+  const showImagesAsRow = useMediaQuery('(min-width:500px) and (max-width:1024px)');
 
   const filtersResolvedWidth = { xs: '100%', lg: '60%' };
 
@@ -312,7 +357,8 @@ function VendiblePage({
       flex={{ xs: 1, md: 9, lg: 10 }}
       {...flexColumn}
       width="100%"
-      height="100%"
+      height="100vh"
+      minHeight="100vh"
     >
       {ExitAppDialog}
       <Header
@@ -327,6 +373,10 @@ function VendiblePage({
         flex={1}
         gap="5%"
       >
+        <InformativeAlert
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          {...alertConfig}
+        />
         <MapModal {...mapModalProps} />
         <Box
           display="flex"
@@ -363,17 +413,10 @@ function VendiblePage({
               const textAreaId = `contact_proveedor_${proveedorId}`;
               const isSendMessageButtonEnabled = buttonsEnabled[textAreaId];
 
-              const descriptionExceedsLimit = descripcion.length > DESCRIPTION_MAX_LENGTH;
-
-              const parsedDescripcion = descriptionExceedsLimit
-                ? splitVendibleDescription(descripcion)
-                : descripcion;
-
               return (
                 <Fragment key={`${vendibleNombre}_${fullName}`}>
                   <Box
                     display="flex"
-                    alignItems={{ xs: 'center', md: '"flex-start"' }}
                     flexDirection={shouldChangeLayout ? 'column' : 'row'}
                     gap={3}
                     sx={{
@@ -386,7 +429,7 @@ function VendiblePage({
                   >
                     <Box
                       display="flex"
-                      flexDirection="column"
+                      flexDirection={showImagesAsRow ? 'row' : 'column'}
                       alignItems="flex-start"
                       gap={2}
                     >
@@ -400,7 +443,7 @@ function VendiblePage({
                           borderColor: 'primary.main',
                         }}
                       />
-                      <Box>
+                      <Box {...flexColumn}>
                         <Typography variant="h6" fontWeight="bold">
                           {fullName}
                         </Typography>
@@ -411,42 +454,47 @@ function VendiblePage({
                         </Typography>
                         )}
                         {!!distance && (
-                        <Link onClick={() => handleOpenMap(proveedorInfo)} sx={{ fontSize: '0.875rem' }}>
+                        <Link
+                          onClick={() => handleOpenMap(proveedorInfo)}
+                          sx={{
+                            fontSize: '0.875rem',
+                            cursor: 'pointer',
+                          }}
+                        >
                           {vendiblesLabels.seeInMap}
                         </Link>
                         )}
                       </Box>
-                      {!!imagenUrl && (
-                      <Box
-                        component="img"
-                        src={imagenUrl}
-                        alt={vendibleNombre}
-                        loading="lazy"
-                        sx={{
-                          maxWidth: '100%',
-                          height: 'auto',
-                          borderRadius: 2,
-                          boxShadow: 1,
-                          maxHeight: '300px',
-                          objectFit: 'cover',
-                        }}
-                      />
-                      )}
-                      <Typography
-                        paragraph
-                        sx={{
-                          wordBreak: 'break-word',
-                          fontSize: '1rem',
-                          color: 'text.primary',
-                        }}
-                      >
-                        {parsedDescripcion}
-                      </Typography>
-                      {!!descriptionExceedsLimit && (
-                        <Link href="#" sx={{ fontSize: '0.875rem' }}>
-                          {sharedLabels.seeMore}
-                        </Link>
-                      )}
+                      <Box>
+                        {!!imagenUrl && (
+                        <Box
+                          component="img"
+                          src={imagenUrl}
+                          alt={vendibleNombre}
+                          loading="lazy"
+                          sx={{
+                            maxWidth: '100%',
+                            height: 'auto',
+                            borderRadius: 2,
+                            boxShadow: 1,
+                            maxHeight: '300px',
+                            objectFit: 'cover',
+                          }}
+                        />
+                        )}
+                        <Typography
+                          paragraph
+                          sx={{
+                            maxWidth: '500px',
+                            overflowWrap: 'break-word',
+                            wordBreak: 'break-word',
+                            whiteSpace: 'pre-wrap',
+                          }}
+                        >
+                          {descripcion}
+                        </Typography>
+                      </Box>
+
                     </Box>
 
                     <Box
@@ -475,7 +523,13 @@ function VendiblePage({
                         onChange={handleEnableButton}
                       />
                       <Button
-                        onClick={() => handleSendMessageClick(textAreaId, phone, name)}
+                        onClick={() => handleSendMessageClick(
+                          textAreaId,
+                          phone,
+                          name,
+                          proveedorInfo.email,
+                          proveedorInfo.hasWhatsapp,
+                        )}
                         target="_blank"
                         variant="contained"
                         color="secondary"
@@ -542,6 +596,7 @@ function VendiblePage({
 }
 
 VendiblePage.propTypes = {
+  sendMessageToProveedor: PropTypes.func.isRequired,
   getVendibles: PropTypes.func.isRequired,
   handleLogout: PropTypes.func.isRequired,
   proveedoresInfo: PropTypes.shape({

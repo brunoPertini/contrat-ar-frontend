@@ -78,21 +78,13 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.updateCommonInfo(userInfo.id, info, { token: userInfo.token });
   };
 
-  const editPersonalInfoForAdmin = (info) => {
-    const client = HttpClientFactory.createAdminHttpClient({
-      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
-      token: userInfo.token,
-      handleLogout,
-    });
-
-    return (userInfo.role === CLIENTE ? client.updateClientePersonalData(userInfo.id, info)
-      : client.updateProveedorPersonalData(userInfo.id, info)).then(() => {
-      localStorageService.setItem(
-        LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
-        { ...info, id: userInfo.id },
-      );
-    });
-  };
+  const editPersonalInfoForAdmin = (info) => (userInfo.role === CLIENTE ? editClienteInfo(info)
+    : editProveedorInfo(info)).then(() => {
+    localStorageService.setItem(
+      LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
+      { ...info, id: userInfo.id },
+    );
+  });
 
   const callEditCommonInfo = async (info, tabName) => {
     const noAminHandlers = {
@@ -201,6 +193,19 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.cancelPlanChange(changeRequestId);
   };
 
+  const changeUserActive = (isActive) => {
+    const client = HttpClientFactory.createAdminHttpClient({
+      token: userInfo.token,
+      alternativeUrl: process.env.REACT_APP_ADMIN_BACKEND_URL,
+      handleLogout,
+    });
+
+    return client.changeIsUserActive(userInfo.id, isActive).then(() => {
+      dispatch(replaceUserInfo({ active: isActive }));
+      return Promise.resolve();
+    }).catch(() => Promise.reject());
+  };
+
   const restoreTokenInMemory = () => {
     const restoredToken = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN,
@@ -270,6 +275,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         getUserInfo={getUserInfo}
         paySubscription={paySubscription}
         cancelPlanChange={cancelPlanChange}
+        changeUserActive={changeUserActive}
       />
     </NavigationContextProvider>
   );

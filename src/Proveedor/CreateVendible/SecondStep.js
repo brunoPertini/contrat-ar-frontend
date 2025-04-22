@@ -76,6 +76,9 @@ function SecondStep({
           sx={{ width: { xs: '80%', md: '50%' }, mt: '2%' }}
         />
         <Box {...flexColumn}>
+          { imageTitle }
+          {!!imageUrl
+          && (
           <ImageListItem
             sx={{
               display: 'flex',
@@ -84,15 +87,13 @@ function SecondStep({
               mt: '5%',
             }}
           >
-            { imageTitle }
-            {!!imageUrl && (
+
             <img
               src={imageUrl}
               srcSet={imageUrl}
               alt=""
               loading="lazy"
             />
-            )}
             {
               !!imageError && (
                 <Typography
@@ -105,6 +106,7 @@ function SecondStep({
               )
             }
           </ImageListItem>
+          ) }
           <Box {...flexColumn} sx={{ width: { xs: '100%', md: '20%' } }}>
             <Button
               component="label"
@@ -142,7 +144,7 @@ function SecondStep({
         <TextareaAutosize
           minRows={15}
           maxLength={maxLengthConstraints.PROVEEDOR.description}
-          style={{ width: '80%', resize: 'none' }}
+          style={{ width: '80%', resize: 'none', lineHeight: 2.5 }}
           placeholder={proveedorLabels['addVendible.description.placeholder'].replace('{vendible}', vendibleType)}
           value={description}
           onChange={handleChangeDescription}

@@ -63,6 +63,12 @@ export default function withRouter(Component) {
     const verifyToken = useCallback(async () => {
       try {
         const userToken = cookiesService.get(CookiesService.COOKIES_NAMES.USER_TOKEN);
+
+        if (window.location.pathname === routes.contact && !userToken) {
+          setTokenVerified(true);
+          return Promise.resolve();
+        }
+
         const savedUserInfo = JSON.parse(localStorageService.getItem(
           LocalStorageService.PAGES_KEYS.ADMIN.USER_INFO,
         ));

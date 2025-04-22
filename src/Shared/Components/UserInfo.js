@@ -79,6 +79,8 @@ export default function UserInfo({ userInfo }) {
     }))),
 
     textAttribute: (label, value) => renderRowAsText(label, value),
+
+    hasWhatsapp: (label, value) => renderRowAsText(label, value ? sharedLabels.yes : sharedLabels.no),
   };
 
   return (

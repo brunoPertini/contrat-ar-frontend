@@ -7,5 +7,6 @@
     "proveedoresById": "/admin/proveedores/{userId}",
     "vendiblePosts": "/v2/vendible/{vendibleId}/proveedores",
     "getAllChangeRequests": "/admin/change-requests",
-    "proveedorVendibleById": "/admin/proveedores/{id}/vendible/{vendibleId}" 
+    "proveedorVendibleById": "/admin/proveedores/{id}/vendible/{vendibleId}" ,
+    "changeIsUserActive": "/admin/usuarios/active"
 }

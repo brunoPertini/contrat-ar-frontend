@@ -43,7 +43,7 @@ function VendibleCreateForm({
 
   const [categories, setCategories] = useState([]);
 
-  const [imagenUrl, setImagenUrl] = useState('+');
+  const [imagenUrl, setImagenUrl] = useState('');
   const [descripcion, setDescripcion] = useState('');
 
   const [activeStep, setActiveStep] = useState(0);
@@ -209,7 +209,10 @@ function VendibleCreateForm({
             <StaticAlert
               styles={{ mt: '3%', fontSize: '1rem', width: '80%' }}
               severity="info"
-              label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace('{vendible}', parseVendibleUnit(vendibleType))}
+              label={proveedorLabels['vendible.new.confirmation.disclaimer'].replace(
+                '{vendible}',
+                parseVendibleUnit(vendibleType),
+              )}
             />
           )
         }

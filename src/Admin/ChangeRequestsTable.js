@@ -97,7 +97,7 @@ async function renderChangeRequestDetail({ request, requestDetail }, userToken) 
 
     const toShowRole = toShowCommonData.role?.nombre;
     const toShowProveedorData = toShowRole === CLIENTE ? {} : pick(requestDetail, ['dni',
-      'fotoPerfilUrl', 'suscripcion']);
+      'fotoPerfilUrl', 'suscripcion', 'hasWhatsapp']);
 
     props = {
       userInfo: {
