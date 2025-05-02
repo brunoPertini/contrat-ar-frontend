@@ -33,6 +33,6 @@
         "jsx-a11y/anchor-is-valid": [0],
         "react/no-array-index-key": [0],
         "import/no-cycle": [0],
-        "max-len": ["error", { "code": 120 }]
+        "max-len": ["error", { "code": 150 }]
     }
 }
