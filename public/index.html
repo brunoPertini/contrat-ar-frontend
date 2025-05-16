@@ -1,48 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
     <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-32x32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon-180x180.png">
     <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon-512x512.png" sizes="512x512">
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="En Contrat.Ar encontrá y contratá servicios o productos cerca tuyo. Conectamos clientes con proveedores de confianza.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Contrat.Ar | Contratá servicios y productos cerca tuyo">
+    <meta property="og:description" content="Plataforma para encontrar servicios, productos, profesionales o negocios en tu zona. Publicá, contratá y conectá fácil y rápido.">
+    <meta property="og:image" content="https://storage.googleapis.com/contract-ar-cdn/favicon.png">
+    <meta property="og:url" content="https://contratar.com.ar">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contrat.Ar | Contratá servicios y productos cerca tuyo">
+    <meta name="twitter:description" content="Plataforma para encontrar servicios y productos cerca tuyo. Conectá con profesionales o negocios en tu zona.">
+    <meta name="twitter:image" content="https://storage.googleapis.com/contract-ar-cdn/favicon.png">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
         integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
         crossorigin=""/>
+
     <style>
       #root {
         min-height: 100vh;
       }
     </style>
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Contrat.Ar</title>
+    <title>Contrat.Ar | Contratá servicios y productos cerca tuyo</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <noscript>
+      <style>
+        .noscript-container {
+          background-color: #fff8f0;
+          padding: 20px;
+          font-family: Arial, sans-serif;
+          color: #333;
+        }
+        .noscript-container h1 {
+          font-size: 24px;
+        }
+      </style>
+      <div class="noscript-container">
+        <h1>Contrat.Ar - Encontrá servicios y productos cerca tuyo</h1>
+        <p>Este sitio requiere JavaScript para funcionar correctamente. Si no podés activarlo, te contamos que en Contrat.Ar conectás clientes con proveedores de confianza en tu zona. Publicá, buscá y contratá servicios fácilmente.</p>
+        <p>Visitá nuestra versión completa en <a href="https://contratar.com.ar">https://contratar.com.ar</a>.</p>
+      </div>
+    </noscript>
+    <div id="root">
+      <h1 style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+        Contrat.Ar - Conectamos clientes con proveedores de confianza
+      </h1>
+    </div>
   </body>
 </html>
