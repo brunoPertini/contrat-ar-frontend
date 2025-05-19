@@ -135,5 +135,6 @@
     "2fa.codeExpired": "El código ya no es válido, por favor solicitá otro",
     "pay": "Pagar",
     "makeClickHere": "Hacé click acá",
-    "hasWhatsapp": "Es un número con whatsapp"
+    "hasWhatsapp": "Es un número con whatsapp",
+    "uploadingImage": "Subiendo imagen"
 }

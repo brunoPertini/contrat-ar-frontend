@@ -69,6 +69,7 @@ export default function UserSignUp({
   );
 
   const [profilePhoto, setProfilePhoto] = useState();
+  const [isLoadingProfilePhoto, setIsLoadingProfilePhoto] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
     title: locationMapLabels['dialog.permission.request.title'],
@@ -219,7 +220,10 @@ export default function UserSignUp({
 
   const callUploadProfilePhoto = (
     file,
-  ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
+  ) => {
+    setIsLoadingProfilePhoto(true);
+    return handleUploadProfilePhoto(personalDataFieldsValues.dni, file).finally(() => setIsLoadingProfilePhoto(false));
+  };
 
   const restoreSignupDataAfterPayment = () => {
     setActiveStep(externalStep);
@@ -318,6 +322,7 @@ export default function UserSignUp({
           alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
           onUpload={callUploadProfilePhoto}
           onSuccess={setProfilePhoto}
+          isLoading={isLoadingProfilePhoto}
         />]}
       />,
       backButtonEnabled: true,
