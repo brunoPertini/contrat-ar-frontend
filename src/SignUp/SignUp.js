@@ -424,10 +424,10 @@ export default function UserSignUp({
   const newPlanType = useMemo(() => getPlanType(planesInfo, selectedPlan), [selectedPlan]);
 
   useEffect(() => {
-    if (newPlanType === PLAN_TYPE_PAID) {
+    if (newPlanType && newPlanType === PLAN_TYPE_PAID) {
       storeTokenInLocalStorage();
     }
-  }, [selectedPlan]);
+  }, [selectedPlan, newPlanType]);
 
   useEffect(() => {
     if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
