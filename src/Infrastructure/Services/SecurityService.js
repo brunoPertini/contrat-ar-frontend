@@ -58,6 +58,10 @@ class SecurityService {
           (page) => localStorageService.removeAllKeysOfPage(page),
         );
 
+        if (this.#handleLogout) {
+          return this.#handleLogout();
+        }
+
         window.location.href = routes.signin;
       }
 

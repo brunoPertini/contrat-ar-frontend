@@ -17,6 +17,7 @@ function SignInContainer({ router, securityService, cookiesService }) {
   useEffect(() => {
     if (location?.state) {
       const { errorMessage: navigationErrorMessage } = location.state;
+      console.log('ERROR MESSAGE: ', navigationErrorMessage);
       setErrorMessage(navigationErrorMessage);
     }
   }, []);
