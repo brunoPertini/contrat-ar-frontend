@@ -213,8 +213,9 @@ function UserProfile({
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
     return confirmPlanChange(userInfo.id, planId)
-      .then(() => {
+      .then((subscriptionData) => {
         checkAttributeRequestChange([userInfo.id], 'suscripcion');
+        return Promise.resolve(subscriptionData);
       })
       .catch(() => {
         setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
