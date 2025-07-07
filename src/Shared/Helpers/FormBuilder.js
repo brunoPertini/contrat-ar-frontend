@@ -197,8 +197,9 @@ helper message
         sx: { ...commonInputStyles, ...borderStyles(!!(errorFields?.email)) },
         onChange: (e) => {
           if (this.shouldValidateField('email')) {
-            const isEmailValid = this.validators.email(fieldsValues.email);
-            return onChangeFields('email', e.target.value, !isEmailValid);
+            const newValue = e.target.value;
+            const isEmailValid = this.validators.email(newValue);
+            return onChangeFields('email', newValue, !isEmailValid);
           }
 
           return onChangeFields('email', e.target.value, false);
