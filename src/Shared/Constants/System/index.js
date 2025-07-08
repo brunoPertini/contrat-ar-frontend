@@ -100,6 +100,7 @@ export const PAYMENT_STATE = {
   SUCCESS: 'APPROVED',
   ERROR: 'REJECTED',
   UNKNOWN: 'UNKNOWN_ERROR',
+  PROCESSED: 'PROCESSED',
 };
 
 export const TwoFactorAuthResult = {

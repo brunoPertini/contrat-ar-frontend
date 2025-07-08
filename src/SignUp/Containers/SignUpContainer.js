@@ -50,11 +50,13 @@ function SignUpContainer({ router }) {
   const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
 
   const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
+  const [storedPaymentState, setStoredPaymentState] = useState();
 
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
   const paymentModalLabels = useMemo(() => ({
     success: paymentLabels['signup.confirmation.success'],
+    processed: paymentLabels['signup.confirmation.processed'],
     error: paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentParams.paymentId),
     unknown: paymentLabels['signup.confirmation.unknownError']
       .replace('{helpPayLink}', process.env.REACT_APP_SITE_URL),
@@ -250,7 +252,8 @@ function SignUpContainer({ router }) {
   const checkPaymentExistence = () => {
     setTemporalToken((restoredToken) => {
       getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
-        if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
+        if (info.id === +paymentParams.paymentId) {
+          setStoredPaymentState(info.state);
           openPaymentDialog();
         }
       }).catch(() => setOpenPaymentDialogModal(false));
@@ -276,7 +279,7 @@ function SignUpContainer({ router }) {
   }, [paymentParams, paySubscriptionServiceResult]);
 
   // TODO: check if have to pass service result flag
-  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels);
+  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels, null, storedPaymentState);
 
   return (
     <>

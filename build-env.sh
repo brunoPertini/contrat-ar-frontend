@@ -21,7 +21,7 @@ EOL
 
 elif [ "$1" == "dev" ]; then
     cat > "$ENV_FILE" <<EOL
-GENERATE_SOURCEMAP='false'
+GENERATE_SOURCEMAP='true'
 REACT_APP_CLIENT_ID='contractarFrontend'
 REACT_APP_CLIENT_SECRET='contractar'
 

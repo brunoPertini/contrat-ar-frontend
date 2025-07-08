@@ -22,6 +22,7 @@ import ContactForm from '../Shared/Components/ContactForm';
 import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
 import { flexColumn } from '../Shared/Constants/Styles';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
+import AnimatedModal from '../Shared/Components/AnimatedModal';
 
 const renderBenefits = (benefits) => benefits.split('.')
   .filter((line) => !!(line.trim()))
@@ -64,6 +65,7 @@ const RootPage = withRouter(({ router }) => {
   });
 
   const [plansData, setPlansData] = useState([]);
+  const [showPromotionModal, setShowPromotionModal] = useState(false);
 
   const menuOptions = [{
     label: rootPageLabels.signup,
@@ -93,6 +95,7 @@ const RootPage = withRouter(({ router }) => {
 
   useEffect(() => {
     fetchPlanes();
+    setShowPromotionModal(true);
     const comesFromSignup = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP,
     ) === 'true';
@@ -134,6 +137,18 @@ const RootPage = withRouter(({ router }) => {
         label={alertData.alertLabel}
         autoHideDuration={5000}
       />
+      <AnimatedModal
+        open={showPromotionModal}
+        onClose={() => setShowPromotionModal(false)}
+        title="¡Mirá nuestras promociones!"
+        footer="(*) Válido para los primeros 10 registros"
+      >
+        <Typography variant="body1">
+          Registrate como proveedor, elegí un plan gratuito, ¡y te regalamos el plan pago de por vida!
+          {' '}
+          <sup>*</sup>
+        </Typography>
+      </AnimatedModal>
       <Header menuOptions={menuOptions} />
       <Stack
         className="companyDescription"
