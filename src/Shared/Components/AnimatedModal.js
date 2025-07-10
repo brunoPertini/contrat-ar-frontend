@@ -15,7 +15,7 @@ const style = {
   },
   bgcolor: 'rgb(36, 134, 164)',
   p: 4,
-  gap: '15px',
+  gap: '50px',
   border: 'none',
   outline: 'none',
 };

@@ -22,7 +22,7 @@ import ContactForm from '../Shared/Components/ContactForm';
 import { buildFooterOptions } from '../Shared/Helpers/UtilsHelper';
 import { flexColumn } from '../Shared/Constants/Styles';
 import { HttpClientFactory } from '../Infrastructure/HttpClientFactory';
-import AnimatedModal from '../Shared/Components/AnimatedModal';
+import PromotionsModal from './PromotionsModal';
 
 const renderBenefits = (benefits) => benefits.split('.')
   .filter((line) => !!(line.trim()))
@@ -57,6 +57,11 @@ const getAllPlanes = () => {
   return client.getAllPlanes();
 };
 
+const getSitePromotions = () => {
+  const client = HttpClientFactory.createUserHttpClient();
+  return client.getPromotions();
+};
+
 const RootPage = withRouter(({ router }) => {
   const [alertData, setAlertData] = useState({
     isAlertOpen: false,
@@ -65,6 +70,8 @@ const RootPage = withRouter(({ router }) => {
   });
 
   const [plansData, setPlansData] = useState([]);
+  const [promotionsData, setPromotionsData] = useState([]);
+
   const [showPromotionModal, setShowPromotionModal] = useState(false);
 
   const menuOptions = [{
@@ -93,9 +100,17 @@ const RootPage = withRouter(({ router }) => {
     setPlansData(plans);
   };
 
+  const fetchPromotionsData = async () => {
+    const data = await getSitePromotions();
+    setPromotionsData(data);
+    if (data?.length) {
+      setShowPromotionModal(true);
+    }
+  };
+
   useEffect(() => {
     fetchPlanes();
-    setShowPromotionModal(true);
+    fetchPromotionsData();
     const comesFromSignup = localStorageService.getItem(
       LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP,
     ) === 'true';
@@ -137,18 +152,11 @@ const RootPage = withRouter(({ router }) => {
         label={alertData.alertLabel}
         autoHideDuration={5000}
       />
-      <AnimatedModal
-        open={showPromotionModal}
+      <PromotionsModal
+        promotions={promotionsData}
+        isOpen={showPromotionModal}
         onClose={() => setShowPromotionModal(false)}
-        title="¡Mirá nuestras promociones!"
-        footer="(*) Válido para los primeros 10 registros"
-      >
-        <Typography variant="body1">
-          Registrate como proveedor, elegí un plan gratuito, ¡y te regalamos el plan pago de por vida!
-          {' '}
-          <sup>*</sup>
-        </Typography>
-      </AnimatedModal>
+      />
       <Header menuOptions={menuOptions} />
       <Stack
         className="companyDescription"
