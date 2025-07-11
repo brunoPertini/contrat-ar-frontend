@@ -11,12 +11,13 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import { sharedLabels } from '../../StaticData/Shared';
 import { planShape } from '../PropTypes/Proveedor';
 import {
-  getPlanDescription, getPlanId, getPlanType, getPlanValue,
+  getPlanByType,
+  getPlanDescription, getPlanId, getPlanType,
+  renderPlanPrice,
 } from '../Helpers/PlanesHelper';
-import { ARGENTINA_LOCALE, PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/System';
+import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/System';
 import LocationMap from './LocationMap';
 import { locationShape } from '../PropTypes/Shared';
-import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
 import Disclaimer from './Disclaimer';
 
 const gridStyles = {
@@ -49,15 +50,7 @@ export default function PlanSelection({
           <Typography variant="h5" fontWeight="bold">
             {sharedLabels.plansNames.FREE}
           </Typography>
-          <Typography variant="h6" color="primary" sx={{ my: 2 }}>
-            { sharedLabels.finalMonthlyPrice.replace(
-              '{price}',
-              getLocaleCurrencySymbol(ARGENTINA_LOCALE) + getPlanValue(
-                planesInfo,
-                systemConstants.PLAN_TYPE_FREE,
-              ),
-            )}
-          </Typography>
+          { renderPlanPrice(getPlanByType(planesInfo, PLAN_TYPE_FREE))}
           <RadioGroup
             value={getPlanType(planesInfo, selectedPlan)}
             onChange={(e) => setSelectedPlan(getPlanId(planesInfo, e.target.value))}
@@ -91,15 +84,7 @@ export default function PlanSelection({
           <Typography variant="h5" fontWeight="bold">
             {sharedLabels.plansNames.PAID}
           </Typography>
-          <Typography variant="h6" color="primary" sx={{ my: 2 }}>
-            { sharedLabels.finalMonthlyPrice.replace(
-              '{price}',
-              getLocaleCurrencySymbol(ARGENTINA_LOCALE) + getPlanValue(
-                planesInfo,
-                systemConstants.PLAN_TYPE_PAID,
-              ),
-            )}
-          </Typography>
+          { renderPlanPrice(getPlanByType(planesInfo, PLAN_TYPE_PAID))}
           <RadioGroup
             value={getPlanType(planesInfo, selectedPlan)}
             onChange={(e) => setSelectedPlan(getPlanId(planesInfo, e.target.value))}

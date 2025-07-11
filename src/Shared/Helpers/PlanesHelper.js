@@ -4,7 +4,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import { userProfileLabels } from '../../StaticData/UserProfile';
 import { sharedLabels } from '../../StaticData/Shared';
-import { PLAN_TYPE_PAID, PLAN_TYPE_FREE } from '../Constants/System';
+import { PLAN_TYPE_PAID, PLAN_TYPE_FREE, ARGENTINA_LOCALE } from '../Constants/System';
+import { getLocaleCurrencySymbol } from './PricesHelper';
 import { flexRow } from '../Constants/Styles';
 
 export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
@@ -63,6 +64,35 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
     </Typography>
   );
 }
+
+export function renderPlanPrice(plan) {
+  if (plan.type === PLAN_TYPE_FREE || plan.price === plan.priceWithDiscount) {
+    return (
+      <Typography variant="h6" color="primary" sx={{ my: 2 }}>
+        {sharedLabels.finalMonthlyPrice}
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.price}
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography variant="h6" color="primary" sx={{ my: 2 }}>
+      { sharedLabels.finalMonthlyPrice }
+      <Box component="span" sx={{ textDecoration: 'line-through', mr: 1 }}>
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
+        {plan.price}
+      </Box>
+      <Box component="span" sx={{ fontWeight: 'bold' }}>
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
+        {plan.priceWithDiscount}
+      </Box>
+    </Typography>
+  );
+}
+
+export const getPlanByType = (planesInfo, planType) => planesInfo.find(
+  (planInfo) => planInfo.type === planType,
+);
 
 export const getPlanId = (planesInfo, planType) => planesInfo.find(
   (planInfo) => planInfo.type === planType,

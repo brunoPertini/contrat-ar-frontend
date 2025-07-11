@@ -27,6 +27,7 @@ export const planShape = {
   descripcion: PropTypes.string,
   type: PropTypes.string,
   price: PropTypes.number,
+  priceWithDiscount: PropTypes.number,
 };
 
 export const suscriptionShape = {
