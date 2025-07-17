@@ -30,23 +30,23 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
 
   const PLAN_DESCRIPTIONS = {
     [PLAN_TYPE_FREE]: (
-      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
-        { userProfileLabels['plan.includes'] }
-        <br />
-        <br />
-        {
-            renderPlanDescription()
-          }
-      </Typography>),
+      <>
+        <Typography variant="h5">
+          {userProfileLabels['plan.includes']}
+        </Typography>
+        <Typography paragraph variant="body" sx={{ mt: '2%' }}>
+          {renderPlanDescription()}
+        </Typography>
+      </>),
     [PLAN_TYPE_PAID]: (
-      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
-        { userProfileLabels['plan.includes'] }
-        <br />
-        <br />
-        {
-              renderPlanDescription()
-            }
-      </Typography>),
+      <>
+        <Typography variant="h5">
+          {userProfileLabels['plan.includes']}
+        </Typography>
+        <Typography paragraph variant="body" sx={{ mt: '2%' }}>
+          {renderPlanDescription()}
+        </Typography>
+      </>),
   };
 
   const disclaimer = showDisclaimer ? (
@@ -89,6 +89,15 @@ export function renderPlanPrice(plan) {
     </Typography>
   );
 }
+
+export const renderPromotionsInfo = (promotionsInfo) => promotionsInfo.map((info) => (
+  <Box {...flexRow} textAlign="left">
+    <CheckIcon sx={{ mr: '1px' }} />
+    <span dangerouslySetInnerHTML={{ __html: info.text }} />
+    <br />
+    <br />
+  </Box>
+));
 
 export const getPlanByType = (planesInfo, planType) => planesInfo.find(
   (planInfo) => planInfo.type === planType,

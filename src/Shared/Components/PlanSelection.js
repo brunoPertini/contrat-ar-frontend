@@ -5,6 +5,10 @@ import CardContent from '@mui/material/CardContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
+import Box from '@mui/material/Box';
 import ExpandableCard from './ExpandableCard';
 import { systemConstants } from '../Constants';
 import { signUpLabels } from '../../StaticData/SignUp';
@@ -14,11 +18,13 @@ import {
   getPlanByType,
   getPlanDescription, getPlanId, getPlanType,
   renderPlanPrice,
+  renderPromotionsInfo,
 } from '../Helpers/PlanesHelper';
 import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Constants/System';
 import LocationMap from './LocationMap';
 import { locationShape } from '../PropTypes/Shared';
 import Disclaimer from './Disclaimer';
+import { flexColumn } from '../Constants/Styles';
 
 const gridStyles = {
   marginTop: '5%',
@@ -42,7 +48,21 @@ const cardStyles = {
 
 export default function PlanSelection({
   selectedPlan, setSelectedPlan, planesInfo, userLocation,
+  getSitePromotions,
 }) {
+  const [promotionsInfo, setPromotionsInfo] = useState([]);
+
+  const handleSetPromotionsInfo = useCallback(async () => {
+    const newPromotionsInfo = await getSitePromotions();
+    setPromotionsInfo([...newPromotionsInfo]);
+  }, [getSitePromotions]);
+
+  useEffect(() => {
+    handleSetPromotionsInfo();
+  }, []);
+
+  const shouldRenderPromoInfo = useMemo(() => !!promotionsInfo?.length, [promotionsInfo]);
+
   const plansColumns = (
     <>
       <Card sx={cardStyles}>
@@ -100,6 +120,22 @@ export default function PlanSelection({
         <CardContent>
           { getPlanDescription(PLAN_TYPE_PAID, planesInfo)}
         </CardContent>
+        {
+          shouldRenderPromoInfo && (
+          <CardContent>
+            <Typography variant="h5">
+              { sharedLabels.ourPromotions }
+              {' '}
+              { ' ' }
+              { sharedLabels.termsAndConditionsApply}
+              :
+            </Typography>
+            <Box {...flexColumn} marginTop="15px" gap="10px">
+              { renderPromotionsInfo(promotionsInfo) }
+            </Box>
+          </CardContent>
+          )
+        }
       </Card>
     </>
   );
@@ -120,6 +156,7 @@ export default function PlanSelection({
 PlanSelection.propTypes = {
   selectedPlan: PropTypes.number.isRequired,
   setSelectedPlan: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   userLocation: PropTypes.shape(locationShape).isRequired,
 };

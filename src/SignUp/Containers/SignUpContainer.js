@@ -135,6 +135,11 @@ function SignUpContainer({ router }) {
     return client.getPaymentInfo(id);
   };
 
+  const getSitePromotions = () => {
+    const client = HttpClientFactory.createUserHttpClient();
+    return client.getPromotions();
+  };
+
   const signupTypeColumns = (
     <>
       <Card
@@ -214,6 +219,7 @@ function SignUpContainer({ router }) {
         sendAccountConfirmEmail={sendAccountConfirmEmail}
         createSubscription={handleCreateSubscription}
         handlePaySubscription={handlePaySubscription}
+        getSitePromotions={getSitePromotions}
         externalStep={activeStep}
       />
     );

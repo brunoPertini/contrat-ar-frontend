@@ -47,6 +47,7 @@ const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 export default function UserSignUp({
   signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
   sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
+  getSitePromotions,
 }) {
   const { title } = signUpLabels;
 
@@ -339,6 +340,7 @@ export default function UserSignUp({
         planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
+        getSitePromotions={getSitePromotions}
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,
@@ -500,6 +502,7 @@ UserSignUp.propTypes = {
   sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
   handlePaySubscription: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
   externalStep: PropTypes.number,
