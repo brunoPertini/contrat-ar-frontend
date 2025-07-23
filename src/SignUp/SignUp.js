@@ -87,6 +87,16 @@ export default function UserSignUp({
 
   const [subscriptionInfo, setSubscriptionInfo] = useState();
 
+  const selectedPlanObject = useMemo(() => {
+    if (!planesInfo?.length || !selectedPlan) {
+      return {};
+    }
+
+    return planesInfo.find(
+      (planInfo) => planInfo.id === selectedPlan,
+    );
+  }, [planesInfo, selectedPlan]);
+
   const handleGranted = (position) => {
     setLocation({
       coords: {
@@ -172,13 +182,15 @@ export default function UserSignUp({
   const handlePostPlanChosen = () => {
     setIsLoading(true);
     if (isEmpty(subscriptionInfo)) {
+      const { applicablePromotion, priceWithDiscount } = selectedPlanObject;
       createSubscription(
         createdUserInfo.id,
         selectedPlan,
-        createdUserInfo.creationToken,
+        applicablePromotion,
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
-        if (planLabel === PLAN_TYPE_PAID) {
+
+        if (planLabel === PLAN_TYPE_PAID && priceWithDiscount) {
           setIsLoading(true);
           saveSignupDataInLocalStorage();
           handlePaySubscription(
@@ -191,7 +203,13 @@ export default function UserSignUp({
           setIsLoading(false);
         }
         setSubscriptionInfo(response);
-      }).catch(() => setIsLoading(false));
+      }).catch((error) => {
+        setIsLoading(false);
+        if (error) {
+          localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+          window.location.href = routes.index;
+        }
+      });
     }
   };
 

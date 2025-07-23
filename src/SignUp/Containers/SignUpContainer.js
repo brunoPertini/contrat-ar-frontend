@@ -107,10 +107,10 @@ function SignUpContainer({ router }) {
     return client.sendRegistrationConfirmEmail(email);
   };
 
-  const handleCreateSubscription = (proveedorId, planId) => {
+  const handleCreateSubscription = (proveedorId, planId, promotionId) => {
     const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
 
-    return client.createSubscription(proveedorId, planId);
+    return client.createSubscription(proveedorId, planId, promotionId);
   };
 
   const handlePaySubscription = (id, userId) => {

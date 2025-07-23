@@ -122,14 +122,17 @@ export class ProveedorHttpClient extends HttpClient {
    *
    * @param {String | Number} proveedorId
    * @param {Number} planId new planId
+   * @param {Number} [promotionId]
    * * @returns {Promise<void> | Promise<Error>}
    */
-  createSubscription(proveedorId, planId) {
+  createSubscription(proveedorId, planId, promotionId) {
     const url = proveedoresRoutes.proveedorSubscription
       .replace('{proveedorId}', proveedorId)
       .replace('{planId}', planId);
 
-    return this.post(url);
+    const queryParams = promotionId ? { promotionId } : {};
+
+    return this.post(url, queryParams);
   }
 
   cancelPlanChange(changeRequestId) {
