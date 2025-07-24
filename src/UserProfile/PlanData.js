@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import isEmpty from 'lodash/isEmpty';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
@@ -143,6 +144,8 @@ function PlanData({
       });
   }, [cancelPlanChange]);
 
+  const promotionInfo = useMemo(() => (!isEmpty(suscripcionData.promotionInfo) ? suscripcionData.promotionInfo : null), [suscripcionData]);
+
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
     subscriptionAlertSeverity: valid ? 'success' : 'error',
     subscriptionAlertLabel: valid
@@ -251,7 +254,7 @@ function PlanData({
           </>
         )
       }
-      { getPlanDescription(plan, planesInfo, true) }
+      { getPlanDescription(plan, planesInfo, true, promotionInfo) }
       {
         plan === PLAN_TYPE_FREE && (
           <LocationMap

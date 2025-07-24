@@ -8,7 +8,16 @@ import { PLAN_TYPE_PAID, PLAN_TYPE_FREE, ARGENTINA_LOCALE } from '../Constants/S
 import { getLocaleCurrencySymbol } from './PricesHelper';
 import { flexRow } from '../Constants/Styles';
 
-export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
+function renderCurrentPromotionInfo(promotionInfo) {
+  return (
+    <Box {...flexRow} textAlign="left" justifyContent="space-between">
+      <Typography variant="h5">¡Tenés aplicada esta promoción!</Typography>
+      <span dangerouslySetInnerHTML={{ __html: promotionInfo.text }} />
+    </Box>
+  );
+}
+
+export function getPlanDescription(plan, planesDescriptions, showDisclaimer, promotionInfo) {
   const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
 
   const renderDescripctionLine = (innerContent) => (
@@ -34,7 +43,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
         <Typography variant="h5">
           {userProfileLabels['plan.includes']}
         </Typography>
-        <Typography paragraph variant="body" sx={{ mt: '2%' }}>
+        <Typography paragraph variant="body" sx={{ mt: '1%' }}>
           {renderPlanDescription()}
         </Typography>
       </>),
@@ -43,8 +52,9 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
         <Typography variant="h5">
           {userProfileLabels['plan.includes']}
         </Typography>
-        <Typography paragraph variant="body" sx={{ mt: '2%' }}>
+        <Typography paragraph variant="body" sx={{ mt: '1%' }}>
           {renderPlanDescription()}
+          {!!promotionInfo && renderCurrentPromotionInfo(promotionInfo)}
         </Typography>
       </>),
   };
