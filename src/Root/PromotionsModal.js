@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import AnimatedModal from '../Shared/Components/AnimatedModal';
 import { flexColumn, flexRow } from '../Shared/Constants/Styles';
+import { indexLabels } from '../StaticData/Index';
 
 const renderFooter = (promotions) => (
   <Box {...flexColumn}>
@@ -34,11 +36,17 @@ const renderBody = (promotions) => (
 );
 
 export default function PromotionsModal({ promotions = [], isOpen = false, onClose = () => {} }) {
+  const title = (
+    <>
+      <CampaignIcon />
+      { indexLabels['promotions.title'] }
+    </>
+  );
   return (
     <AnimatedModal
       open={isOpen}
       onClose={onClose}
-      title="¡Mirá nuestras promociones!"
+      title={title}
       footer={renderFooter(promotions)}
     >
       { renderBody(promotions) }

@@ -1,18 +1,40 @@
 import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import InfoIcon from '@mui/icons-material/Info';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import Box from '@mui/material/Box';
 import { userProfileLabels } from '../../StaticData/UserProfile';
 import { sharedLabels } from '../../StaticData/Shared';
 import { PLAN_TYPE_PAID, PLAN_TYPE_FREE, ARGENTINA_LOCALE } from '../Constants/System';
 import { getLocaleCurrencySymbol } from './PricesHelper';
-import { flexRow } from '../Constants/Styles';
+import { flexColumn, flexRow } from '../Constants/Styles';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
 
 function renderCurrentPromotionInfo(promotionInfo) {
+  const hasExpirationDate = !!promotionInfo.expirationDate;
+
   return (
-    <Box {...flexRow} textAlign="left" justifyContent="space-between">
-      <Typography variant="h5">¡Tenés aplicada esta promoción!</Typography>
-      <span dangerouslySetInnerHTML={{ __html: promotionInfo.text }} />
+    <Box {...flexColumn} textAlign="left" justifyContent="space-between">
+      <Typography variant="h5">
+        ¡Tenés aplicada esta promoción!
+        {hasExpirationDate && (
+          <>
+            {' '}
+            (Válida hasta el
+            {' '}
+            {switchDateFormat({
+              date: promotionInfo.expirationDate,
+              inputFormat: FORMAT_YMD,
+              outputFormat: FORMAT_DMY,
+            })}
+            )
+          </>
+        )}
+      </Typography>
+      <Box {...flexRow} textAlign="left" sx={{ mt: '1%' }}>
+        <LocalOfferIcon sx={{ mr: '1px' }} />
+        <span dangerouslySetInnerHTML={{ __html: promotionInfo.text }} />
+      </Box>
     </Box>
   );
 }
