@@ -138,5 +138,6 @@
     "hasWhatsapp": "Es un número con whatsapp",
     "uploadingImage": "Subiendo imagen",
     "ourPromotions": "Promociones que ofrecemos",
-    "termsAndConditionsApply": "(aplican términos y condiciones)"
+    "termsAndConditionsApply": "(aplican términos y condiciones)",
+    "valid.until": "Válida hasta el"
 }

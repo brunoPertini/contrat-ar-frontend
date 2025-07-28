@@ -21,7 +21,7 @@ export default function usePaymentDialogModal(
   useEffect(() => {
     const { paymentId } = paymentParams;
 
-    const status = storedPaymentState ?? { paymentParams };
+    const { status } = storedPaymentState ?? paymentParams;
 
     const wasPaymentOk = status === PAYMENT_STATE.SUCCESS;
 

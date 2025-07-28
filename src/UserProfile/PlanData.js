@@ -8,6 +8,7 @@ import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../StaticData/Shared';
 import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
 import LocationMap from '../Shared/Components/LocationMap';
@@ -15,7 +16,7 @@ import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
 import { userProfileLabels } from '../StaticData/UserProfile';
 import { planShape, suscriptionShape } from '../Shared/PropTypes/Proveedor';
-import { getPlanDescription } from '../Shared/Helpers/PlanesHelper';
+import { getPlanDescription, renderPromotionsInfo } from '../Shared/Helpers/PlanesHelper';
 import StaticAlert from '../Shared/Components/StaticAlert';
 import Disclaimer from '../Shared/Components/Disclaimer';
 import { flexColumn } from '../Shared/Constants/Styles';
@@ -27,7 +28,7 @@ import InformativeAlert from '../Shared/Components/Alert';
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
   actualPlan, confirmPlanChange, planRequestChangeExists,
-  suscripcionData, cancelPlanChange, paySubscription,
+  suscripcionData, cancelPlanChange, paySubscription, getSitePromotions,
 }) {
   const { plansNames } = sharedLabels;
 
@@ -55,6 +56,10 @@ function PlanData({
     label: '',
   });
 
+  const [promotionsInfo, setPromotionsInfo] = useState([]);
+
+  const isChangingPlan = useMemo(() => actualPlan && plan && plan !== actualPlan, [plan, actualPlan]);
+
   useEffect(() => () => {
     changeUserInfo(actualPlan);
   }, []);
@@ -62,6 +67,17 @@ function PlanData({
   useEffect(() => {
     setHasPendingRequest(planRequestChangeExists);
   }, [planRequestChangeExists]);
+
+  const handleSetPromotionsInfo = useCallback(async () => {
+    const newPromotionsInfo = await getSitePromotions();
+    setPromotionsInfo([...newPromotionsInfo]);
+  }, [getSitePromotions]);
+
+  useEffect(() => {
+    if (isChangingPlan && plan === PLAN_TYPE_PAID) {
+      handleSetPromotionsInfo();
+    }
+  }, [isChangingPlan]);
 
   const openCancelPlanDialogModal = useCallback(() => {
     setModalContent((previous) => ({
@@ -190,7 +206,7 @@ function PlanData({
         label={subscriptionAlertLabel}
       />
       {
-        actualPlan === PLAN_TYPE_PAID && (
+        actualPlan === PLAN_TYPE_PAID && !!expirationDate && (
           <StaticAlert
             styles={{
               width: !isLayourNearTabletSize ? '15%' : '80%',
@@ -267,6 +283,22 @@ function PlanData({
           />
         )
       }
+      {
+        isChangingPlan && plan === PLAN_TYPE_PAID && (
+          <Box {...flexColumn}>
+            <Typography variant="h5">
+              { sharedLabels.ourPromotions }
+              {' '}
+              { ' ' }
+              { sharedLabels.termsAndConditionsApply}
+              :
+            </Typography>
+            <Box marginTop="15px" gap="10px">
+              { renderPromotionsInfo(promotionsInfo) }
+            </Box>
+          </Box>
+        )
+      }
     </Layout>
   );
 }
@@ -285,6 +317,7 @@ PlanData.propTypes = {
   confirmPlanChange: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
   paySubscription: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   planRequestChangeExists: PropTypes.bool.isRequired,
   actualPlan: PropTypes.oneOf(['FREE', 'PAID']).isRequired,

@@ -217,6 +217,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     }
   };
 
+  const getSitePromotions = () => {
+    const client = HttpClientFactory.createUserHttpClient();
+    return client.getPromotions();
+  };
+
   // Coming back from payment page or pay subscription service
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
@@ -276,6 +281,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         paySubscription={paySubscription}
         cancelPlanChange={cancelPlanChange}
         changeUserActive={changeUserActive}
+        getSitePromotions={getSitePromotions}
       />
     </NavigationContextProvider>
   );

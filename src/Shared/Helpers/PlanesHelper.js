@@ -14,13 +14,19 @@ function renderCurrentPromotionInfo(promotionInfo) {
   const hasExpirationDate = !!promotionInfo.expirationDate;
 
   return (
-    <Box {...flexColumn} textAlign="left" justifyContent="space-between">
+    <Box
+      {...flexColumn}
+      textAlign="left"
+      justifyContent="space-between"
+      marginTop="20px"
+    >
       <Typography variant="h5">
-        ¡Tenés aplicada esta promoción!
+        { userProfileLabels['promotion.applied.title']}
         {hasExpirationDate && (
           <>
             {' '}
-            (Válida hasta el
+            (
+            { sharedLabels['valid.until'] }
             {' '}
             {switchDateFormat({
               date: promotionInfo.expirationDate,

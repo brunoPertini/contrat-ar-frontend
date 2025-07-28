@@ -36,7 +36,7 @@ function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
   isAdmin, getUserInfo, getPaymentsOfUser, changeUserActive,
-  paySubscription, cancelPlanChange,
+  paySubscription, cancelPlanChange, getSitePromotions,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
 
@@ -275,9 +275,10 @@ function UserProfile({
         confirmPlanChange={handlePlanChangeConfirmation}
         planRequestChangeExists={!!changeRequestsMade.suscripcion}
         cancelPlanChange={handleCancelPlanChange}
+        getSitePromotions={getSitePromotions}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
-        styles={{ height: '100vh', pl: '1%', pr: '1%' }}
+        styles={{ pl: '1%', pr: '1%' }}
         paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
@@ -361,6 +362,7 @@ UserProfile.propTypes = {
   paySubscription: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
   changeUserActive: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

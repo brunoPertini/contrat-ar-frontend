@@ -34,5 +34,6 @@
         "currency": "Moneda de pago",
         "state": "Estado del pago",
          "paymentProviderName": "Proveedor de pago"
-    }
+    },
+    "promotion.applied.title": "¡Tenés aplicada esta promoción!"
 }
