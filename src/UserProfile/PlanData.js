@@ -106,6 +106,8 @@ function PlanData({
     setIsLoading(false);
   };
 
+  const currentPlanInfo = useMemo(() => planesInfo.find((planInfo) => planInfo.type === plan), [planesInfo, plan]);
+
   const planChangeHandlers = {
     [PLAN_TYPE_FREE]: () => {
       setIsLoading(true);
@@ -117,14 +119,21 @@ function PlanData({
         .finally(cancelIsLoading);
     },
 
-    [PLAN_TYPE_PAID]: () => {
+    [PLAN_TYPE_PAID]: async () => {
       setIsLoading(true);
       setShowPlanDisclaimer(false);
-      confirmPlanChange(plan).then((subscriptionData) => {
+      let subscriptionData = null;
+      try {
+        subscriptionData = await confirmPlanChange(plan);
+      } catch (e) {
+        cancelIsLoading();
+      }
+
+      if (currentPlanInfo.priceWithDiscount !== 0) {
         paySubscription(subscriptionData.id, TABS_NAMES.PLAN).then((checkoutUrl) => {
           window.location.href = checkoutUrl;
         }).catch(cancelIsLoading);
-      }).catch(cancelIsLoading);
+      }
     },
 
   };
@@ -161,6 +170,22 @@ function PlanData({
   }, [cancelPlanChange]);
 
   const promotionInfo = useMemo(() => (!isEmpty(suscripcionData.promotionInfo) ? suscripcionData.promotionInfo : null), [suscripcionData]);
+
+  const saveChangesButtonLabel = useMemo(() => {
+    if (plan === PLAN_TYPE_FREE) {
+      return sharedLabels.saveChanges;
+    }
+
+    const hasApplicablePromotion = !!(currentPlanInfo.applicablePromotion);
+
+    const isNotFullDiscountPromotion = (hasApplicablePromotion && currentPlanInfo.priceWithDiscount);
+
+    if (!hasApplicablePromotion || isNotFullDiscountPromotion) {
+      return userProfileLabels['pay.amount'].replace('{amount}', currentPlanInfo.priceWithDiscount);
+    }
+
+    return userProfileLabels['plan.change.save.withPromotion'];
+  }, [currentPlanInfo]);
 
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
     subscriptionAlertSeverity: valid ? 'success' : 'error',
@@ -250,7 +275,7 @@ function PlanData({
               disabled={actualPlan === plan}
               onClick={() => planChangeHandlers[plan]()}
             >
-              { sharedLabels.saveChanges }
+              { saveChangesButtonLabel }
             </Button>
           </Box>
         )
