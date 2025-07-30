@@ -218,8 +218,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   };
 
   const getSitePromotions = () => {
-    const client = HttpClientFactory.createUserHttpClient();
-    return client.getPromotions();
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    return client.getUserPromotions(userInfo.id);
   };
 
   // Coming back from payment page or pay subscription service

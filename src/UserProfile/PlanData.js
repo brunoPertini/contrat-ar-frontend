@@ -134,6 +134,8 @@ function PlanData({
           window.location.href = checkoutUrl;
         }).catch(cancelIsLoading);
       }
+
+      cancelIsLoading();
     },
 
   };

@@ -11,5 +11,6 @@
     "paySubscription": "/pay/signup/{subscriptionId}",
     "paymentById": "/pay/{paymentId}",
     "cancelPlanChange": "/plan/{changeRequestId}/change",
-    "sendProveedorMessage": "/mail/proveedor"
+    "sendProveedorMessage": "/mail/proveedor",
+    "proveedorSuscripcionBaseUrl": "/proveedor/{proveedorId}/suscripcion"
 }

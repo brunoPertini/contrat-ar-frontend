@@ -14,5 +14,6 @@
     "resetPasswordEmail": "/mail/password/forgot",
     "checkForgotPasswordToken": "/security/token",
     "sendContactFormEmail": "/mail/contact",
-    "promotions": "/promotion"
+    "promotions": "/promotion",
+    "promotionsByUser": "/promotion/{promotionId}"
 }

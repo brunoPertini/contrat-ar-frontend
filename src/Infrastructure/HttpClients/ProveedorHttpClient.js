@@ -1,5 +1,5 @@
 import pickBy from 'lodash/pickBy';
-import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
+import { proveedoresRoutes, usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
 import { HEADERS_NAMES, HEADERS_VALUES } from '../Constants';
 import { HttpClientFactory } from '../HttpClientFactory';
@@ -139,5 +139,11 @@ export class ProveedorHttpClient extends HttpClient {
     const url = proveedoresRoutes.cancelPlanChange.replace('{changeRequestId}', changeRequestId);
 
     return this.delete(url);
+  }
+
+  getUserPromotions(userId) {
+    const url = usersRoutes.promotionsByUser.replace('{promotionId}', userId);
+
+    return this.get(url);
   }
 }
