@@ -100,20 +100,6 @@ export class ProveedorHttpClient extends HttpClient {
     return userHttpClient.updateUserCommonInfo(userId, info, PROVEEDOR);
   }
 
-  /**
-   *
-   * @param {String | Number} proveedorId
-   * @param {Number} planId new planId
-   * * @returns {Promise<void> | Promise<Error>}
-   */
-  updatePlan(proveedorId, planId) {
-    const url = proveedoresRoutes.changePlan
-      .replace('{proveedorId}', proveedorId)
-      .replace('{planId}', planId);
-
-    return this.post(url);
-  }
-
   getAllPlanes() {
     return this.get(proveedoresRoutes.planBaseUrl, {});
   }

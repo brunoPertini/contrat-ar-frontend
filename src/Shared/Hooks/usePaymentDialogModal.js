@@ -13,6 +13,7 @@ export default function usePaymentDialogModal(
   },
   paySubscriptionServiceResult,
   storedPaymentState = null,
+  payedWithPromotionFull = false,
 ) {
   const [modalContent, setModalContent] = useState({ title: '', text: '', paperStyles: {} });
 
@@ -39,7 +40,7 @@ export default function usePaymentDialogModal(
       if (paySubscriptionServiceResult === false) {
         return paymentLabels['payment.unknownError'];
       }
-      if (wasPaymentOk) {
+      if (wasPaymentOk || payedWithPromotionFull) {
         return modalLabels.success;
       }
 
@@ -61,7 +62,7 @@ export default function usePaymentDialogModal(
       text: <StaticAlert label={alertLabel} {...alertProps} />,
       paperStyles,
     });
-  }, [isOpen]);
+  }, [isOpen, payedWithPromotionFull]);
 
   if (!isOpen) {
     return null;

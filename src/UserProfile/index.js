@@ -209,10 +209,10 @@ function UserProfile({
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
-  const handlePlanChangeConfirmation = (newPlanType) => {
+  const handlePlanChangeConfirmation = (newPlanType, promotionId) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId)
+    return confirmPlanChange(userInfo.id, planId, promotionId)
       .then((subscriptionData) => {
         checkAttributeRequestChange([userInfo.id], 'suscripcion');
         return Promise.resolve(subscriptionData);

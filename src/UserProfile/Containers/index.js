@@ -33,6 +33,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   // eslint-disable-next-line no-unused-vars
   const [temporalToken, setTemporalToken] = useState();
 
+  const [changedPlanWithPromotionFull, setChangedPlanWithPromotionFull] = useState(false);
+
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -41,6 +43,10 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
 
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
+
+  const openPaymentDialog = () => {
+    setOpenPaymentDialogModal(true);
+  };
 
   const getUserInfo = () => {
     const client = HttpClientFactory.createUserHttpClient(null, {
@@ -51,13 +57,18 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getUserInfo(userInfo.id).then((info) => dispatch(setUserInfo(info)));
   };
 
-  const confirmPlanChange = (proveedorId, planId) => {
+  const confirmPlanChange = (proveedorId, planId, promotionId) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token: userInfo.token,
       handleLogout,
     });
 
-    return client.updatePlan(proveedorId, planId);
+    return client.createSubscription(proveedorId, planId, promotionId).then((suscripcionData) => {
+      if (promotionId) {
+        setChangedPlanWithPromotionFull(true);
+      }
+      return Promise.resolve(suscripcionData);
+    }).catch((error) => Promise.reject(error));
   };
 
   const editClienteInfo = (info) => {
@@ -165,13 +176,10 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     () => {
       setOpenPaymentDialogModal(false);
       setPaySubscriptionServiceResult(null);
+      setChangedPlanWithPromotionFull(false);
     },
     [setOpenPaymentDialogModal],
   );
-
-  const openPaymentDialog = () => {
-    setOpenPaymentDialogModal(true);
-  };
 
   const checkPaymentExistence = () => {
     setTemporalToken((currentToken) => {
@@ -232,10 +240,23 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   }, [paymentParams, paySubscriptionServiceResult]);
 
   useEffect(() => {
+    if (changedPlanWithPromotionFull) {
+      openPaymentDialog();
+    }
+  }, [changedPlanWithPromotionFull]);
+
+  useEffect(() => {
     restoreTokenInMemory();
   }, []);
 
   const resolvedPaymentLabels = useMemo(() => {
+    if (changedPlanWithPromotionFull) {
+      return {
+        success: 'Tu plan fue cambiado correctamente',
+        error: 'No fue posible cambiar tu plan. Por favor, intentalo de nuevo mas tarde',
+      };
+    }
+
     if (returnTab === TABS_NAMES.MY_PAYMENTS) {
       return {
         success: paymentLabels['payment.done'],
@@ -255,13 +276,14 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     }
 
     return null;
-  }, [paymentParams]);
+  }, [paymentParams, changedPlanWithPromotionFull]);
 
   const paymentDialogModal = usePaymentDialogModal(
     openPaymentDialogModal,
     closePaymentDialogModal,
     resolvedPaymentLabels,
     paySubscriptionServiceResult,
+    changedPlanWithPromotionFull,
   );
 
   return (

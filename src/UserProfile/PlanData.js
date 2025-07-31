@@ -124,7 +124,7 @@ function PlanData({
       setShowPlanDisclaimer(false);
       let subscriptionData = null;
       try {
-        subscriptionData = await confirmPlanChange(plan);
+        subscriptionData = await confirmPlanChange(plan, currentPlanInfo.applicablePromotion);
       } catch (e) {
         cancelIsLoading();
       }
