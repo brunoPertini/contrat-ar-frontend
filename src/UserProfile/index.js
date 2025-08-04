@@ -215,6 +215,7 @@ function UserProfile({
     return confirmPlanChange(userInfo.id, planId, promotionId)
       .then((subscriptionData) => {
         checkAttributeRequestChange([userInfo.id], 'suscripcion');
+        setCurrentUserPlanData(newPlanType);
         return Promise.resolve(subscriptionData);
       })
       .catch(() => {

@@ -4,6 +4,7 @@ import StaticAlert from '../Components/StaticAlert';
 import usePaymentQueryParams from './usePaymentQueryParams';
 import { PAYMENT_STATE } from '../Constants/System';
 import { paymentLabels } from '../../StaticData/Payment';
+import { userProfileLabels } from '../../StaticData/UserProfile';
 
 export default function usePaymentDialogModal(
   isOpen,
@@ -28,9 +29,9 @@ export default function usePaymentDialogModal(
 
     const wasPaymentProcessed = status === PAYMENT_STATE.PROCESSED;
 
-    const alertProps = wasPaymentOk || wasPaymentProcessed ? { severity: 'success' } : { severity: 'error' };
+    const alertProps = wasPaymentOk || wasPaymentProcessed || payedWithPromotionFull ? { severity: 'success' } : { severity: 'error' };
 
-    const paperStyles = { backgroundColor: wasPaymentOk || wasPaymentProcessed ? '#2e7d32' : '#d32f2f', color: '#fff' };
+    const paperStyles = { backgroundColor: wasPaymentOk || wasPaymentProcessed || payedWithPromotionFull ? '#2e7d32' : '#d32f2f', color: '#fff' };
 
     function defineAlertLabel() {
       if (!isOpen) {
@@ -55,10 +56,18 @@ export default function usePaymentDialogModal(
       return modalLabels.unknown;
     }
 
+    function defineAlertTitle() {
+      if (payedWithPromotionFull) {
+        return userProfileLabels['plan.change.title'];
+      }
+
+      return !paymentId ? paymentLabels.paymentError : paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId);
+    }
+
     const alertLabel = defineAlertLabel();
 
     setModalContent({
-      title: !paymentId ? paymentLabels.paymentError : paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId),
+      title: defineAlertTitle(),
       text: <StaticAlert label={alertLabel} {...alertProps} />,
       paperStyles,
     });

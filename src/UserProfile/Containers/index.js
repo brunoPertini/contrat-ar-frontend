@@ -67,6 +67,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       if (promotionId) {
         setChangedPlanWithPromotionFull(true);
       }
+      getUserInfo();
       return Promise.resolve(suscripcionData);
     }).catch((error) => Promise.reject(error));
   };
@@ -283,6 +284,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     closePaymentDialogModal,
     resolvedPaymentLabels,
     paySubscriptionServiceResult,
+    null,
     changedPlanWithPromotionFull,
   );
 

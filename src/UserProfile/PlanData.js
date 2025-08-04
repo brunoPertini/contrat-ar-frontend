@@ -24,6 +24,7 @@ import Layout from '../Shared/Components/Layout';
 import DialogModal from '../Shared/Components/DialogModal';
 import { TABS_NAMES } from './Constants';
 import InformativeAlert from '../Shared/Components/Alert';
+import { getLocaleCurrencySymbol } from '../Shared/Helpers/PricesHelper';
 
 function PlanData({
   plan, styles, userLocation, changeUserInfo, planesInfo,
@@ -34,7 +35,6 @@ function PlanData({
 
   const { validity: { valid, expirationDate } } = suscripcionData;
 
-  const [showPlanDisclaimer, setShowPlanDisclaimer] = useState(false);
   const [hasPendingRequest, setHasPendingRequest] = useState(planRequestChangeExists);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -93,25 +93,22 @@ function PlanData({
     open: false,
   })), [setModalContent]);
 
-  const onPlanChange = (newPlan) => {
-    const newPlanKey = Object.keys(plansNames)
-      .find((key) => plansNames[key] === newPlan);
-
-    setShowPlanDisclaimer(true);
-
-    changeUserInfo(newPlanKey);
-  };
-
   const cancelIsLoading = () => {
     setIsLoading(false);
   };
 
   const currentPlanInfo = useMemo(() => planesInfo.find((planInfo) => planInfo.type === plan), [planesInfo, plan]);
 
+  const onPlanChange = (newPlan) => {
+    const newPlanKey = Object.keys(plansNames)
+      .find((key) => plansNames[key] === newPlan);
+
+    changeUserInfo(newPlanKey);
+  };
+
   const planChangeHandlers = {
     [PLAN_TYPE_FREE]: () => {
       setIsLoading(true);
-      setShowPlanDisclaimer(false);
       confirmPlanChange(plan).then(() => {
         setHasPendingRequest(true);
         return Promise.resolve();
@@ -121,7 +118,6 @@ function PlanData({
 
     [PLAN_TYPE_PAID]: async () => {
       setIsLoading(true);
-      setShowPlanDisclaimer(false);
       let subscriptionData = null;
       try {
         subscriptionData = await confirmPlanChange(plan, currentPlanInfo.applicablePromotion);
@@ -173,21 +169,30 @@ function PlanData({
 
   const promotionInfo = useMemo(() => (!isEmpty(suscripcionData.promotionInfo) ? suscripcionData.promotionInfo : null), [suscripcionData]);
 
+  const showPromotionsInfo = useMemo(
+    () => isChangingPlan && plan === PLAN_TYPE_PAID && !!promotionsInfo?.length,
+    [isChangingPlan, plan, promotionsInfo],
+  );
+
   const saveChangesButtonLabel = useMemo(() => {
     if (plan === PLAN_TYPE_FREE) {
       return sharedLabels.saveChanges;
     }
 
-    const hasApplicablePromotion = !!(currentPlanInfo.applicablePromotion);
+    const hasApplicablePromotion = !!(currentPlanInfo.applicablePromotion) && showPromotionsInfo;
 
     const isNotFullDiscountPromotion = (hasApplicablePromotion && currentPlanInfo.priceWithDiscount);
 
-    if (!hasApplicablePromotion || isNotFullDiscountPromotion) {
-      return userProfileLabels['pay.amount'].replace('{amount}', currentPlanInfo.priceWithDiscount);
+    if (!hasApplicablePromotion) {
+      return userProfileLabels['pay.amount'].replace('{amount}', getLocaleCurrencySymbol('es-AR') + currentPlanInfo.price);
+    }
+
+    if (isNotFullDiscountPromotion) {
+      return userProfileLabels['pay.amount'].replace('{amount}', getLocaleCurrencySymbol('es-AR') + currentPlanInfo.priceWithDiscount);
     }
 
     return userProfileLabels['plan.change.save.withPromotion'];
-  }, [currentPlanInfo]);
+  }, [currentPlanInfo, showPromotionsInfo]);
 
   const { subscriptionAlertSeverity, subscriptionAlertLabel } = useMemo(() => ({
     subscriptionAlertSeverity: valid ? 'success' : 'error',
@@ -195,6 +200,24 @@ function PlanData({
       ? userProfileLabels['plan.subscription.activeFrom'].replace('{createdAt}', suscripcionData.createdDate)
       : userProfileLabels['plan.subscription.invalid'],
   }), [suscripcionData]);
+
+  const disclaimerLabel = useMemo(() => {
+    if (!isChangingPlan) {
+      return null;
+    }
+
+    if (plan === PLAN_TYPE_FREE) {
+      return <Disclaimer text={userProfileLabels['plan.change.free.disclaimer']} />;
+    }
+
+    const shouldShowPaidPlanDisclaimer = (currentPlanInfo && (!currentPlanInfo.applicablePromotion || !currentPlanInfo.priceWithDiscount));
+
+    if (shouldShowPaidPlanDisclaimer) {
+      return <Disclaimer text={userProfileLabels['plan.change.paid.disclaimer']} />;
+    }
+
+    return null;
+  }, [isChangingPlan, currentPlanInfo]);
 
   const isLayourNearTabletSize = useMediaQuery('(max-width: 700px');
 
@@ -257,14 +280,10 @@ function PlanData({
         disabled={planRequestChangeExists || hasPendingRequest}
       />
       {
-        showPlanDisclaimer && (
-          <Disclaimer text={plan === PLAN_TYPE_PAID ? userProfileLabels['plan.change.paid.disclaimer']
-            : userProfileLabels['plan.change.free.disclaimer']}
-          />
-        )
+        disclaimerLabel
       }
       {
-        !hasPendingRequest && (
+        !hasPendingRequest && isChangingPlan && (
           <Box
             display="flex"
             flexDirection="column"
@@ -274,7 +293,6 @@ function PlanData({
               variant="contained"
               startIcon={<SaveIcon />}
               sx={{ mt: '5%', mb: !isLayourNearTabletSize ? 0 : '10%' }}
-              disabled={actualPlan === plan}
               onClick={() => planChangeHandlers[plan]()}
             >
               { saveChangesButtonLabel }
@@ -311,7 +329,7 @@ function PlanData({
         )
       }
       {
-        isChangingPlan && plan === PLAN_TYPE_PAID && (
+        showPromotionsInfo && (
           <Box {...flexColumn}>
             <Typography variant="h5">
               { sharedLabels.ourPromotions }
