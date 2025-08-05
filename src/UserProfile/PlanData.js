@@ -10,7 +10,7 @@ import {
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../StaticData/Shared';
-import { PLAN_TYPE_FREE, PLAN_TYPE_PAID } from '../Shared/Constants/System';
+import { PLAN_TYPE_FREE, PLAN_TYPE_PAID, PROMOTION_TYPE } from '../Shared/Constants/System';
 import LocationMap from '../Shared/Components/LocationMap';
 import { parseLocationForMap } from '../Shared/Helpers/UtilsHelper';
 import SelectComponent from '../Shared/Components/Select';
@@ -118,22 +118,26 @@ function PlanData({
 
     [PLAN_TYPE_PAID]: async () => {
       setIsLoading(true);
+      // Assuming first element in promotionsInfo is the applicable one
+      const promotionMatches = !!promotionsInfo.length && promotionsInfo[0].id === currentPlanInfo.applicablePromotion;
+
       let subscriptionData = null;
       try {
-        subscriptionData = await confirmPlanChange(plan, currentPlanInfo.applicablePromotion);
+        const promotionId = promotionMatches ? currentPlanInfo.applicablePromotion : null;
+
+        subscriptionData = await confirmPlanChange(plan, promotionId);
       } catch (e) {
         cancelIsLoading();
       }
 
-      if (currentPlanInfo.priceWithDiscount !== 0) {
+      if (!promotionMatches || currentPlanInfo.priceWithDiscount !== 0) {
         paySubscription(subscriptionData.id, TABS_NAMES.PLAN).then((checkoutUrl) => {
           window.location.href = checkoutUrl;
         }).catch(cancelIsLoading);
+      } else {
+        cancelIsLoading();
       }
-
-      cancelIsLoading();
     },
-
   };
 
   const cleanInformativeAlertInfo = useCallback(() => {
@@ -226,6 +230,11 @@ function PlanData({
     [hasPendingRequest, planRequestChangeExists],
   );
 
+  const isSelectDisabled = useMemo(() => {
+    const isFullDiscountForeverPromotion = promotionInfo?.promotionType === PROMOTION_TYPE.FULL_DISCOUNT_FOREVER;
+    return planChangedPending || hasPendingRequest || isFullDiscountForeverPromotion;
+  }, [planChangedPending, hasPendingRequest, promotionInfo]);
+
   const cancelPlanLink = planChangedPending
     ? (
       <Link onClick={openCancelPlanDialogModal} sx={{ mt: '2%', cursor: 'pointer' }}>
@@ -277,7 +286,7 @@ function PlanData({
         handleOnChange={onPlanChange}
         label={userProfileLabels['plan.label']}
         renderValue={(value) => (value === plansNames[actualPlan] ? `${value} (Tu plan actual)` : value)}
-        disabled={planRequestChangeExists || hasPendingRequest}
+        disabled={isSelectDisabled}
       />
       {
         disclaimerLabel

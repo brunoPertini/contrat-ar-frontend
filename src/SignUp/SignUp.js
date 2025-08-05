@@ -190,7 +190,7 @@ export default function UserSignUp({
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
 
-        if (planLabel === PLAN_TYPE_PAID && priceWithDiscount) {
+        if (planLabel === PLAN_TYPE_PAID && (!applicablePromotion || priceWithDiscount)) {
           setIsLoading(true);
           saveSignupDataInLocalStorage();
           handlePaySubscription(

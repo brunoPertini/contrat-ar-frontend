@@ -16,6 +16,7 @@ import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 import { paymentLabels } from '../../StaticData/Payment';
 import { TABS_NAMES } from '../Constants';
+import { useSearchParams } from 'react-router-dom';
 
 const stateSelector = (state) => state;
 
@@ -35,11 +36,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
 
   const [changedPlanWithPromotionFull, setChangedPlanWithPromotionFull] = useState(false);
 
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
-  const queryParams = new URLSearchParams(window.location.search);
-
-  const returnTab = queryParams.get('returnTab');
+  const returnTab = urlSearchParams.get('returnTab');
 
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
@@ -178,8 +179,14 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
       setOpenPaymentDialogModal(false);
       setPaySubscriptionServiceResult(null);
       setChangedPlanWithPromotionFull(false);
+      setUrlSearchParams((prevParams) => {
+        const newParams = new URLSearchParams(prevParams);
+        newParams.delete('paymentId');
+        newParams.delete('status');
+        return newParams;
+      });
     },
-    [setOpenPaymentDialogModal],
+    [setOpenPaymentDialogModal, setUrlSearchParams],
   );
 
   const checkPaymentExistence = () => {

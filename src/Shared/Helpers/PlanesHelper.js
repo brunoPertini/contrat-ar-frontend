@@ -104,7 +104,7 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer, pro
 }
 
 export function renderPlanPrice(plan) {
-  if (plan.type === PLAN_TYPE_FREE || plan.price === plan.priceWithDiscount) {
+  if (plan.type === PLAN_TYPE_FREE || !plan.applicablePromotion) {
     return (
       <Typography variant="h6" color="primary" sx={{ my: 2 }}>
         {sharedLabels.finalMonthlyPrice}

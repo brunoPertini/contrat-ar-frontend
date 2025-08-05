@@ -114,3 +114,7 @@ export const ACCOUNT_STATUS = {
   DISABLED: 'disabled',
   UNVERIFIED: 'unverified',
 };
+
+export const PROMOTION_TYPE = {
+  FULL_DISCOUNT_FOREVER: 'FULL_DISCOUNT_FOREVER',
+};

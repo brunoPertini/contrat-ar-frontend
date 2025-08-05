@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Groups2Icon from '@mui/icons-material/Groups2';
 import BuildIcon from '@mui/icons-material/Build';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../../Header';
 import { ExpandableCard, withRouter } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
@@ -52,7 +53,10 @@ function SignUpContainer({ router }) {
   const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
   const [storedPaymentState, setStoredPaymentState] = useState();
 
+  const [searchParams] = useSearchParams();
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
+
+  const preselectedPlan = searchParams.get('plan');
 
   const paymentModalLabels = useMemo(() => ({
     success: paymentLabels['signup.confirmation.success'],
@@ -117,10 +121,7 @@ function SignUpContainer({ router }) {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
     return client.paySubscription(id, userId)
-      .then((checkoutUrl) => {
-        setPaySubscriptionServiceResult(true);
-        return checkoutUrl;
-      })
+      .then((checkoutUrl) => checkoutUrl)
       .catch((error) => {
         setPaySubscriptionServiceResult(false);
         return Promise.reject(error);
@@ -142,23 +143,25 @@ function SignUpContainer({ router }) {
 
   const signupTypeColumns = (
     <>
-      <Card
-        sx={{
-          ...cardStyles,
-        }}
-        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
-      >
-        <CardHeader
-          title={signUpLabels['signup.want.to.client']}
-          avatar={<Groups2Icon sx={{ ...iconStyles }} />}
-          titleTypographyProps={{ ...titleStyles }}
-        />
-        <CardContent>
-          <Typography variant="body1">
-            { signUpLabels['client.content.text']}
-          </Typography>
-        </CardContent>
-      </Card>
+      {!preselectedPlan ? (
+        <Card
+          sx={{
+            ...cardStyles,
+          }}
+          onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
+        >
+          <CardHeader
+            title={signUpLabels['signup.want.to.client']}
+            avatar={<Groups2Icon sx={{ ...iconStyles }} />}
+            titleTypographyProps={{ ...titleStyles }}
+          />
+          <CardContent>
+            <Typography variant="body1">
+              { signUpLabels['client.content.text']}
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : null}
       <Card
         sx={{ ...cardStyles }}
         onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
@@ -260,6 +263,7 @@ function SignUpContainer({ router }) {
       getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
         if (info.id === +paymentParams.paymentId) {
           setStoredPaymentState(info.state);
+          setPaySubscriptionServiceResult(true);
           openPaymentDialog();
         }
       }).catch(() => setOpenPaymentDialogModal(false));
@@ -279,13 +283,18 @@ function SignUpContainer({ router }) {
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
       checkPaymentExistence();
-    } else if (paySubscriptionServiceResult === false) {
-      openPaymentDialog();
     }
-  }, [paymentParams, paySubscriptionServiceResult]);
+  }, [paymentParams]);
 
   // TODO: check if have to pass service result flag
-  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels, null, storedPaymentState);
+  const paymentDialogModal = usePaymentDialogModal(
+    openPaymentDialogModal,
+    closePaymentDialogModal,
+    paymentModalLabels,
+    paySubscriptionServiceResult,
+    storedPaymentState,
+    null,
+  );
 
   return (
     <>

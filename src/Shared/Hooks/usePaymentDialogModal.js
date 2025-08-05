@@ -21,9 +21,9 @@ export default function usePaymentDialogModal(
   const paymentParams = usePaymentQueryParams();
 
   useEffect(() => {
-    const { paymentId } = paymentParams;
+    const { paymentId, status: paymentParamsStatus } = paymentParams;
 
-    const { status } = storedPaymentState ?? paymentParams;
+    const status = paymentParamsStatus || storedPaymentState;
 
     const wasPaymentOk = status === PAYMENT_STATE.SUCCESS;
 
@@ -71,7 +71,7 @@ export default function usePaymentDialogModal(
       text: <StaticAlert label={alertLabel} {...alertProps} />,
       paperStyles,
     });
-  }, [isOpen, payedWithPromotionFull]);
+  }, [isOpen, payedWithPromotionFull, paySubscriptionServiceResult, storedPaymentState]);
 
   if (!isOpen) {
     return null;
