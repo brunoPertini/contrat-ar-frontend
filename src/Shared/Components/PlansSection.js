@@ -78,7 +78,7 @@ function PlansSection({ plans, containerStyles }) {
               }
             <Box {...flexColumn}>
               <Button variant="contained" color="primary" fullWidth href={plan.type === PLAN_TYPE_FREE ? '/signup' : '/signup?plan=PAID'}>
-                { plan.type === PLAN_TYPE_FREE ? indexLabels.suscribe : indexLabels.tryForFree }
+                { !plan.applicablePromotion ? indexLabels.suscribe : indexLabels.tryForFree }
               </Button>
             </Box>
 

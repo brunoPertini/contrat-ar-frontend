@@ -209,6 +209,8 @@ function UserProfile({
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
+  const handlePaySubscription = (subscriptionId, tabName) => paySubscription(subscriptionId, tabName, userInfo.suscripcion.promotionInfo.promotionId);
+
   const handlePlanChangeConfirmation = (newPlanType, promotionId) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
@@ -290,7 +292,7 @@ function UserProfile({
         canPaySubscription={userInfo.suscripcion.validity.canBePayed && !changeRequestsMade.suscripcion}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
         getPayments={getPaymentsOfUser}
-        paySubscription={paySubscription}
+        paySubscription={handlePaySubscription}
       />
     ) : null), [userInfo, changeRequestsMade]),
   };

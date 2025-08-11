@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import UserProfile from '../index';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { withRouter } from '../../Shared/Components';
@@ -16,7 +17,6 @@ import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 import { paymentLabels } from '../../StaticData/Payment';
 import { TABS_NAMES } from '../Constants';
-import { useSearchParams } from 'react-router-dom';
 
 const stateSelector = (state) => state;
 
@@ -152,11 +152,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getPaymentsOfUser(userInfo.id);
   };
 
-  const paySubscription = (subscriptionId, sourceTab) => {
+  const paySubscription = (subscriptionId, sourceTab, promotionId) => {
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN, userInfo.token);
     const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
 
-    return client.paySubscriptionFromUserProfile(subscriptionId, userInfo.id, sourceTab).then((checkoutUrl) => {
+    return client.paySubscriptionFromUserProfile(subscriptionId, userInfo.id, sourceTab, promotionId).then((checkoutUrl) => {
       setPaySubscriptionServiceResult(true);
       return checkoutUrl;
     })
