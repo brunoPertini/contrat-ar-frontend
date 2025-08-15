@@ -49,11 +49,13 @@ export default class ClienteHttpClient extends HttpClient {
   sendProveedorMessage({
     toAddress, clienteMail, vendibleName, message,
   }) {
-    return this.post(proveedoresRoutes.sendProveedorMessage, null, {
+    this.post(proveedoresRoutes.sendProveedorMessage, null, {
       toAddress,
       clienteMail,
       vendibleName,
       message,
     });
+
+    return Promise.resolve(true);
   }
 }

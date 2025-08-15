@@ -47,6 +47,7 @@ const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 export default function UserSignUp({
   signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
   sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
+  getSitePromotions,
 }) {
   const { title } = signUpLabels;
 
@@ -69,6 +70,7 @@ export default function UserSignUp({
   );
 
   const [profilePhoto, setProfilePhoto] = useState();
+  const [isLoadingProfilePhoto, setIsLoadingProfilePhoto] = useState(false);
 
   const [dialogLabels, setDialogLabels] = useState({
     title: locationMapLabels['dialog.permission.request.title'],
@@ -84,6 +86,16 @@ export default function UserSignUp({
   const [createdUserInfo, setCreatedUserInfo] = useState({});
 
   const [subscriptionInfo, setSubscriptionInfo] = useState();
+
+  const selectedPlanObject = useMemo(() => {
+    if (!planesInfo?.length || !selectedPlan) {
+      return {};
+    }
+
+    return planesInfo.find(
+      (planInfo) => planInfo.id === selectedPlan,
+    );
+  }, [planesInfo, selectedPlan]);
 
   const handleGranted = (position) => {
     setLocation({
@@ -170,13 +182,15 @@ export default function UserSignUp({
   const handlePostPlanChosen = () => {
     setIsLoading(true);
     if (isEmpty(subscriptionInfo)) {
+      const { applicablePromotion, priceWithDiscount } = selectedPlanObject;
       createSubscription(
         createdUserInfo.id,
         selectedPlan,
-        createdUserInfo.creationToken,
+        applicablePromotion,
       ).then((response) => {
         const planLabel = getPlanType(planesInfo, response.planId);
-        if (planLabel === PLAN_TYPE_PAID) {
+
+        if (planLabel === PLAN_TYPE_PAID && (!applicablePromotion || priceWithDiscount)) {
           setIsLoading(true);
           saveSignupDataInLocalStorage();
           handlePaySubscription(
@@ -189,7 +203,13 @@ export default function UserSignUp({
           setIsLoading(false);
         }
         setSubscriptionInfo(response);
-      }).catch(() => setIsLoading(false));
+      }).catch((error) => {
+        setIsLoading(false);
+        if (error) {
+          localStorageService.setItem(LocalStorageService.PAGES_KEYS.ROOT.COMES_FROM_SIGNUP, true);
+          window.location.href = routes.index;
+        }
+      });
     }
   };
 
@@ -219,7 +239,10 @@ export default function UserSignUp({
 
   const callUploadProfilePhoto = (
     file,
-  ) => handleUploadProfilePhoto(personalDataFieldsValues.dni, file);
+  ) => {
+    setIsLoadingProfilePhoto(true);
+    return handleUploadProfilePhoto(personalDataFieldsValues.dni, file).finally(() => setIsLoadingProfilePhoto(false));
+  };
 
   const restoreSignupDataAfterPayment = () => {
     setActiveStep(externalStep);
@@ -318,6 +341,7 @@ export default function UserSignUp({
           alt={`${personalDataFieldsValues.name} ${personalDataFieldsValues.surname}`}
           onUpload={callUploadProfilePhoto}
           onSuccess={setProfilePhoto}
+          isLoading={isLoadingProfilePhoto}
         />]}
       />,
       backButtonEnabled: true,
@@ -334,6 +358,7 @@ export default function UserSignUp({
         planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
+        getSitePromotions={getSitePromotions}
       />,
       backButtonEnabled: true,
       nextButtonEnabled: true,
@@ -419,10 +444,10 @@ export default function UserSignUp({
   const newPlanType = useMemo(() => getPlanType(planesInfo, selectedPlan), [selectedPlan]);
 
   useEffect(() => {
-    if (newPlanType === PLAN_TYPE_PAID) {
+    if (newPlanType && newPlanType === PLAN_TYPE_PAID) {
       storeTokenInLocalStorage();
     }
-  }, [selectedPlan]);
+  }, [selectedPlan, newPlanType]);
 
   useEffect(() => {
     if (signupType !== systemConstants.USER_TYPE_CLIENTE) {
@@ -495,6 +520,7 @@ UserSignUp.propTypes = {
   sendAccountConfirmEmail: PropTypes.func.isRequired,
   handleUploadProfilePhoto: PropTypes.func,
   handlePaySubscription: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   planesInfo: PropTypes.arrayOf(PropTypes.shape(planShape)).isRequired,
   hasError: PropTypes.bool,
   externalStep: PropTypes.number,

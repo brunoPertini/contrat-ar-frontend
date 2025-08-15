@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import UserProfile from '../index';
 import { NavigationContextProvider } from '../../State/Contexts/NavigationContext';
 import { withRouter } from '../../Shared/Components';
@@ -16,6 +17,7 @@ import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 import { paymentLabels } from '../../StaticData/Payment';
 import { TABS_NAMES } from '../Constants';
+import { userProfileLabels } from '../../StaticData/UserProfile';
 
 const stateSelector = (state) => state;
 
@@ -33,14 +35,20 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   // eslint-disable-next-line no-unused-vars
   const [temporalToken, setTemporalToken] = useState();
 
+  const [changedPlanWithPromotionFull, setChangedPlanWithPromotionFull] = useState(false);
+
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
 
-  const queryParams = new URLSearchParams(window.location.search);
-
-  const returnTab = queryParams.get('returnTab');
+  const returnTab = urlSearchParams.get('returnTab');
 
   const userInfo = useSelector(userInfoSelector);
   const dispatch = useDispatch();
+
+  const openPaymentDialog = () => {
+    setOpenPaymentDialogModal(true);
+  };
 
   const getUserInfo = () => {
     const client = HttpClientFactory.createUserHttpClient(null, {
@@ -51,13 +59,19 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getUserInfo(userInfo.id).then((info) => dispatch(setUserInfo(info)));
   };
 
-  const confirmPlanChange = (proveedorId, planId) => {
+  const confirmPlanChange = (proveedorId, planId, promotionId) => {
     const client = HttpClientFactory.createProveedorHttpClient({
       token: userInfo.token,
       handleLogout,
     });
 
-    return client.updatePlan(proveedorId, planId);
+    return client.createSubscription(proveedorId, planId, promotionId).then((suscripcionData) => {
+      if (promotionId) {
+        setChangedPlanWithPromotionFull(true);
+      }
+      getUserInfo();
+      return Promise.resolve(suscripcionData);
+    }).catch((error) => Promise.reject(error));
   };
 
   const editClienteInfo = (info) => {
@@ -139,11 +153,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     return client.getPaymentsOfUser(userInfo.id);
   };
 
-  const paySubscription = (subscriptionId, sourceTab) => {
+  const paySubscription = (subscriptionId, sourceTab, promotionId) => {
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.USER_PROFILE.TOKEN, userInfo.token);
     const client = HttpClientFactory.createPaymentHttpClient({ token: userInfo.token, handleLogout });
 
-    return client.paySubscriptionFromUserProfile(subscriptionId, userInfo.id, sourceTab).then((checkoutUrl) => {
+    return client.paySubscriptionFromUserProfile(subscriptionId, userInfo.id, sourceTab, promotionId).then((checkoutUrl) => {
       setPaySubscriptionServiceResult(true);
       return checkoutUrl;
     })
@@ -165,13 +179,16 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     () => {
       setOpenPaymentDialogModal(false);
       setPaySubscriptionServiceResult(null);
+      setChangedPlanWithPromotionFull(false);
+      setUrlSearchParams((prevParams) => {
+        const newParams = new URLSearchParams(prevParams);
+        newParams.delete('paymentId');
+        newParams.delete('status');
+        return newParams;
+      });
     },
-    [setOpenPaymentDialogModal],
+    [setOpenPaymentDialogModal, setUrlSearchParams],
   );
-
-  const openPaymentDialog = () => {
-    setOpenPaymentDialogModal(true);
-  };
 
   const checkPaymentExistence = () => {
     setTemporalToken((currentToken) => {
@@ -217,6 +234,11 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     }
   };
 
+  const getSitePromotions = () => {
+    const client = HttpClientFactory.createProveedorHttpClient({ token: userInfo.token });
+    return client.getUserPromotions(userInfo.id);
+  };
+
   // Coming back from payment page or pay subscription service
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
@@ -227,10 +249,23 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   }, [paymentParams, paySubscriptionServiceResult]);
 
   useEffect(() => {
+    if (changedPlanWithPromotionFull) {
+      openPaymentDialog();
+    }
+  }, [changedPlanWithPromotionFull]);
+
+  useEffect(() => {
     restoreTokenInMemory();
   }, []);
 
   const resolvedPaymentLabels = useMemo(() => {
+    if (changedPlanWithPromotionFull) {
+      return {
+        success: userProfileLabels['plan.change.success'],
+        error: userProfileLabels['plan.change.error'],
+      };
+    }
+
     if (returnTab === TABS_NAMES.MY_PAYMENTS) {
       return {
         success: paymentLabels['payment.done'],
@@ -250,13 +285,15 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
     }
 
     return null;
-  }, [paymentParams]);
+  }, [paymentParams, changedPlanWithPromotionFull]);
 
   const paymentDialogModal = usePaymentDialogModal(
     openPaymentDialogModal,
     closePaymentDialogModal,
     resolvedPaymentLabels,
     paySubscriptionServiceResult,
+    null,
+    changedPlanWithPromotionFull,
   );
 
   return (
@@ -276,6 +313,7 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
         paySubscription={paySubscription}
         cancelPlanChange={cancelPlanChange}
         changeUserActive={changeUserActive}
+        getSitePromotions={getSitePromotions}
       />
     </NavigationContextProvider>
   );

@@ -4,46 +4,74 @@ import StaticAlert from '../Components/StaticAlert';
 import usePaymentQueryParams from './usePaymentQueryParams';
 import { PAYMENT_STATE } from '../Constants/System';
 import { paymentLabels } from '../../StaticData/Payment';
+import { userProfileLabels } from '../../StaticData/UserProfile';
 
 export default function usePaymentDialogModal(
   isOpen,
   onCloseDialog,
-  modalLabels = { success: '', error: '', unknown: '' },
+  modalLabels = {
+    success: '', error: '', unknown: '', processed: '',
+  },
   paySubscriptionServiceResult,
+  storedPaymentState = null,
+  payedWithPromotionFull = false,
 ) {
   const [modalContent, setModalContent] = useState({ title: '', text: '', paperStyles: {} });
 
   const paymentParams = usePaymentQueryParams();
 
   useEffect(() => {
-    const { paymentId, status } = paymentParams;
+    const { paymentId, status: paymentParamsStatus } = paymentParams;
+
+    const status = paymentParamsStatus || storedPaymentState;
 
     const wasPaymentOk = status === PAYMENT_STATE.SUCCESS;
 
-    const alertProps = wasPaymentOk ? { severity: 'success' } : { severity: 'error' };
+    const wasPaymentProcessed = status === PAYMENT_STATE.PROCESSED;
 
-    const paperStyles = { backgroundColor: wasPaymentOk ? '#2e7d32' : '#d32f2f', color: '#fff' };
+    const alertProps = wasPaymentOk || wasPaymentProcessed || payedWithPromotionFull ? { severity: 'success' } : { severity: 'error' };
 
-    let alertLabel;
+    const paperStyles = { backgroundColor: wasPaymentOk || wasPaymentProcessed || payedWithPromotionFull ? '#2e7d32' : '#d32f2f', color: '#fff' };
 
-    if (paySubscriptionServiceResult === false) {
-      alertLabel = paymentLabels['payment.unknownError'];
-    } else if (isOpen) {
-      if (wasPaymentOk) {
-        alertLabel = modalLabels.success;
-      } else if (paymentId) {
-        alertLabel = modalLabels.error;
-      } else {
-        alertLabel = modalLabels.unknown;
+    function defineAlertLabel() {
+      if (!isOpen) {
+        return '';
       }
+
+      if (paySubscriptionServiceResult === false) {
+        return paymentLabels['payment.unknownError'];
+      }
+      if (wasPaymentOk || payedWithPromotionFull) {
+        return modalLabels.success;
+      }
+
+      if (wasPaymentProcessed) {
+        return modalLabels.processed;
+      }
+
+      if (paymentId) {
+        return modalLabels.error;
+      }
+
+      return modalLabels.unknown;
     }
 
+    function defineAlertTitle() {
+      if (payedWithPromotionFull) {
+        return userProfileLabels['plan.change.title'];
+      }
+
+      return !paymentId ? paymentLabels.paymentError : paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId);
+    }
+
+    const alertLabel = defineAlertLabel();
+
     setModalContent({
-      title: !paymentId ? paymentLabels.paymentError : paymentLabels.paymentConfirmed.replace('{paymentId}', paymentId),
+      title: defineAlertTitle(),
       text: <StaticAlert label={alertLabel} {...alertProps} />,
       paperStyles,
     });
-  }, [isOpen]);
+  }, [isOpen, payedWithPromotionFull, paySubscriptionServiceResult, storedPaymentState]);
 
   if (!isOpen) {
     return null;

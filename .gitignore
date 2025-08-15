@@ -4,3 +4,4 @@ node_modules
 *.sql
 *.pem
 .env
+.env.production

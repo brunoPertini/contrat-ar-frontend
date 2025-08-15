@@ -24,7 +24,7 @@
     "signup.success": "¡Recibimos tu registro! Un administrador lo revisará a la brevedad.",
     "signup.error": "¡Hubo un error con tu registro! Te vamos a contactar para solucionarlo.",
     "signup.accountConfirmation.title": "Para confirmar tu cuenta, te vamos a enviar un mail a la dirección que registraste con un enlace al que tenés que acceder.",
-    "signup.mail.send": "¡El mail fue enviado a {email}! Ahí vas a encontrar un enlace para activar tu cuenta",
+    "signup.mail.send": "¡El mail fue enviado a {email}! Ahí vas a encontrar un enlace para activar tu cuenta. Si no lo ves en tu bandeja de entrada, no olvides revisar la carpeta de spam.",
     "account.confirmation.email": "Confirmacion de email",
     "account.confirmation.disclaimer": "Si te encontrás en la etapa de registro, tené en cuenta que aunque tu cuenta sea confirmada, no va a estar activa hasta que revisemos tus datos.",
     "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} ",

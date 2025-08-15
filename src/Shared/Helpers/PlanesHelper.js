@@ -1,13 +1,51 @@
 import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import InfoIcon from '@mui/icons-material/Info';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import Box from '@mui/material/Box';
 import { userProfileLabels } from '../../StaticData/UserProfile';
 import { sharedLabels } from '../../StaticData/Shared';
-import { PLAN_TYPE_PAID, PLAN_TYPE_FREE } from '../Constants/System';
-import { flexRow } from '../Constants/Styles';
+import { PLAN_TYPE_PAID, PLAN_TYPE_FREE, ARGENTINA_LOCALE } from '../Constants/System';
+import { getLocaleCurrencySymbol } from './PricesHelper';
+import { flexColumn, flexRow } from '../Constants/Styles';
+import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
 
-export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
+function renderCurrentPromotionInfo(promotionInfo) {
+  const hasExpirationDate = !!promotionInfo.expirationDate;
+
+  return (
+    <Box
+      {...flexColumn}
+      textAlign="left"
+      justifyContent="space-between"
+      marginTop="20px"
+    >
+      <Typography variant="h5">
+        { userProfileLabels['promotion.applied.title']}
+        {hasExpirationDate && (
+          <>
+            {' '}
+            (
+            { sharedLabels['valid.until'] }
+            {' '}
+            {switchDateFormat({
+              date: promotionInfo.expirationDate,
+              inputFormat: FORMAT_YMD,
+              outputFormat: FORMAT_DMY,
+            })}
+            )
+          </>
+        )}
+      </Typography>
+      <Box {...flexRow} textAlign="left" sx={{ mt: '1%' }}>
+        <LocalOfferIcon sx={{ mr: '1px' }} />
+        <span dangerouslySetInnerHTML={{ __html: promotionInfo.text }} />
+      </Box>
+    </Box>
+  );
+}
+
+export function getPlanDescription(plan, planesDescriptions, showDisclaimer, promotionInfo) {
   const currentPlanInfo = planesDescriptions.find((planInfo) => planInfo.type === plan);
 
   const renderDescripctionLine = (innerContent) => (
@@ -29,23 +67,24 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
 
   const PLAN_DESCRIPTIONS = {
     [PLAN_TYPE_FREE]: (
-      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
-        { userProfileLabels['plan.includes'] }
-        <br />
-        <br />
-        {
-            renderPlanDescription()
-          }
-      </Typography>),
+      <>
+        <Typography variant="h5">
+          {userProfileLabels['plan.includes']}
+        </Typography>
+        <Typography paragraph variant="body" sx={{ mt: '1%' }}>
+          {renderPlanDescription()}
+        </Typography>
+      </>),
     [PLAN_TYPE_PAID]: (
-      <Typography paragraph variant="body" sx={{ mt: '2%' }}>
-        { userProfileLabels['plan.includes'] }
-        <br />
-        <br />
-        {
-              renderPlanDescription()
-            }
-      </Typography>),
+      <>
+        <Typography variant="h5">
+          {userProfileLabels['plan.includes']}
+        </Typography>
+        <Typography paragraph variant="body" sx={{ mt: '1%' }}>
+          {renderPlanDescription()}
+          {!!promotionInfo && renderCurrentPromotionInfo(promotionInfo)}
+        </Typography>
+      </>),
   };
 
   const disclaimer = showDisclaimer ? (
@@ -64,13 +103,51 @@ export function getPlanDescription(plan, planesDescriptions, showDisclaimer) {
   );
 }
 
+export function renderPlanPrice(plan) {
+  if (plan.type === PLAN_TYPE_FREE || !plan.applicablePromotion) {
+    return (
+      <Typography variant="h6" color="primary" sx={{ my: 2 }}>
+        {sharedLabels.finalMonthlyPrice}
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.price}
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography variant="h6" color="primary" sx={{ my: 2 }}>
+      { sharedLabels.finalMonthlyPrice }
+      <Box component="span" sx={{ textDecoration: 'line-through', mr: 1 }}>
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
+        {plan.price}
+      </Box>
+      <Box component="span" sx={{ fontWeight: 'bold' }}>
+        {getLocaleCurrencySymbol(ARGENTINA_LOCALE)}
+        {plan.priceWithDiscount}
+      </Box>
+    </Typography>
+  );
+}
+
+export const renderPromotionsInfo = (promotionsInfo) => promotionsInfo.map((info) => (
+  <Box {...flexRow} textAlign="left">
+    <CheckIcon sx={{ mr: '1px' }} />
+    <span dangerouslySetInnerHTML={{ __html: info.text }} />
+    <br />
+    <br />
+  </Box>
+));
+
+export const getPlanByType = (planesInfo, planType) => planesInfo.find(
+  (planInfo) => planInfo.type === planType,
+);
+
 export const getPlanId = (planesInfo, planType) => planesInfo.find(
   (planInfo) => planInfo.type === planType,
 )?.id ?? '';
 
 export const getPlanType = (planesInfo, planId) => planesInfo.find(
   (planInfo) => planInfo.id === planId,
-).type;
+)?.type;
 
 export const getPlanLabel = (planId) => (planId === 1
   ? sharedLabels.plansNames.FREE

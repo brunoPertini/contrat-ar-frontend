@@ -13,5 +13,7 @@
     "request2FaCode": "/2fa",
     "resetPasswordEmail": "/mail/password/forgot",
     "checkForgotPasswordToken": "/security/token",
-    "sendContactFormEmail": "/mail/contact"
+    "sendContactFormEmail": "/mail/contact",
+    "promotions": "/promotion",
+    "promotionsByUser": "/promotion/{promotionId}"
 }

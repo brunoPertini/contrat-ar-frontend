@@ -1,5 +1,5 @@
 import pickBy from 'lodash/pickBy';
-import { proveedoresRoutes } from '../../Shared/Constants/ApiRoutes';
+import { proveedoresRoutes, usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { PROVEEDOR, ROLE_PROVEEDOR_PRODUCTOS } from '../../Shared/Constants/System';
 import { HEADERS_NAMES, HEADERS_VALUES } from '../Constants';
 import { HttpClientFactory } from '../HttpClientFactory';
@@ -100,20 +100,6 @@ export class ProveedorHttpClient extends HttpClient {
     return userHttpClient.updateUserCommonInfo(userId, info, PROVEEDOR);
   }
 
-  /**
-   *
-   * @param {String | Number} proveedorId
-   * @param {Number} planId new planId
-   * * @returns {Promise<void> | Promise<Error>}
-   */
-  updatePlan(proveedorId, planId) {
-    const url = proveedoresRoutes.changePlan
-      .replace('{proveedorId}', proveedorId)
-      .replace('{planId}', planId);
-
-    return this.post(url);
-  }
-
   getAllPlanes() {
     return this.get(proveedoresRoutes.planBaseUrl, {});
   }
@@ -122,19 +108,28 @@ export class ProveedorHttpClient extends HttpClient {
    *
    * @param {String | Number} proveedorId
    * @param {Number} planId new planId
+   * @param {Number} [promotionId]
    * * @returns {Promise<void> | Promise<Error>}
    */
-  createSubscription(proveedorId, planId) {
+  createSubscription(proveedorId, planId, promotionId) {
     const url = proveedoresRoutes.proveedorSubscription
       .replace('{proveedorId}', proveedorId)
       .replace('{planId}', planId);
 
-    return this.post(url);
+    const queryParams = promotionId ? { promotionId } : {};
+
+    return this.post(url, queryParams);
   }
 
   cancelPlanChange(changeRequestId) {
     const url = proveedoresRoutes.cancelPlanChange.replace('{changeRequestId}', changeRequestId);
 
     return this.delete(url);
+  }
+
+  getUserPromotions(userId) {
+    const url = usersRoutes.promotionsByUser.replace('{promotionId}', userId);
+
+    return this.get(url);
   }
 }

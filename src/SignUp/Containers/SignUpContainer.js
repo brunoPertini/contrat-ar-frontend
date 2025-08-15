@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Groups2Icon from '@mui/icons-material/Groups2';
 import BuildIcon from '@mui/icons-material/Build';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../../Header';
 import { ExpandableCard, withRouter } from '../../Shared/Components';
 import { signUpLabels } from '../../StaticData/SignUp';
@@ -50,11 +51,16 @@ function SignUpContainer({ router }) {
   const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
 
   const [paySubscriptionServiceResult, setPaySubscriptionServiceResult] = useState(null);
+  const [storedPaymentState, setStoredPaymentState] = useState();
 
+  const [searchParams] = useSearchParams();
   const paymentParams = usePaymentQueryParams(paySubscriptionServiceResult);
+
+  const preselectedPlan = searchParams.get('plan');
 
   const paymentModalLabels = useMemo(() => ({
     success: paymentLabels['signup.confirmation.success'],
+    processed: paymentLabels['signup.confirmation.processed'],
     error: paymentLabels['signup.confirmation.error'].replace('{paymentId}', paymentParams.paymentId),
     unknown: paymentLabels['signup.confirmation.unknownError']
       .replace('{helpPayLink}', process.env.REACT_APP_SITE_URL),
@@ -105,20 +111,17 @@ function SignUpContainer({ router }) {
     return client.sendRegistrationConfirmEmail(email);
   };
 
-  const handleCreateSubscription = (proveedorId, planId) => {
+  const handleCreateSubscription = (proveedorId, planId, promotionId) => {
     const client = HttpClientFactory.createProveedorHttpClient({ token: temporalToken });
 
-    return client.createSubscription(proveedorId, planId);
+    return client.createSubscription(proveedorId, planId, promotionId);
   };
 
   const handlePaySubscription = (id, userId) => {
     const client = HttpClientFactory.createPaymentHttpClient({ token: temporalToken });
 
     return client.paySubscription(id, userId)
-      .then((checkoutUrl) => {
-        setPaySubscriptionServiceResult(true);
-        return checkoutUrl;
-      })
+      .then((checkoutUrl) => checkoutUrl)
       .catch((error) => {
         setPaySubscriptionServiceResult(false);
         return Promise.reject(error);
@@ -133,25 +136,32 @@ function SignUpContainer({ router }) {
     return client.getPaymentInfo(id);
   };
 
+  const getSitePromotions = () => {
+    const client = HttpClientFactory.createUserHttpClient();
+    return client.getPromotions();
+  };
+
   const signupTypeColumns = (
     <>
-      <Card
-        sx={{
-          ...cardStyles,
-        }}
-        onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
-      >
-        <CardHeader
-          title={signUpLabels['signup.want.to.client']}
-          avatar={<Groups2Icon sx={{ ...iconStyles }} />}
-          titleTypographyProps={{ ...titleStyles }}
-        />
-        <CardContent>
-          <Typography variant="body1">
-            { signUpLabels['client.content.text']}
-          </Typography>
-        </CardContent>
-      </Card>
+      {!preselectedPlan ? (
+        <Card
+          sx={{
+            ...cardStyles,
+          }}
+          onClick={() => handleSetSignupType(systemConstants.USER_TYPE_CLIENTE)}
+        >
+          <CardHeader
+            title={signUpLabels['signup.want.to.client']}
+            avatar={<Groups2Icon sx={{ ...iconStyles }} />}
+            titleTypographyProps={{ ...titleStyles }}
+          />
+          <CardContent>
+            <Typography variant="body1">
+              { signUpLabels['client.content.text']}
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : null}
       <Card
         sx={{ ...cardStyles }}
         onClick={() => handleSetSignupType(systemConstants.USER_TYPE_PROVEEDOR_SERVICES)}
@@ -212,6 +222,7 @@ function SignUpContainer({ router }) {
         sendAccountConfirmEmail={sendAccountConfirmEmail}
         createSubscription={handleCreateSubscription}
         handlePaySubscription={handlePaySubscription}
+        getSitePromotions={getSitePromotions}
         externalStep={activeStep}
       />
     );
@@ -250,7 +261,9 @@ function SignUpContainer({ router }) {
   const checkPaymentExistence = () => {
     setTemporalToken((restoredToken) => {
       getPaymentInfo(paymentParams.paymentId, restoredToken).then((info) => {
-        if (info.id === +paymentParams.paymentId && info.state === paymentParams.status) {
+        if (info.id === +paymentParams.paymentId) {
+          setStoredPaymentState(info.state);
+          setPaySubscriptionServiceResult(true);
           openPaymentDialog();
         }
       }).catch(() => setOpenPaymentDialogModal(false));
@@ -270,13 +283,18 @@ function SignUpContainer({ router }) {
   useEffect(() => {
     if (paymentParams.paymentId && paymentParams.status) {
       checkPaymentExistence();
-    } else if (paySubscriptionServiceResult === false) {
-      openPaymentDialog();
     }
-  }, [paymentParams, paySubscriptionServiceResult]);
+  }, [paymentParams]);
 
   // TODO: check if have to pass service result flag
-  const paymentDialogModal = usePaymentDialogModal(openPaymentDialogModal, closePaymentDialogModal, paymentModalLabels);
+  const paymentDialogModal = usePaymentDialogModal(
+    openPaymentDialogModal,
+    closePaymentDialogModal,
+    paymentModalLabels,
+    paySubscriptionServiceResult,
+    storedPaymentState,
+    null,
+  );
 
   return (
     <>

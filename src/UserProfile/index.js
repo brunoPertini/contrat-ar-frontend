@@ -36,7 +36,7 @@ function UserProfile({
   handleLogout, userInfo, confirmPlanChange, getAllPlanes,
   editCommonInfo, uploadProfilePhoto, requestChangeExists,
   isAdmin, getUserInfo, getPaymentsOfUser, changeUserActive,
-  paySubscription, cancelPlanChange,
+  paySubscription, cancelPlanChange, getSitePromotions,
 }) {
   const queryParams = new URLSearchParams(window.location.search);
 
@@ -209,12 +209,16 @@ function UserProfile({
 
   const usuarioType = userInfo.role === CLIENTE ? USER_TYPE_CLIENTE : PROVEEDOR;
 
-  const handlePlanChangeConfirmation = (newPlanType) => {
+  const handlePaySubscription = (subscriptionId, tabName) => paySubscription(subscriptionId, tabName, userInfo.suscripcion.promotionInfo.promotionId);
+
+  const handlePlanChangeConfirmation = (newPlanType, promotionId) => {
     const planId = planesInfo.find((p) => p.type === newPlanType).id;
 
-    return confirmPlanChange(userInfo.id, planId)
-      .then(() => {
+    return confirmPlanChange(userInfo.id, planId, promotionId)
+      .then((subscriptionData) => {
         checkAttributeRequestChange([userInfo.id], 'suscripcion');
+        setCurrentUserPlanData(newPlanType);
+        return Promise.resolve(subscriptionData);
       })
       .catch(() => {
         setAlertConfig({ label: userProfileLabels['plan.change.error'], severity: 'error', open: true });
@@ -274,9 +278,10 @@ function UserProfile({
         confirmPlanChange={handlePlanChangeConfirmation}
         planRequestChangeExists={!!changeRequestsMade.suscripcion}
         cancelPlanChange={handleCancelPlanChange}
+        getSitePromotions={getSitePromotions}
         planesInfo={planesInfo}
         suscripcionData={userInfo.suscripcion}
-        styles={{ height: '100vh', pl: '1%', pr: '1%' }}
+        styles={{ pl: '1%', pr: '1%' }}
         paySubscription={paySubscription}
       />
     ) : null), [planData, userInfo.suscripcion, personalData.location,
@@ -287,7 +292,7 @@ function UserProfile({
         canPaySubscription={userInfo.suscripcion.validity.canBePayed && !changeRequestsMade.suscripcion}
         isSubscriptionValid={userInfo.suscripcion.validity.valid}
         getPayments={getPaymentsOfUser}
-        paySubscription={paySubscription}
+        paySubscription={handlePaySubscription}
       />
     ) : null), [userInfo, changeRequestsMade]),
   };
@@ -360,6 +365,7 @@ UserProfile.propTypes = {
   paySubscription: PropTypes.func.isRequired,
   cancelPlanChange: PropTypes.func.isRequired,
   changeUserActive: PropTypes.func.isRequired,
+  getSitePromotions: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
 };
 

@@ -7,6 +7,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CircularProgress from '@mui/material/CircularProgress';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { sharedLabels } from '../../StaticData/Shared';
 import { maxLengthConstraints } from '../../Shared/Constants/InputConstraints';
@@ -18,8 +19,10 @@ function SecondStep({
   setDescription, isEditionEnabled,
 }) {
   const [imageError, setImageError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (event) => {
+    setIsLoading(true);
     const file = event.target.files[0];
     if (file) {
       handleUploadImage(file).then((response) => {
@@ -27,7 +30,7 @@ function SecondStep({
         setImageError('');
       }).catch((error) => {
         setImageError(error);
-      });
+      }).finally(() => setIsLoading(false));
     }
   };
 
@@ -75,9 +78,18 @@ function SecondStep({
           textAlign="justify"
           sx={{ width: { xs: '80%', md: '50%' }, mt: '2%' }}
         />
-        <Box {...flexColumn}>
-          { imageTitle }
-          {!!imageUrl
+        <Box {...flexColumn} marginTop="5%">
+          { isLoading && (
+          <Box {...flexColumn}>
+            <CircularProgress />
+            <Typography variant="h6">
+              { sharedLabels.uploadingImage }
+            </Typography>
+          </Box>
+          )}
+
+          { !isLoading && imageTitle }
+          {!!imageUrl && !isLoading
           && (
           <ImageListItem
             sx={{
@@ -93,6 +105,12 @@ function SecondStep({
               srcSet={imageUrl}
               alt=""
               loading="lazy"
+              style={{
+                maxHeight: '400px',
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
             />
             {
               !!imageError && (
@@ -107,30 +125,35 @@ function SecondStep({
             }
           </ImageListItem>
           ) }
-          <Box {...flexColumn} sx={{ width: { xs: '100%', md: '20%' } }}>
-            <Button
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-            >
-              { sharedLabels.uploadImage }
-              <input
-                type="file"
-                onChange={handleFileChange}
-                style={{
-                  clip: 'rect(0 0 0 0)',
-                  clipPath: 'inset(50%)',
-                  height: 1,
-                  overflow: 'hidden',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  whiteSpace: 'nowrap',
-                  width: 1,
-                }}
-              />
-            </Button>
-          </Box>
+          {
+            !isLoading && (
+              <Box {...flexColumn} sx={{ width: { xs: '100%', md: '20%' } }}>
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ mt: '5%' }}
+                >
+                  { sharedLabels.uploadImage }
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    style={{
+                      clip: 'rect(0 0 0 0)',
+                      clipPath: 'inset(50%)',
+                      height: 1,
+                      overflow: 'hidden',
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      whiteSpace: 'nowrap',
+                      width: 1,
+                    }}
+                  />
+                </Button>
+              </Box>
+            )
+          }
         </Box>
       </Box>
       <Box

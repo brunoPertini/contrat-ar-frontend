@@ -22,11 +22,14 @@ import StaticAlert from '../../Shared/Components/StaticAlert';
 import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import GoBackLink from '../../Shared/Components/GoBackLink';
+import Layout from '../../Shared/Components/Layout';
 
 function VendibleCreateForm({
   userInfo, vendibleType, handleUploadImage, handlePostVendible,
 }) {
   const { token, location } = userInfo;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [nombre, setNombre] = useState('');
 
@@ -53,6 +56,7 @@ function VendibleCreateForm({
 
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
+      setIsLoading(true);
       const category = buildCategoryObject(categories.reverse());
       const offersDelivery = locationTypes.includes(SERVICE_LOCATION_AT_HOME)
        || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
@@ -80,7 +84,7 @@ function VendibleCreateForm({
         setOperationResult(true);
       }).catch(() => {
         setOperationResult(false);
-      });
+      }).finally(() => setIsLoading(false));
     }
     window.scrollTo({
       top: 0,
@@ -199,8 +203,9 @@ function VendibleCreateForm({
   useOnLeavingTabHandler();
 
   return (
-    <Box
-      {...containerProps}
+    <Layout
+      isLoading={isLoading}
+      gridProps={{ ...containerProps }}
     >
       <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
@@ -243,7 +248,7 @@ function VendibleCreateForm({
           {nexButtonLabel}
         </Button>
       </Box>
-    </Box>
+    </Layout>
   );
 }
 
