@@ -17,6 +17,7 @@ import usePaymentQueryParams from '../../Shared/Hooks/usePaymentQueryParams';
 import usePaymentDialogModal from '../../Shared/Hooks/usePaymentDialogModal';
 import { paymentLabels } from '../../StaticData/Payment';
 import { TABS_NAMES } from '../Constants';
+import { userProfileLabels } from '../../StaticData/UserProfile';
 
 const stateSelector = (state) => state;
 
@@ -260,8 +261,8 @@ function UserProfileContainer({ handleLogout, isAdmin }) {
   const resolvedPaymentLabels = useMemo(() => {
     if (changedPlanWithPromotionFull) {
       return {
-        success: 'Tu plan fue cambiado correctamente',
-        error: 'No fue posible cambiar tu plan. Por favor, intentalo de nuevo mas tarde',
+        success: userProfileLabels['plan.change.success'],
+        error: userProfileLabels['plan.change.error'],
       };
     }
 

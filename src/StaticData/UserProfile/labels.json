@@ -38,5 +38,6 @@
     "promotion.applied.title": "¡Tenés aplicada esta promoción!",
     "pay.amount": "Pagar {amount}",
     "plan.change.save.withPromotion": "¡Confirmar cambio de plan con promoción!",
-    "plan.change.title": "Cambio de plan"
+    "plan.change.title": "Cambio de plan",
+    "plan.change.success": "Tu plan fue cambiado correctamente"
 }

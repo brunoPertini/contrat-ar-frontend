@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
-import {
-  Box, Modal, Slide, Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Slide from '@mui/material/Slide';
+import Typography from '@mui/material/Typography';
 import { flexColumn } from '../Constants/Styles';
 
 const style = {
