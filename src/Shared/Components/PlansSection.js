@@ -5,10 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { getPlanLabel, getPlanDescription } from '../Helpers/PlanesHelper';
-import { sharedLabels } from '../../StaticData/Shared';
-import { getLocaleCurrencySymbol } from '../Helpers/PricesHelper';
-import { ARGENTINA_LOCALE, PLAN_TYPE_FREE } from '../Constants/System';
+import { getPlanLabel, getPlanDescription, renderPlanPrice } from '../Helpers/PlanesHelper';
+import { PLAN_TYPE_FREE } from '../Constants/System';
 import { parseLocationForMap } from '../Helpers/UtilsHelper';
 import LocationMap from './LocationMap';
 import { indexLabels } from '../../StaticData/Index';
@@ -58,12 +56,7 @@ function PlansSection({ plans, containerStyles }) {
               <Typography variant="h5" fontWeight="bold">
                 { getPlanLabel(plan.id)}
               </Typography>
-              <Typography variant="h6" color="primary" sx={{ my: 2 }}>
-                { sharedLabels.finalMonthlyPrice.replace(
-                  '{price}',
-                  getLocaleCurrencySymbol(ARGENTINA_LOCALE) + plan.price,
-                )}
-              </Typography>
+              {renderPlanPrice(plan)}
               <Divider sx={{ my: 2 }} />
               <Box>
                 { getPlanDescription(plan.type, plans, false) }
@@ -85,7 +78,7 @@ function PlansSection({ plans, containerStyles }) {
               }
             <Box {...flexColumn}>
               <Button variant="contained" color="primary" fullWidth href={plan.type === PLAN_TYPE_FREE ? '/signup' : '/signup?plan=PAID'}>
-                { plan.type === PLAN_TYPE_FREE ? indexLabels.suscribe : indexLabels.tryForFree }
+                { !plan.applicablePromotion ? indexLabels.suscribe : indexLabels.tryForFree }
               </Button>
             </Box>
 

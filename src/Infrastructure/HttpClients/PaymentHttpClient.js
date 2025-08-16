@@ -13,11 +13,12 @@ export class PaymentHttpClient extends HttpClient {
    * @param {Number} subscriptionId
    * @param {Number} toBeBindUserId
    * @param {String} returnTab MY_PAYMENTS or PLAN
+   * @param {Number} [promotionId]
    * @returns {Promise<String>} Checkout url
    */
-  paySubscriptionFromUserProfile(subscriptionId, toBeBindUserId, returnTab = 'MY_PAYMENTS') {
+  paySubscriptionFromUserProfile(subscriptionId, toBeBindUserId, returnTab = 'MY_PAYMENTS', promotionId) {
     const url = paymentRoutes.paySubscriptionFromUserProfile.replace('{subscriptionId}', subscriptionId);
-    return this.post(url, { returnTab }, { integrationType: 'OUTSITE', toBeBindUserId });
+    return this.post(url, { returnTab }, { integrationType: 'OUTSITE', toBeBindUserId, promotionId });
   }
 
   getPaymentInfo(paymentId) {

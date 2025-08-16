@@ -1,7 +1,8 @@
 {
   "name": "contrat-ar-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "homepage": "https://contratar.com.ar",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

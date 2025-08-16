@@ -17,6 +17,7 @@ import { createStore } from '../../../State';
 import { removeOnLeavingTabHandlers } from '../../Hooks/useOnLeavingTabHandler';
 import { HttpClientFactory } from '../../../Infrastructure/HttpClientFactory';
 import { LocalStorageService } from '../../../Infrastructure/Services/LocalStorageService';
+import { errorMessages } from '../../../StaticData/Shared';
 
 const store = createStore();
 const cookiesService = new CookiesService();
@@ -78,13 +79,11 @@ export default function withRouter(Component) {
         }
 
         securityService.validateJwt(userToken, savedUserInfo?.id).then(async (userInfo) => {
-          userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
-
           if (isEmpty(userInfo)) {
             setTokenVerified(false);
-            await store.dispatch(resetUserInfo());
-            navigate(routes.signin);
+            handleLogout({ errorMessage: errorMessages.sessionExpired });
           } else {
+            userInfo.indexPage = routes[`ROLE_${userInfo.role.nombre}`];
             cookiesService.add(CookiesService.COOKIES_NAMES.USER_INDEX_PAGE, userInfo.indexPage);
             setTokenVerified(true);
             await store.dispatch(setUserInfo({ ...userInfo, token: userToken }));

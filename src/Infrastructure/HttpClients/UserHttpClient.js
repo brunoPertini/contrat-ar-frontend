@@ -126,4 +126,8 @@ export class UserHttpClient extends HttpClient {
   sendContactFormEmail(data) {
     return this.post(usersRoutes.sendContactFormEmail, null, data);
   }
+
+  getPromotions() {
+    return this.get(usersRoutes.promotions);
+  }
 }

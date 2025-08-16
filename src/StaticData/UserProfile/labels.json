@@ -34,5 +34,9 @@
         "currency": "Moneda de pago",
         "state": "Estado del pago",
          "paymentProviderName": "Proveedor de pago"
-    }
+    },
+    "promotion.applied.title": "¡Tenés aplicada esta promoción!",
+    "pay.amount": "Pagar {amount}",
+    "plan.change.save.withPromotion": "¡Confirmar cambio de plan con promoción!",
+    "plan.change.title": "Cambio de plan"
 }

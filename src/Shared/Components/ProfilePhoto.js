@@ -3,11 +3,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 import { sharedLabels } from '../../StaticData/Shared';
 import InformativeAlert from './Alert';
+import { flexColumn } from '../Constants/Styles';
 
 export default function ProfilePhoto({
-  src, alt, onUpload, onSuccess, isButtonEnabled,
+  src, alt, onUpload, onSuccess, isButtonEnabled, isLoading = false,
 }) {
   const [alertErrorConfig, setAlertErrorConfig] = useState({
     openSnackbar: false,
@@ -47,37 +51,49 @@ export default function ProfilePhoto({
         severity={alertErrorConfig.alertSeverity}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       />
-      <Avatar
-        alt={alt}
-        src={src}
-        sx={{
-          height: 100,
-          width: 100,
-        }}
-      />
-      <Button
-        component="label"
-        variant="contained"
-        sx={{ width: '30%' }}
-        startIcon={<CloudUploadIcon />}
-        disabled={!isButtonEnabled}
-      >
-        {sharedLabels.changeImage}
-        <input
-          type="file"
-          onChange={handleFileChange}
-          style={{
-            clip: 'rect(0 0 0 0)',
-            clipPath: 'inset(50%)',
-            height: 1,
-            overflow: 'hidden',
-            bottom: 0,
-            left: 0,
-            width: 1,
-            whiteSpace: 'nowrap',
-          }}
-        />
-      </Button>
+      {
+        isLoading ? (
+          <Box {...flexColumn} alignItems="center">
+            <CircularProgress />
+            <Typography variant="h6">{ sharedLabels.uploadingImage}</Typography>
+          </Box>
+        ) : (
+          <>
+            <Avatar
+              alt={alt}
+              src={src}
+              sx={{
+                height: 100,
+                width: 100,
+              }}
+            />
+            <Button
+              component="label"
+              variant="contained"
+              sx={{ width: '30%' }}
+              startIcon={<CloudUploadIcon />}
+              disabled={!isButtonEnabled}
+            >
+              {sharedLabels.changeImage}
+              <input
+                type="file"
+                onChange={handleFileChange}
+                style={{
+                  clip: 'rect(0 0 0 0)',
+                  clipPath: 'inset(50%)',
+                  height: 1,
+                  overflow: 'hidden',
+                  bottom: 0,
+                  left: 0,
+                  width: 1,
+                  whiteSpace: 'nowrap',
+                }}
+              />
+            </Button>
+          </>
+        )
+      }
+
     </>
   );
 }
@@ -93,4 +109,5 @@ ProfilePhoto.propTypes = {
   alt: PropTypes.string,
   onUpload: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
 };

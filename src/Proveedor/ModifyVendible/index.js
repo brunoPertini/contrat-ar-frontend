@@ -32,6 +32,7 @@ import { proveedorLabels } from '../../StaticData/Proveedor';
 import { parseVendibleUnit } from '../../Shared/Helpers/UtilsHelper';
 import InformativeAlert from '../../Shared/Components/Alert';
 import GoBackLink from '../../Shared/Components/GoBackLink';
+import Layout from '../../Shared/Components/Layout';
 
 const localStorageService = new LocalStorageService();
 
@@ -39,6 +40,7 @@ function ModifyVendibleForm({
   userToken, vendibleInfo, vendibleType, handleUploadImage, handlePutVendible,
   showSaveChangesAlertModal, proveedorId,
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [nombre, setNombre] = useState(vendibleInfo.vendibleNombre);
 
   const [vendibleLocation, setVendibleLocation] = useState(vendibleInfo.location);
@@ -85,6 +87,7 @@ function ModifyVendibleForm({
 
   const changeCurrentStep = (newStep) => {
     if (newStep === 3) {
+      setIsLoading(true);
       const offersDelivery = locationTypes.includes(SERVICE_LOCATION_AT_HOME)
       || locationTypes.includes(PRODUCT_LOCATION_AT_HOME);
       const offersInCustomAddress = locationTypes.includes(SERVICE_LOCATION_FIXED)
@@ -128,7 +131,7 @@ function ModifyVendibleForm({
         setOperationResult(true);
       }).catch(() => {
         setOperationResult(false);
-      });
+      }).finally(() => setIsLoading(false));
     }
     window.scrollTo({
       top: 0,
@@ -248,8 +251,9 @@ function ModifyVendibleForm({
   ));
 
   return (
-    <Box
-      {...containerProps}
+    <Layout
+      isLoading={isLoading}
+      gridProps={{ ...containerProps }}
     >
       <GoBackLink styles={{ alignSelf: 'flex-start' }} />
       { steps[activeStep].component }
@@ -297,7 +301,7 @@ function ModifyVendibleForm({
           {nexButtonLabel}
         </Button>
       </Box>
-    </Box>
+    </Layout>
   );
 }
 
