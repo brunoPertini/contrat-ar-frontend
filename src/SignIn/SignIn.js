@@ -69,6 +69,9 @@ function SignIn({
     onButtonClick: shouldVerifyEmail ? () => setShowAccountVerificationComponent(true) : onButtonClick,
     errorMessage: finalErrorMessage,
     onOpenForgotPassword: () => setShowForgotPassword(true),
+    goToSignUp: () => {
+      window.location.href = '/signup';
+    },
   });
 
   return (
