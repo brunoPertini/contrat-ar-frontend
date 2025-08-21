@@ -30,6 +30,6 @@
     "account.confirmation.success": "¡Tu cuenta fue activada! Iniciá sesión {loginLink} ",
     "client.content.text": "Encontrá rápido lo que buscás, elegí al vendedor que mejor se adapte a tus necesidades y contactalo de forma fácil y rápida.",
     "provider.service.context.text":"Creá tu perfil, publicá tus servicios y empezá a recibir solicitudes de clientes interesados en minutos.",
-    "provider.product.context.text": "Si vendés productos, nuestra plataforma es el lugar perfecto para vos. Creá tu perfil y empezá a conectar con tus clientes. No te preocupes por configuraciones complicadas: publicá tus productos de forma sencilla y hacelos visibles a miles de clientes al instante."
-
+    "provider.product.context.text": "Si vendés productos, nuestra plataforma es el lugar perfecto para vos. Creá tu perfil y empezá a conectar con tus clientes. No te preocupes por configuraciones complicadas: publicá tus productos de forma sencilla y hacelos visibles a miles de clientes al instante.",
+    "signup.date.help": "Escribila de esta forma: \"03/01/2003\" o usá el calendario"
 }

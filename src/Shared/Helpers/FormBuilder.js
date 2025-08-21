@@ -13,6 +13,7 @@ import InputLabel from '@mui/material/InputLabel';
 import InfoIcon from '@mui/icons-material/Info';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import HelpOutline from '@mui/icons-material/HelpOutline';
 import { errorMessages, sharedLabels } from '../../StaticData/Shared';
 import LocationMap from '../Components/LocationMap';
 import { systemConstants } from '../Constants';
@@ -22,6 +23,7 @@ import { signUpLabels } from '../../StaticData/SignUp';
 import { signinLabels } from '../../StaticData/SignIn';
 import { FORMAT_DMY, FORMAT_YMD, switchDateFormat } from './DatesHelper';
 import { proveedorLabels } from '../../StaticData/Proveedor';
+import { flexRow } from '../Constants/Styles';
 
 function TextFieldWithLabel(showInlineLabels, componentProps, label) {
   return (
@@ -260,9 +262,21 @@ helper message
 
       birthDateRow = baseBox(
         <>
-          <Typography variant="subtitle1" align="left">
-            { sharedLabels.birthDate }
-          </Typography>
+          <Box {...flexRow}>
+            <Typography variant="subtitle1">
+              { sharedLabels.birthDate }
+            </Typography>
+            <Tooltip
+              placement="right-start"
+              title={(
+                <Typography variant="h6">
+                  {signUpLabels['signup.date.help']}
+                </Typography>
+        )}
+            >
+              <HelpOutline />
+            </Tooltip>
+          </Box>
           <TextField
             id="form-birthDate"
             value={birthDateFinalValue}
@@ -419,7 +433,7 @@ export class SignInFormBuilder extends FormBuilder {
 
   build({
     onButtonClick, onChangeFields, fieldsValues = {}, errorFields = [], errorMessage,
-    shouldVerifyEmail = false, onOpenForgotPassword,
+    shouldVerifyEmail = false, onOpenForgotPassword, goToSignUp,
   }) {
     const emailValue = fieldsValues.email || this.fields.email;
     const passwordValue = fieldsValues.password || this.fields.password;
@@ -489,6 +503,11 @@ export class SignInFormBuilder extends FormBuilder {
         <Grid item xs={12} sx={{ mt: '2%' }}>
           <Link onClick={onOpenForgotPassword} style={{ cursor: 'pointer' }}>
             { signinLabels.forgotPassword }
+          </Link>
+        </Grid>
+        <Grid item xs={12} sx={{ mt: '2%' }}>
+          <Link onClick={goToSignUp} style={{ cursor: 'pointer' }}>
+            { signinLabels.signupLink }
           </Link>
         </Grid>
       </Box>

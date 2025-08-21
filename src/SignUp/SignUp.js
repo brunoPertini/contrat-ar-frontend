@@ -149,34 +149,50 @@ export default function UserSignUp({
   };
 
   const handlePermission = useCallback(() => {
-    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-      if (result.state === 'granted') {
-        getCurentLocation();
-      }
-      if (result.state === 'prompt') {
+    // navigator.permissions isn't supported in Safari, so provide a safe fallback.
+    if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted') {
+          getCurentLocation();
+        } else if (result.state === 'prompt') {
+          setDialogLabels({
+            title: locationMapLabels['dialog.permission.request.title'],
+            contextText: locationMapLabels['dialog.permission.request.textContext'],
+            cancelText: locationMapLabels['dialog.permission.request.cancelText'],
+            acceptText: locationMapLabels['dialog.permission.request.acceptText'],
+          });
+          setOpenPermissionDialog(true);
+        } else if (result.state === 'denied') {
+          setDialogLabels({
+            title: locationMapLabels['dialog.permission.revoke.title'],
+            contextText: <span dangerouslySetInnerHTML={{
+              __html: locationMapLabels['dialog.permission.revoke.textContext'],
+            }}
+            />,
+            acceptText: locationMapLabels['dialog.permission.revoke.finish'],
+          });
+          setOpenPermissionDialog(true);
+        }
+      }).catch(() => {
+        // If the permissions API query fails for whatever reason, fallback to prompt flow.
         setDialogLabels({
-
           title: locationMapLabels['dialog.permission.request.title'],
           contextText: locationMapLabels['dialog.permission.request.textContext'],
           cancelText: locationMapLabels['dialog.permission.request.cancelText'],
           acceptText: locationMapLabels['dialog.permission.request.acceptText'],
-
         });
         setOpenPermissionDialog(true);
-      }
-
-      if (result.state === 'denied') {
-        setDialogLabels({
-          title: locationMapLabels['dialog.permission.revoke.title'],
-          contextText: <span dangerouslySetInnerHTML={{
-            __html: locationMapLabels['dialog.permission.revoke.textContext'],
-          }}
-          />,
-          acceptText: locationMapLabels['dialog.permission.revoke.finish'],
-        });
-        setOpenPermissionDialog(true);
-      }
-    });
+      });
+    } else {
+      // Safari / older browsers: show our permission dialog and call geolocation on accept.
+      setDialogLabels({
+        title: locationMapLabels['dialog.permission.request.title'],
+        contextText: locationMapLabels['dialog.permission.request.textContext'],
+        cancelText: locationMapLabels['dialog.permission.request.cancelText'],
+        acceptText: locationMapLabels['dialog.permission.request.acceptText'],
+      });
+      setOpenPermissionDialog(true);
+    }
   }, [handleGranted]);
 
   const handlePostPlanChosen = () => {
