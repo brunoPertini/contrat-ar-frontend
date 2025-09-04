@@ -32,12 +32,6 @@ import { useOnLeavingTabHandler } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
-const geoSettings = {
-  enableHighAccuracy: true,
-  maximumAge: 0,
-  timeout: 20000,
-};
-
 const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 
 /**
@@ -116,10 +110,26 @@ export default function UserSignUp({
   };
 
   const getCurentLocation = () => {
+    const low = { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 };
+    const high = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
+
     navigator.geolocation.getCurrentPosition(
-      handleGranted,
-      handleDialogDenied,
-      geoSettings,
+      (pos) => {
+        console.log('POS: ', pos);
+        handleGranted(pos);
+        if (pos.coords.accuracy && pos.coords.accuracy > 100) {
+          navigator.geolocation.getCurrentPosition(handleGranted, () => {}, high);
+        }
+      },
+      (err) => {
+        console.error('ERROR: ', err);
+        if (err.code === err.TIMEOUT) {
+          navigator.geolocation.getCurrentPosition(handleGranted, handleDialogDenied, high);
+        } else {
+          handleDialogDenied(err);
+        }
+      },
+      low,
     );
   };
 
