@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect,
+  useEffect,
   useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
@@ -11,8 +11,6 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import isEmpty from 'lodash/isEmpty';
 import { signUpLabels } from '../StaticData/SignUp';
-import { labels as locationMapLabels } from '../StaticData/LocationMap';
-
 import DialogModal from '../Shared/Components/DialogModal';
 import Form from '../Shared/Components/Form';
 import LocationMap from '../Shared/Components/LocationMap';
@@ -32,8 +30,6 @@ import { useOnLeavingTabHandler } from '../Shared/Hooks/useOnLeavingTabHandler';
 
 const personalDataFormBuilder = new PersonalDataFormBuilder();
 
-const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
-
 /**
  * FormBuilder for user signup. Responsible of defining form fields, titles, and application
  * logic for signup (like steps control)
@@ -41,7 +37,7 @@ const fallbackCoords = { latitude: 34.9208082, longitude: -57.9556221 };
 export default function UserSignUp({
   signupType, dispatchSignUp, hasError, planesInfo, handleUploadProfilePhoto, externalStep,
   sendAccountConfirmEmail, createSubscription, localStorageService, handlePaySubscription,
-  getSitePromotions,
+  getSitePromotions, userLocation, setUserLocation,
 }) {
   const { title } = signUpLabels;
 
@@ -56,7 +52,6 @@ export default function UserSignUp({
     email: false,
   });
 
-  const [location, setLocation] = useState();
   const [readableAddress, setReadableAddress] = useState('');
 
   const [selectedPlan, setSelectedPlan] = useState(
@@ -66,14 +61,6 @@ export default function UserSignUp({
   const [profilePhoto, setProfilePhoto] = useState();
   const [isLoadingProfilePhoto, setIsLoadingProfilePhoto] = useState(false);
 
-  const [dialogLabels, setDialogLabels] = useState({
-    title: locationMapLabels['dialog.permission.request.title'],
-    contextText: locationMapLabels['dialog.permission.request.textContext'],
-    cancelText: locationMapLabels['dialog.permission.request.cancelText'],
-    acceptText: locationMapLabels['dialog.permission.request.acceptText'],
-  });
-
-  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -90,48 +77,6 @@ export default function UserSignUp({
       (planInfo) => planInfo.id === selectedPlan,
     );
   }, [planesInfo, selectedPlan]);
-
-  const handleGranted = (position) => {
-    setLocation({
-      coords: {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      },
-    });
-    setOpenPermissionDialog(false);
-  };
-
-  // eslint-disable-next-line consistent-return
-  const handleDialogDenied = (error) => {
-    if (error && error.code !== error.PERMISSION_DENIED) {
-      return handleGranted({ coords: fallbackCoords });
-    }
-    window.location.href = routes.index;
-  };
-
-  const getCurentLocation = () => {
-    const low = { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 };
-    const high = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        console.log('POS: ', pos);
-        handleGranted(pos);
-        if (pos.coords.accuracy && pos.coords.accuracy > 100) {
-          navigator.geolocation.getCurrentPosition(handleGranted, () => {}, high);
-        }
-      },
-      (err) => {
-        console.error('ERROR: ', err);
-        if (err.code === err.TIMEOUT) {
-          navigator.geolocation.getCurrentPosition(handleGranted, handleDialogDenied, high);
-        } else {
-          handleDialogDenied(err);
-        }
-      },
-      low,
-    );
-  };
 
   const storeTokenInLocalStorage = () => {
     setCreatedUserInfo((currentCreatedUserInfo) => {
@@ -151,59 +96,12 @@ export default function UserSignUp({
       LocalStorageService.PAGES_KEYS.SIGNUP.PERSONAL_DATA,
       personalDataFieldsValues,
     );
-    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, location);
+    localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.LOCATION, userLocation);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PROFILE_PHOTO, profilePhoto);
     localStorageService.setItem(LocalStorageService.PAGES_KEYS.SIGNUP.PLAN_ID, selectedPlan);
 
     storeTokenInLocalStorage();
   };
-
-  const handlePermission = useCallback(() => {
-    // navigator.permissions isn't supported in Safari, so provide a safe fallback.
-    if (navigator.permissions && typeof navigator.permissions.query === 'function') {
-      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-        if (result.state === 'granted') {
-          getCurentLocation();
-        } else if (result.state === 'prompt') {
-          setDialogLabels({
-            title: locationMapLabels['dialog.permission.request.title'],
-            contextText: locationMapLabels['dialog.permission.request.textContext'],
-            cancelText: locationMapLabels['dialog.permission.request.cancelText'],
-            acceptText: locationMapLabels['dialog.permission.request.acceptText'],
-          });
-          setOpenPermissionDialog(true);
-        } else if (result.state === 'denied') {
-          setDialogLabels({
-            title: locationMapLabels['dialog.permission.revoke.title'],
-            contextText: <span dangerouslySetInnerHTML={{
-              __html: locationMapLabels['dialog.permission.revoke.textContext'],
-            }}
-            />,
-            acceptText: locationMapLabels['dialog.permission.revoke.finish'],
-          });
-          setOpenPermissionDialog(true);
-        }
-      }).catch(() => {
-        // If the permissions API query fails for whatever reason, fallback to prompt flow.
-        setDialogLabels({
-          title: locationMapLabels['dialog.permission.request.title'],
-          contextText: locationMapLabels['dialog.permission.request.textContext'],
-          cancelText: locationMapLabels['dialog.permission.request.cancelText'],
-          acceptText: locationMapLabels['dialog.permission.request.acceptText'],
-        });
-        setOpenPermissionDialog(true);
-      });
-    } else {
-      // Safari / older browsers: show our permission dialog and call geolocation on accept.
-      setDialogLabels({
-        title: locationMapLabels['dialog.permission.request.title'],
-        contextText: locationMapLabels['dialog.permission.request.textContext'],
-        cancelText: locationMapLabels['dialog.permission.request.cancelText'],
-        acceptText: locationMapLabels['dialog.permission.request.acceptText'],
-      });
-      setOpenPermissionDialog(true);
-    }
-  }, [handleGranted]);
 
   const handlePostPlanChosen = () => {
     setIsLoading(true);
@@ -335,14 +233,13 @@ export default function UserSignUp({
         width: '100%',
       }}
       showTranslatedAddress
-      location={location}
-      setLocation={setLocation}
+      location={userLocation}
+      setLocation={setUserLocation}
       readableAddress={readableAddress}
       setReadableAddress={setReadableAddress}
     />
   </Box>,
-    nextButtonEnabled: useMemo(() => !!location && Object.values(location)
-      .every((value) => value), [[location]]),
+    nextButtonEnabled: true,
   },
   {
     label: signUpLabels['account.confirmation.email'],
@@ -380,7 +277,7 @@ export default function UserSignUp({
       label: signUpLabels['steps.planType'],
       isOptional: false,
       component: <PlanSelection
-        userLocation={location}
+        userLocation={userLocation}
         planesInfo={planesInfo}
         selectedPlan={selectedPlan}
         setSelectedPlan={setSelectedPlan}
@@ -398,7 +295,7 @@ export default function UserSignUp({
     dispatchSignUp({
       ...personalDataFieldsValues,
       fotoPerfilUrl: profilePhoto,
-      location,
+      location: { ...userLocation },
     }).then((response) => setCreatedUserInfo(response))
       .finally(() => {
         setIsLoading(false);
@@ -458,10 +355,6 @@ export default function UserSignUp({
   );
 
   useEffect(() => {
-    handlePermission();
-  }, []);
-
-  useEffect(() => {
     if (externalStep) {
       restoreSignupDataAfterPayment();
     }
@@ -511,15 +404,6 @@ export default function UserSignUp({
           handleOnStepChange(0);
         }}
       />
-      <DialogModal
-        title={dialogLabels.title}
-        contextText={dialogLabels.contextText}
-        cancelText={dialogLabels.cancelText}
-        acceptText={dialogLabels.acceptText}
-        open={openPermissionDialog}
-        handleAccept={getCurentLocation}
-        handleDeny={() => handleDialogDenied()}
-      />
       {!isLoading && isStepValid && (
       <Stepper
         steps={steps}
@@ -551,4 +435,6 @@ UserSignUp.propTypes = {
   hasError: PropTypes.bool,
   externalStep: PropTypes.number,
   localStorageService: PropTypes.instanceOf(LocalStorageService).isRequired,
+  userLocation: PropTypes.shape({ coords: { latitude: PropTypes.number, longitude: PropTypes.number } }).isRequired,
+  setUserLocation: PropTypes.func.isRequired,
 };

@@ -47,6 +47,7 @@ function SignUpContainer({ router }) {
   const [activeStep, setActiveStep] = useState();
 
   const [temporalToken, setTemporalToken] = useState();
+  const [location, setLocation] = useState();
 
   const [openPaymentDialogModal, setOpenPaymentDialogModal] = useState(false);
 
@@ -67,6 +68,16 @@ function SignUpContainer({ router }) {
   }), [paymentParams]);
 
   const signupWasntStarted = useMemo(() => !signupType && !activeStep, [signupType, activeStep]);
+
+  const fetchUserLocation = useCallback(async () => {
+    try {
+      const httpClient = HttpClientFactory.createUserHttpClient();
+      const newLocation = await httpClient.getUserLocation();
+      setLocation({ coords: { ...newLocation } });
+    } catch (e) {
+      setLocation({ coords: { latitude: -34000, longitude: -64000 } });
+    }
+  }, [setLocation]);
 
   const dispatchSignUp = (body) => {
     const httpClient = HttpClientFactory.createUserHttpClient();
@@ -224,6 +235,8 @@ function SignUpContainer({ router }) {
         handlePaySubscription={handlePaySubscription}
         getSitePromotions={getSitePromotions}
         externalStep={activeStep}
+        userLocation={location}
+        setUserLocation={setLocation}
       />
     );
 
@@ -277,6 +290,7 @@ function SignUpContainer({ router }) {
     }
 
     restoreTokenInMemory();
+    fetchUserLocation();
   }, []);
 
   // Coming back from payment page or pay subscription service

@@ -1,6 +1,6 @@
 /* eslint-disable no-new-wrappers */
 import { systemConstants } from '../../Shared/Constants';
-import { usersRoutes } from '../../Shared/Constants/ApiRoutes';
+import { thirdPartyRoutes, usersRoutes } from '../../Shared/Constants/ApiRoutes';
 import { HttpClient } from './HttpClient';
 
 export class UserHttpClient extends HttpClient {
@@ -129,5 +129,13 @@ export class UserHttpClient extends HttpClient {
 
   getPromotions() {
     return this.get(usersRoutes.promotions);
+  }
+
+  /**
+   * Returns the user location based on IP
+   * @returns {Promise<{latitude: Number, longitude: Number}>}
+   */
+  getUserLocation() {
+    return this.get(thirdPartyRoutes.getUserLocation);
   }
 }
